@@ -1,0 +1,307 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-recommend-box{
+        box-sizing:border-box;width:100%;height:100%;background:url(https://wx-small.runwise.cn/image/imageID6e857b9616c43697f41da69a3b97.png);background-size:cover;position:relative;left:0;top:0;
+        view{box-sizing:border-box;}
+        .ui-title{width:100%;padding:62rpx 0 32rpx;font-size:48rpx;font-weight:700;color:@color-white;text-align:center;line-height:48rpx;}
+        .ui-subtitle{width:100%;padding:0 64rpx;font-size:30rpx;font-weight:700;color:rgba(255,255,255,.8);text-align:center;line-height:42rpx;}
+
+        .ui-swiper-list{
+            width:100%;height:640rpx;margin-top:96rpx;
+            .ui-item{
+                width:100%;height:100%;background-color:#fff;border-radius:20rpx;overflow:hidden;transform:scale(0.88);transition:all .5s ease;
+                &.active{transform:scale(1);}
+            }
+
+            .ui-thumb{
+                width:100%;height:430rpx;position:relative;overflow:hidden;
+                image{width:100%;height:100%;}
+                text{width:80%;position:absolute;left:32rpx;}
+                text:nth-of-type(1){font-size:44rpx;font-weight:700;color:#fff;line-height:60rpx;top:90rpx;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+                text:nth-of-type(2){font-size:24rpx;color:#fff;line-height:60rpx;top:158rpx;}
+            }
+            .ui-content{
+                .cell-title{
+                    height:36rpx;margin:30rpx 0 24rpx;font-size:26rpx;color:@color-gray;
+                    text{display:inline-block;width:8rpx;height:8rpx;margin:0 8rpx;background-color:@color-gray;border-radius:50%;}
+                }
+                .cell-button{width:320rpx;height:80rpx;margin:0 auto;background-color:@color-blue;font-size:36rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;}
+            }
+        }
+        .ui-indicator-list{
+            width:100%;height:32rpx;margin:40rpx 0;
+            text{
+                display:inline-block;width:16rpx;height:16rpx;margin:0 13rpx;background-color:rgba(255,255,255,.5);border-radius:50%;transition:all .2s ease;
+                &.active{background-color:@color-white;}
+            }
+        }
+    }
+    .ui-mask{width:100%;height:100%;background-color:rgba(0,0,0,.5);position:fixed;left:0;top:0;z-index:30;display:none;}
+    .ui-popup-box{
+        width:100%;height:100%;position:fixed;left:0;top:0;z-index:31;opacity:0;transform:translateY(-2000rpx);
+        .ui-popup{
+            width:574rpx;height:720rpx;background-color:@background-white;border-radius:20rpx;overflow:hidden;
+            .ui-thumb{
+                width:100%;height:286rpx;position:relative;overflow:hidden;background-color: #f90;
+                image{width:100%;height:100%;}
+                .ui-text{box-sizing:border-box;width:100%;height:100%;padding:82rpx 32rpx 0;position:absolute;left:0;top:0;}
+                text:nth-of-type(1){display:block;padding-botom:4rpx;font-size:44rpx;font-weight:700;color:@color-white;line-height:60rpx;}
+                text:nth-of-type(2){display:block;font-size:20rpx;color:@color-white;line-height:26rpx;}
+            }
+            .ui-content{
+                padding:16rpx 0 36rpx;
+                text{display:block;width:100%;text-align:center;}
+                text:nth-of-type(1){font-size:96rpx;color:@color-blue;}
+                text:nth-of-type(2){padding:6rpx 0;font-size:44rpx;font-weight:700;color:@color-black;line-height:60rpx;}
+                text:nth-of-type(3){font-size:28rpx;color:@color-gray;line-height:40rpx;}
+            }
+            .cell-button{width:402rpx;height:88rpx;margin:0 auto;background:@color-blue;font-size:36rpx;color:@color-white;border-radius:@border-radius-20}
+        }
+    }
+</style>
+
+<template>
+    <!--<jn-loading wx:if="{{!isLoaded}}"></jn-loading>-->
+    <view class="ui-recommend-box">
+        <jn-header className="background-transparent"></jn-header>
+        <view class="ui-title">你完成啦</view>
+        <view class="ui-subtitle"><text>基于你的选择，我们为你推荐了以下课程， \n你可以选择一个，确认授权后领取</text></view>
+
+        <form bindsubmit="handleSavePushCode" report-submit>
+            <swiper class="ui-swiper-list"
+                    circular
+                    current="{{swiperCurrent}}"
+                    previous-margin="88rpx"
+                    next-margin="88rpx"
+                    bindchange="getSwiperChange">
+                <repeat for="{{recommendList}}" key="index" index="index" item="item">
+                    <swiper-item>
+                        <view class="ui-item" :class="{'active': index===swiperCurrent}">
+                            <view class="ui-thumb">
+                                <text class="cell-title">{{item.name}}</text>
+                                <text class="cell-suntitle">{{item.showPoint}}</text>
+                                <image mode="aspectFill" src="{{item.image}}"></image>
+                            </view>
+                            <view class="ui-content">
+                                <view class="cell-title main-center cross-center">内含{{item.senceCount}}小节 <text></text> 预计学习{{item.minute}}分钟</view>
+                                <button class="cell-button main-center cross-center"
+                                        formType="submit"
+                                        data-item="{{item}}"
+                                        open-type="getPhoneNumber"
+                                        @getphonenumber.stop="getReceive">免费领取</button>
+                            </view>
+                        </view>
+                    </swiper-item>
+                </repeat>
+            </swiper>
+        </form>
+
+        <view class="ui-indicator-list main-center">
+            <repeat for="{{recommendList}}" key="index" index="index" item="item">
+                <text :class="{'active': index===swiperCurrent}"></text>
+            </repeat>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import fetchPhoneMixin from "../../mixins/fetchPhone";
+    import PushMixin from '../../mixins/push'
+    import {auth as authApi, registered as fetchRegistered} from '../../api'
+    import {setPhone, renewWechatCode} from '../../redux/models/user'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        },
+        entrance(state) { // 全局场景值
+            return state.entrance
+        }
+    })
+    export default class registeredRecommend extends wepy.page {
+        config = {
+            disableScroll: true
+        }
+
+        mixins = [fetchPhoneMixin, PushMixin]
+
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading
+        }
+
+        data = {
+            isLoaded: false,
+            swiperCurrent: 0,
+            isNewCourseMap: {},
+            recommendList: [],
+            receiveInfo: {},
+        }
+
+        onLoad() {
+            let self = this
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            self.initialize()
+        }
+
+        onShow() {
+
+        }
+
+        initialize() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token
+            }
+            self.isLoaded = false
+            fetchRegistered.recommendCourse(postData).then((respone) => {
+                self.isNewCourseMap = respone.isNewCourseMap
+                self.recommendList = respone.recommendCourseList
+                self.$apply()
+                setTimeout(()=>{
+                    self.isLoaded = true
+                    self.$apply()
+                }, 1000)
+            }).catch(error => {
+                self.isLoaded = true
+            })
+        }
+
+        /** 领取课程结果
+         * @param phone 手机号码
+         * @param item 当前点击的哪个推荐课程
+         */
+        __receiveResult(phone, item) {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                mobile: phone,
+                verCode: null,
+                courseID: item.id
+            }
+
+            let a = {
+                "data": {
+                    "success": 2,
+                    "message": "已有历史领取记录",
+                    "data": {"courseID": "courseID00c0efe042a435bc9ded5704e37b", "courseFlag": "fullCourse"}
+                }, "message": "success", "status": 200
+            }
+
+            fetchRegistered.savePhone(postData).then((respone) => {
+                switch (respone.success) {
+                    case 1: // 领取成功
+                        self.receiveInfo = item
+
+                        let url = self.isNewCourseMap[self.receiveInfo.id] ? `/pages/course-module/course-new-details?id=${self.receiveInfo.id}` : `/pages/course-module/course-details?id=${self.receiveInfo.id}`
+                        wx.reLaunch({url: url})
+                        self.$apply()
+                        break
+                    case 2: // 已经领取过了
+                        let receiveInfo = _.find(self.recommendList, {id: respone.data.courseID})
+                        if (receiveInfo) {
+                            self.receiveInfo = receiveInfo
+                        } else {
+                            let url = 'fullCourse' === respone.data.courseFlag ? `/pages/course-module/course-new-details?id=${respone.data.courseID}` : `/pages/course-module/course-details?id=${respone.data.courseID}`
+                            wx.reLaunch({url: url})
+                        }
+                        self.$apply()
+                        break
+                    case 0: // 领取失败
+                        wx.showToast({
+                            icon: 'none',
+                            title: respone.message || '验证码超时或错误'
+                        })
+                        break
+                }
+            }).catch(error => {
+                self.isLoaded = true
+            })
+        }
+
+        methods = {
+            /**
+             * 轮播图切换
+             * @param event
+             */
+            getSwiperChange(event) {
+                let self = this
+                self.swiperCurrent = event.detail.current
+                self.$apply()
+            },
+            /**
+             * 获取课程
+             * @param event
+             */
+            getReceive(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
+                let analyticsInfo = {
+                    username: self.systemInfo.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.systemInfo.role,
+                    coursename: item.name
+                }
+                // 点击的微信统计
+                wx.reportAnalytics('free_collect', analyticsInfo)
+
+                // 拒绝授权手机号码
+                if ('getPhoneNumber:ok' !== errMsg) {
+                    wx.reportAnalytics('agreephonenumber_cancel', analyticsInfo)
+                    return console.log(errMsg)
+                }
+
+                wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-保存号码'}) // ga统计
+                wx.reportAnalytics('agreephonenumber_confirm', analyticsInfo) // wx统计
+
+                let postData = {
+                    token: self.systemInfo.token,
+                    code: self.systemInfo.code,
+                    encryptedData,
+                    iv
+                }
+                // 拿到手机加密的号码跟私钥，由后台解密
+                authApi.sendPhoneNumber(postData).then((respone) => {
+                    let {phone} = respone
+                    renewWechatCode(store.dispatch) // 更新登录code
+                    phone && store.dispatch(setPhone({
+                        status: "success",
+                        response: {phone: phone}
+                    }))
+                    self.__receiveResult(phone, item)
+                    self.$apply()
+                }).catch(error => {
+                    renewWechatCode(store.dispatch) // 更新登录code
+                })
+            },
+
+            /**
+             * 前往课程详情页
+             * @private
+             */
+            getCourseDetail() {
+                let self = this
+
+                wx.reportAnalytics('start_learning', {
+                    username: self.systemInfo.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.systemInfo.role
+                })
+
+                setTimeout(()=>{
+                    let url = self.isNewCourseMap[self.receiveInfo.id] ? `/pages/course-module/course-new-details?id=${self.receiveInfo.id}` : `/pages/course-module/course-details?id=${self.receiveInfo.id}`
+                    wx.reLaunch({url: url})
+                    self.$apply()
+                }, 300)
+            }
+        }
+
+        events = {}
+    }
+</script>

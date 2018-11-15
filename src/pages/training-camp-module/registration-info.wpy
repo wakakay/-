@@ -1,0 +1,270 @@
+<template>
+    <jn-header title="报名信息"></jn-header>
+  	<view class="ui-team-learning-apply"  style="height: calc(100% - {{headerHeigth}}px)">
+		<view class="cell-team-learning-tip">{{computedTip}}</view>
+		<form>
+			<view class="ui-item">
+				<text class="iconfont icon-name"></text>
+				<input value="{{name}}" 
+					bindinput="getName" 
+					placeholder-style="color:#A1A9AB"  
+					placeholder="姓名" 
+				/>
+			</view>
+			<view class="ui-item" wx:if="{{isClose}}">
+				<text class="iconfont icon-department"></text>
+				<input value="{{companyName}}" 
+					bindinput="getCompanyName" 
+					placeholder-style="color:#A1A9AB"  
+					placeholder="请输入部门" 
+				/>
+			</view>
+			<view class="ui-item">
+        		<text class="iconfont icon-phone"></text>
+				<input value="{{phoneNum}}" placeholder-style="color:#A1A9AB"  bindinput="getPhoneNum" placeholder="手机号码"  maxlength="11"  type="number"/>
+				<button
+					class="cell-auto-phone"
+					open-type="getPhoneNumber" data-phone="{{ phone }}" @getphonenumber.stop="handleSendPhone">自动填写</button>
+			</view>
+		</form>
+		<view class="ui-apply-button">
+			<viw class="cell-apply-sure" @tap.stop="getSureBtn">确定</viw>
+		</view>
+  	</view>
+	<view></view>
+</template>
+
+<script>
+	import wepy from 'wepy'
+    import {getStore,connect} from "wepy-redux"
+    import { doDecrpytPhone, showErrorPage, initializationDeligate } from "../../utils"
+	import {
+		team as teamApi,
+		auth as authApi} from '../../api'
+	import fetchPhoneMixin from "../../mixins/fetchPhone";
+	import {
+		refreshUserInformations,
+		login,
+		setPhone,
+		renewWechatCode
+	} from '../../redux/models/user'
+    import header from '../../components/common/header'
+	import AuthorizationModal from '../../components/AuthorizationModal/index'
+	import Loading from "../../components/common/loading"
+
+  	const store = getStore();
+ 	@connect({
+		userName(state) {
+			return state.user.name;
+		},
+		role(state) {
+			return state.user.role;
+		},
+		token(state) {
+			// return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+			return state.user.token;
+		},
+		code(state) {
+			return state.user.code;
+		},
+	  	phone(state) {
+			return state.user.phone
+		},
+        entrance(state) {//全局场景值
+            return state.entrance
+        }
+  	})
+  	export default class TeamLearningApply extends wepy.page {
+		components = {
+            mloading: Loading,
+            AuthorizationModal,
+            'jn-header': header
+		} // end components
+
+	 	mixins = [fetchPhoneMixin] // end mixins
+
+		data = {
+			teamID: 'defaultTeamID',
+			roleType: 'defaultShareFlag', // 团队角色
+			buttonStatus: 'defaultButtonStatus', // allowSignUp   学员允许报名状态; teamManagerByConfirm 营长待确认 teamTeacherByConfirm 老师待确认
+			name:'',
+			phoneNum:'',
+			companyName:'',
+			teamName:'',
+			headerHeigth:0,
+			isClose:false
+
+		} // end data
+		computed = {
+			// 头部提示语
+			computedTip() {
+				return 'allowSignUp'===this.buttonStatus? '填写姓名和手机号码，方便老师联系你': 'teamManagerByConfirm'===this.buttonStatus? '请填写你的姓名和手机号码': 'teamTeacherByConfirm'===this.buttonStatus? '请填写你的姓名和手机号码':'请填写你的姓名和手机号码'
+			},
+			// input 提示语
+			computedInput() {
+				return 'allowSignUp'===this.buttonStatus? '开营通知手机号': 'teamManagerByConfirm'===this.buttonStatus? '手机号码': 'teamTeacherByConfirm'===this.buttonStatus? '手机号码':''
+			},
+		}
+
+		methods = {
+			// 自动填写 获取手机号码
+			handleSendPhone({detail: {encryptedData,errMsg: phoneErrMsg,iv}}) 
+			{
+				return authApi.sendPhoneNumber({
+					token: this.token,
+					code: this.code,
+					encryptedData,
+					iv
+				})
+				.then(({phone}) => {
+					const copy = JSON.parse(JSON.stringify(phone));
+					this.phoneNum= copy
+					this.setData({
+						phoneNum: this.phoneNum
+					})
+					renewWechatCode(store.dispatch) // 更新登录code
+					(phone && store.dispatch(setPhone({status: "success",response: { phone }})))
+
+				})
+				.catch(error => {
+					renewWechatCode(store.dispatch) // 更新登录code
+				})
+			},
+			// 更改	name 触发的方法
+			getName(e) {
+				this.name = e.detail.value
+			},
+			// 更改 phone 触发的方法
+			getPhoneNum(e) {
+				this.phoneNum = e.detail.value
+			},
+			// 更改 公司名 触发的方法
+			getCompanyName(e) {
+				this.companyName = e.detail.value
+			},
+			// 点击确认 触发的方法
+			getSureBtn() {
+				if(this.name == '' || !this.name){
+					return wepy.showToast({
+                        title: '请输入姓名',
+                        icon: 'none',
+        				mask: true
+                    })
+				}
+				if(this.isClose == true) {
+					if(this.companyName == '' || !this.companyName){
+						return wepy.showToast({
+							title: '请输入部门名称',
+							icon: 'none',
+							mask: true
+						})
+					}
+				}
+				
+
+				if(this.phoneNum) {
+					if(this.phoneNum.length !== 11){
+						return wepy.showToast({
+							title: '请输入正确的手机号码',
+							icon: 'none',
+							mask: true
+						})
+					}
+				}else {
+					return wepy.showToast({
+						title: '请输入手机号码',
+						icon: 'none',
+						mask: true
+					})
+				}
+				// 确认报名接口
+				teamApi.signUpNewTeamLearning({
+					token: this.token,
+					teamID: this.teamID,
+					buttonStatus: this.buttonStatus,
+					name:this.name,
+					department:this.companyName,
+					phoneNum:this.phoneNum,
+					roleType: this.roleType
+				})
+				.then(() => {
+					setTimeout(() => {
+						wepy.showToast({
+							title: '报名成功',
+							icon: 'success',
+							duration: 2000
+						})
+					}, 4000)
+                    let rounter = getCurrentPages()
+                    if (rounter.length > 2) {
+                        return wx.redirectTo({url:`/pages/training-camp-module/coursr-list?teamID=${this.teamID}`})
+                    }
+					return wx.reLaunch({url:`/pages/training-camp-module/coursr-list?teamID=${this.teamID}`})
+				})
+				.catch(error => {
+					console.log(error + 'fail to confirm from backend')
+				})
+			}
+		}
+		onLoad(itemObj) {
+			this.teamID = itemObj.teamID
+			this.buttonStatus = itemObj.buttonStatus
+			this.roleType = itemObj.roleType
+			this.teamName = itemObj.name
+			this.companyName = itemObj.companyName
+			this.isClose = itemObj.isClose === "false" ? false : true
+			this.$apply()
+            wepy.$instance.globalData.getLoadHuilder({pageTheme: this.teamName}) // ga统计
+			//访问训练营 的人数
+			wx.reportAnalytics('team_learning_apply', {
+				nickname: this.userName,
+				channel: this.entrance.mappers[this.entrance.scenceID],
+				role: this.role,
+				teamname: this.teamName,
+			});
+			// 获取姓名 手机号
+			teamApi.getTeamLearningInfo({
+				token: this.token,
+				teamID: itemObj.teamID,
+				buttonStatus: itemObj.buttonStatus,
+				roleType: itemObj.roleType
+			})
+			.then(res => {
+				this.name = res.name;
+				this.companyName = res.companyName;
+				this.phoneNum = res.phoneNum;
+				this.$apply()
+			})
+			.catch(error => {
+				console.log('fail to confirm from backend')
+			})
+		}
+		events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+  	}
+</script>
+
+
+<style lang="less">
+	@import "../../assets/style/theme";
+	.ui-team-learning-apply {
+		background-color: @background-gray-F4;
+		.cell-team-learning-tip {font-size: 28rpx;color:@color-gray;padding:32rpx 0 32rpx 36rpx;}
+		.ui-item{
+			background-color: @background-white;font-size: 32rpx;height: 120rpx;display:flex;align-items:center;border-bottom: 1px solid @border-gray;
+			input{width:60%}
+			text{margin: 0 20rpx 0 40rpx;color:@color-gray;}
+			.cell-auto-phone {width:160rpx;height:56rpx;background-color:@background-blue;color:@color-white;border-radius:@border-radius-8;text-align:center;line-height:56rpx;font-size:32rpx;padding:0;}
+
+		}
+		.ui-apply-button{
+			display: flex;justify-content: center;
+			.cell-apply-sure{width:702rpx;height:100rpx;background-color:@background-blue;color:@color-white;line-height:100rpx;text-align:center;border-radius:@border-radius-20;margin-top:128rpx;display:flex;justify-content:center;font-size: 40rpx}
+		}
+	}
+</style>

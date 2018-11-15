@@ -1,0 +1,127 @@
+<template>
+    <view class="my-feedback-body">
+        <jn-header title="意见反馈"></jn-header>
+        <image class="my-feedback-image"
+               src="http://wx-small.runwise.cn/image/imageID0a43755b08c481af440e1635d7a2.png"/>
+        <view class="my-feedback-desc">感谢你为即能提出建议，我们会在大家的监督和提醒下，持续优化产品体验!</view>
+        <button class="feedback-btn-style" open-type="feedback" plain="{{true}}">意见反馈</button>
+        <view class="my-feedback-title-top">请添加即能客服进行反馈</view>
+        <view class="my-feedback-title">客服微信号：
+            <text>oliviaJN2</text>
+        </view>
+        <button class="copy-btn-style" plain="{{true}}" @tap.stop="copyTBL">{{copyStatus}}</button>
+    </view>
+    <toast/>
+</template>
+<script>
+  import wepy from "wepy";
+  import Toast from "wepy-com-toast";
+  import {
+    NetworkError
+  } from "../../errors";
+  import {
+    getStore,
+    connect
+  } from "wepy-redux";
+  import {
+    course as courseApi,
+  } from "../../api";
+  import header from '../../components/common/header'
+  import {
+    toast,
+    showErrorPage
+  } from "../../utils";
+  const store = getStore();
+  @connect({
+    userName(state) {
+      return state.user.name;
+    }, // mapState 即getters
+    avatar(state) {
+      return state.user.avatar;
+    },
+    token(state) {
+    //   return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+      return state.user.token;
+    },
+    code(state) {
+      return state.user.code;
+    },
+    role(state) {
+      return state.user.role
+    },
+    entrance(state) {
+      return state.entrance
+    },
+  })
+  export default class MineFeedback extends wepy.page {
+    data = {
+        previewImage:['http://wx-small.runwise.cn/image/imageID374fc9d569f4c9a62acd65f0e0dd.png','http://wx-small.runwise.cn/image/T60a13fdb5234de93d0c407e49be7Width430ImageCode.png'],
+        clipBoardData:'PasangXu2013',
+        copyStatus:'复制微信号',
+
+    } // end data
+    components = {
+      toast: Toast,
+        'jn-header': header
+    } // end components
+    methods = {
+      copyTBL:function(){
+          let that = this
+          wx.setClipboardData({
+            data: this.clipBoardData,
+            success: function(res) {
+              //  that.copyStatus = '已复制'
+               that.$apply()
+              //  that.$invoke("toast", "show", {
+              //     title: '棋枫老师微信号已复制到剪贴板，请添加为好友后反馈意见，谢谢！'
+              //   });
+
+              // wx.showModal({
+              //   content: '棋枫老师微信号已复制到剪贴板，请添加为好友后反馈意见，谢谢！',
+              //   showCancel:false,
+              //   confirmText:'知道了',
+              //   success: function(res) {
+
+              //   }
+              // })
+
+                wx.showToast({
+                  title:'微信号已复制',
+                  icon:'success'
+                })
+                // wx.showModal({con})
+            }
+          });
+      },
+        handlePreviewCoreImage() {
+            return wepy.previewImage({urls: this.previewImage})
+        }
+    };
+    computed = {};
+    onLoad() {
+        wepy.$instance.globalData.getLoadHuilder() // ga统计
+    }
+    onUnload(){
+      // this.copyStatus='+添加棋枫老师微信'
+    }
+    onShow() {
+
+    }
+  }
+</script>
+<style lang="less" scoped>
+@import "../../assets/style/theme";
+.my-feedback-body{
+	width: 100%;height: 100%;display: flex;align-items: center;flex-direction: column;
+	.my-feedback-image{width: 272rpx;height: 272rpx;margin-top: 72rpx;margin-bottom: 24rpx;}
+	.my-feedback-desc{font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-black;text-align: center;line-height: 52rpx;width: 510rpx;}
+	.feedback-btn-style{border:0 !important;margin-top: 48rpx;width: 400rpx;height: 88rpx;border-radius:@border-radius-20;background-color: @background-blue;color:@color-white;font-weight: 600}
+	.my-feedback-title-top{font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;text-align: center;margin-top: 148rpx;}
+	.my-feedback-title{
+		font-family: PingFangSC-Regular;text-align: center;margin: 14rpx;font-size: 28rpx;color: @color-gray;line-height: 36rpx;
+		text{color: @color-blue;font-size: 32rpx;line-height: 36rpx;}
+	}
+	.copy-btn-style{border:0 !important;margin-top: 48rpx;width: 400rpx;height: 88rpx;border-radius: @border-radius-20;background-color: @background-gray-F4;color:@color-blue;font-weight: 600;}
+}
+
+</style>

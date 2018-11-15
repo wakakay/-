@@ -1,0 +1,188 @@
+<!--judgement.wxml-->
+<template name="judgement">
+  <view class="judgement-article">
+    <view class="judgement-article-image">
+      <image wx:if="{{bundle.bigimage}}" class="judgement-article-image {{isActived ? 'on' : ''}}" src="{{bundle.bigimage}}" hidden="{{!imageLoaded}}" @load="handleImageLoaded" mode="widthFix"></image>
+      <image wx:else class="judgement-article-image {{isActived ? 'on' : ''}}" src="http://wx-small.runwise.cn/image/imageID7d19766a081481a966d356e8adad.png" mode="widthFix"></image>
+    </view>
+    <view class="judgement-article-body">
+      <view class="judgement-article-body-title {{isActived ? 'on' : ''}}">{{bundle.description}}</view>
+
+      <view class="judgement-article-body-bottom {{isActived ? 'on' : ''}}" wx:if="{{ 'neutral'===bundle.cardStatus }}">
+        <view @tap.stop="handleTapNeutralResponse" data-id="{{1}}" data-feedback="{{bundle.feedbackNeutral}}" class="judgement-article-body-bottom-icon-left"></view>
+        <view @tap.stop="handleTapNeutralResponse" data-id="{{2}}" data-feedback="{{bundle.feedbackNeutral}}" class="judgement-article-body-bottom-icon-right"></view>
+      </view><!-- body-bottom -->
+
+      <view class="judgement-article-body-bottom {{isActived ? 'on' : ''}}" wx:else>
+        <view @tap.stop="handleTapLeft" data-status="{{ bundle.cardStatus }}" data-id="{{1}}" data-flag="{{ bundle.select[0].isanswer }}" data-feedback="{{bundle.select[0].feedback}}" class="judgement-article-body-bottom-icon-left"></view>
+        <view @tap.stop="handleTapLeft" data-status="{{ bundle.cardStatus }}" data-id="{{2}}" data-flag="{{ bundle.select[1].isanswer }}" data-feedback="{{bundle.select[1].feedback}}" class="judgement-article-body-bottom-icon-right"></view>
+      </view><!-- body-bottom -->
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import loadingMixin from "../../mixins/loading";
+  import {
+    sleep
+  } from '../../utils'
+  export default class Judgement extends wepy.component {
+    mixins = [loadingMixin]; // end mixins
+    props = {
+      offset: {},
+      bundle: {
+        type: Object
+      },
+      isActived: {
+        type: Boolean
+      }
+    }; // end props
+    data = {
+      // animation: null
+    }; // end data
+    methods = {
+      handleTapLeft({
+        target: {
+          dataset: {
+            id,
+            flag,
+            feedback,
+            status
+          }
+        }
+      }) {
+        // let mOffset = this.$index;
+        // setTimeout(() => {
+        //   this.$emit("feedbackResponse", {
+        //     offset: this.$parent.,
+        //     feedbackBundle: {
+        //       flag: Boolean(flag),
+        //       ...feedback
+        //     }
+        //   });
+        // }, 550);
+        // setTimeout(() => {
+        //   this.rotate(180, 0);
+        // }, 500);
+        // //   return false
+        // // console.log('feedback generate index', this.$parent.)
+        // this.$broadcast("feedbackRender", this.$parent., {
+        //   flag: Boolean(flag),
+        //   ...feedback
+        // });
+        // this.$apply();
+        sleep(0.4)
+          .then(() => {
+            this.$emit('feedback', {
+              offset: this.$index,
+              feedbackBundle: {
+                feedbackType: status,
+                flag,
+                ...feedback
+              }
+            })
+          })
+      }, // end handleTapLeft
+      handleTapNeutralResponse({ target: { dataset: { feedback } } }) {
+        this.$emit('neutralResponse', {
+            offset: this.$index,
+            feedbackBundle: feedback
+        })
+      } // handleTapNeutralResponse
+    }; // end methods
+    events = {
+      // closeFeedback(offset, $event) {
+      //   //   this.selectedId = "";
+      //   this.clearAnimation();
+      // },
+      cardSwitch(current, $event) {
+        // if (!this.isActived) return
+      } // end cardSwitch
+    };
+    // rotate(deg, opacity) {
+    //   this.animation = wx.createAnimation({
+    //     duration: 350,
+    //     timingFunction: "ease"
+    //   });
+    //   this.animation
+    //     .rotateY(deg)
+    //     .opacity(opacity)
+    //     .step();
+    //   this.animation = this.animation.export();
+    //   this.$apply();
+    // } // end reverse
+    // clearAnimation() {
+    //   this.rotate(0, 1);
+    // }
+  }
+</script>
+
+<style lang="less">
+  .judgement-article {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .judgement-article-image.on {
+    animation: zoomIn .3s ease-in 0s;
+  }
+  .judgement-article-body-title.on {
+    animation: zoomIn .3s ease-in .05s;
+  }
+  .judgement-article-body-bottom.on {
+    animation: zoomIn .3s ease-in .1s;
+  }
+
+  .judgement-article-image {
+    width: 100%;
+    height: 360rpx;
+  }
+  .judgement-article-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    /* height: 666rpx; */
+    flex:1;
+  }
+  .judgement-article-body-title {
+    margin: 20rpx 90rpx 0 90rpx;
+    color: #303f48;
+    /* font-size: 36rpx; */
+    font-size: 40rpx;
+    font-family: PingFangSC-Semibold;
+    line-height: 88rpx;
+  }
+  .judgement-article-body-bottom {
+    margin-bottom: 116rpx;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .judgement-article-body-bottom-icon-left {
+    width: 124rpx;
+    height: 124rpx;
+    margin-left: 160rpx;
+    background-image: url("http://wx-small.runwise.cn/image/imageID9bd4adef0924dba34e2f03f04905.svg");
+    background-position: center;
+    background-size: 100%;
+  }
+  .judgement-article-body-bottom-icon-left:active {
+    background-image: url("http://wx-small.runwise.cn/image/imageIDe1483d9bcf74f7b86a7d19db0240.svg");
+  }
+  .judgement-article-body-bottom-icon-right {
+    width: 124rpx;
+    height: 124rpx;
+    margin-right: 160rpx;
+    background-image: url("http://wx-small.runwise.cn/image/imageIDdd6534bd4c0434a99ff5649a0d8e.svg");
+    background-size: 100%;
+  }
+  .judgement-article-body-bottom-icon-right:active {
+    background-image: url("http://wx-small.runwise.cn/image/imageIDc2fde1d35de4f8bc34d93fda7b58.svg");
+  }
+</style>

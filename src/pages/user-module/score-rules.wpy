@@ -1,0 +1,138 @@
+<template>
+    <jn-header title="即能币规则"></jn-header>
+    <scroll-view class="score-rules-body" scroll-y="{{true}}">
+        <view class="score-rules-content">
+            <view class="score-rules-title">{{content_one.title}}</view>
+            <view class="score-rules-content-detail">{{content_one.desc}}</view>
+            <view class="score-rules-title">{{content_two.title}}</view>
+            <view class="{{index===0?'score-rules-content-detail':'score-rules-content-detail-copy'}}" wx:for="{{content_two.desc}}" wx:key="{{index}}">{{item}}</view>
+            <view class="score-rules-title">{{content_three.title}}</view>
+            <view class="score-rules-content-detail">{{content_three.desc}}</view>
+            <view class="score-rules-table">
+                <view class="score-rules-table-row" style="border:0">
+                    <view class="border-right score-rules-table-title">获取方式</view>
+                    <view class="score-rules-table-title">奖励数量</view>
+                </view>
+                <view class="score-rules-table-row" wx:for="{{getWay}}" wx:key="{{index}}">
+                    <view class="flex score-rules-table-left border-right">{{item.option}}</view>
+                    <view class="flex score-rules-table-right"><text>{{item.bonus}}</text>{{item.unit}}</view>
+                </view>
+            </view>
+            <view class="score-rules-content-detail-s">{{content_three.tips}}</view>
+            <view class="blank"></view>
+        </view>
+    </scroll-view>
+</template>
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .score-rules-content {
+        width: calc(~"100% - 80rpx");margin: 0 40rpx;
+        .score-rules-title {font-family: PingFangSC-Semibold;font-size: 40rpx;color: @color-black;line-height: 40rpx;margin: 72rpx 0 24rpx;}
+        .score-rules-content-detail-copy {
+            margin-left: 70rpx;font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-gray;text-align: justify;line-height: 48rpx;display: flex;align-items: center;
+            &::before{content: ' ';background-color: @background-gray;border-radius: 50%;width: 16rpx;height: 16rpx;position: relative;left: -20rpx;}
+        }
+
+        .score-rules-content-detail {margin-left: 48rpx;font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-gray;text-align: justify;line-height: 48rpx;}
+        .score-rules-table{
+            margin: 24rpx 0 40rpx;border: 2rpx solid @border-color;
+            .score-rules-table-row{
+                display: flex;border-top: 2rpx solid @border-color;
+                .score-rules-table-title{height: 62rpx;text-align: center;line-height: 62rpx;font-family: PingFangSC-Semibold;font-size: 28rpx;width: 50%;color: @color-black;}
+                .score-rules-table-left{width: 50%;padding: 20rpx 20rpx;font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-black;}
+                .score-rules-table-right{
+                    width: 50%;padding: 20rpx 20rpx;font-family: PingFangSC-Regular;font-size: 30rpx;color: @color-black;line-height: 44rpx;
+                    text{margin-right: 6rpx;color: @color-blue;}
+                }
+
+            }
+
+        }
+        .score-rules-content-detail-s {font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-gray;}
+    }
+    .blank{width: 100%;height: 80rpx;}
+    .flex{display: flex;justify-content: center;align-items: center}
+    .border-right{border-right: 2rpx solid #979797;}
+    .score-rules-body {width: 100%;height: 100%;}
+</style>
+<script>
+    import wepy from "wepy"
+    import loadingMixin from "../../mixins/loading"
+    import header from '../../components/common/header'
+    import {
+        score as scoreApi
+    } from "../../api"
+    import {
+        NetworkError
+    } from "../../errors"
+    import {
+        getStore,
+        connect
+    } from "wepy-redux"
+    const store = getStore();
+    const state = store.getState();
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            // return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) { //全局场景值
+            return state.entrance
+        }
+    })
+    export default class ScoreRules extends wepy.page {
+        mixins = [loadingMixin] // end mixins
+        components = {
+            'jn-header': header
+        } // end components
+        data = {
+            content_one: {
+                title: '1. 什么是即能币？',
+                desc: '即能币是即能推出的一种虚拟货币，用于奖励用户在即能中完成微课，评价微课、赠送微课、内测新功能等行为。'
+            },
+            content_two: {
+                title: '2. 即能币能用来做什么？',
+                desc: [
+                    '即能币可在购买课程时用于支付,1即能币 = 1元。',
+                    // '10 积分可抵扣 1 元',
+                    // '积分抵扣金额不得超过每笔交易总额',
+                    // '使用即能币的数量为 10 的整数倍'
+                ],
+            },
+            content_three: {
+                title: '3. 如何获得即能币？',
+                desc: '你目前可以通过以下4种方式获得即能币：',
+                tips:'更多获取即能币的方式将陆续上线，敬请期待。'
+            },
+            content_four: {
+                title: '4. 积分的有效期有多长？',
+                desc: '积分获取后有效期为 1 个月，过期未使用的积分将自动扣除。例如你在2018年4月1日获得的积分，将于2018年5月1日到期。'
+            },
+            getWay:[]
+        }; // end data
+        onShow() {
+
+        }
+        onLoad() {
+            scoreApi.getBonusDescriptionList({token:this.token})
+            .then(data=>{
+                this.getWay = data
+                this.$apply()
+            })
+        }
+        events = {} // end events
+        methods = {}
+    }
+</script>

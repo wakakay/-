@@ -1,0 +1,561 @@
+<template>
+  <form bindsubmit="handleSavePushCode" report-submit>
+    <view class="favourite-course-copy-article" hover-class="active">
+      <image wx:if="{{label && 'new'===label}}" class="favourite-course-copy-article__fixed-tag" src="http://wx-small.runwise.cn/image/imageID3b2bc1e45be427830c14555c1ba3.svg" mode="scaleToFill" ></image>
+      <button class="btn-diaphane whole-from-wrapper favourite-course-copy-article__shade" @tap.stop="handleTendToAttendClass" data-course-i-d="{{id}}" data-course-type="{{courseType}}" data-course-name="{{courseName}}"  data-name ="{{name}}" formType="submit"></button><!-- shade -->
+
+      <view class="favourite-course-copy-article__body__icon-wrapper" :class="{'image-loading': !imageLoaded}">
+        <image class="favourite-course-copy-article__body__icon" src="{{ image }}" mode="aspectFill" hidden="{{!imageLoaded}}" @load="handleImageLoaded"  data-course-type="{{courseType}}"  data-course-name="{{courseName}}" @tap.stop="handleTendToAttendClassC" data-course-i-d="{{id}}" formType="submit">
+          <image wx:if="{{ 'new'===newLabel }}" class="favourite-course-copy-article__body__icon-wrapper__tag" src="http://wx-small.runwise.cn/image/imageID3b2bc1e45be427830c14555c1ba3.svg" mode="scaleToFill" />
+          <image wx:if="{{ 'update'===newLabel }}" class="favourite-course-copy-article__body__icon-wrapper__tag" src="http://wx-small.runwise.cn/image/imageIDfc5760fcdff407a3d68671b53963.svg" mode="scaleToFill" />
+        </image>
+      </view>
+
+      <view class="favourite-course-copy-article__footer mvp24 flex-space-between-row">
+        <view class="favourite-course-copy-article__footer__stars-wrapper">
+          <image wx:for="{{ userAvatarUrlList }}" class="favourite-course-copy-article__footer__stars-wrapper__star" wx:for-index="$favouritecourse$index" wx:for-item="$favouritecourse$item" wx:key="$favouritecourse$index" wx:key="{{ index }}" data-score="{{ $favouritecourse$item.avatarUrl }}" data-test="{{score}}" class="" src="{{ $favouritecourse$item.avatarUrl }}" mode="scaleToFill" ></image>
+        </view>
+
+        <text class="favourite-course-copy-article__footer__caption" wx:if="{{userCount}}"> {{ userCount }}人在学 </text>
+
+        <view wx:if="{{payType==='free' || price=='0'}}" class="favourite-course-copy-article__footer__price temporary }}">限时免费</view>
+
+        <view wx:if="{{payType!=='free' && price!='0' }}" class="favourite-course-copy-article__footer__price temporary }}">{{price==='回顾'?price:'获取'}}</view>
+      </view>
+    </view>
+  </form>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import PushMixin from '../../mixins/push'
+  import loadingMixin from '../../mixins/loading'
+
+  export default class HomeCourse extends wepy.component {
+    mixins = [ PushMixin, loadingMixin ]
+
+    props = {
+      offset: {
+        type: Number
+      },
+      id: {
+        type: String
+      },
+      newLabel: {
+        type: String
+      },
+      headerIsShow: {
+        type: Boolean,
+        default: true
+      },
+      courseStatus: {
+        type: String
+      },
+      gradeName: {
+        type: String
+      }, // end tags
+      skill: {
+        type: String
+      },
+      image: {
+        type: String
+      },
+      name: {
+        type: String
+      },
+      showPoint: {
+        type: String
+      },
+      showPoint2:{
+
+      },
+      percent: {
+        type: Number
+      },
+      label: {
+        type: String
+      },
+      score: {
+        type: Number
+      },
+      price: {
+      },
+      previousPrice:{default: 0},
+      payType:{
+        type: String
+      },
+      isShowBasePrice: {
+        type: String
+      },
+      userCount: {
+        type: Number
+      },
+      userAvatarUrlList: {
+        type: Array
+      },
+      courseType:{
+        type: String
+      },
+      courseName:{
+        type: String
+      }
+    } // edn props
+
+    data = {
+      scoreTest: 4
+    }
+
+    methods = {
+      handleTendToAttendClass({target: {dataset: {courseID, resume='NO', courseType, name, courseName}}, detail}) {
+        this.$emit('attendClass', courseID, resume, courseType, name, courseName)
+      }, // end handleTendToAttendClass
+      handleTendToAttendClassC({currentTarget: {dataset: {courseID, resume='NO', courseType,name,courseName}}, detail}) {
+        this.$emit('attendClass', courseID, resume, courseType, name,courseName)
+      }, // end handleTendToAttendClass
+      handleTendToReview({target: {dataset: {courseID}}, detail}) {
+        this.$emit('review', courseID)
+      } // end handleTendToReview
+    } // end methods
+  }
+</script>
+
+<style lang="less" scoped>
+  @import "../../assets/style/theme";
+  .favourite-course-copy-article__body-title-wapper{
+    position: absolute;
+    width: 100%;
+    height: 352rpx;
+    top: 0;
+    left: 0;
+  }
+  .favourite-course-copy-article {
+    width: 100%;
+    min-width: 670rpx;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    text-align: left;
+    /*background-color: yellow;*/
+    /*margin: 32rpx;*/
+    /*padding: 32rpx;*/
+    background-color: #fff;
+    z-index: 2;
+    box-shadow:0 12rpx 48rpx 0 rgba(109,130,143,0.35);
+    border-radius: 24rpx;transform:scale(1);transition:all .5s ease;
+    &.active{transform:scale(0.95);}
+  }
+  .favourite-course-copy-article-fullimg-title{
+    font-size: 44rpx;
+    line-height: 57rpx;
+    max-width: 480rpx;
+    white-space: pre-line;
+
+    font-family: PingFangSC-Semibold;
+    color: #FFFFFF;
+    margin-left: 32rpx;
+    margin-top: 32rpx;
+  }
+
+  .favourite-course-copy-article__shade {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* height: 800rpx; */
+    height: 496rpx;
+    background-color: #D1E3F8;
+    z-index: 9;
+  }
+
+  .favourite-course-copy-article__fixed-tag {
+    width: 74rpx;
+    height: 88rpx;
+    position: absolute;
+    top: 0;
+    right: 72rpx;
+  }
+
+  .favourite-course-copy-article__header__shadow {
+    width: 100%;
+    height: 84rpx;
+    line-height: 84rpx;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, .0), rgba(0, 0, 0, .6));
+    color: #FFF;
+    font-family: PingFang-SC-Medium;
+    font-size: 28rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box;
+    padding-left: 48rpx;
+  }
+
+  .favourite-course-copy-article__header {
+    width: 100%;
+    height: 40rpx;
+    position: absolute;
+    left: 48rpx;
+    top: 40rpx;
+    display: block;
+    box-sizing: border-box;
+    z-index: 999;
+  }
+
+  .favourite-course-copy-article__header__tag {
+    height: 40rpx;
+    line-height: 43rpx;
+    box-sizing: border-box;
+    margin: 0;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 24rpx;
+    margin-right: 16rpx;
+    color: #2DB7B5;
+    font-family: PingFangSC-Regular;
+    font-size: 26rpx;
+    background-color: #F8F8F8;
+    border: 0;
+    border-radius: 20rpx;
+  }
+
+  .favourite-course-copy-article__header__tag::after {
+    border: 0 !important;
+    color: #778D9A !important;
+    height: 40rpx;
+    line-height: 40rpx;
+    text-align: center;
+    font-size: 26rpx;
+    font-weight : normal;
+    /*background-color: white !important; */
+
+  }
+
+  .favourite-course-copy-article__body__icon-wrapper {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-top-right-radius: 24rpx;
+    border-top-left-radius: 24rpx;
+    overflow: hidden;
+    /*border:1rpx solid red;*/
+    /*background-color: #F5E8E5;*/
+  }
+
+  .favourite-course-copy-article__body__icon {
+    width: 100%;
+    /* height: 670rpx; */
+    height: 352rpx;
+    position: relative;
+    display: block;
+
+  }
+
+  .favourite-course-copy-article__body__icon-wrapper__tag {
+    width: 74rpx;
+    height: 88rpx;
+    position: absolute;
+    right: 50rpx;
+    top: 0;
+    z-index: 3;
+  }
+
+  .favourite-course-copy-article__body__title {
+    max-height: 144rpx;
+    width: 100%;
+    line-height: 64rpx;
+    box-sizing: border-box;
+    padding: 16rpx 36rpx 0;
+    color: #294657;
+    font-family: PingFangSC-Medium;
+    font-size: 48rpx;
+    word-break: break-all;
+    white-space: pre-line;
+    text-align: justify;
+  }
+
+  .favourite-course-copy-article__caption {
+    min-height: 64rpx;
+    height: auto;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 16rpx 34rpx 36rpx;
+  }
+
+  .favourite-course-copy-article__caption__with-caption {
+  }
+
+  .favourite-course-copy-article__caption__icon {
+    width: 30rpx;
+    height: 30rpx;
+    margin-right: 20rpx;
+    display: inline-block;
+    vertical-align: top;
+
+  }
+
+  .favourite-course-copy-article__caption__desc {
+    max-width: 568rpx;
+    height: auto;
+    display: block;
+    line-height: 40rpx;
+    opacity: .7;
+    color: #294657;
+    font-family: PingFangSC-Regular;
+    font-size: 26rpx;
+    border-left: 8rpx solid #007aff;
+    padding-left: 20rpx;
+    word-break: break-all;
+    white-space: pre-line;
+    text-align: left;
+  }
+
+  .favourite-course-copy-article__footer__with-progress {
+    width: calc(~"100% - 28rpx");
+    position: relative;
+  }
+
+  .favourite-course-copy-article__footer__progress {
+    width: 200rpx;
+    height: 10rpx;
+    position: absolute;
+    left: 0;
+    bottom: 50rpx;
+  }
+
+  .crimson-btn {
+    width: 200rpx;
+    height: 72rpx;
+    line-height: 72rpx;
+    margin: 0;
+    background-color: #007aff;
+    border-radius: 16rpx;
+    color: #FFF;
+    font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    position: absolute;
+    right: 20rpx;
+    bottom: 20rpx;
+  }
+  .crimson-btn::after {
+    border: 0 !important;
+  }
+
+  .favourite-course-copy-article__footer__with-preview {
+    width: 100%;
+    margin: 0;
+    position: relative;
+  }
+
+  .favourite-course-copy-cell-article__footer__preview-btn {
+    width: auto;
+    height: auto;
+    display: inline-block;
+    vertical-align: top;
+    font-size: 28rpx;
+    line-height: 100%;
+    border-radius: 10rpx;
+    color: #007aff;
+    background-color: #FFF;
+    font-family: PingFangSC-Medium;
+    border: 0;
+    position: absolute;
+    padding: 0;
+    right: 40rpx;
+    bottom: 28rpx;
+  }
+
+  .favourite-course-copy-cell-article__footer__preview-btn::after {
+    border: 0;
+  }
+
+  .favourite-course-copy-cell-article__footer__preview-icon {
+    width: 28rpx;
+    height: 28rpx;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .favourite-course-copy-article__footer__progress::before {
+    content: '';
+    width: 12rpx !important;
+    height: 12rpx !important;
+    border-radius: 6rpx;
+    position: absolute !important;
+    left: -6rpx;
+    top: 0;
+    background-color: #457A97;
+
+  }
+
+  .favourite-course-copy-article__footer__progress::after {
+    content: '';
+    width: 12rpx !important;
+    height: 12rpx !important;
+    border-radius: 50%;
+    position: absolute !important;
+    right: -6rpx;
+    top: 0;
+    background-color: #CCDFE8;
+  }
+
+  .favourite-course-copy-article__footer {
+    width: 598rpx;
+    height: 210rpx;
+    margin: 0 auto;
+    position: relative;
+    box-sizing: border-box;
+    border-top: 1rpx solid #cdced3;
+    /*background-color: #F7C8C1;*/
+    align-items: center;
+  }
+
+  .favourite-course-copy-article__footer.mvp24 {
+    height: 152rpx;
+    position: relative;
+  }
+
+  .favourite-course-copy-article__footer__stars-wrapper {
+    height: 100%;
+    /*margin-left: 36rpx;*/
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .favourite-course-copy-article__footer__stars-wrapper > image {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: -16rpx;
+    border: 2rpx solid @border-white;
+  }
+
+  .favourite-course-copy-article__footer__caption {
+    margin-left: -55rpx;
+    color: @color-black;
+    font-family: PingFangSC-Regular;
+    font-size: 26rpx;
+  }
+
+  .favourite-course-copy-article__footer__price {
+    margin-left: auto;
+    font-family: SFProText-Semibold;
+    font-size: 28rpx;
+    width: 210rpx;
+    height:60rpx;
+    line-height:60rpx;
+    border-radius:@border-radius-32;
+    color: @color-blue;
+    text-align: center;
+    font-weight:bold;
+    background-color: @background-gray-F4;
+  }
+
+  .favourite-course-copy-article__footer__price:active {
+    background-color: @background-blue;
+  }
+
+  .favourite-course-copy-article__footer__price-free {
+    margin-left: auto;
+    color: @color-white;
+    font-family: PingFangSC-Medium;
+    font-size: 28rpx;
+    text-align: center;
+    height:60rpx;
+    line-height:60rpx;
+    border-radius:131.2rpx;
+    background-color: @background-blue;
+    padding: 0 32rpx;
+    box-shadow: 0 4rpx 12rpx rgba(38, 155, 154, .5);
+    min-width: 144rpx;
+  }
+
+  .favourite-course-copy-article__footer__price-free::active {
+    background-color: @background-blue;
+    box-shadow: 0 4rpx 12rpx rgba(38, 155, 154, .5);
+  }
+
+  .favourite-course-copy-article__footer__price.temporary {
+    font-size: 32rpx;
+  }
+
+  .favourite-course-copy-article__footer__previous-price {
+    width: 208rpx;
+    display: block;
+    text-align: center;
+    position: absolute;
+    bottom: 8rpx;
+    right: 0;
+    /*background-color: yellow;*/
+    color: #A1A1A1;
+    font-family: PingFangSC-Semibold;
+    font-size: 22rpx;
+    text-decoration:line-through;
+  }
+
+  .favourite-course-copy-article__middle-wrapper {
+    height: 262rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-self: center;
+  }
+
+.favouriteCourse-article__body__help-block__row {
+  /*background-color: #AAC8F4;*/
+  /* margin-bottom: 20rpx; */
+}
+
+.favouriteCourse-article__body__help-block__row:last-child {
+  /*background-color: #AAC8F4;*/
+  margin-bottom: 0;
+}
+
+.favouriteCourse-article__body__help-block__row__li {
+  width: 12rpx;
+  height: 12rpx;
+  margin-bottom: 14rpx;
+  background-color: #007aff;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.favouriteCourse-article__body__help-block__row__text {
+  max-width: 538rpx;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 40rpx;
+  opacity: .7;
+  color: #294657;
+  font-family: PingFangSC-Regular;
+  font-size: 26rpx;
+  padding-left: 12rpx;
+  word-break: break-all;
+  white-space: pre-line;
+  text-align: left;
+}
+
+  .favourite-course-copy-article-fullimg-subtitle {
+    width: 562rpx;
+
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    color: #FFFFFF;
+    line-height: 28rpx;
+    margin-top: 12rpx;
+    margin-left: 32rpx;
+  }
+
+</style>

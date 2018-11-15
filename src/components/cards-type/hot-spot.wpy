@@ -1,0 +1,142 @@
+<style lang="less" scoped>
+</style>
+
+<template>
+    <scroll-view class="module-hot-spot-box" :class="{'is-phonex': isIphonex}"
+                 scroll-y>
+        <view class="ui-title">{{cardItem.title}}</view>
+        <view class="ui-thumb">
+            <image model="aspectFit" src="{{cardItem.bigimage}}" style="width:{{cardItem.imgWidth}}px;height:{{cardItem.imgHeight}}px"></image>
+            <repeat for="{{cardItem.hotSpotPosition}}" key="index" index="index" item="item">
+                <view class="ui-hot-pointer"
+                      style="left:{{item.left}}%;top:{{item.top}}%"
+                      data-item="{{item}}"
+                      @tap.stop="getSelected">
+                    <view class="cell-corrugated"></view>
+                    <view class="cell-corrugated"></view>
+                </view>
+            </repeat>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class hotSpotCard extends wepy.component {
+        props = {
+            cardIndex: {
+                type: Number
+            },
+            cardItem: {
+                type: Object,
+                default: {}
+            },
+            cardsList: {
+                type: Array,
+                default: []
+            }
+        }
+
+        data = {}
+
+        onLoad() {
+            let self = this
+        }
+
+        __calculateImage(res) {
+            let self = this
+            let base = 0.85
+            let prop = self.systemInfo.windowWidth / res.width
+            let width = Math.ceil(res.width * prop * base)
+            let height = Math.ceil(res.height * prop * base)
+            let maxHeight = Math.ceil(self.systemInfo.windowHeight * 0.65)
+
+            if (height > maxHeight) {
+                height = maxHeight
+            }
+            return {
+                width: width,
+                height: height
+            }
+        }
+
+        __emit(selectedItem) {
+            let self = this
+            let data = {
+                isFinish: true,
+                isAnswerOver: true,
+                isAnimation: true,
+                buttonShow: true,
+                id: self.cardItem.id,
+                selectedId: selectedItem.id,
+                selectedItem: selectedItem,
+                width: selectedItem.width,
+                height: selectedItem.height,
+                fullImageBottomtText: '继续学习',
+                json: selectedItem.sId,
+                answerStatus: 3, // 3 不提示正确还是错误
+                // answerTitle: selectedItem.option,
+                answerIcon: selectedItem.icon,
+                answerDescription: selectedItem.description
+            }
+
+            self.$emit('on-interaction', data)
+        }
+
+        methods = {
+            /**
+             * 选中某个选项
+             * @param event
+             * @returns {boolean}
+             */
+            getSelected(event) {
+                let self = this
+                let {currentTarget: {offsetTop, dataset:{item}}} = event
+
+                let selectedItem = _.find(self.cardsList[self.cardIndex].select, (data) => {
+                    return !data.hidden && data.index + 1 === item.location
+                })
+
+                if (selectedItem.width) {
+                    self.__emit(selectedItem)
+                    return
+                }
+
+                selectedItem.icon = selectedItem.icon.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
+                wx.getImageInfo({
+                    src: selectedItem.icon,
+                    success(res) {
+                        let data = self.__calculateImage(res)
+                        let newData = _.extend(selectedItem, data)
+                        self.__emit(selectedItem)
+                    }
+                })
+            }
+        }
+
+        events = {
+            /**
+             * 监听父级，重置初始化数据
+             * @param data
+             */
+            'broadcast-reset-status': (data) => {
+                let self = this
+                self.oldIndex = -1 // 记录之前的卡片索引
+                self.selectedId = 0 // 当前选中的那个选项
+                self.selectedOffsetTop = 0
+                self.selectedTargetTop = 0
+                self.resultId = -1 // 正确的结果id
+                self.$apply()
+            }
+        }
+    }
+</script>

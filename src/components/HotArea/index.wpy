@@ -1,0 +1,299 @@
+<template>
+  <view class="flex-space-between-column hot-area-article">
+    <view class="hot-area-article__header" wx:if="{{null==bundle.selectedAreaOffset}}">
+      <image class="hot-area-article__header__icon" src="{{ bundle.bigimage }}" mode="scaleToFill">
+        <view class="hot-area-article__header__icon__mask">
+            <view wx:for="{{ bundle&&bundle.hotSpotFlag }}" wx:for-index="$mhotarea$index" wx:for-item="$mhotarea$item" wx:key="$mhotarea$index" data-offset="{{$mhotarea$index}}" data-block-offset="{{ $mhotarea$item.selectNo }}" data-block-flag="{{ $mhotarea$item.borderFlag }}" style="width: {{computedWidth}}; height: {{computedHeight}};" class="hot-area-article__header__icon__mask__grid-block {{ 1===$mhotarea$item.borderFlag? 'border-top': 2===$mhotarea$item.borderFlag? 'border-right': 3===$mhotarea$item.borderFlag? 'border-bottom': 4===$mhotarea$item.borderFlag? 'border-left': 'none' }} {{ isActived&&null==bundle.selectedAreaOffset? 'on': '' }}" :class="{ flag: $mhotarea$item&&$mhotarea$item.selectNo }" @tap.stop="handleTapMask">
+              <view wx:if="{{ $mhotarea$item.borderFlag }}" class="hot-area-article__header__icon__mask__grid-block__inner-block"></view><!-- inner-block -->
+              <image wx:if="{{ 'fingerPoint'===$mhotarea$item.pointTipPosition }}" class="hot-area-article__header__icon__mask__grid-block__inner-icon {{ isActived&&null==bundle.selectedAreaOffset? 'on': '' }}" mode="scaleToFill" src="../../assets/img/icon-finger.svg"></image><!-- inner-icon -->
+            </view><!-- end mask grid block -->
+        </view><!-- end mask -->
+      </image>
+    </view><!-- header 点击面板 -->
+
+    <view wx:for="{{ bundle&&bundle.select }}" wx:for-index="$mhotarea$index" wx:for-item="$mhotarea$item" wx:key="$mhotarea$index" data-select-index="{{ $mhotarea$index }}" class="flex-space-between-column hot-area-article__preview {{ $mhotarea$index==bundle.selectedAreaOffset ? 'actived' : 'disactived' }}">
+      <view class="hot-area-feedback-body">
+        <view class="hot-area-article__header-feedback {{ bundle.selectedAreaOffset===$mhotarea$item.index ? 'show' : 'disactived' }}">
+          <image class="hot-area-article__header__icon-copy" src="{{ $mhotarea$item.feedback && $mhotarea$item.feedback.bigimage }}" mode="widthFix"></image>
+        </view><!-- header -->
+        <view class="hot-area-article__body">
+          <view class="text-subtitle" style="text-align:center;margin:4rpx auto;" wx:if="{{ $mhotarea$item.feedback.title }}">{{ $mhotarea$item.feedback.title }}</view>
+          <view wx:if="{{ $mhotarea$item.feedback.descrListType&&$mhotarea$item.feedback.descriptionList[0] }}" class="hot-area-article__body__description-list">
+            <view class="imagetextList-article-desclist-item" wx:for="{{ $mhotarea$item.feedback.descriptionList }}" wx:for-index="$minnerhotarea$index" wx:for-item="$minnerhotarea$item" wx:if="{{ $minnerhotarea$item }}" wx:key="$minnerhotarea$index">
+                <view class="imagetextList-article-tag-icon-point-wapper" ><view class="imagetextList-article-tag-icon-point"/></view>
+                <view class="imagetextList-article-desclist-text">{{ $minnerhotarea$item }}</view>
+            </view>
+          </view><!-- list -->
+          <view wx:if="{{ !$mhotarea$item.feedback.descrListType&&$mhotarea$item.feedback.description }}" class="text-body hot-area-article__body__description">{{ $mhotarea$item.feedback.description }}</view><!-- description -->
+        </view><!-- end body -->
+      </view>
+      <view class="hot-area-article__footer">
+        <button class="orange-btn hot-area-btn btn-fill-orange" hover-class="hot-area-btn-hover" plain="{{true}}" @tap.stop="handleClosePreview"> 返回 </button>
+      </view><!-- footer -->
+    </view><!-- preview 反馈 -->
+
+  </view><!-- end hot-area-article -->
+</template>
+
+<script>
+import wepy from "wepy";
+
+export default class HotArea extends wepy.page {
+  props = {
+    bundle: {
+      type: Object
+    },
+    offset: {},
+    isActived: {
+      type: Boolean
+    }
+  }; // end props
+
+  data = {
+    spotsTotalCount: 70
+  }; // end data
+
+  computed = {
+    computedHeight() {
+      return Number(100 / 20).toFixed(8) + "%";
+    },
+    computedWidth() {
+      return Number(100 / 14).toFixed(6) + "%";
+    },
+    isTimeToLeave() {
+      return true;
+    }
+  }; // end computed
+
+  methods = {
+    handleTapMask({ currentTarget: { dataset: { offset, blockOffset } } }) {
+      console.log('blockOffset', blockOffset)
+      if (null == blockOffset) return false
+      this.$emit('setHotArea', { componentOffset: this.$index, areaOffset: blockOffset })
+    }, // end handleTapMask
+    handleClosePreview(event) {
+      this.$emit('setHotArea', { componentOffset: this.$index, areaOffset: null })
+      this.$apply();
+    } // end handleClosePreview
+  }; // end methods
+
+  checkInAvailableOptionsRange(index) {
+    let availableOptions =
+      this.bundle["select"] && this.bundle["select"].map(item => item.index);
+    return availableOptions.some(item => index === item);
+  } // end checkInAvailableOptionsRange
+}
+</script>
+
+<style lang="less" scoped>
+.hot-area-feedback-body{
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.hot-area-article {
+  height: 100%;
+  align-items: center;
+  background-color: #FFF;
+  position: relative;
+}
+.hot-area-article__header.on {
+  animation: zoomIn .3s ease-in 0s;
+}
+.hot-area-article_title.on {
+  animation: zoomIn .3s ease-in .05s;
+}
+.hot-area-article_title.on {
+  animation: zoomIn .3s ease-in .1s;
+}
+.hot-area-article_title {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 156rpx;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.hot-area-article__preview {
+  height: 100%;
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #fff;
+  opacity: 0;
+  /*transform: scale(.2, .2);
+  transform-origin: 0% 100%;
+  transition: all .35s ease-in;*/
+}
+.hot-area-article__preview.actived {
+  opacity: 1;
+  z-index: 1000;
+  transform: none;
+}
+.hot-area-article__preview.disactived {
+  display: block;
+}
+.hot-area-article__preview > .hot-area-article__header.show {
+  animation: pulse 0.35s ease-out;
+}
+
+.hot-area-article__header {
+  height: 100%;
+  width: 702rpx;
+}
+.hot-area-article__header-feedback {
+  /* height: 600rpx; */
+  height: auto;
+  width: 702rpx;
+  /*background-color: #A7ADF9;*/
+}
+.hot-area-article__header__icon {
+  height: inherit !important;
+  width: 702rpx;
+  position: relative;
+}
+.hot-area-article__header__icon-copy {
+  /* height: inherit !important; */
+  width: 702rpx;
+  position: relative;
+}
+.hot-area-article__header__icon__mask {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(123, 124, 125, 0);
+  font-size: 0;
+}
+.hot-area-article__header__icon__mask-feedback {
+  width: 702rpx;
+  height: 600rpx;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(123, 124, 125, 0);
+}
+.hot-area-article__body {
+  /* flex: 1; */
+}
+.hot-area-article__body__description {
+  display: block;
+  line-height: 150%;
+  white-space: pre-line;
+  word-break: break-all;
+  width: 570rpx;
+  margin: 20rpx auto 0;
+  font-size: 36rpx;
+  color: #000;
+}
+.hot-area-article__body__description-list {
+  padding: 0 72rpx;
+  box-sizing: border-box;
+  color: #2C3F49;
+  font-family: PingFangSC-Regular;
+  font-size: 36rpx;
+  line-height: 64rpx;
+}
+.hot-area-article__footer {
+  height: 120rpx;
+  /*background-color: #FBC2D3;*/
+}
+.btn-fill-orange {
+  color: #2db7b5 !important;
+  /* background-color: #f0f0f7 !important; */
+  background-color: #f5f9f9 !important;
+  border: 0 !important;
+}
+.btn-fill-orange::after {
+  border: 0;
+}
+.hot-area-btn-hover {
+  background-color: rgba(0, 202, 157, .4) !important;
+}
+.hot-area-article__header__icon__mask__grid-block {
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 20rpx;
+  text-align: center;
+  overflow: visible;
+}
+
+.hot-area-article__header__icon__mask__grid-block__inner-icon {
+  width: 48rpx;
+  height: 48rpx;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.hot-area-article__header__icon__mask__grid-block__inner-icon.on {
+  opacity: 0;
+  /*animation: upDown 3s linear 0s; */
+}
+
+.hot-area-article__header__icon__mask__grid-block__inner-block {
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.hot-area-article__header__icon__mask__grid-block.flag {
+  /*background-color: rgba(0, 202, 157, .4);*/
+}
+
+.hot-area-article__header__icon__mask__grid-block.flag.on {
+  animation: turnOut 3s;
+}
+
+.hot-area-article__header__icon__mask__grid-block.border-top > .hot-area-article__header__icon__mask__grid-block__inner-block {
+  border-left: 4rpx solid #A9A9A9;
+  border-top: 4rpx solid #A9A9A9;
+  /*animation: driftingMovementTopLeft .35s ease-in 0s infinite alternate;*/
+  left: 0;
+  top: 0;
+}
+.hot-area-article__header__icon__mask__grid-block.border-right > .hot-area-article__header__icon__mask__grid-block__inner-block {
+  border-right: 4rpx solid #A9A9A9;
+  border-top: 4rpx solid #A9A9A9;
+  /*animation: driftingMovementTopRight .35s ease-in 0s infinite alternate;*/
+  left: 60%;
+  top: 0;
+}
+.hot-area-article__header__icon__mask__grid-block.border-bottom > .hot-area-article__header__icon__mask__grid-block__inner-block {
+  border-bottom: 4rpx solid #A9A9A9;
+  border-left: 4rpx solid #A9A9A9;
+  /*animation: driftingMovementBottomLeft .35s ease-in 0s infinite alternate;*/
+  left: 0;
+  bottom: 0;
+}
+
+.hot-area-article__header__icon__mask__grid-block.border-left > .hot-area-article__header__icon__mask__grid-block__inner-block {
+  border-right: 4rpx solid #A9A9A9;
+  border-bottom: 4rpx solid #A9A9A9;
+  /*animation: driftingMovementBottomRight .35s ease-in 0s infinite alternate;*/
+  left: 60%;
+  bottom: 0;
+}
+
+.hot-area-article__footer > .fixed-footer__text {
+  width: 500rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+</style>

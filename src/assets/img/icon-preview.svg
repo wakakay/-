@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>search</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="MVP7-Course-详情页标注" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-1602.000000, -1380.000000)">
+        <g id="Group-15-Copy" transform="translate(1382.000000, 423.000000)">
+            <g id="search" transform="translate(220.000000, 957.000000)">
+                <rect id="Rectangle-7" fill="#FFFFFF" opacity="0.01" x="0" y="0" width="24" height="24"></rect>
+                <circle id="Oval" stroke="#294657" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cx="11" cy="11" r="8"></circle>
+                <path d="M21.7122236,21.7122236 L17,17" id="Shape" stroke="#294657" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M7,11 L15,11" id="Path-21" stroke="#294657" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M11,7 L11,15" id="Path-21-Copy" stroke="#294657" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

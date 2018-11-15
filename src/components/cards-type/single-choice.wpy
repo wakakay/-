@@ -1,0 +1,175 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <scroll-view class="module-single-choice-box" :class="{'is-phonex': isIphonex}"
+                 scroll-y
+                 scroll-top="{{scrollTop}}"
+                 scroll-with-animation="{{isScrollAnimation}}">
+        <view class="ui-content">
+            <view class="ui-thumb" wx:if="{{cardItem.bigimage}}">
+                <image mode="aspectFit" src="{{cardItem.bigimage}}"></image>
+            </view>
+            <view class="ui-title">{{cardItem.title}}</view>
+            <view class="ui-subtitle" wx:if="{{!isExercises}}">{{cardItem.singleChoiceDescribe}}</view>
+            <view class="ui-answer-list">
+                <repeat for="{{cardItem.select}}" key="index" index="index" item="item">
+                    <view class="ui-item main-justify cross-center"
+                          :class="{'is-selected': selectedId==item.id || cardsList[cardIndex].selectedId == item.id,'is-success': (cardsList[cardIndex].allowToNext && item.isanswer) || (cardItem.allowToNext && item.isanswer),'is-error': (cardsList[cardIndex].allowToNext && cardsList[cardIndex].selectedId == item.id && !cardsList[cardIndex].selectedItem.isanswer) || (cardItem.allowToNext && !item.isanswer && item.selected)}"
+                          hover-class="{{!isAnswerOver && !cardItem.allowToNext ? 'ui-item-hover' : ''}}"
+                          data-item="{{ item }}"
+                          data-index="{{ index }}"
+                          @tap.stop="getSelected">
+                        <view class="cell-title" :class="{'is-full': isExercises}">
+                            <text>{{labelDictionary[index+1]}}. </text>
+                            <text>{{item.option}}</text>
+                        </view>
+                        <view class="cell-icon" wx:if="{{!isExercises}}"><text class="icon-correctly"></text></view>
+                    </view>
+                </repeat>
+            </view>
+
+            <view class="module-exercises-result" :class="{'is-show': isExercises && isAnswerOver}">
+                <view class="main-justify">
+                    <view class="cell-exercises-title">题目解释</view>
+                    <button hover-class="cell-exercises-hover" class="cell-exercises-button" @tap.stop="getToDiscuss">参与讨论</button>
+                </view>
+                <view class="ui-description">{{description}}</view>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class singleChoiceCard extends wepy.component {
+        props = {
+            cardIndex: {
+                type: Number
+            },
+            cardItem: {
+                type: Object,
+                default: {}
+            },
+            cardsList: {
+                type: Array,
+                default: []
+            },
+            isExercises: {
+                type: Number,
+                default: 0
+            }
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            isScrollAnimation: false, // 滚动条是否要动画
+            scrollTop: 0, // 滚动条的位置
+            senceID: null,
+            oldIndex: -1, // 记录之前的卡片索引
+            selectedId: 0, // 当前选中的那个选项
+            resultId: -1, // 正确的结果id
+            isAnswerOver: false, // 是否作答结束
+            labelDictionary: {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F'},
+            description: '', // 选中的答案的解释详情
+        }
+
+        onLoad() {
+            let self = this
+            self.senceID = self.isExercises && self.$parent.paramsInfo.senceID
+        }
+
+        methods = {
+            /**
+             * 选中某个选项
+             * @param event
+             * @returns {boolean}
+             */
+            getSelected(event) {
+                let self = this
+                if (self.isAnswerOver
+                    && self.oldIndex === self.cardIndex
+                    || self.cardItem.allowToNext) {
+                    return false
+                }
+
+                let {currentTarget: {dataset: {item, index}}} = event
+                self.selectedId = item.id
+                self.$apply()
+
+                let data = {
+                    isFinish: true,
+                    isAnswerOver: false,
+                    id: self.cardItem.id,
+                    selectedId: item.id,
+                    selectedItem: item,
+                    fullImageBottomtText: '我已选好',
+                    json: item.sId,
+                    answerStatus: item.isanswer ? 1 : 2, // 1回答正确, 2回答错误
+                    answerTitle: item.feedback.title,
+                    answerDescription: item.feedback.description
+                }
+                self.$emit('on-interaction', data)
+            },
+            /**
+             * 前往评论列表
+             * @param event
+             * @returns {boolean}
+             */
+            getToDiscuss() {
+                let self = this
+                wx.navigateTo({url: `/pages/course-module/course-discuss?practiceCardID=${self.cardItem.id}&senceID=${self.senceID}`})
+            }
+        }
+
+        events = {
+            /**
+             * 监听父级页面触发提交答案
+             * @param data
+             */
+            'broadcast-single-choive': (data) => {
+                let self = this
+                let item = !self.isExercises
+                        ? _.find(self.cardItem.select, {isanswer: true})
+                        : _.find(self.cardItem.select, {id: data.selectedId})
+                self.resultId = item.id
+
+                self.isAnswerOver = true
+                self.oldIndex = _.clone(self.cardIndex)
+                self.description = item.feedback.description
+                if (self.isExercises) {
+                    self.scrollTop = 500
+                    self.isScrollAnimation = true
+                    setTimeout(()=>{
+                        self.isScrollAnimation = false
+                        self.$apply()
+                    }, 300)
+                }
+                self.$apply()
+            },
+            /**
+             * 监听父级，重置初始化数据
+             * @param data
+             */
+            'broadcast-reset-status': (data) => {
+                let self = this
+                self.scrollTop = 0
+                self.oldIndex = -1 // 记录之前的卡片索引
+                self.selectedId = 0 // 当前选中的那个选项
+                self.resultId = -1 // 正确的结果id
+                self.isAnswerOver = false // 是否作答结束
+                self.$apply()
+            }
+        }
+    }
+</script>

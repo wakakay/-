@@ -1,0 +1,306 @@
+<style lang="less" scoped>
+    .ui-canvas-box{width:646rpx;height:620rpx;margin:0 auto;border-radius:20rpx;margin-top:-40rpx;}
+    .ui-radar-canvas{width:100%;height:620rpx;}
+</style>
+
+<template>
+    <view class='ui-canvas-box main-center cross-center'>
+        <canvas class='ui-radar-canvas' canvas-id='radarCanvas' id="radarCanvas"></canvas>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+
+    const radarCanvas = wx.createCanvasContext("radarCanvas")
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class skillsBoard extends wepy.component {
+        props = {
+            radarData: {
+                type: Array
+            }
+        }
+
+        data = {
+            radarParam: {
+                width: 300,
+                height: 300,
+                total: 4,
+                slot: 3,
+            },
+            shareInfo: {
+                width: 375,
+                height:667
+            },
+            radarImage: null, // 雷达图画完之后保存为图片
+        }
+
+        onLoad() {
+            let self = this
+            self.radarImage = null // 清空之前的图片地址
+            // 获取canvas的DOM信息
+            var query = wx.createSelectorQuery()
+            query.select('#radarCanvas').boundingClientRect(function (response) {
+                let number = 0
+                let timer = setInterval(() => {
+                    if (self.radarData.length) {
+                        self.__drawInit(response)
+                        number++
+                        clearInterval(timer)
+                    } else if (number > 8) {
+                        console.log('雷达图的数据后端返回的是一个空数组')
+                        clearInterval(timer)
+                    }
+                }, 300)
+            }).exec()
+        }
+
+        /**
+         * 初始化canvas所需要的信息
+         * @param mData
+         */
+        __drawInit(response) {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+            let length = radarData.length
+            radarParam.width = response.width
+            radarParam.height = response.height
+            radarParam.center = radarParam.width >> 1// 中心点
+            radarParam.angle = Math.floor(Math.PI * 2 * 100) / 100 / length  // 角度
+            radarParam.radius = radarParam.center - 60  // 半径(减去的值用于给绘制的文本留空间)
+
+            // 计算没个数据需要画的X,Y
+            radarData.forEach((item, index) => {
+                let x = radarParam.radius * Math.cos(radarParam.angle * index)
+                let y = radarParam.radius * Math.sin(radarParam.angle * index)
+                item.X = x
+                item.Y = y
+                item.CX = radarParam.center + x
+                item.CY = radarParam.center + y
+            })
+
+            self.__drawRadar()
+        }
+
+        /**
+         * 雷达图
+         * @param mData
+         */
+        __drawRadar() {
+            let self = this
+            self.__drawEdge('rgba(48,197,211, 0.8)') // 调用
+            // 开始绘制
+            radarCanvas.draw(false, () => {
+                // 保存雷达图片
+                self.__saveRadarImage()
+            })
+        }
+
+        /**
+         * 绘制6条边
+         * @param mData
+         */
+        __drawEdge(color) {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+
+            radarCanvas.setStrokeStyle(color)
+            radarCanvas.setLineWidth(1) // 设置线宽
+
+            for (let i = 0; i < radarParam.slot; i++) {
+                // 计算半径
+                radarCanvas.beginPath()
+                let radius = radarParam.radius / radarParam.slot * (i + 1)
+                // 画多边形线段
+                for (let j = 0; j < radarData.length; j++) {
+                    let x = radarParam.center + radius * Math.cos(radarParam.angle * j)
+                    let y = radarParam.center + radius * Math.sin(radarParam.angle * j)
+                    radarCanvas.lineTo(x, y)
+                }
+                radarCanvas.closePath()
+                radarCanvas.stroke()
+            }
+
+            self.__drawLinePoint() // 画对角线
+        }
+        /**
+         * 画点
+         * @param mData
+         */
+        __drawLinePoint() {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+
+            radarCanvas.beginPath()
+            radarData.forEach((item) => {
+                radarCanvas.moveTo(radarParam.center, radarParam.center)
+                radarCanvas.lineTo(item.CX, item.CY)
+            })
+            radarCanvas.stroke()
+
+            self.__drawRegion('rgba(255, 1, 79, 0.5)') // 设置数据
+        }
+        /**
+         * 绘制数据区域(数据和填充颜色)
+         * @param mData
+         */
+        __drawRegion(color) {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+
+            radarCanvas.beginPath()
+            radarData.forEach((item, index) => {
+                let x = radarParam.center + item.X * item.number / 100
+                let y = radarParam.center + item.Y * item.number / 100
+                radarCanvas.lineTo(x, y)
+            })
+            radarCanvas.closePath()
+            radarCanvas.setFillStyle(color)
+            radarCanvas.fill()
+
+
+            self.__drawTextCans() // 设置文本数据
+        }
+        /**
+         * 画文字
+         * @param mData
+         */
+        __drawTextCans() {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+            let length = radarData.length
+
+            radarCanvas.setTextAlign('left')
+            radarCanvas.setFillStyle("#5A696B")
+            radarCanvas.setFontSize(14)
+            // 设置字体
+            radarData.forEach((item, index) => {
+                let textWidth = radarCanvas.measureText(item.name).width
+                // 通过不同的位置，调整文本的显示位置
+                if (4 === length) {
+                    if (!index
+                        && radarParam.angle * index >= 0
+                        && radarParam.angle * index <= Math.PI / 2) {
+                        radarCanvas.fillText(item.name, item.CX + 10, item.CY + 5)
+                    } else if (radarParam.angle * index > Math.PI / 2
+                        && radarParam.angle * index <= Math.PI) {
+                        radarCanvas.fillText(item.name, item.CX - textWidth - 10, item.CY + 5)
+                    } else if (radarParam.angle * index > Math.PI
+                        && radarParam.angle * index <= Math.PI * 3 / 2) {
+                        radarCanvas.fillText(item.name, item.CX - (textWidth >> 1), item.CY - 10)
+                    } else {
+                        radarCanvas.fillText(item.name, item.CX - (textWidth >> 1), item.CY + 20)
+                    }
+                } else {
+                    if (radarParam.angle * index >= 0 && radarParam.angle * index <= Math.PI / 2) {
+                        radarCanvas.fillText(item.name, item.CX + 4, item.CY + 6)
+                    } else if (radarParam.angle * index > Math.PI / 2 && radarParam.angle * index <= Math.PI) {
+                        radarCanvas.fillText(item.name, item.CX - radarCanvas.measureText(item.name).width - 4, item.CY + 6)
+                    } else if (radarParam.angle * index > Math.PI && radarParam.angle * index <= Math.PI * 3 / 2) {
+                        radarCanvas.fillText(item.name, item.CX - radarCanvas.measureText(item.name).width - 2, item.CY - 4)
+                    } else {
+                        radarCanvas.fillText(item.name, item.CX, item.CY - 4)
+                    }
+                }
+            })
+            // self.__drawCircle('#FF014F') // 设置节点
+            self.__drawBorder('rgba(216, 19, 82, 0.8)') // 设置填充的边
+        }
+        /**
+         * 画填充区域的角圆点
+         * @param mData
+         * @param color
+         */
+        __drawCircle(color) {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+
+            let R = 3 // 设置节点小圆点的半径
+            radarData.forEach((item) => {
+                let x = radarParam.center + item.X * item.number / 100
+                let y = radarParam.center + item.Y * item.number / 100
+
+                radarCanvas.beginPath()
+                radarCanvas.arc(x, y, R, 0, Math.PI * 2)
+                radarCanvas.setFillStyle(color)
+                radarCanvas.fill()
+            })
+        }
+        /**
+         * 画填充区域的边线
+         * @param mData
+         * @param color
+         */
+        __drawBorder(color) {
+            let self = this
+            let radarData = self.radarData
+            let radarParam = self.radarParam
+            let length = radarData.length - 1
+
+            radarCanvas.beginPath()
+            // 起点==最后一个的的x，y
+            let lastX = radarParam.center + radarData[length].X * radarData[length].number / 100
+            let lastY = radarParam.center + radarData[length].Y * radarData[length].number / 100
+            radarCanvas.moveTo(lastX, lastY)
+            radarCanvas.strokeStyle = color
+            radarCanvas.setLineWidth(1)
+
+            radarData.forEach((item) => {
+                let x = radarParam.center + item.X * item.number / 100
+                let y = radarParam.center + item.Y * item.number / 100
+
+                radarCanvas.lineTo(x, y)
+                radarCanvas.stroke()
+            })
+
+            radarCanvas.closePath()
+        }
+        /**
+         * 保存雷达图片
+         * @param
+         */
+        __saveRadarImage() {
+            let self = this
+            wx.canvasToTempFilePath({
+                destWidth: self.radarParam.width * self.systemInfo.pixelRatio,
+                destHeight: self.radarParam.height * self.systemInfo.pixelRatio,
+                fileType: 'png',
+                canvasId: 'radarCanvas',
+                success(res) {
+                    self.radarImage = res.tempFilePath
+                    let data = {
+                        radarParam: self.radarParam,
+                        radarImage: self.radarImage
+                    }
+                    self.$emit('on-radar-chart-options', data)
+                },
+                fail(res) {
+                    let data = {
+                        radarParam: self.radarParam,
+                    }
+                    self.$emit('on-radar-chart-options', data)
+                }
+            })
+        }
+
+        methods = {
+
+        }
+
+        events = {
+
+        }
+    }
+</script>

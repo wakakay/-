@@ -1,0 +1,452 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .module-study-bar{
+        width:700rpx;height:24rpx;margin:0 auto;
+        .ui-content-box{
+            box-sizing:border-box;width:700rpx;height:100rpx;padding:14rpx 10rpx 14rpx 16rpx;background-color:rgba(239, 239, 244, 0.95);border-radius:@border-radius-20;position:fixed;left:25rpx;bottom:16rpx;z-index:@z-index-header;overflow:hidden;transform:translateY(0);transition:all .1s ease-in;
+            &.active{transform:translateY(80px);}
+            .ui-marquee{
+                width:136rpx;height:100rpx;position:absolute;left:-116rpx;top:0;
+                image{width:100%;height:100%;}
+            }
+            .cell-list{
+                width:72rpx;height:72rpx;background-color:@background-white;border-radius:@border-radius-20;
+                text{font-size:48rpx;color:@color-gray-44;}
+            }
+            .ui-title{
+                padding-left:24rpx;text-align:left;position:relative;
+                text{line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                .cell-title{font-size:32rpx;color:@color-black;}
+                .cell-subtitle{font-size:22rpx;color:@color-gray;}
+            }
+            .ui-button{
+                width:100rpx;height:100%;
+                text{color:@color-blue;}
+            }
+        }
+    }
+    .ui-study-list-box{
+        box-sizing:border-box;
+        view{box-sizing:border-box;}
+        &.is-show-list{
+            .ui-mask{width:100%;height:100%;background-color:@background-mask-slightly;position:fixed;bottom:0px;left:0;z-index:@z-index-mask;}
+            .ui-scroll-box{transform:translateY(0);}
+        }
+        .ui-scroll-box{width:100%;height:88%;background-color:@color-white;border-top-right-radius:@border-radius-32;border-top-left-radius:@border-radius-32;overflow:hidden;position:fixed;bottom:0px;left:0;z-index:@z-index-highest;transform:translateY(140%);transition:all .4s ease-in-out;animation-delay:.5s;}
+        .ui-pack-up-button{
+            width:100%;height:64rpx;background-color:@color-white;
+            text{display:block;color:@background-gray-d6;font-size:24rpx;}
+        }
+        .ui-container{width:100%;height:100%;}
+        .is-delete{height:0 !important;padding:0 !important;margin:0 !important;transition:all .5s ease-in-out;}
+        .ui-sence-list{
+            padding-bottom:20rpx;background-color:@background-gray-d6;
+            &:nth-last-of-type(1){padding-bottom:0;}
+            .cell-sence-title{
+                width:100%;height:112rpx;padding:20rpx 30rpx 0;background-color:@background-white;font-size:44rpx;font-weight:700;color:@color-black;line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
+                &.active{color:@color-blue;}
+            }
+            .ui-item{
+                width:100%;height:144rpx;padding:8rpx 32rpx 16rpx;background-color:@background-white;position:relative;
+                &.is-add-init{height:0;padding:0;margin:0;opacity:0;transform:translateX(-100rpx);}
+                &.is-add{height:128rpx;padding:4rpx 16rpx 4rpx 32rpx !important;transition:all .5s ease-in-out;}
+                &::before{content:' ';width:100%;height:2rpx;background-color:@border-gray;position:absolute;left:144rpx;bottom:0rpx;}
+                &:nth-last-of-type(1)::before{height:0;}
+                .ui-thumb{
+                    width:112rpx;height:112rpx;border-radius:@border-radius-20;overflow:hidden;
+                    image{width:100%;height:100%;}
+                }
+                .ui-content{
+                    width:100%;padding:0 24rpx;
+                    .cell-title{width:384rpx;padding-bottom:20rpx;font-size:32rpx;color:@color-black;text-align:left;line-height:44rpx;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                    .cell-subtitle{
+                        width:324rpx;font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;
+                        text:nth-of-type(1){padding-right:12rpx;color:@color-black;line-height:20rpx;}
+                    }
+                }
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
+        <view class="ui-content-box dir-left main-justify" :class="{'active': !isAndroid && !direction}">
+            <view class="ui-marquee lightSpeedOut">
+                <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
+            </view>
+
+            <view class="cell-list main-center cross-center flex-box-0"
+                  @tap.stop="getShowList" >
+                <text class="icon-list"></text>
+            </view>
+
+            <view class="ui-text-box flex flex-box-1"
+                  data-name="{{continueSenceInfo.senceName}}"
+                  data-source="{{source}}"
+                  @tap.stop="getContinue">
+                <view class="ui-title dir-top main-justify">
+                    <text class="cell-title">{{continueSenceInfo.senceName}}</text>
+                    <text class="cell-subtitle">{{continueSenceInfo.senceSkillName}}</text>
+                </view>
+
+                <view class="ui-button main-center cross-center">
+                    <text class="icon-right-arrow"></text>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <view class="ui-study-list-box" :class="{'is-show-list': isShowList}">
+        <view class="ui-mask" @tap.stop="getHideList"></view>
+        <view class="ui-scroll-box">
+            <view class="ui-pack-up-button cross-center main-center" @tap.stop="getHideList">
+                <text class="icon-down-arrow"></text>
+            </view>
+            <scroll-view
+                    class="ui-container"
+                    style="height:{{scrollBoxHeight}}px"
+                    scroll-y>
+                <repeat for="{{learningSenceList}}" key="dataIndex" index="dataIndex" item="data">
+                    <view class="ui-sence-list" :class="{'fadeOutRight': data.isMove, 'is-delete': data.isDelete}">
+                        <view class="cell-sence-title cross-center"
+                              hover-class="active"
+                              data-item="{{data}}"
+                              @tap.stop="getCourseDetails">{{data.courseName}}</view>
+
+                        <repeat for="{{data.senceList}}" key="index" index="index" item="item">
+                            <view class="ui-item cross-center"
+                                  :class="{'fadeOutRight': item.isMove, 'is-delete': item.isDelete, 'is-add-init': item.isAddInit, 'is-add': item.isAdd, 'fadeOutLeft': item.isMoveLeft}"
+                                  data-item="{{item}}"
+                                  data-source="{{source}}"
+                                  data-type="{{courseType[1]}}"
+                                  @tap.stop="getContinueButton">
+                                <view class="ui-thumb flex-box-0">
+                                    <image mode="aspectFill" src="{{item.imageUrl}}"></image>
+                                </view>
+                                <view class="ui-content">
+                                    <view class="cell-title">{{item.senceName}}</view>
+                                    <view class="cell-subtitle"><text class="icon-study-bar"></text>{{item.senceSkillName}}</view>
+                                </view>
+                                <view class="ui-circular-progress flex-box-0">
+                                    <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
+                                    <view class="ui-wrapper ui-right">
+                                        <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
+                                    </view>
+                                    <view class="ui-wrapper ui-left">
+                                        <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view>
+                                    </view>
+                                </view>
+                            </view>
+                        </repeat>
+
+                    </view>
+                </repeat>
+            </scroll-view>
+        </view>
+    </view>
+
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import {course as courseApi} from '../../api'
+    import {initializationDeligate, navigateToLesson} from '../../utils'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        },
+        entrance(state) { // 全局场景值
+            return state.entrance
+        }
+    })
+    export default class studyingBar extends wepy.component {
+        props = {
+            scrollTop: {
+                type: Number,
+                default: -1
+            }
+        }
+
+        computed = {
+            /**
+             * 监听滚动的方向，{1: 向下, 0: 向上}
+             * @returns {number}
+             */
+            direction() {
+                let self = this
+                let flag = (self.scrollTop <= self.oldScrollTop || self.scrollTop <= 5) ? 1 : 0
+                setTimeout(()=>{
+                    self.oldScrollTop = self.scrollTop
+                },120)
+
+                return flag
+            }
+        }
+
+        data = {
+            isAndroid: /android/i.test(wx.getSystemInfoSync().system),
+            isShowBar: false,
+            isShowList: false,
+            isRefresh: false,
+            scrollBoxHeight: 0,
+            oldScrollTop: 0,
+            continueSenceInfo: {},
+            learningSenceList: [],
+            newContinueSenceInfo: {},
+            newLearningSenceList: [],
+            isNewCourseMap: {}, // 进入课程详情页的新老界面判断
+            isNewSenceMap: {}, // 进入微课的新老界面判断
+            source:'continueList',
+            courseType:['button','list'],
+        }
+
+        onLoad() {
+            let self = this
+            self.isNewSenceMap = {}
+        }
+
+        /**
+         * 获取正在学习的数据
+         */
+        __learningSenceList() {
+            let self = this
+            courseApi.getMyLearningSenceList({token: self.systemInfo.token}).then(response => {
+                self.isNewCourseMap = response.isNewCourseMap
+                self.isNewSenceMap = response.isNewSenceMap
+                self.isRefresh = !response.learningSenceList.length
+                // 是否没有待学习课
+                if (!response.learningSenceList.length) {
+                    response.continueSence.isComplete = true
+                }
+
+                self.continueSenceInfo = _.clone(response.continueSence)
+                if (!self.learningSenceList.length || !self.isShowList) {
+                    self.learningSenceList = _.clone(response.learningSenceList)
+                } else {
+                    self.newContinueSenceInfo = _.clone(response.continueSence)
+                    self.newLearningSenceList = _.clone(response.learningSenceList)
+                    self.__animation(response)
+                }
+
+                // 是否有正在学习的课
+                /*if (response.learningSenceList.length) {
+                    self.isShowBar = true
+                }
+                if (!_.isEmpty(response.continueSence) && !response.learningSenceList.length
+                || _.isEmpty(response.continueSence) && response.learningSenceList.length) {
+                    self.isShowBar = false
+                }*/
+                self.isShowBar = response.learningSenceList.length ? true : false
+                self.$emit('on-is-studying-bar', {isShowBar: self.isShowBar})
+
+                // 获取列表的高度区域
+                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect(function(rect){
+                    self.scrollBoxHeight = Math.floor(rect.height) - 40
+                    self.$apply()
+                }).exec()
+
+                self.$apply()
+            })
+        }
+        /**
+         * 对比数据，做运动动效
+         */
+        __animation(newData) {
+            let self = this
+
+            _.each(self.learningSenceList, (data, index) => {
+                let course = _.find(newData.learningSenceList, {courseID: data.courseID})
+                // 没有这个课程系列，需要这个移除掉
+                if (!course) {
+                    data.isMove = true
+                    self.$apply()
+
+                    setTimeout(() => {
+                        data.isDelete = true
+                        self.$apply()
+                    }, 600)
+                    return false
+                }
+
+                let senceList = []
+                let times = 200
+                _.each(course.senceList, (item, cIndex) => {
+                    let sence = _.find(data.senceList, {senceID: item.senceID})
+                    if (sence) {
+                        return false
+                    }
+                    times = 1000
+                    item.srcAdd = true // 标识是添加的
+                    senceList.push(item)
+                })
+
+                let newSenceList = _.union(senceList, data.senceList)
+
+                // 再次对比微课
+                _.each(newSenceList, (item, cIndex) => {
+                    let sence = _.find(course.senceList, {senceID: item.senceID})
+
+                    if (item.srcAdd) {
+                        item.isAddInit = true
+                        setTimeout(() => {
+                            item.isAdd = true
+                            self.$apply()
+
+                            setTimeout(() => {
+                                item.isMoveLeft = true
+                                self.$apply()
+                            }, 600)
+                        }, cIndex * 200)
+                    }
+
+                    if (!sence) {
+                        setTimeout(() => {
+                            item.isMove = true
+                            self.$apply()
+
+                            setTimeout(() => {
+                                item.isDelete = true
+                                self.$apply()
+                            }, 600)
+                        }, cIndex * times)
+                    } else {
+                        item.progress = sence.progress
+                        self.$apply()
+                    }
+                })
+
+                data.senceList = newSenceList
+            })
+        }
+        /**
+         * 通知父组件，是否禁止滚动
+         * @private
+         */
+        __emit() {
+            let self = this
+            self.$emit('on-studying-bar', {isShow: !self.isShowList})
+        }
+        /**
+         * 通知父组件，是否禁止滚动
+         * @private
+         */
+        __refreshData() {
+            let self = this
+            if (self.newLearningSenceList.length || self.isRefresh) {
+                self.continueSenceInfo = _.clone(self.newContinueSenceInfo)
+                self.learningSenceList = _.clone(self.newLearningSenceList)
+            }
+        }
+
+        methods = {
+            /**
+             * 显示正在学习的课程列表信息
+             */
+            getShowList() {
+                let self = this
+                self.isShowList = true
+                self.__emit()
+                wepy.$instance.globalData.getHuilder('课程页/待学习bar','click','待学习')
+                wx.reportAnalytics('study_bar_list_icon', {
+                    username: self.systemInfo.name,
+                    role: self.systemInfo.role,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
+                })
+            },
+            /**
+             * 隐藏
+             */
+            getHideList() {
+                let self = this
+                self.isShowList = false
+                self.__emit()
+            },
+            /**
+             * 继续学习
+             */
+            getContinue(event) {
+                let self = this
+                let continueSenceInfo = self.continueSenceInfo
+                // 如果是全部完成了，点击无效
+                if (continueSenceInfo.isComplete) {
+                    return
+                }
+                // 学习bar数据统计
+                wx.reportAnalytics('study_bar_arrow', {
+                    username: self.systemInfo.name,
+                    role: self.systemInfo.role,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
+                })
+                let senceName = event.currentTarget.dataset.name
+                wepy.$instance.globalData.getHuilder('待学习页/学习bar箭头','click',`${senceName}`)
+                let {currentTarget: {dataset: {item = continueSenceInfo}}} = event
+                item.source = event.currentTarget.dataset.source
+                let {courseID, senceID,source} = item
+                let isNewSence = self.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, isNewSence})
+                self.__refreshData()
+            },
+            /**
+             * 继续学习 打开课程列表的button
+             */
+            getContinueButton(event) {
+                let self = this
+                let continueSenceInfo = self.continueSenceInfo
+
+                // 如果是全部完成了，点击无效
+                if (continueSenceInfo.isComplete) {
+                    return
+                }
+
+                //学习bar数据统计
+                wx.reportAnalytics('study_bar_continue', {
+                    username: self.systemInfo.name,
+                    role: self.systemInfo.role,
+                    channel: self.entrance.mappers[this.entrance.scenceID]
+                })
+                let courseType = event.currentTarget.dataset.type
+                let courseName = event.currentTarget.dataset.sencename ? event.currentTarget.dataset.sencename : event.currentTarget.dataset.item.senceName
+
+                if (courseType === 'button') {
+                    wepy.$instance.globalData.getHuilder('待学习页/最近待学微课', 'click', `${courseName}`)
+                } else {
+                    wepy.$instance.globalData.getHuilder('待学习页/微课', 'click', `${courseName}`)
+                }
+                
+                let {currentTarget: {dataset: {item = continueSenceInfo}}} = event
+                item.source = event.currentTarget.dataset.source
+                let {courseID, senceID,source} = item
+                self.__refreshData()
+                let isNewSence = self.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, isNewSence})
+            },
+            /**
+             * 课程详情
+             */
+            getCourseDetails(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                wepy.$instance.globalData.getHuilder('待学习页/课程','click',`${item.courseName}`)
+                self.__refreshData()
+                let isNewCourseMap = self.isNewCourseMap[item.courseID]
+                wx.navigateTo({
+                    url: `/pages/course-module/${isNewCourseMap ? 'course-new-details' : 'course-details'}?id=${item.courseID}`
+                })
+            }
+        }
+
+        events = {
+            // 监听页面加载结束，启动刷新数据
+            'studying-bar': () => {
+                let self = this
+                initializationDeligate({initializeFunc: self.__learningSenceList.bind(self)})
+            }
+        }
+    }
+</script>

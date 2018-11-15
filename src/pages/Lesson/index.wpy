@@ -1,0 +1,1297 @@
+<template>
+    <link rel="dns-prefetch" href="https://wx-small.runwise.cn/"></link>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <view class="lesson-container" wx:if="{{ isLoaded }}">
+        <jn-header :title.sync="headerTitle" className="background-cancel"></jn-header>
+        <view class="lesson-container__body" style="height:calc(100% - {{60+44+statusBarHeight}}px);">
+            <swiper
+                wx:if="{{currentCardSet==='preview'}}"
+                class="lesson-container__body__swiper-wrapper"
+                indicator-dots="{{indicatorDots}}"
+                autoplay="{{autoplay}}"
+                interval="{{interval}}"
+                duration="{{duration}}"
+                current="{{cardSyncCurrent}}">
+                <repeat for="{{previewCards}}" key="{{ index }}">
+                    <swiper-item
+                        class="lesson-container__body__swiper-wrapper__item {{ item.allowSwitch ? 'allowed': 'rejected' }}"
+                        :class="{ actived: index===cardSyncCurrent && (timesTendToUnlockWithNopermission > 0) }"
+                        data-offset="{{ index }}"
+                        data-allow-switch="{{ item.allowSwitch }}"
+                        data-type="{{ item.type }}"
+                        bindtouchstart="handleSwipperStart"
+                        catchtouchmove="handleSwipperMove"
+                        catchtouchend="handleSwipperEndPreview">
+                        <link rel="prerender" href="{{ item.bigimage }}"/>
+                        <view
+                            wx:if="{{ (index >= cardSyncCurrent - 2) && (index <= cardSyncCurrent + 2) }}"
+                            class="lesson-container__body__swiper-wrapper__item__wrapper" id="drawCanvasBox"
+                            :class="{ 'lock-touch-actived': index===cardSyncCurrent && (timesTendToUnlockWithNopermission > 0) }"
+                            animation="{{ item.animation }}"
+                            style="height: {{ cardHeight }}px;">
+
+
+                            <mtextselectionver2 wx:if="{{item.type==='textSelectionVer2'}}" :bundle.sync="item"
+                                                :offset.sync="index" :isActived.sync="cardSyncCurrent===index"/>
+                            <mfullimage wx:if="{{item.type==='fullimage'}}" :bundle.sync="item" :offset.sync="index"
+                                        :isActived.sync="cardSyncCurrent===index"/>
+                            <mstartcard wx:if="{{item.type==='startCard'}}" :bundle.sync="item" :offset.sync="index"
+                                        :buttonMsg.sync="'解锁微课'" :isActived.sync="cardSyncCurrent===index"/>
+                            <mfront wx:if="{{ item.type==='front' }}" :bundle.sync="item" :offset.sync="index"
+                                    :cardTop.sync="cardTop" :isActived.sync="cardSyncCurrent===index"/>
+                            <mpoll wx:if="{{ item.type==='poll' }}" :bundle.sync="item" :offset.sync="index"
+                                   :cardTop.sync="cardTop" :isActived.sync="cardSyncCurrent===index"/>
+                            <mmultiplepoll wx:if="{{ item.type==='multiplePoll' }}" :bundle.sync="item"
+                                           :offset.sync="index" :cardTop.sync="cardTop"
+                                           :isActived.sync="cardSyncCurrent===index"/>
+                            <mfeedback wx:if="{{item.type==='feedback'}}" :bundle.sync="item" :offset.sync="index"
+                                       :isActived.sync="cardSyncCurrent===index"/>
+                            <mhotspot wx:if="{{item.type==='hotSpot'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                        </view><!-- item__wrapper -->
+                    </swiper-item>
+                </repeat>
+            </swiper>
+
+
+            <swiper
+                wx:else
+                class="lesson-container__body__swiper-wrapper"
+                indicator-dots="{{indicatorDots}}"
+                autoplay="{{autoplay}}"
+                interval="{{interval}}"
+                duration="{{duration}}"
+                current="{{cardSyncCurrent}}">
+                <repeat for="{{cards}}" key="{{ index }}">
+                    <swiper-item
+                        class="lesson-container__body__swiper-wrapper__item {{ item.allowSwitch ? 'allowed': 'rejected' }}"
+                        :class="{ actived: index===cardSyncCurrent && (timesTendToUnlockWithNopermission > 0) }"
+                        data-offset="{{ index }}"
+                        data-allow-switch="{{ item.allowSwitch }}"
+                        data-type="{{ item.type }}"
+                        bindtouchstart="handleSwipperStart"
+                        catchtouchmove="handleSwipperMove"
+                        catchtouchend="handleSwipperEnd">
+                        <link rel="prerender" href="{{ item.bigimage }}"/>
+                        <view
+                            wx:if="{{ (index >= cardSyncCurrent - 2) && (index <= cardSyncCurrent + 2) }}"
+                            class="lesson-container__body__swiper-wrapper__item__wrapper" id="drawCanvasBox"
+                            :class="{ 'lock-touch-actived': index===cardSyncCurrent && (timesTendToUnlockWithNopermission > 0) }"
+                            animation="{{ item.animation }}"
+                            style="height: {{ cardHeight }}px;">
+
+                            <match wx:if="{{item.type==='association'}}" :bundle.sync="item" :offset.sync="index"
+                                   :cardWidth="cardWidth" cardHeight="cardHeight" :cardTop="cardTop"
+                                   :isActived.sync="cardSyncCurrent===index"/>
+                            <mhotspot wx:if="{{item.type==='hotSpot'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                            <mhotarea wx:if="{{item.type==='hotArea'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                            <mfolder wx:if="{{item.type==='folder'}}" :bundle.sync="item" :offset.sync="index"
+                                     :isActived.sync="cardSyncCurrent===index"/>
+                            <msession wx:if="{{item.type==='session'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                            <!-- <m-summary wx:if="{{item.type==='summary'}}" :bundle.sync="item" :offset.sync="index" :isActived.sync="cardSyncCurrent===index" /> -->
+                            <mfeedback wx:if="{{item.type==='feedback'}}" :bundle.sync="item" :offset.sync="index"
+                                       :isActived.sync="cardSyncCurrent===index"/>
+                            <mneutralresponse wx:if="{{item.type==='neutralResponse'}}" :bundle.sync="item"
+                                              :offset.sync="index" :isActived.sync="cardSyncCurrent===index"/>
+                            <WholeImageResponse wx:if="{{item.type==='wholeImageResponse'}}" :bundle.sync="item"
+                                                :offset.sync="index" :isActived.sync="cardSyncCurrent===index"/>
+                            <m-big-image wx:if="{{item.type==='bigImage'}}" :bundle.sync="item" :offset.sync="index"
+                                         :isActived.sync="cardSyncCurrent===index"/>
+                            <m-step wx:if="{{item.type==='step'}}" :bundle.sync="item" :offset.sync="index"
+                                    :isActived.sync="cardSyncCurrent===index"/>
+                            <mtextselection wx:if="{{item.type==='textSelection'}}" :bundle.sync="item"
+                                            :offset.sync="index" :current.sync="index"
+                                            :isActived.sync="cardSyncCurrent===index"/>
+                            <m-cover wx:if="{{item.type==='cover'}}" :bundle.sync="item" :offset.sync="index"
+                                     :sencePosition.sync="sencePosition" :isActived.sync="cardSyncCurrent===index"
+                                     :senceMinute.sync="senceMinute" :subtitle.sync="senceTitle"
+                                     @startLessons.user="handleStartLessons"/>
+                            <mgeneral wx:if="{{item.type==='general'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                            <mgeneralstep wx:if="{{item.type==='general-step'}}" :bundle.sync="item"
+                                          :offset.sync="index" :isActived.sync="cardSyncCurrent===index"/>
+                            <!-- <mgeneralend wx:if="{{item.type==='general-end'}}" :bundle.sync="item" :offset.sync="index" :isActived.sync="cardSyncCurrent===index" /> -->
+                            <mtransit wx:if="{{item.type==='transit'}}" :bundle.sync="item" :offset.sync="index"
+                                      :isActived.sync="cardSyncCurrent===index"/>
+                            <mtransition wx:if="{{item.type==='transition'}}" :bundle.sync="item" :offset.sync="index"
+                                         :isActived.sync="cardSyncCurrent===index"/>
+                            <mjudgement wx:if="{{item.type==='judgement'}}" :bundle.sync="item" :offset.sync="index"
+                                        :isActived.sync="cardSyncCurrent===index"/>
+                            <!-- <mexercisehome wx:if="{{item.type==='practice'}}" :bundle.sync="item" :offset.sync="index" :isActived.sync="cardSyncCurrent===index" />
+                            <mexercisequestion wx:if="{{item.type==='blank'}}" :bundle.sync="item" :offset.sync="index" :isActived.sync="cardSyncCurrent===index" />
+                            <mexerciseanswer wx:if="{{item.type==='practiceEnd'}}" :bundle.sync="item" :offset.sync="index" :practiceinputsanswer.sync="practiceinputsanswer" :isActived.sync="cardSyncCurrent===index" />  -->
+                            <morder wx:if="{{item.type==='order'}}" :bundle.sync="item" :offset.sync="index"
+                                    :isActived.sync="cardSyncCurrent===index"/>
+                            <mblank wx:if="{{item.type==='selectBlank'}}" :bundle.sync="item" :offset.sync="index"
+                                    :isActived.sync="cardSyncCurrent===index"/>
+                            <mimagetexttoptitle wx:if="{{item.type==='imagetext-independence-toptitle'}}"
+                                                :bundle.sync="item" :offset.sync="index"
+                                                :isActived.sync="cardSyncCurrent===index"/>
+                            <mimagetexttopimage wx:if="{{item.type==='imagetext-independence-topimage'}}"
+                                                :bundle.sync="item" :offset.sync="index"
+                                                :isActived.sync="cardSyncCurrent===index"/>
+                            <mimagetextnotitle wx:if="{{item.type==='imagetext-independence-notitle'}}"
+                                               :bundle.sync="item" :offset.sync="index"
+                                               :isActived.sync="cardSyncCurrent===index"/>
+                            <mtransitv2 wx:if="{{item.type==='transit-type2'}}" :bundle.sync="item" :offset.sync="index"
+                                        :isActived.sync="cardSyncCurrent===index"/>
+                            <mtextselectionver2 wx:if="{{item.type==='textSelectionVer2'}}" :bundle.sync="item"
+                                                :offset.sync="index" :isActived.sync="cardSyncCurrent===index"/>
+                            <mfullimage wx:if="{{item.type==='fullimage'}}" :bundle.sync="item" :offset.sync="index"
+                                        :isActived.sync="cardSyncCurrent===index"/>
+                            <mstartcard wx:if="{{item.type==='startCard'}}" :bundle.sync="item" :offset.sync="index"
+                                        :buttonMsg.sync="'开始学习'" :isActived.sync="cardSyncCurrent===index"/>
+                            <mslider wx:if="{{ item.type==='slider' }}" :bundle.sync="item" :offset.sync="index"
+                                     :isActived.sync="cardSyncCurrent===index"/>
+                            <mcombination wx:if="{{ item.type==='combination' }}" :bundle.sync="item"
+                                          :offset.sync="index" :cardTop.sync="cardTop"
+                                          :isActived.sync="cardSyncCurrent===index"/>
+                            <mconclusion wx:if="{{ item.type==='conclusion' }}" :bundle.sync="item" :offset.sync="index"
+                                         :cardTop.sync="cardTop" :isActived.sync="cardSyncCurrent===index"/>
+                            <mfront wx:if="{{ item.type==='front' }}" :bundle.sync="item" :offset.sync="index"
+                                    :cardTop.sync="cardTop" :isActived.sync="cardSyncCurrent===index"/>
+                            <mpoll wx:if="{{ item.type==='poll' }}" :bundle.sync="item" :offset.sync="index"
+                                   :cardTop.sync="cardTop" :isActived.sync="cardSyncCurrent===index"/>
+                            <mmultiplepoll wx:if="{{ item.type==='multiplePoll' }}" :bundle.sync="item"
+                                           :offset.sync="index" :cardTop.sync="cardTop"
+                                           :isActived.sync="cardSyncCurrent===index"/>
+                        </view><!-- item__wrapper -->
+                    </swiper-item>
+                </repeat>
+            </swiper>
+        </view><!-- lesson-container__body -->
+        <view class="lesson-container__footer">
+            <progress percent="{{computedProgress}}" backgroundColor="#85C5B3" activeColor="#C2E1D9"
+                      data-attr="{{cardSyncCurrent + 1}}/{{cards.length}}">
+                <view class="lesson-container__footer__page-number">{{cardSyncCurrent + 1}}/{{cards.length + 1}}</view>
+            </progress>
+        </view><!-- lesson-container__footer -->
+        <toast/>
+        <card-share-image @onCardDrawOver.user="getCardDrawOver"></card-share-image>
+    </view><!-- end lesson-container -->
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import Toast from "wepy-com-toast"
+    import {card as cardApi, course as courseApi, push as pushApi, share as shareApi, report as reportApi} from '../../api'
+    import {getStore, connect} from 'wepy-redux'
+    import {
+        setName, setEquipmentPhone, fetchToken
+    } from '../../redux/models/user'
+    import {
+        fetchCardsWithPreview,
+        fetchCards,
+        updateAppointedCardByOffset,
+        toggleAppointedCardFragment,
+        setCurrentCardOffset,
+        dropAppointedCardAnimation,
+        setAppointedCardFragmentAnimation,
+        shuffleTextSelections,
+        reverseFolderSelection,
+        unlockRejectedCard,
+        clearCardsSections,
+        resetAllCardAnimation,
+        updateOrderCard,
+        shuffleOrderCard,
+        toggleBlankButton,
+        shuffleBlankCard,
+        setAssocicationLocation,
+        setAssocicationHidden,
+        setAssocicationMatchOptionStatu,
+        shuffleAssocicationCard,
+        setHotArea,
+        setSliderStep,
+        setCombinationStep,
+        setAnchorFooterShown,
+        setAnchorFooterHidden,
+        windUpScoreForSence,
+        shuffleCombination,
+        setSinglePoll,
+        setMultiplePollSelect,
+        setMultiplePollSubmit,
+        setImageLoadError,
+        reloadImage
+    } from '../../redux/models/cards'
+    import {fetchPractices, setCurrentPracticeOffset} from '../../redux/models/practice'
+    import {
+        setCurrentCourseID,
+        setCurrentCourseName
+    } from '../../redux/models/courses'
+    import {
+        setCurrentSenceID,
+        setCurrentSenceName
+    } from '../../redux/models/sences'
+    import StartCard from '../../components/StartCard/index'
+    import Folder from '../../components/Folder/index'
+    import Session from '../../components/Session/index'
+    import Feedback from '../../components/Feedback/index'
+    import NeutralResponse from '../../components/NeutralResponse/index'
+    import WholeImageResponse from '../../components/WholeImageResponse/index'
+    import BigImage from '../../components/BigImage/index'
+    import Step from '../../components/Step/index'
+    import TextSelection from '../../components/textSelection/index'
+    import Cover from '../../components/Cover/index'
+    import Loading from '../../components/common/loading'
+    import header from '../../components/common/header'
+    import Hotspot from '../../components/Hotspot/index'
+    import HotArea from '../../components/HotArea/index'
+    import Match from '../../components/Match/index'
+    import General from '../../components/General/index'
+    import GeneralStep from '../../components/GeneralStep/index'
+    import Transit from '../../components/Transit/index'
+    import Transition from '../../components/Transition/index'
+    import Judgement from '../../components/Judgement/index'
+    import Order from '../../components/Order/index'
+    import Blank from '../../components/Blank/index'
+    import ImagetextTopTitle from '../../components/ImagetextTopTitle/index'
+    import ImagetextTopImage from '../../components/ImagetextTopImage/index'
+    import ImagetextNoTitle from '../../components/ImagetextNoTitle/index'
+    import TransitV2 from '../../components/TransitV2/index'
+    import TextSelectionVer2 from '../../components/textSelectionVer2/index'
+    import Fullimage from '../../components/Fullimage/index'
+    import Slider from '../../components/Slider/index'
+    import Combination from '../../components/Combination/index'
+    import Conclusion from '../../components/Conclusion/index'
+    import Front from '../../components/Front/index'
+    import Poll from '../../components/Poll/index'
+    import MultiplePoll from '../../components/MultiplePoll/index'
+    import cardShareImage from '../../components/shareImages/card'
+
+    import {NetworkError, CustomError, LessonPermissionDenyError, UnAuthenticationError} from '../../errors'
+    import {
+        showErrorPage,
+        sleep,
+        canvasPreviewAndSave,
+        drawText,
+        shareDictionary,
+        navigateToPractice,
+        redirectToPractice,
+        initializationDeligate,
+        parsePercentageForPoll
+    } from '../../utils'
+
+    const UNLOCK_WITH_NO_PERMISSION_IMAGE = '../../assets/img/icon-choice-toast.svg'
+    const UNLOCK_WITH_NO_PERMISSION_TIPS = 'no way'
+
+    const UNLOCK_WITH_NO_PERMISSION_OPTIONS = {
+        'textSelection': {icon: '../../assets/img/icon-choice-toast.svg', tips: '选择正确的选项'},
+        'textSelectionVer2': {icon: '../../assets/img/icon-choice-toast.svg', tips: '选择正确的选项'},
+        'session': {icon: '../../assets/img/icon-choice-toast.svg', tips: '选择正确的回答'},
+        'hotSpot': {icon: '../../assets/img/icon-hotspot-toast.svg', tips: '点击热点查看'},
+        'folder': {icon: '../../assets/img/icon-expandable-toast.svg', tips: '点击每一项查看'},
+        'order': {icon: '../../assets/img/icon-expandable-toast.svg', tips: '点击每一项排序'},
+        'association': {icon: '../../assets/img/icon-hotspot-toast.svg', tips: '拖动图片到正确的位置'},
+        'transit': {icon: '../../assets/img/icon-choice-toast.svg', tips: '点击按钮继续'},
+        'transition': {icon: '../../assets/img/icon-choice-toast.svg', tips: '点击按钮继续'},
+        'selectBlank': {icon: '../../assets/img/icon-choice-toast.svg', tips: '选择正确的选项'},
+        'slider': {icon: '../../assets/img/icon-choice-toast.svg', tips: '拖动滑条查看'},
+        'judgement': {icon: '../../assets/img/icon-choice-toast.svg', tips: '点击对错按钮继续'},
+        'front': {icon: '../../assets/img/icon-choice-toast.svg', tips: '点击按钮继续'}
+    }
+    const VALID_TOUCH_MOVE_DISTANCE = 20
+    const PRACTICE_VALID_TOUCH_MOVE_DISTANCE = 20
+    const TYPE_OF_COMPONENT_MAPPER = {
+        // 'association': 'massociation',
+        'association': 'match',
+        'hotSpot': 'mhotspot',
+        'hotArea': 'mhotarea',
+        'folder': 'mfolder',
+        'session': 'msession',
+        'information': 'm-information',
+        // 'summary': 'm-summary',
+        'feedback': 'mfeedback',
+        // 'short': 'm-short',
+        // 'target': 'm-target',
+        // 'paragraph': 'm-paragraph',
+        'smallImage': 'm-small-image',
+        'theEnd': 'mtheend',
+        'bigImage': 'm-big-image',
+        'step': 'm-step',
+        'textSelection': 'mtextselection',
+        'cover': 'm-cover',
+        'general': 'mgeneral',
+        'general-step': 'mgeneralstep',
+        // 'general-end': 'mgeneralend',
+        'transit': 'mtransit',
+        'transition': 'mtransition',
+        'judgement': 'mjudgement',
+        'order': 'morder',
+        // 'practice': 'mexercisehome',
+        // 'blank':'mexercisequestion',
+        // 'practiceEnd': 'mexerciseanswer',
+        'selectBlank': 'mblank',
+        'imagetext-independence-toptitle': 'mimagetexttoptitle',
+        'imagetext-independence-topimage': 'mimagetexttopimage',
+        'imagetext-independence-notitle': 'mimagetextnotitle',
+        'imagetext-list': 'mimagetextlist',
+        'fullimage': 'mfullimage',
+        'conclusion': 'mconclusion',
+        'textSelectionVer2': 'mtextselectionver2',
+        'combination': 'mcombination',
+        'front': 'mfront',
+        'poll': 'mpoll',
+        'multiplePoll': 'mmultiplepoll'
+    }
+    const store = getStore()
+
+    @connect({
+        userName(state) {
+            return state.user.name
+        }, // mapState 即getters
+        token(state) {
+            // return 'userIDe92b7bcc76b6493585d7bad13dd4e423-1534906940629-7f5ef1cd06c3c5ffe2feac5dfd56aeb6'
+            return state.user.token
+        },
+        role(state) {
+            return state.user.role
+        },
+        cards(state) {
+            return state.cards.sections
+        },
+        currentCardSectionOffset(state) {
+            return state.cards.currentSectionOffset
+        },
+        cardsLength(state) {
+            return state.cards.sections.length
+        },
+        currentCourseID(state) {
+            return state.courses.currentID
+        },
+        currentCourseName(state) {
+            return state.courses.currentName
+        },
+        currentSenceName(state) {
+            return state.sences.currentName
+        },
+        currentSenceID(state) {
+            return state.sences.currentID
+        },
+        sences(state) {
+            return state.sences.sections
+        },
+        requestFlag(state) {
+            return state.cards.requestFlag
+        },
+        sencePosition(state) {
+            return state.sences.sections.findIndex(item => item.id === state.sences.currentID) + 1 + `/${state.sences.sections.length}`
+        },
+        user(state) {
+            return state.user
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
+        },
+        windowWidth(state) {
+            return state.user.windowWidth
+        },
+        windowHeight(state) {
+            return state.user.windowHeight
+        },
+        screenHeight(state) {
+            return state.user.screenHeight
+        },
+        cardHeight(state) {
+            // return state.user.screenHeight >= 740? (550 + 30).toFixed(6): (state.user.screenHeight * 0.75).toFixed(6) + 30
+            return state.user.screenHeight >= 740 ? 550 : state.user.screenHeight * 0.75
+        },
+        practiceinputsanswer(state) {//处理即学即练答案显示richText节点内容.
+            return state.cards.collections.practiceInputs[10].answer
+        },
+        shareCardStandardWidth(state) {
+            return state.user.windowWidth
+        },
+        shareCardStandardHeight(state) {
+            return state.user.windowHeight
+        }
+    })
+    export default class Lesson extends wepy.page {
+        components = {
+            'jn-header': header,
+            'toast': Toast,
+            'match': Match,
+            'mhotspot': Hotspot,
+            'mhotarea': HotArea,
+            'mfolder': Folder,
+            'msession': Session,
+            'mfeedback': Feedback,
+            'mneutralresponse': NeutralResponse,
+            'WholeImageResponse': WholeImageResponse,
+            'm-big-image': BigImage,
+            'm-step': Step,
+            'mtextselection': TextSelection,
+            'm-cover': Cover,
+            'mloading': Loading,
+            'mgeneral': General,
+            'mgeneralstep': GeneralStep,
+            'mtransit': Transit,
+            'mtransition': Transition,
+            'mtransitv2': TransitV2,
+            'mjudgement': Judgement,
+            'morder': Order,
+            'mblank': Blank,
+            'mimagetexttoptitle': ImagetextTopTitle,
+            'mimagetexttopimage': ImagetextTopImage,
+            'mimagetextnotitle': ImagetextNoTitle,
+            'mtextselectionver2': TextSelectionVer2,
+            'mfullimage': Fullimage,
+            'mslider': Slider,
+            'mcombination': Combination,
+            'mconclusion': Conclusion,
+            'mfront': Front,
+            'mpoll': Poll,
+            'mmultiplepoll': MultiplePoll,
+            'mstartcard':StartCard,
+            'card-share-image': cardShareImage
+        }
+        data = {
+            headerTitle: '',
+            source:'',
+            statusBarHeight: 20,
+            navigateBackFlag: false,
+            btnAble: true,
+            isLoaded: false,
+            shouldBeExistsWhileNavigateBack: true, // 导航返回上一页到本页的时候，本页是否该继续留存
+            lessonType: '',
+            teamID: 'defaultTeamID',
+            courseID: 'defualtCourseID',
+            senceID: 'defaultSenceID',
+            tendToResumeLastRead: false, // 默认重新开始卡片
+            isSwitchTipsShow: false, // 首次上课提示flag
+            switchTipsTimer: null, // 首次上课提示timer
+            senceMinute: 0,
+            senceTitle: 'senceTitle is subtitle',
+            cardSyncCurrent: 0,
+            cardCurrentOffset: 0,
+            cardTouchLock: true,
+            cardTouchStartPiontX: 0,
+            timesTendToEscapeFromLastOne: 0,
+            timesTendToUnlockWithNopermission: 0,
+            indicatorDots: false,
+            autoplay: false,
+            interval: 5000,
+            duration: 100,
+            cardTop: 0, // 卡片顶部距离屏幕高度
+            cardHeight: 0, // 卡片高度
+            cardWidth: 0, // 卡片宽度
+
+            //卡片预览
+            previewCards:[], //预览卡组
+            currentCardSet:'preview', //卡组状态切换
+            isTryAllow:true, //bu显示预览
+            isTryAllowStatus:'',//解锁弹窗控制
+        } // end data
+
+        computed = {
+            progressSchedule() {
+                return `${this.cardSyncCurrent + 1}/${this.cardsLength}`
+            },
+            computedProgress() {
+                return Math.ceil((this.cardSyncCurrent + 1) / (this.cardsLength + 1) * 100)
+            } // end computedProgress
+        } // end computed
+
+        methods = {
+            shutDownLessonPage() {
+                console.log('shutDownLessonPage-------------------------->>>>>>>>>>>')
+                this.shouldBeExistsWhileNavigateBack = false
+            }, // end shutDownLessonPage
+            handleSwiperChange({detail: {current}}) {
+            }, // end handleSwiperChange
+            handleSwipperStart(event) {
+                if (!(event.changedTouches && event.changedTouches[0])) return false
+                let {changedTouches: [{pageX}]} = event
+                this.cardTouchStartPiontX = pageX
+                this.cardTouchLock = false
+                // console.log('tend to move start ,tap start event!!', event, pageX)
+            },
+            handleSwipperMove(event) {
+                return false
+            }, // handleSwipperMove
+            handleSwipperEndPreview(event){
+                if (!(event.changedTouches && event.changedTouches[0])) return this.cardTouchLock = true
+                const {changedTouches: [{pageX}], timestamp, currentTarget: {dataset: {offset, allowSwitch, type}}} = event
+                const touchMoveDitance = Math.abs(pageX - this.cardTouchStartPiontX)
+                // console.log('tend to catch move ,tap move event!!', event, pageX, pageX - this.swiper.touchStartPiontX, this.swiper.touchLock)
+                if (this.cardTouchLock) return this.cardTouchLock = true
+                if (pageX === this.cardTouchStartPiontX) return this.cardTouchLock = true // 手指没有移动
+                if (touchMoveDitance < VALID_TOUCH_MOVE_DISTANCE) return this.cardTouchLock = true // 手指移动距离不够有效距离
+                if (['textSelectionVer2', 'combination', 'order'].some(item => item === type) && touchMoveDitance < PRACTICE_VALID_TOUCH_MOVE_DISTANCE) {
+                    console.log('touch dinstance is not enought!!', touchMoveDitance)
+                    return this.cardTouchLock = true // 对于指定的三张联系卡，有更大的滑动距离限制
+                }
+                if (pageX - this.cardTouchStartPiontX > 0) {
+                    // console.info('switch left distance', touchMoveDitance)
+                    this.timesTendToEscapeFromLastOne && (this.timesTendToEscapeFromLastOne = 0) // 重置escape
+                    try {
+                        this.setCurrentCardPreview({current: offset - 1, sync: true})
+                    } catch (error) {
+                        console.log(error.toString())
+                    }
+                }
+                if (pageX - this.cardTouchStartPiontX < 0) {
+                    // console.info('switch right distance', touchMoveDitance)
+                    try {
+                        allowSwitch && this.setCurrentCardPreview({current: offset + 1})
+                    } catch (error) {
+                        console.log(error.toString())
+                    }
+                    !allowSwitch && this.timesTendToUnlockWithNopermission++
+                    !allowSwitch && this.timesTendToUnlockWithNopermission > 0 && this.$invoke("toast", "show", {
+                        title: UNLOCK_WITH_NO_PERMISSION_OPTIONS[type]['tips'],
+                        img: UNLOCK_WITH_NO_PERMISSION_OPTIONS[type]['icon']
+                    })
+
+                    sleep(0.4)
+                        .then(() => {
+                            this.timesTendToUnlockWithNopermission = 0
+                            this.$apply()
+                        })
+                    // allowSwitch && this.previewCards.length - 1 === this.cardSyncCurrent && 1 === this.timesTendToEscapeFromLastOne && this.$redirect(this.lessonType === 'lesson' ? '/pages/EpilogueBefore/index' : '/pages/EpilogueByPractice/index', {
+                    //     courseID: this.currentCourseID,
+                    //     senceID: this.currentSenceID,
+                    //     teamID: this.teamID
+                    // }) // 逃逸次数为1的时候跳转页面
+
+                    // 未解锁 toast  已解锁 改cardset //only locked status can fetch here
+                    if( allowSwitch && this.previewCards.length - 1 === this.cardSyncCurrent && 1 === this.timesTendToEscapeFromLastOne ){
+                        // if(true){
+                        //     this.currentCardSet = 'normal'
+                        // }else{
+                            this.$invoke("toast", "show", {
+                                title: '解锁微课后可完整学习',
+                                img: 'http://wx-small.runwise.cn/image/imageID208ed2618974608a6ab6f5ef9289.png'
+                            })
+                        // }
+                    }
+
+                    this.previewCards.length - 1 === this.cardSyncCurrent && allowSwitch && this.timesTendToEscapeFromLastOne++ // 递增逃逸次数
+                }
+                this.cardTouchLock = true
+
+            },
+            handleSwipperEnd(event) {
+                if (!(event.changedTouches && event.changedTouches[0])) return this.cardTouchLock = true
+                const {changedTouches: [{pageX}], timestamp, currentTarget: {dataset: {offset, allowSwitch, type}}} = event
+                const touchMoveDitance = Math.abs(pageX - this.cardTouchStartPiontX)
+                // console.log('tend to catch move ,tap move event!!', event, pageX, pageX - this.swiper.touchStartPiontX, this.swiper.touchLock)
+                if (this.cardTouchLock) return this.cardTouchLock = true
+                if (pageX === this.cardTouchStartPiontX) return this.cardTouchLock = true // 手指没有移动
+                if (touchMoveDitance < VALID_TOUCH_MOVE_DISTANCE) return this.cardTouchLock = true // 手指移动距离不够有效距离
+                if (['textSelectionVer2', 'combination', 'order'].some(item => item === type) && touchMoveDitance < PRACTICE_VALID_TOUCH_MOVE_DISTANCE) {
+                    console.log('touch dinstance is not enought!!', touchMoveDitance)
+                    return this.cardTouchLock = true // 对于指定的三张联系卡，有更大的滑动距离限制
+                }
+                if (pageX - this.cardTouchStartPiontX > 0) {
+                    // console.info('switch left distance', touchMoveDitance)
+                    this.timesTendToEscapeFromLastOne && (this.timesTendToEscapeFromLastOne = 0) // 重置escape
+                    try {
+                        this.setCurrentCard({current: offset - 1, sync: true})
+                    } catch (error) {
+                        console.log(error.toString())
+                    }
+                }
+                if (pageX - this.cardTouchStartPiontX < 0) {
+                    // console.info('switch right distance', touchMoveDitance)
+                    try {
+                        allowSwitch && this.setCurrentCard({current: offset + 1})
+                    } catch (error) {
+                        console.log(error.toString())
+                    }
+                    !allowSwitch && this.timesTendToUnlockWithNopermission++
+                    !allowSwitch && this.timesTendToUnlockWithNopermission > 0 && this.$invoke("toast", "show", {
+                        title: UNLOCK_WITH_NO_PERMISSION_OPTIONS[type]['tips'],
+                        img: UNLOCK_WITH_NO_PERMISSION_OPTIONS[type]['icon']
+                    })
+
+                    sleep(0.4)
+                        .then(() => {
+                            this.timesTendToUnlockWithNopermission = 0
+                            this.$apply()
+                        })
+                    // allowSwitch && this.cards.length - 1 === this.cardSyncCurrent && 1 === this.timesTendToEscapeFromLastOne && this.$redirect(this.lessonType === 'lesson' ? '/pages/EpilogueBefore/index' : '/pages/EpilogueByPractice/index', {
+                    //     courseID: this.currentCourseID,
+                    //     senceID: this.currentSenceID,
+                    //     teamID: this.teamID
+                    // }) // 逃逸次数为1的时候跳转页面
+                    this.cards.length - 1 === this.cardSyncCurrent && allowSwitch && this.timesTendToEscapeFromLastOne++ // 递增逃逸次数
+                }
+                this.cardTouchLock = true
+            }, // end handleSwipperEnd
+                        /**
+             * 绘画结束
+             * 进行数据统计
+             * @private data
+             */
+            getCardDrawOver(data) {
+                let self = this
+                // 提交到后台统计数据
+                shareApi.reportSharing({
+                    token: self.token,
+                    type: shareDictionary.SHARE_CARD.type,
+                    courseID: self.courseID,
+                    senceID: self.senceID,
+                    teamID: self.teamID
+                }).then(() => {
+                    // 分享事件上报
+                    wx.reportAnalytics('share_event', {
+                        role: self.role,
+                        nickname: self.userName,
+                        coursename: self.senceTitle,
+                        sencename: self.currentSenceName,
+                        channel: self.entrance.mappers[self.entrance.scenceID],
+                        type: shareDictionary.SHARE_CARD.type,
+                    })
+                }).catch(error => {
+                    console.log('draw card error', error)
+                })
+            }
+        } // end methods
+
+        events = {
+            previewCardEnd(){
+                // this.currentCardSet = 'normal'
+                // this.setCurrentCard({current: 0})
+                // this.$apply()
+
+                if(this.currentCardSet === 'preview'){
+                    // this.currentCardSet = 'normal'
+                    this.$navigate('/pages/PayForLesson/index',{senceID:this.senceID})
+                    reportApi.doUserBehaviourLog({token:this.token,body:{
+                        senceID: this.senceID,
+                        pageType: "开始页" ,
+                        EventType:'ButtonClick',
+                        ComponentName:'解锁微课',
+                        CpnPresentName:'解锁微课'
+                    }})
+
+                }else{
+                    this.setCurrentCard({current: this.cardSyncCurrent+1})
+
+                }
+
+            },
+            navigateToPractices(pOffset) {
+                console.log('navigate to exercises', pOffset)
+                wx.showLoading({title: '正在加载', mask: true})
+                if (!this.btnAble) return console.log('front btn tap tap tap')
+
+                this.btnAble = false
+                store.dispatch(fetchPractices({
+                    token: this.token,
+                    cardID: this.cards[this.cardSyncCurrent]['id'],
+                    senceID: this.senceID,
+                    courseID: this.courseID,
+                    teamID: this.teamID
+                }))
+                    .then(response => {
+                        let mOffset = 0
+                        return navigateToPractice(mOffset)
+                    })
+                    .then(() => {
+                        wx.hideLoading()
+                    })
+                    .catch(error => {
+                        wx.hideLoading()
+                        this.btnAble = true
+                    })
+            }, // end jumpToExercises
+            switchToNextCard(offset) {
+                this.switchTipsTimer && clearTimeout(this.switchTipsTimer) // 清楚首次上课timer
+                this.setCurrentCard({current: offset + 1, sync: true})
+                store.dispatch(unlockRejectedCard({componentOffset: offset, flag: true}))
+                this.$apply()
+            }, // end switchNextCard
+            failToLoadImage({componentOffset}) {
+                store.dispatch(setImageLoadError({componentOffset}))
+            }, // end failToLoadImage
+            tendToReloadImage({componentOffset}) {
+                store.dispatch(reloadImage({componentOffset}))
+                this.$apply()
+            }, // end tendToReloadImage
+            feedback({offset, feedbackBundle}, $event) {
+                this.toggleRotate(offset)
+                this.toggleRotatePreview(offset)
+                sleep(0.4)
+                    .then(() => {
+                        console.log('feedbackBundle', feedbackBundle)
+                        const mFlag = feedbackBundle.flag
+                        const mType = mFlag ? 'correct' : 'wrong'
+                        pushApi.sendFeedBack({
+                            token: this.token,
+                            courseID: this.currentCourseID,
+                            senceID: this.currentSenceID,
+                            cardID: this.cards[this.cardSyncCurrent]['id'],
+                            type: mType
+                        })
+                            .catch(error => console.log('fail to sendFeedBack to backend', error))
+                        store.dispatch(toggleAppointedCardFragment({offset, type: 'feedback', data: feedbackBundle}))
+                        store.dispatch(dropAppointedCardAnimation(offset))
+                        store.dispatch(unlockRejectedCard({componentOffset: offset, flag: true}))
+                        if(this.previewCards&&this.previewCards.length&&this.previewCards[offset])
+                            this.previewCards[offset] = this.cards[offset]
+                        this.$apply()
+                    })
+            },
+            transition({offset, feedbackBundle}, $event) {
+                this.toggleRotate(offset)
+                sleep(0.38)
+                    .then(() => {
+                        store.dispatch(toggleAppointedCardFragment({offset, type: 'transition', data: feedbackBundle}))
+                        store.dispatch(dropAppointedCardAnimation(offset))
+                        this.$apply()
+                    })
+            }, // end transit
+            feedbackResponse({offset, feedbackBundle, type = 'feedback'}, $event) {
+                store.dispatch(toggleAppointedCardFragment({offset, type, data: feedbackBundle}))
+                store.dispatch(unlockRejectedCard({componentOffset: offset, flag: true})) // 解锁卡片
+            },
+            closeFeedback(offset, $event) {
+                this.toggleRotate(offset)
+                sleep(0.4)
+                    .then(() => {
+                        store.dispatch(toggleAppointedCardFragment({offset}))
+                        store.dispatch(dropAppointedCardAnimation(offset))
+                        this.$apply()
+                        return sleep(0.7)
+                    })
+                    .then(() => {
+                        let mFlag = ['combination', 'textSelectionVer2', 'order'].some(item => item === this.cards[offset]['type'])
+                        mFlag && this.$invoke(TYPE_OF_COMPONENT_MAPPER[this.cards[offset]['type']], 'activateCard', offset)
+                    })
+                return true
+                // store.dispatch(dropAppointedCardAnimation())
+            },
+            shuffleTextSelect(offset, $event) {
+                store.dispatch(shuffleTextSelections(offset))
+            },
+            folderOpenCell({componentOffset, selectionOffset}, $event) {
+                // console.log(`receive folder component: ${componentOffset}, selectionOffset: ${selectionOffset}`)
+                store.dispatch(reverseFolderSelection({componentOffset, selectionOffset}))
+            },
+            reorder({componentOffset, orderList, mapper}) {
+                store.dispatch(updateOrderCard({componentOffset, orderList, mapper}))
+            },
+            shuffleOrder(componentOffset, $event) {
+                // store.dispatch(shuffleOrderCard({ componentOffset }))
+                sleep(0.4)
+                    .then(() => {
+                        store.dispatch(shuffleOrderCard({componentOffset}))
+                        this.$apply()
+                    })
+            },
+            fillBlank({componentOffset, optionID}) {
+                // console.log('receive fillBlank', componentOffset, optionID)
+                store.dispatch(toggleBlankButton({componentOffset, optionID}))
+            },
+            shuffleBlank({componentOffset}) {
+                // console.log('receive shuffleBlank')
+                store.dispatch(shuffleBlankCard({componentOffset}))
+            },
+            neutralResponse({offset, feedbackBundle}, $event) {
+                this.toggleRotate(offset)
+                sleep(0.4)
+                    .then(() => {
+                        store.dispatch(toggleAppointedCardFragment({
+                            offset,
+                            type: 'neutralResponse',
+                            data: feedbackBundle
+                        }))
+                        store.dispatch(dropAppointedCardAnimation(offset))
+                        store.dispatch(unlockRejectedCard({componentOffset: offset, flag: true}))
+                        this.$apply()
+                    })
+            },
+            sliderResponse({offset, feedbackBundle}, $event) {
+                this.toggleRotate(offset)
+                sleep(0.4)
+                    .then(() => {
+                        store.dispatch(toggleAppointedCardFragment({
+                            offset,
+                            type: 'wholeImageResponse',
+                            data: feedbackBundle
+                        }))
+                        store.dispatch(dropAppointedCardAnimation(offset))
+                        store.dispatch(unlockRejectedCard({componentOffset: offset, flag: true}))
+                        this.$apply()
+                    })
+            },
+            shuffleCombinationCard(offset) {
+                store.dispatch(shuffleCombination(offset))
+            },
+            setAssocicationLocation({componentOffset, associationOffset, x, y}) {
+                // console.log('receive association', componentOffset, associationOffset, x, y)
+                store.dispatch(setAssocicationLocation({componentOffset, associationOffset, x, y}))
+            },
+            setAssocicationHidden({componentOffset, associationOffset, to}) {
+                // console.log('receive association hidden', componentOffset, associationOffset)
+                store.dispatch(setAssocicationHidden({componentOffset, associationOffset, to}))
+            },
+            toggleAssocicationMatchOptionStatu({componentOffset, associationOffset, flag}) {
+                // console.log('receive association match option status', componentOffset, associationOffset, flag)
+                store.dispatch(setAssocicationMatchOptionStatu({componentOffset, associationOffset, flag}))
+            },
+            shuffleAssocicationCard({componentOffset}) {
+                // console.log('receive association shuffle')
+                store.dispatch(shuffleAssocicationCard({componentOffset}))
+            },
+            setHotArea({componentOffset, areaOffset}) {
+                // console.log(`receive set hot area, componentOffset ${componentOffset}, areaOffset: ${areaOffset}`)
+                store.dispatch(setHotArea({componentOffset, areaOffset}))
+                store.dispatch(unlockRejectedCard({componentOffset, flag: true}))
+            },
+            sliderChanged({componentOffset, score}) {
+                // console.log(`receive sliderChanged, componentOffset: ${componentOffset}, score: ${score}`)
+                store.dispatch(setSliderStep({componentOffset, score}))
+            },
+            selectCombinationOption({componentOffset, score}) {
+                store.dispatch(setCombinationStep({componentOffset, score}))
+            },
+            /**
+             * 卡片分享
+             * @param contentImage
+             */
+            shareCard({currentTarget: {dataset: {contentImage}}}) {
+                let self = this
+                // console.log(`share card contentImage: ${contentImage}`)
+                shareApi.getCourseQrCode({token: this.token, courseID: this.currentCourseID})
+                    .then(({imageUrl: shareImage}) => {
+                        let cardShareImages = {
+                            footImage: 'http://wx-small.runwise.cn/image/imageID61f845c2d274f5a71c79b0d78f30.jpg', //https://wx-small.runwise.cn/image/imageIDbbf18caf662432bd5c6d4f9c204b.png',
+                            contentImage,
+                            shareImage
+                        }
+                        // 通知组件，生成图片预览
+                        self.$broadcast('card-share-images-list', cardShareImages)
+                    })
+            }, // end shareCard
+            anchorShow(index) {
+                store.dispatch(setAnchorFooterShown({componentOffset: index}))
+            },// end anchorShow
+            anchorHide(index) {
+                store.dispatch(setAnchorFooterHidden({componentOffset: index}))
+            }, // end anchorHide
+            reportCardScore(blob) {
+                let mBlob = Object.keys(blob).reduce((total, current) => 'string' === typeof total ? {
+                    [total]: blob[total],
+                    [current]: blob[current]
+                } : "" === blob[current] ? total : {...total, [current]: blob[current]})
+                cardApi.sendCardScore({...mBlob, token: this.token, senceID: this.senceID})
+                    .then(() => console.log(`成功上报卡片分数`))
+                    .catch(error => console.log(`上报卡片失败`, error))
+            },
+            windUp(index) {
+                store.dispatch(windUpScoreForSence({
+                    token: this.token,
+                    senceID: this.senceID,
+                    cardID: this.cards[index]['id']
+                }))
+                    .catch(error => console.log('error', error))
+            }, // end windUp
+            singlePoll({componentOffset, optionID}) {
+                // console.log('receive singlePoll', componentOffset, optionID)
+                store.dispatch(setSinglePoll({componentOffset, optionID}))
+
+                if(this.previewCards&&this.previewCards.length){
+                    let nextState = this.previewCards
+                    let totalBallots = this.previewCards[componentOffset]['select'].reduce((total, current) => total + current.ballot, 0)
+                    nextState[componentOffset]['select'] = this.previewCards[componentOffset]['select'].map(item => ({...item, ballot: item.id === optionID ? item.ballot + 1 : item.ballot, percentage: item.id === optionID ? parsePercentageForPoll(item.ballot + 1, totalBallots)(1) : parsePercentageForPoll(item.ballot, totalBallots)(1), selected: false }))
+                    const mFirstAmount = nextState[componentOffset]['select'].reduce((total, current, index) => total - (0 === index ? 0 : current.percentage), 100)
+                    nextState[componentOffset]['select'][0]['percentage'] = mFirstAmount
+                    nextState[componentOffset]['select'].find(option => option.id === optionID)['selected'] = true
+                    nextState[componentOffset]['isDone'] = true
+                    this.previewCards = nextState
+                }
+
+                pushApi.sendPollSelection({
+                    token: this.token,
+                    cardID: this.cards[componentOffset]['id'],
+                    optionList: optionID
+                })
+
+            }, // end singlePoll
+            multiplePollSelect({componentOffset, optionID}) {
+                // console.log('select id', componentOffset, optionID)
+                store.dispatch(setMultiplePollSelect({componentOffset, optionID}))
+                // if(this.previewCards&&this.previewCards.length){
+                //     let nextState = this.previewCards
+                //     nextState['sections'][componentOffset]['select'] = this.previewCards['sections'][componentOffset]['select'].map(item => ({...item, ballot: item.id === optionID ? item.ballot + (item.selected ? -1 : 1) : item.ballot, selected: item.id === optionID ? !item.selected : item.selected }))
+                //     nextState['sections'][componentOffset]['numberOfSelections'] = nextState['sections'][componentOffset]['select'].filter(item => item.selected).length
+                //     this.previewCards = nextState
+                // }
+                this.previewCards[componentOffset] = this.cards[componentOffset]
+                this.$apply()
+            }, // end multiplePoll
+            multiplePollSubmit({componentOffset, options}) {
+                // console.log('receive multiplePollSubmit', componentOffset, options)
+                store.dispatch(setMultiplePollSubmit({componentOffset}))
+                pushApi.sendPollSelection({
+                    token: this.token,
+                    cardID: this.cards[componentOffset]['id'],
+                    optionList: options
+                })
+            } // end multiplePollSubmit
+        } // end events
+
+        setCurrentCard({current, sync = false}) {
+            this.switchTipsTimer && clearTimeout(this.switchTipsTimer) // 清楚首次上课timer
+            if (0 === this.cardsLength) throw new Error('none cards')
+            if (current < 0 || current >= this.cardsLength) throw new Error('overstep the boundary')
+            if (current === this.cardSyncCurrent) return true
+            this.cardSyncCurrent = current // 设置本地卡片位置状态
+            store.dispatch(resetAllCardAnimation()) // 清除所有动画
+            store.dispatch(setCurrentCardOffset(current)) // 设置状态redux当前卡片位置
+
+            try {
+                TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']] && this.$com[TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']]]['methods'].hasOwnProperty('activateCard') && this.$invoke(TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']], 'activateCard', current) // 替代cardSwitch下发事件，采用调用子组件的方法 tips: 有需要的子组件需要添加到TYPE_OF_COMPONENT_MAPPER
+            } catch (event) {
+                console.log('activateCard调用失败 ' + event.toString())
+            }
+
+            this.timesTendToUnlockWithNopermission = 0 // 重置解锁times
+            cardApi.markCard({
+                token: this.token,
+                senceID: this.currentSenceID,
+                cardID: this.cards[current]['id'],
+                requestFlag: this.requestFlag,
+                teamID: this.teamID
+            }) // 请求后台记录卡片位置
+            // .then(() => console.log(`第${current}张卡片记录成功`))
+                .catch(error => console.log(`第${current}张卡片记录失败`))
+                // this.checkIfTheLastCard(current) && courseApi.sendFinish({
+                //     token: this.token,
+                //     senceID: this.senceID,
+                //     courseID: this.courseID,
+                //     requestFlag: this.requestFlag
+                //   })
+                .catch(error => console.log('记录finish状态失败', error))
+            this.$apply()
+        } // end setCurrentCard
+
+        setCurrentCardPreview({current, sync = false}) {
+            // console.log(current,this.previewCards.length)
+            this.switchTipsTimer && clearTimeout(this.switchTipsTimer) // 清楚首次上课timer
+            if (0 === this.previewCards.length) throw new Error('none cards')
+            if (current < 0 || current >= this.previewCards.length) throw new Error('overstep the boundary')
+            if (current === this.cardSyncCurrent) return true
+            this.cardSyncCurrent = current // 设置本地卡片位置状态
+            store.dispatch(resetAllCardAnimation()) // 清除所有动画
+            store.dispatch(setCurrentCardOffset(current)) // 设置状态redux当前卡片位置
+
+            try {
+                TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']] && this.$com[TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']]]['methods'].hasOwnProperty('activateCard') && this.$invoke(TYPE_OF_COMPONENT_MAPPER[this.cards[current]['type']], 'activateCard', current) // 替代cardSwitch下发事件，采用调用子组件的方法 tips: 有需要的子组件需要添加到TYPE_OF_COMPONENT_MAPPER
+            } catch (event) {
+                console.log('activateCard调用失败 ' + event.toString())
+            }
+
+            this.timesTendToUnlockWithNopermission = 0 // 重置解锁times
+            cardApi.markCard({
+                token: this.token,
+                senceID: this.currentSenceID,
+                cardID: this.cards[current]['id'],
+                requestFlag: this.requestFlag,
+                teamID: this.teamID
+            }) // 请求后台记录卡片位置
+            .catch(error => console.log(`第${current}张卡片记录失败`))
+            this.$apply()
+        } // end setCurrentCardPreview
+
+        resumeLastRead(cardID) {
+            console.log('resume cardID', cardID)
+            if (!cardID) return false
+            if (0 === this.cards.length) return false
+            let mTargetIndex = this.cards.findIndex(item => cardID === item.id)
+            if (-1 !== mTargetIndex) {
+                this.setCurrentCard({current: mTargetIndex})
+            }
+            console.log('resume last step')
+        }
+
+        checkIfTheLastCard(current) {
+            return Number(current) === this.cardsLength - 1
+        }
+
+        setPageTitle(pTitle = '即能') {
+            this.headerTitle = pTitle
+            wepy.$instance.globalData.getLoadHuilder({pageTheme: pTitle}) // ga统计
+            this.$apply()
+        }
+
+        toggleRotatePreview(cardOffset) {
+            if(!this.previewCards||!this.previewCards.length||!this.previewCards[cardOffset]) return
+            const clearFlag = ['transition', 'feedback', 'neutralResponse'].some(item => item === this.cards[cardOffset]['type'])
+            if (clearFlag) return this.previewCards[cardOffset]['animation'] = this.rotate(cardOffset, 0, 1)
+            return this.previewCards[cardOffset]['animation'] = this.rotate(cardOffset, 180, 1)
+
+        }
+
+        toggleRotate(cardOffset) {
+            const clearFlag = ['transition', 'feedback', 'neutralResponse'].some(item => item === this.cards[cardOffset]['type'])
+            if (clearFlag) return store.dispatch(setAppointedCardFragmentAnimation({
+                offset: cardOffset,
+                animation: this.rotate(cardOffset, 0, 1)
+            }))
+            return store.dispatch(setAppointedCardFragmentAnimation({
+                offset: cardOffset,
+                animation: this.rotate(cardOffset, 180, 1)
+            }))
+        }
+
+        rotate(cardOffset, deg, opacity) {
+            if (!this.cards[cardOffset]) return false
+            let animation = wx.createAnimation({
+                duration: 350,
+                timingFunction: 'ease',
+            })
+            animation.rotateY(180).opacity(0.2).step()
+            animation.rotateY(360).opacity(1).step()
+            return animation.export()
+        } // end rotate
+
+        initialize({
+                       courseID,
+                       senceID,
+                       teamID,
+                       resumeLastRead,
+                       source,
+                   }) {
+            return store.dispatch(fetchCardsWithPreview({
+                token: this.token,
+                senceID,
+                courseID,
+                teamID,
+                source:this.source
+            }))
+                .then(({ isTryAllow, mArrPreview, isTryAllowStatus, senceID, senceName, courseID, lastCardID, minute, subtitle, isSwitchTipsShow, lessonType}) => {
+                    //预览卡
+                    this.isTryAllow = isTryAllow
+                    this.currentCardSet = !isTryAllow&&mArrPreview.length?'preview':'normal'
+                    this.previewCards = mArrPreview
+                    if(this.isTryAllowStatus&&this.isTryAllowStatus==='notAllow'&&isTryAllowStatus==='allow'){
+                            this.$invoke("toast", "show", {
+                                title: '微课成功解锁',
+                                img: 'http://wx-small.runwise.cn/image/imageID76a7248ed574ab9292aa7adbdf74.png'
+                            })
+                            reportApi.doUserBehaviourLog({token:this.token,body:{
+                                senceID: this.senceID,
+                                pageType: "开始页" ,
+                                EventType:'ButtonClick',
+                                ComponentName:'开始学习',
+                                CpnPresentName:'开始学习'
+                            }})
+                        }
+                    this.isTryAllowStatus = isTryAllowStatus
+                    //预览卡
+                    this.isLoaded = true
+                    this.senceMinute = minute
+                    this.senceTitle = subtitle
+                    this.isSwitchTipsShow = isSwitchTipsShow
+                    this.lessonType = lessonType
+                    // this.setCurrentCard({current: 25}) // for unit test
+                    store.dispatch(setCurrentSenceID(senceID))
+                    store.dispatch(setCurrentSenceName(senceName))
+                    this.setPageTitle(senceName)
+                    // console.log('senceName, state', senceName, store.getState())
+                    if ('YES' === resumeLastRead) this.resumeLastRead(lastCardID)
+                    console.log('打开小节事件上报:' + senceName)
+                    wx.reportAnalytics('opensence', {
+                        role: this.role,
+                        nickname: this.userName,
+                        coursename: this.currentCourseName,
+                        sencename: senceName,
+                        channel: this.entrance.mappers[this.entrance.scenceID]
+                    })
+
+                    sleep(0.3)
+                        .then(() => {
+                            var mQuery = wx.createSelectorQuery()
+                            mQuery.select('.lesson-container__body__swiper-wrapper__item__wrapper').boundingClientRect()
+                            mQuery.exec(([{width, height, top, bottom}]) => {
+                                this.cardWidth = width
+                                this.cardHeight = height
+                                this.cardTop = top
+                                this.$apply()
+                            }) // end exec
+                        }) // end then // 查询卡片节点的位置和宽高
+
+                    this.isSwitchTipsShow && (this.switchTipsTimer = setTimeout(() => {
+                        wepy.showToast({
+                            title: '左滑查看下一张',
+                            icon: 'none',
+                            image: '../../assets/img/icon_switch_tips.png',
+                            duration: 2000
+                        })
+                    }, 4000))
+
+                    this.$apply()
+
+                })
+                .catch(error => {
+                    !(error instanceof LessonPermissionDenyError) && showErrorPage()
+                    console.log('fail to initialize lesson', error)
+                })
+        } // end initialize
+
+        onLoad({senceID, courseID, resumeLastRead = 'NO', teamID = 'defaultTeamID',source}) {
+            // console.log(`lesson on load, courseID: ${courseID}, senceID: ${senceID}, resumeLastRead: ${resumeLastRead}, teamID: ${teamID}`)
+
+            if (null == senceID) throw new CustomError('param senceID is required')
+            if (null == courseID) throw new CustomError('param courseID is required')
+            // courseID=courseIDac1e4aac92842faba138178bc7e8&senceID=senceID74ac5b55e4149ea8e8059381ffbc&platform=devtools&teamID=defaultTeamID&resumeLastRead=YES
+            this.isTryAllowStatus = ''
+            wepy.setNavigationBarColor({
+                frontColor: '#ffffff',
+                backgroundColor: '#47B99F',
+                animation: {
+                    duration: 400,
+                    timingFunc: 'easeIn'
+                }
+            })
+            //for test
+            // this.courseID = 'courseIDac1e4aac92842faba138178bc7e8'
+            // this.senceID= 'senceID74ac5b55e4149ea8e8059381ffbc'
+            this.courseID = courseID
+            this.senceID = senceID
+            this.teamID = teamID
+            this.source = source
+            this.tendToResumeLastRead = resumeLastRead
+            this.cardSyncCurrent = 0
+            this.statusBarHeight = wx.getSystemInfoSync().statusBarHeight
+
+        } // end onLoad
+
+        onShow() {
+            this.btnAble = true
+            this.timesTendToEscapeFromLastOne = 0
+            if (!this.shouldBeExistsWhileNavigateBack) return wx.navigateBack({
+                delta: 1
+            })
+
+            initializationDeligate({
+                initializeFunc: this.initialize.bind(this, {
+                    courseID: this.courseID,
+                    senceID: this.senceID,
+                    teamID: this.teamID,
+                    resumeLastRead: this.tendToResumeLastRead,
+                    source:this.source
+                })
+            })
+                .catch(error => {
+                    'login:no' === error && new UnAuthenticationError()
+                })
+        } // end onShow
+
+        onReady() {
+        } // end onReady
+
+        onUnload() {
+            this.isLoaded = false
+            store.dispatch(clearCardsSections())
+            this.switchTipsTimer && clearTimeout(this.switchTipsTimer) // 清楚首次上课timer
+        } // end onUnload
+    } // end class
+</script>
+
+<style lang="less">
+  .lesson-container {
+    width: 100%;
+    height: 100%;
+    background-color: #47B99F;
+    overflow: hidden;
+  }
+
+  .lesson-container__body {
+    width: 100%;
+    height: calc(~"100% - 60px");
+
+    /*background-color: #F0E0C5;*/
+  }
+
+  .lesson-container__body__swiper-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .lesson-container__body__swiper-wrapper__item {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .lesson-container__body__swiper-wrapper__item.rejected.actived {
+  }
+
+  .lesson-container__body__swiper-wrapper__item__wrapper {
+    width: 702rpx;
+    /*position: relative;*/
+    /*top: 30rpx;*/
+    /*left: 24rpx;*/
+    border-radius: 16rpx;
+    box-shadow: 0 12rpx 20rpx rgba(0, 0, 0, .3);
+    /*rgba(109,130,143, .2)*/
+    overflow: hidden;
+  }
+
+  .lesson-container__body__swiper-wrapper__item__wrapper.lock-touch-actived {
+    animation: wobble .3s;
+  }
+
+  .slide-image {
+    width: inherit;
+    height: inherit;
+  }
+
+  .lesson-container__footer {
+    width: 100%;
+    height: 60px;
+    /*background-color: #F6BACD;*/
+    position: relative;
+  }
+
+  .lesson-container__footer progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 480rpx;
+    height: 50rpx;
+    font-size: 24rpx;
+    color: #778D9A;
+  }
+
+  /*.lesson-container__footer progress:after {
+    content: attr(data-attr);
+    margin-left: 24rpx;
+    color: #778D9A;
+    font-size: 24rpx;
+    line-height: 28rpx;
+  }
+*/
+
+  .lesson-container__footer__page-number {
+    margin-left: 24rpx;
+    color: #FFF;
+    font-size: 24rpx;
+    line-height: 28rpx;
+  }
+
+  .wetoast__bd__img_desc {
+    width: 128rpx !important;
+    height: 128rpx !important;
+  }
+
+  .wetoast__bd {
+    width: 240rpx !important;
+    height: 240rpx !important;
+  }
+
+</style>

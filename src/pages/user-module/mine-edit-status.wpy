@@ -1,0 +1,168 @@
+<template>
+    <scroll-view
+        scroll-y="{{isScroll}}"
+        enable-back-to-top="{{ true }}"
+        scroll-with-animation="{{ true }}"
+        bindscroll="getScroll"
+        class="mine-article__body">
+        <jn-header title="更改职能"></jn-header>
+        <view class="ui-edit-status">
+            <view class="cell-title">你感兴趣的领域</view>
+            <view class="cell-dec">
+                你已选好 
+                <text wx:for="{{statusList}}"  wx:key="{{item.id}}" wx:if="{{item.isActive}}">“{{item.label}}”</text>
+                这些领域，可以重新选择哦
+            </view>
+            <view class="ui-status">
+                <view wx:for="{{statusList}}" wx:key="{{item.id}}"  class="cell-item" @tap.stop="getItem" data-item="{{item}}">
+                    <view >
+                        <text class='icon-{{item.id}} cell-manager'></text>
+                    </view>
+                    <view>{{item.label}}</view>
+                    <view wx:if="{{item.isActive}}" class="ui-complete">
+                        <text class="icon-complete cell-complete"></text>
+                    </view>
+                </view>
+            </view>
+            <view class="cell-commit" @tap.stop="getCommit">确定</view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {getStore, connect} from "wepy-redux";
+    import {auth as authApi,report as reportApi} from "../../api";
+    import header from '../../components/common/header'
+
+    const store = getStore();
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
+            //return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+        role(state) {
+            return state.user.role
+        },
+    })
+    export default class MineEditStatus extends wepy.page {
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            statusList:[],
+            activeList:[]
+
+        } // end data
+        components = {
+            'jn-header': header,
+        }
+        methods = {
+            getCommit(){
+                let self = this
+
+                let list = self.statusList.filter(item => {
+                    return item.isActive
+                })
+
+                if(!list.length) {
+                    return wepy.showToast({
+                        title: '请选择您的学习目标',
+                        icon:'none'
+                    })
+                }
+                reportApi.saveUserCenterInfo({ token:self.token, json: { statusList: list}, flag:'statusList'})
+                    .then((res) => {
+                        wx.navigateBack()
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+                
+            },
+            getItem({currentTarget: {dataset: {item}}}){
+                if(item.isActive) {
+                    this.statusList.map(i =>{
+                        if(i.id == item.id) {
+                            i.isActive = !i.isActive
+                        }
+                    })
+                }else{
+                    this.activeList =this.statusList.filter(item => {
+                        return item.isActive
+                    })
+                    if(this.activeList.length >= 2) {
+                        return wepy.showToast({
+                            title: '兴趣标签最多选择2个',
+                            icon:'none'
+                        })
+                    }else{
+                        this.statusList.map(i =>{
+                            if(i.id == item.id) {
+                                i.isActive = !i.isActive
+                            }
+                        })
+                    }
+                }
+            }
+           
+           
+        }
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
+        onShow(){
+            let self = this
+            reportApi.userCenterInfo({
+                token:this.token,
+            })
+            .then(data=>{
+                self.statusList = data.statusList
+                self.$apply()
+            })
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .mine-article__body {height: 100%;background-color: @background-white;position: relative;overflow-x: hidden;}
+    .ui-edit-status{
+        font-family: PingFangSC-Medium;display: flex;flex-direction: column;align-items: center;
+        .cell-title{font-size: 48rpx;color: @color-black;letter-spacing: 0;margin-top: 120rpx}
+        .cell-dec{font-size: 28rpx;color: @color-gray;opacity: 0.8;margin: 40rpx 0 60rpx;text-align: center;width: 604rpx;}
+        .ui-status{
+            display: flex;flex-wrap: wrap;padding:0 26rpx;
+            .cell-item{
+                display: flex;width: 320rpx;height: 120rpx;background: @background-gray-F4;border-radius: @border-radius-20;align-items: center;justify-content: center;font-size: 32rpx;color: @color-black;margin:0 15rpx 46rpx;
+                .cell-manager{color: #B7C3C8;margin-right: 24rpx;font-size:44rpx;}
+                .ui-complete{
+                    width: 44rpx;height: 44rpx;border-radius: 50%;background: @background-blue;display:flex;align-items:center;justify-content:center;margin-left:30rpx;
+                    .cell-complete{color: @color-white}
+                }
+            }
+        }
+        .cell-commit{width: 702rpx;height: 100rpx;background: @background-gray-F4;border-radius: @border-radius-20;color:@color-blue;font-family: PingFangSC-Medium;font-size:36rpx;letter-spacing: 0.04rpx;text-align: center;line-height: 100rpx;margin-top: 106rpx}
+
+    }
+</style>

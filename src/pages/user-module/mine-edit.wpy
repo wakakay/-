@@ -1,0 +1,219 @@
+<template>
+    <scroll-view
+        scroll-y="{{isScroll}}"
+        enable-back-to-top="{{ true }}"
+        scroll-with-animation="{{ true }}"
+        bindscroll="getScroll"
+        class="mine-article__body">
+        <jn-header hiddenButton title="个人信息">
+            <button slot="cursor-button" class="cell-back" @tap.stop="getBackStep">
+                <text class="icon-back"></text>
+            </button>
+        </jn-header>
+        <view class="ui-mine-edit">
+            <view class="ui-mine">
+                <text>头像</text>
+                <image src="{{userObj.avatarUrl}}"/>
+            </view>
+            <view class="ui-row-box">
+                <view class="ui-row">
+                    <view class="cell-key">昵称</view>
+                    <view class="cell-value cell-name">{{userObj.nickName}}</view>
+                </view>
+                <view class="ui-row" @tap.stop="getEditPhonePage" data-phone="{{userObj.mobile}}">
+                    <view class="cell-key">手机号码</view>
+                    <view class="cell-value">
+                        <view wx:if="{{userObj.mobile}}">{{userObj.mobile}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </view>
+                <view class="ui-row" @tap.stop="getEditEmailPage" data-email="{{userObj.email}}">
+                    <view class="cell-key">邮箱</view>
+                    <view class="cell-value">
+                        <view wx:if="{{userObj.email}}">{{userObj.email}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </view>
+            </view>
+            <view class="ui-row-box" @tap.stop="getEditStatusPage">
+                <view class="ui-row">
+                    <view class="cell-key">职能标签</view>
+                    <view class="cell-value">
+                        <view>{{statusItem}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </view>
+                <view class="ui-row" @tap.stop="getEditInterestPage">
+                    <view class="cell-key">兴趣标签</view>
+                    <view class="cell-value">
+                        <view>{{interestItem}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </view>
+                <view class="ui-row" @tap.stop="getEditTargetPage">
+                    <view class="cell-key">学习目标</view>
+                    <view class="cell-value">
+                        <view>{{targetItem.label}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {connect} from "wepy-redux";
+    import {report as reportApi} from "../../api";
+    import header from '../../components/common/header'
+
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
+            return state.user.token;
+        },
+    })
+    export default class MineEdit extends wepy.page {
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            userObj:{},
+            interestList:[],//兴趣标签
+            targetItem:[],//学习目标
+            statusList:[],//学习目标
+        } // end data
+        components = {
+            'jn-header': header,
+        }
+        methods = {
+            getBackStep() {
+                wx.navigateTo({
+                    url: '/pages/user-module/mine'
+                })
+            },
+            // 跳转修改手机页面
+            getEditPhonePage({currentTarget: {dataset: {phone}}}){
+                wx.navigateTo({
+                    url: `/pages/user-module/mine-edit-phone?phone=${phone}`
+                })
+            },
+            // 跳转修改邮箱页面
+            getEditEmailPage({currentTarget: {dataset: {email}}}){
+                wx.navigateTo({
+                    url: `/pages/user-module/mine-edit-email?email=${email}`
+                })
+            },
+            // 跳转修改兴趣页面
+            getEditInterestPage(){
+                wx.navigateTo({
+                    url: '/pages/user-module/mine-edit-interest'
+                })
+            },
+            // 跳转修改目标页面
+            getEditTargetPage(){
+                wx.navigateTo({
+                    url: '/pages/user-module/mine-edit-target'
+                })
+            },
+            // 跳转修改职能页面
+            getEditStatusPage(){
+                wx.navigateTo({
+                    url: '/pages/user-module/mine-edit-status'
+                })
+            }
+           
+        }
+
+        computed = {
+            interestItem() {
+                if(!this.interestList.length) return ''
+                if(this.interestList.length <= 1) {
+                    return this.interestList[0].label
+                }else{
+                    return this.interestList[0].label + ' 等' +this.interestList.length + '个'
+                }
+            },
+            statusItem() {
+                if(!this.statusList.length) return ''
+                if(this.statusList.length <= 1) {
+                    return this.statusList[0].label
+                }else{
+                    return this.statusList[0].label + ' 等' +this.statusList.length + '个'
+                }
+            },
+            headLine() {
+                return this.$parent.cardHeight - 64
+            }
+        } 
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
+        onShow(){
+            let self = this
+            reportApi.userCenterInfo({
+                token:this.token,
+            })
+            .then(data=>{
+                self.userObj = data
+                console.log(data)
+                // 兴趣标签
+                let interestList = self.userObj.interestList
+                self.interestList= interestList.filter((item)=>{
+                    return item.isActive
+                })
+                // 学习目标
+                let targetList = self.userObj.targetList
+                let targetIndex = targetList.findIndex(item => item.isActive)
+                self.targetItem = targetList[targetIndex] ? targetList[targetIndex] : {}
+
+                // 职能标签
+                let statusList = self.userObj.statusList
+                self.statusList= statusList.filter((item)=>{
+                    return item.isActive
+                })
+                self.$apply()
+            })
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .mine-article__body {height: 100%;background-color:@background-gray-F4;position: relative;overflow-x: hidden;}
+    .ui-mine-edit{
+        .ui-mine{
+           width: 100%;height: 168rpx;padding: 0 32rpx 0 40rpx;display: flex;align-items: center;justify-content: space-between;box-sizing: border-box;font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;margin-top:20rpx;background-color:@background-white;
+           image{height: 100rpx;width:100rpx;border-radius: 50%;}
+        }
+        .ui-row-box{
+            background-color: @background-white;margin-top:20rpx;
+            .ui-row{
+                height: 128rpx;display: flex;padding-right:24rpx;justify-content: space-between;align-items: center;font-family: PingFangSC-Regular;font-size: 30rpx;margin-left:40rpx;border-bottom:2rpx solid @border-gray;
+                .cell-key{color: @color-black;}
+                .cell-value{
+                    color: @color-gray;display: flex;height:100%;align-items:center;
+                    text{color:@color-gray-c7;margin-left: 8rpx}
+                }
+                .cell-value.cell-name{padding-right: 12rpx}
+            }
+        }
+    }
+</style>

@@ -1,0 +1,445 @@
+<template>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <scroll-view
+        scroll-y="{{isScroll}}"
+        enable-back-to-top="{{ true }}"
+        scroll-with-animation="{{ true }}"
+        bindscroll="getScroll"
+        class="__body">
+        <jn-header hiddenButton  title="我的">
+             <button slot="cursor-button" class="cell-back" @tap.stop="getBackFindList">
+                <text class="icon-back"></text>
+            </button>
+        </jn-header>
+        <view class="ui-mine-box" @tap.stop="getToEditPage">
+            <view class="ui-mine">
+                <view class="ui-portrait">
+                    <image class="mine-userinfo-view-avator" src="{{avatar}}" />
+                </view>
+                <view class="ui-name-box">
+                    <view class="ui-name">{{userName}}</view>
+                    <view class="ui-test" wx:if="{{testUserCount}}">
+                        <image src="http://wx-small.runwise.cn/image/imageID5ddf3c30bb643ebe42e821827eb1.png" />
+                        <text>内测用户</text>
+                    </view>
+                </view>
+            </view>
+            <view class="ui-edit">修改资料<text class="icon-details"></text></view>
+        </view>
+        <view class="ui-mine-skill">
+            <view class="ui-mine-skill-row"
+                hover-class="ui-mine-skill-down"
+                @tap.stop="handleSkillBoard">
+                <view class="ui-mine-skill-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageID015da1634d0405b3a87a919a487d.png"></image>
+                    <view class="title">我的技能成就</view>
+                </view>
+                <text class="icon-details"></text>
+            </view>
+        </view>
+        <view class="mine-funtion-rows">
+            <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down"  @tap.stop="handleLesson">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageIDc4f2234fd884ae899229f2f0fcb4.png"/>
+                    <view class="title">已完成微课</view>
+                </view>
+				<text class="icon-details"></text>
+            </view>
+            <!-- <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down"  @tap.stop="handleCollect">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageID1905d19167c4efb9f4c617fff352.png"/>
+                    <view class="title">收藏</view>
+                </view>
+				<text class="icon-details"></text>
+            </view> -->
+            <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down"  @tap.stop="handleTapScore">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageID84f42259d4f4cea9b09b65bc825b.png"/>
+                    <view class="title">我的即能币</view>
+                    <view class="mine-funtion-row-coin-num">{{userBonus}}</view>
+                </view>
+				<text class="icon-details"></text>
+            </view>
+            <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down" wx:if="{{isShowGift}}">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageID08c30263fa14fb93d6390e312c8e.png"/>
+                    <view class="title">专属礼包</view>
+
+                    <form bindsubmit="handleSavePushCode" report-submit>
+                        <button class="cell-button" formType="submit" @tap.stop="getGift">
+                            领取
+                        </button>
+                    </form>
+                </view>
+                <text class="icon-details"></text>
+            </view>
+            <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down"  @tap.stop="handleApply">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageID01b560dcd544aa9c9d8d9ace1b96.png"/>
+                    <view class="title">申请成为内测用户</view>
+                    <image class="mine-funtion-row-neice" wx:if="{{testUserFlag}}"
+                           src="http://wx-small.runwise.cn/image/imageID7c5ec0b91224baa2ab08caf5a1b7.png"/>
+                </view>
+				<text class="icon-details"></text>
+            </view>
+            <view class="mine-funtion-row" hover-class="ui-mine-funtion-row-down"  @tap.stop="handleFeedback">
+                <view class="mine-funtion-row-left">
+                    <image class="icon"
+                           src="http://wx-small.runwise.cn/image/imageIDf8893c54cf94849f99cdcbaa9cc4.png"/>
+                    <view class="title">意见反馈</view>
+                </view>
+				<text class="icon-details"></text>
+            </view>
+        </view>
+        <view class="mine-bottom-view">
+            <image class="mine-bottom-image"
+                   src="http://wx-small.runwise.cn/image/imageIDb6b51ba40084b3817965bfa6483f.png"/>
+            <view class="mine-officialaccount-btn" @tap.stop="handleOpenGuideImage" id="fallow_official_account">关注
+            </view>
+        </view>
+        <view style="width:100%;height:80rpx;"></view>
+    </scroll-view>
+    <view class="mine-guide-image" style="padding-top:{{headerHeigth}}px" @tap.stop="handleCloseGuideImage" wx:if="{{guideShow}}">
+        <image src="http://wx-small.runwise.cn/image/imageID2ebac44f7f14828c4448f466196f.png" mode="widthFix"></image>
+    </view>
+
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {
+        NetworkError
+    } from "../../errors";
+    import {
+        getStore,
+        connect
+    } from "wepy-redux";
+    import {
+        course as courseApi,
+        payment as paymentApi,
+        contact as contactApi,
+        registered as fetchRegistered
+    } from "../../api";
+    import {
+        showErrorPage
+    } from "../../utils";
+    import PushMixin from '../../mixins/push'
+    import loadingMixin from "../../mixins/loading";
+    import Loading from '../../components/common/loading';
+    import header from '../../components/common/header'
+    import SkillSet from '../../components/SkillSet/index'
+
+    const store = getStore();
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            // return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {
+            return state.entrance
+        },
+    })
+    export default class Mine extends wepy.page {
+        mixins = [PushMixin, loadingMixin]; // end mixins
+
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            extendAble: true,
+            isLoaded: false,
+            isShowGift: false,
+            courses: [], // end courses
+            mySkillGroup: [],
+            giftCount: 0,
+            isShowClearButton: false,
+            userSkillSet: {},
+            skillGroupList: [],
+            skillList: [],
+            testUserCount: 0,
+            userBonus: 0,
+            couponCount: 0,
+            payCount: 0,
+            guideShow: false,
+            testUserFlag: false,
+        }
+        components = {
+            'mloading': Loading,
+            'mSkillSetInMine': SkillSet,
+            'jn-header': header,
+        }
+        methods = {
+            getBackFindList(){
+               wx.switchTab({
+                    url: "/pages/FindList/index"
+                }); 
+            },
+            // 点击去修改资料的页面
+            getToEditPage(){
+                wepy.navigateTo({
+                    url: "/pages/user-module/mine-edit"
+                });
+            },
+            handleLesson() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/lesson-list"
+                });
+            },
+            handleCollect() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/mine-collect"
+                });
+            },
+            //点击去技能看板
+            handleSkillBoard() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/skill-board"
+                });
+            },
+            handleOpenGuideImage() {
+                this.guideShow = true
+            },
+            handleCloseGuideImage() {
+                this.guideShow = false
+            },
+            handleFeedback() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/mine-feedback"
+                });
+            },
+            handleTapScore() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/score-detail"
+                });
+            },
+            handleClearStorage(event) {
+                wx.clearStorage()
+            },
+            handleMyTeamLearn() {
+                wepy.navigateTo({
+                    url: "/pages/MyTeamLearning/index"
+                });
+            },
+            handleTapGiftRecord() {
+                return this.$navigate('/pages/GiftDetail/index', {type: 'mine'})
+                this.$navigate('/pages/GiftRecord/index')
+            }, // handleTapGiftRecord
+            handleTapHasBuy() {
+                wepy.navigateTo({
+                    url: "/pages/BuyRecord/index"
+                });
+            },
+            handleApply() {
+                wepy.navigateTo({
+                    url: "/pages/user-module/apply-for-test"
+                });
+            },
+            getGift(event) {
+                wepy.navigateTo({
+                    url: '/pages/registered-module/interest-select'
+                });
+            },
+            /**
+             * 监听滚动条的位置
+             * @param
+             */
+            getScroll({ detail: { scrollTop } }) {
+                let self = this
+                setTimeout(() => {
+                    self.scrollTop = scrollTop
+                }, 100)
+            }
+        };
+
+        onLoad(parmas) {
+            let self = this
+            self.isShowGift = false
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+
+            if (parmas && parmas.type) {
+                let name = 1==parmas.type ? '课程页/头像' : '发现页/头像'
+                wepy.$instance.globalData.getHuilder('课程页/头像', 'click', '我的页面')
+            }
+
+            self.__isGetGift()
+        }
+        onUnload() {
+            this.guideShow = false
+        }
+
+        computeTestUser() {
+            if (!this.testUserCount) return
+            let testUser = ''
+            let self = this
+            wx.getStorage({
+                key: 'testUserCount',
+                success: function (res) {
+                    testUser = res.data
+                    console.log('已通过图标次数', testUser)
+                    self.testUserFlag = !testUser ? true : false
+                    self.$apply()
+                    wx.setStorage({
+                        key: "testUserCount",
+                        data: !testUser ? 1 : testUser + 1
+                    })
+                },
+                fail: function (res) {
+                    console.log('已通过图标次数', res)
+                    self.testUserFlag = true
+                    self.$apply()
+                    wx.setStorage({
+                        key: "testUserCount",
+                        data: 1
+                    })
+                }
+            })
+        }
+
+        onShow() {
+            // 通知组件，生成图片预览
+            this.$broadcast('studying-bar')
+            courseApi
+                .getMyCenterNew({
+                    token: this.token
+                })
+                .then(data => {
+                    // this.mySkillGroup = data.myLabel.filter(item => null!==item&&''!==item);
+                    // this.giftCount = data.giftCount;
+                    // this.isShowClearButton = data.isShowClearButton
+                    // this.skillSet = data.skillSet
+                    // this.skillGroupList = data.skillGroupList
+                    this.testUserCount = data.testUserCount
+                    this.payCount = data.payCount
+                    this.couponCount = data.couponCount
+                    this.userBonus = data.userBonus
+                    this.userSkillSet = data.userSkillSet
+                    this.skillGroupList = data.userSkillSet.skillGroupList
+                    this.skillList = data.userSkillSet.skillList
+                    this.$invoke('mSkillSetInMine', 'refreshData', {
+                        skillSet: data.userSkillSet.skillList,
+                        skillGroupList: data.userSkillSet.skillGroupList,
+                        title: '我的技能',
+                        extendAble: true
+                    })
+                    this.computeTestUser()
+                    this.isLoaded = true
+
+                    this.$apply()
+
+                    wx.reportAnalytics('mycenter_visit', {
+                        role: this.role,
+                        nickname: this.userName,
+                        channel: this.entrance.mappers[this.entrance.scenceID]
+                    })
+
+                })
+                .catch(error => {
+                    if (error instanceof NetworkError) return showErrorPage();
+                    console.log("get getMyCenter error", error);
+                });
+        }
+
+        __isGetGift() {
+            let self = this
+            let postData = {
+                token: self.token
+            }
+            fetchRegistered.userInfo(postData).then((respone) => {
+                self.isShowGift = !respone.hasGift
+                self.$apply()
+            }).catch(error => {
+
+            })
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-mine-box{
+        display: flex;padding:0 24rpx 0 32rpx;background-color:#fff;width: 100%;height: 200rpx;align-items:center;justify-content:space-between;box-sizing:border-box;
+        .ui-mine{
+            display: flex;height: 128rpx;
+            .ui-portrait image{width: 128rpx;height: 128rpx;border-radius: 50%;margin-right: 24rpx;}
+            .ui-name-box{
+                height: 128rpx;display: flex;flex-direction: column;justify-content:space-between;
+                .ui-name{font-family: PingFangSC-Medium;font-size: 48rpx;color:@color-black;width: 380rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                .ui-test{
+                    font-family: PingFangSC-Regular;font-size: 26rpx;color:@color-yellow;height: 36rpx;display: flex;align-items: center;
+                    image{width: 32rpx;height: 28rpx;margin-right: 8rpx}
+                }
+            }
+        } 
+        .ui-edit{
+            width: 164rpx;height: 100%;;font-size: 28rpx;color: @color-gray;font-family: PingFangSC-Regular;display:flex;align-items:center;justify-content: flex-end;line-height: 200rpx;
+            text{font-size: 28rpx}
+        }
+    }
+    .ui-mine-skill {
+        background-color: @background-white;
+        .ui-mine-skill-row {
+            border-bottom: 2rpx solid @border-gray;position: relative;display: flex;padding:0 24rpx 0 40rpx;align-items: center;height: 144rpx;justify-content: space-between;margin:20rpx 0;
+            .ui-mine-skill-left{
+                display: flex;align-items: center;width: fit-content;
+                .title{font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;margin-left: 32rpx;}
+                .icon{width: 48rpx;height: 48rpx;}
+            }
+            .icon-details {color:@color-gray-c7}
+        }
+        .ui-mine-skill-down{background: @background-mask-normal-2;}
+        
+    }
+    .mine-funtion-rows{
+        width: 100%;box-sizing: border-box;background-color: #fff;
+        .mine-funtion-row{
+            border-bottom: 2rpx solid #f1f2f5;position: relative;display: flex;align-items: center;height: 120rpx;justify-content: space-between;padding: 0 24rpx 0 40rpx;
+            .mine-funtion-row-left{
+                display: flex;align-items: center;width: fit-content;
+                .title{font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;margin-left: 32rpx;}
+                .icon{width: 48rpx;height: 48rpx;}
+	            .mine-funtion-row-coin-num{font-size: 36rpx;color:@color-blue;position: absolute;right: 72rpx;}
+                .cell-button{width:128rpx;height:56rpx;background-color:@background-blue;font-size:30rpx;color:@color-white;text-align:center;line-height:56rpx;border-radius:@border-radius-12;position:absolute;right:72rpx;top: 50%;transform: translate(0,-50%)}
+	            .mine-funtion-row-neice{right: 72rpx;position: absolute;width: 112rpx;height: 52rpx;}
+            }
+            .icon-details {color:@color-gray-c7}
+        }
+        .ui-mine-funtion-row-down{background: @background-mask-normal-2;}
+    }
+    .mine-bottom-view{
+        border-top: 20rpx solid @border-gray;width: 100%;height: 260rpx;position: relative;
+	    .mine-bottom-image{width: 100%;height: 100%;}
+	    .mine-officialaccount-btn{border-radius: @border-radius-12;background-color: @background-blue;display: flex;align-items: center;justify-content: center;font-family: PingFangSC-Medium;font-size: 30rpx;color: @color-white;margin-left: 266rpx;position: absolute;width: 128rpx;height: 72rpx;right: 24rpx;top: 94rpx;}
+    }
+  
+	.__body {height: 100%;background-color: @background-gray-F4;position: relative;overflow-x: hidden;}
+	::-webkit-scrollbar{width: 0 !important;height: 0 !important;background: transparent !important;}
+
+	.mine-guide-image{position: fixed;width: 100%;height: 100%;background-color: rgba(0, 0, 0, .7);top: 0;left: 0;z-index: 30;}
+	.mine-guide-image image{width: 100%;height: 992rpx;margin-top:10rpx;}
+</style>

@@ -1,0 +1,152 @@
+<template>
+    <scroll-view
+        scroll-y="{{isScroll}}"
+        enable-back-to-top="{{ true }}"
+        scroll-with-animation="{{ true }}"
+        bindscroll="getScroll"
+        class="mine-article__body">
+        <jn-header title="更改兴趣"></jn-header>
+        <view class="ui-edit-interest">
+            <view class="cell-title">你想提升的能力</view>
+            <view class="cell-dec">选择不同的能力，即能将为你推荐针对性的课程</view>
+            <view class="ui-interest">
+                <view wx:for="{{interestList}}" wx:key="{{item.id}}"  class="ui-item" @tap.stop="getInterestItem" data-item="{{item}}">
+                    <text>{{item.label}}</text>
+                    <view class="ui-icon" wx:if="{{item.isActive}}">
+                        <text class="icon-complete"></text>
+                    </view>
+                </view>
+            </view>
+            <view class="cell-commit" @tap.stop="getCommit">确定</view>
+            <view style="width:100%;height:80rpx;"></view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {getStore, connect} from "wepy-redux";
+    import {auth as authApi,report as reportApi} from "../../api";
+    import header from '../../components/common/header'
+
+    const store = getStore();
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
+            //return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+        role(state) {
+            return state.user.role
+        },
+    })
+    export default class MineEditInterest extends wepy.page {
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            interestList:[],
+            num:0,
+            activeList:[]
+
+        } // end data
+        components = {
+            'jn-header': header,
+        }
+        methods = {
+            // 点击单个 item
+            getInterestItem({currentTarget: {dataset: {item}}}) {
+                if(item.isActive) {
+                    this.interestList.map(i =>{
+                        if(i.id == item.id) {
+                            i.isActive = !i.isActive
+                        }
+                    })
+                }else{
+                    this.activeList =this.interestList.filter(item => {
+                        return item.isActive
+                    })
+                    if(this.activeList.length >= 3) {
+                        return wepy.showToast({
+                            title: '兴趣标签最多选择3个',
+                            icon:'none'
+                        })
+                    }else{
+                        this.interestList.map(i =>{
+                            if(i.id == item.id) {
+                                i.isActive = !i.isActive
+                            }
+                        })
+                    }
+                }
+            },
+            getCommit(){
+                let self = this
+                let list = self.interestList.filter(item => {
+                    return item.isActive
+                })
+                reportApi.saveUserCenterInfo({ token:self.token, json: { interestList: list}, flag:'interestList'})
+                    .then((res) => {
+                        wx.navigateBack()
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+                
+            }
+           
+           
+        }
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
+        onShow(){
+            let self = this
+            reportApi.userCenterInfo({
+                token:this.token,
+            })
+            .then(data=>{
+                self.interestList = data.interestList
+                self.$apply()
+            })
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .mine-article__body {height: 100%;background-color: @background-white;position: relative;overflow-x: hidden;}
+    .ui-edit-interest{
+        display: flex;flex-direction: column;align-items: center;justify-content: center;padding-top:40rpx;font-family: PingFangSC-Medium;
+        .cell-title{font-size: 48rpx;color: @color-black;letter-spacing: 0;}
+        .cell-dec{opacity: 0.8;font-size: 28rpx;color: @color-gray;margin-top: 34rpx}
+        .ui-interest{
+            display:flex;margin-top: 70rpx;flex-wrap:wrap;padding:0 27rpx;
+            width: 100%;box-sizing:border-box;
+            .ui-item{
+                width: 200rpx;height: 88rpx;background: @background-gray-F4;border-radius: @border-radius-20;font-size: 30rpx;color: @color-black;letter-spacing: 0.02rpx;display: flex;align-items: center;justify-content: center;margin: 0 16rpx 36rpx;
+                .ui-icon{width: 36rpx;height: 36rpx;background: @color-blue;border-radius: 50%;color: @color-white;margin-left: 10rpx;font-size: 24rpx;line-height:38rpx;text-align:right;}
+            }
+        }
+        .cell-commit{width: 700rpx;height: 100rpx;background: @background-gray-F4;border-radius: @border-radius-20;color:@color-blue;font-family: PingFangSC-Medium;font-size:36rpx;letter-spacing: 0.04rpx;text-align: center;line-height: 100rpx;margin-top: 48rpx}
+    }
+</style>

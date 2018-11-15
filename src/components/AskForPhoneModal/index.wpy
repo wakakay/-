@@ -1,0 +1,99 @@
+<template>
+  <view class="flex-center-column author-modal-wrapper">
+    <view class="author-modal-wrapper__box">
+      <view class="author-modal-wrapper__box__body"> {{ tips }} </view>
+      <button class="author-modal-wrapper__box__footer" open-type="{{isPhoneSet? 'nil': 'getPhoneNumber'}}"  @getphonenumber.stop="handleDescryptPhone">知道了</button>
+    </view><!-- box -->
+  </view><!-- wrapper -->
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { sleep, doDecrpytPhone } from '../../utils'
+  import { getStore, connect } from 'wepy-redux'
+  import { CustomError } from '../../errors'
+  import {
+    login
+  } from '../../redux/models/user'
+  const store = getStore()
+
+  @connect({
+    poster(state) {
+      return state.activity.poster
+    }
+  })
+  export default class ActivityModal extends wepy.component {
+    props = {
+      tips: {
+        type: String,
+        default: 'bala bala bala'
+      }
+    } // end props
+
+    data = {
+      isModalShow: true
+    }
+
+    methods = {
+      handleDescryptPhone(event) {
+        return doDecrpytPhone(event.detail)
+          .then(() => {
+            this.$emit('descryptPhoneSuccess')
+          })
+          .catch(error => {
+            this.$emit('descryptPhoneFail', error)
+          })
+      } // end handleDescryptPhone
+    } // end methods
+
+  }
+</script>
+
+<style lang="less">
+  .author-modal-wrapper {
+    width: 750rpx;
+    height: 100vh;
+    z-index: 10000;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .7);
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+
+  .author-modal-wrapper__box {
+    width: 600rpx;
+    height: auto;
+    border-radius: 24rpx;
+    background-color: #FFF;
+  }
+
+  .author-modal-wrapper__box__body {
+    padding: 46rpx 40rpx;
+    /*background-color: yellow;*/
+    font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    color: #294657;
+    text-align: justify;
+    line-height: 48rpx;
+  }
+
+  .author-modal-wrapper__box__footer {
+    height: 100rpx;
+    position: static;
+    border-top: 2rpx solid #F1F2F5;
+    line-height: 100rpx;
+    text-align: center;
+    font-family: PingFangSC-Semibold;
+    font-size: 32rpx;
+    color: rgb(60, 197, 31);
+    letter-spacing: 1.4rpx;
+    background-color: #FFF !important;
+  }
+
+  .author-modal-wrapper__box__footer::before {
+    display: none;
+    border: 0 !important;
+  }
+
+</style>

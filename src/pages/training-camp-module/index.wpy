@@ -1,0 +1,428 @@
+<template>
+	<mloading wx:if="{{ !isLoaded  }}"/>
+	<jn-header title="训练营" hiddenButton></jn-header>
+	<view class="ui-training-camp" style="height: calc(100% - {{headerHeigth}}px)" wx:if="{{isLoaded}}">
+		<scroll-view class="ui-bar" scroll-x="{{ true }}"
+					 scroll-into-view="item-{{ activedAssortmentPage }}"
+					 wx:if="{{adminTeamBeforList.length || adminTeamDoingList.length || adminTeamEndList.length}}" scroll-with-animation="{{ true }}">
+			<view wx:for="{{ teamSort }}" wx:key="{{ index }}" id="item-{{ 0==index? 'source-zero': index }}"
+				  data-series-index="{{ index }}" class="cell-item"
+				  :class="{ actived: index==activedAssortmentIndex }" @tap.stop="handleSelectSeries">{{ item.label }}
+			</view>
+		</scroll-view>
+		<swiper class="ui-list {{!adminTeamBeforList.length && !adminTeamDoingList.length && !adminTeamEndList.length? 'empty' : ''}}"
+				indicator-dots="{{ false }}"
+				autoplay="{{ false }}"
+				circular="{{ false }}"
+				duration="300" interval="2000"
+				current="{{ activedAssortmentIndex }}"
+				bindchange="handleSwiperChanged">
+			<swiper-item wx:for="{{ teamSortTab }}" wx:key="{{ index }}" data-swiper-item-id="item-{{ index }}">
+				<!-- 我管理的 -->
+				<scroll-view wx:if="{{index===1}}"
+							 scroll-y="{{isScroll}}"
+							 bindscroll="getScroll"
+							 class="ui-scroll">
+					<!-- 我管理的 adminTeamDoingList -->
+					<view wx:if="{{ adminTeamDoingList.length }}">
+						<view>
+							<repeat for="{{ adminTeamDoingList }}" item="item" index="index" key="index">
+								<view class="ui-item ui-admin">
+									<teamLearningCourse
+											:teamLearnCourse="item" :teamStatus.sync='teamStatus[0]'
+											:offset.sync="index" :id.sync="item.teamID"
+											:courseStatus.sync="item.courseStatus" :gradeName.sync="item.gradeName"
+											:image.sync="item.imageUrl" :name.sync="item.name"
+											:showPoint.sync="item.showPoint" :skill.sync="item.skill"
+											:price.sync="item.price"
+											:newLabel.sync="item.newLabel" :payType.sync="item.payType"
+											:startDate.sync="item.beginDate" :endDate.sync="item.endDate"
+											:statusMsg.sync="item.statusMsg" :status.sync="item.status"
+											:count.sync="item.joinCount" :limit.sync="item.limitCount"
+											:role.sync="item.role" :userAvatarUrlList="item.userAvatarUrlList"
+											:userCount="item.userCount" :percent.sync="item.progress"
+											:index.sync="item.index" :allIndex.sync="item.allIndex"
+											:taskMyProgress="item.taskMyProgress" :taskPlanProgress="item.taskPlanProgress"
+											@tendToAttendTeamLearning.user="handleTendToAttendTeamLearning"
+											@tendToAttendTeamLearningManager.user="handleTendToAttendTeamLearningManager"
+									/>
+								</view>
+								<!-- wrapper -->
+							</repeat>
+						</view>
+					</view>
+					<!-- 我管理的 adminTeamBeforList -->
+					<view wx:if="{{ adminTeamBeforList.length }}">
+						<view>
+							<repeat for="{{ adminTeamBeforList }}" item="item" index="index" key="index">
+								<view class="ui-item ui-admin">
+									<teamLearningCourse
+											:teamLearnCourse="item"
+											:offset.sync="index" :id.sync="item.teamID"
+											:gradeName.sync="item.gradeName"
+											:image.sync="item.imageUrl" :name.sync="item.name"
+											:startDate.sync="item.beginDate" :endDate.sync="item.endDate"
+											:statusMsg.sync="item.statusMsg" :status.sync="item.status"
+											:count.sync="item.joinCount" :limit.sync="item.limitCount"
+											:notStart.sync='true' :role.sync="item.role"
+											:userAvatarUrlList="item.userAvatarUrlList"
+											:beginDateTip="item.beginDateTip"
+											:userCount="item.userCount" :percent.sync="item.progress"
+											:index.sync="item.index" :allIndex.sync="item.allIndex"
+											@tendToAttendTeamLearning.user="handleTendToAttendTeamLearning"
+									/>
+								</view>
+							</repeat>
+						</view>
+					</view>
+					<view class="cell-recommend-box" :class="{'has' : adminTeamDoingList.length || adminTeamBeforList.length}" wx:if="{{adminTeamEndList.length}}">已结束</view>
+					<view wx:if="{{adminTeamEndList.length}}">
+						<view class="ui-camp-item" wx:for="{{ adminTeamEndList }}"  wx:key="{{index}}" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{item.teamID}}">
+							<view class="ui-box">
+								<image class="cell-img" src="{{item.imageUrl}}" />
+							</view>
+							<view class="ui-font">
+								<view class="cell-title">{{item.name}}</view>
+								<view class="cell-date">{{item.teamTimeTip}}
+									<text>，</text>
+									<text class="color-flag">{{item.progress+'% '}}</text>
+									<text>完成比例</text>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="ui-team-height"></view>
+				</scroll-view>
+
+				<!-- 我参与的 -->
+				<scroll-view scroll-y="{{isScroll}}"
+							 bindscroll="getScroll"
+							 class="ui-scroll"
+							 style="" wx:if="{{index===0}}">
+					<view class="ui-partin-title-box" wx:if="{{ memberTeamStatus === 'sign' }}">
+						<view class="ui-parin-your-camp">你的训练营</view>
+						<view class="ui-parin-all-camp" @tap.stop="goAllCampList">
+							查看全部
+							<text class="iconfont icon-right-arrow"></text>
+						</view>
+					</view>
+					<!-- 我参与的 teamDoingList-->
+					<view wx:if="{{ teamDoingList.length }}">
+						<view>
+							<repeat for="{{ teamDoingList }}" item="item" index="index" key="index">
+								<view class="ui-item ui-member">
+									<teamLearningCourse
+											:offset.sync="index" :id.sync="item.teamID"
+											:image.sync="item.imageUrl" :name.sync="item.name"
+											:startDate.sync="item.beginDate" :endDate.sync="item.endDate"
+											:statusMsg.sync="item.statusMsg" :status.sync="item.status"
+											:count.sync="item.joinCount" :limit.sync="item.limitCount"
+											:role.sync="item.role"  :taskTip="item.myTaskTip"
+											:userAvatarUrlList="item.userAvatarUrlList"
+											:beginDateTip="item.beginDateTip"
+											:taskMyProgress="item.taskMyProgress" :taskPlanProgress="item.taskPlanProgress"
+											:userCount="item.userCount" :percent.sync="item.progress"
+											:index.sync="item.index" :allIndex.sync="item.allIndex"
+											@tendToAttendTeamLearning.user="handleTendToAttendTeamLearning"/>
+								</view>
+							</repeat>
+						</view>
+					</view>
+					<!-- 我参与的 未开始的 teamBeforList-->
+					<view wx:if="{{ teamBeforList.length }}">
+						<view>
+							<repeat for="{{ teamBeforList }}" item="item" index="index" key="index">
+								<view class="ui-item ui-member">
+									<teamLearningCourse
+											:offset.sync="index" :id.sync="item.teamID"
+											:image.sync="item.imageUrl" :name.sync="item.name"
+											:startDate.sync="item.beginDate" :endDate.sync="item.endDate"
+											:statusMsg.sync="item.statusMsg" :status.sync="item.status"
+											:count.sync="item.joinCount" :limit.sync="item.limitCount"
+											:role.sync="item.role"  :taskTip="item.myTaskTip"
+											:userAvatarUrlList="item.userAvatarUrlList"
+											:beginDateTip="item.beginDateTip"
+											:userCount="item.userCount" :percent.sync="item.progress"
+											:index.sync="item.index" :allIndex.sync="item.allIndex"
+											@tendToAttendTeamLearning.user="handleTendToAttendTeamLearning"
+									/>
+
+								</view>
+							</repeat>
+						</view>
+					</view>
+
+					<!-- 我参与的 当列表为空时-->
+					<view class="ui-empty-list"
+						  wx:if="{{ isLoaded && !teamDoingList.length && !teamBeforList.length}}">
+						<image mode="scaleToFill"
+							   src="http://wx-small.runwise.cn/image/imageID63f4f9ce69d433b12a647a979545.png" />
+						<view class="cell-text" wx:if="{{memberTeamStatus == 'neverSign'}}">快去报名你的第一个训练营吧~</view>
+						<view class="cell-text" wx:else>最近没有报名训练营噢~</view>
+					</view>
+
+					<!-- 为你推荐 -->
+					<view class="cell-recommend-box" :class="{'has' : teamDoingList.length || teamBeforList.length}" wx:if="{{teamCommendList.length}}">为你推荐</view>
+					<view wx:if="{{teamCommendList.length}}">
+						<view class="ui-camp-item" wx:for="{{ teamCommendList }}"   wx:key="{{index}}" @tap.stop="handleTendToAttendTeamLearningIntroduction" data-team-i-d="{{item.teamID}}">
+							<view class="ui-box">
+								<image class="cell-img" src="{{item.imageUrl}}"></image>
+							</view>
+							<view class="ui-font">
+								<view class="cell-title">{{item.name}}</view>
+								<view class="cell-date">{{item.beginDate}}-{{item.endDate}}
+									<text>· </text>
+									<text class="cell-num">{{item.joinCount}}人</text> 报名
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="ui-team-height"></view>
+				</scroll-view>
+			</swiper-item>
+		</swiper>
+	</view>
+	<studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore,connect} from "wepy-redux"
+    import Loading from '../../components/common/loading'
+    import loadingMixin from '../../mixins/loading'
+    import header from '../../components/common/header'
+    import TeamLearningCourse from '../../components/TeamLearningCourse/index'
+    import studyingBar from '../../components/common/studying-bar'
+    import {practice as practiceApi } from '../../api'
+    import {initializationDeligate} from '../../utils'
+
+    const store = getStore();
+    @connect({
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+			// return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+        	// return 'userIDe843f9cc21194f45b3eec68544a5961a-1531659221846-8f9281b71c0f2203970a24bb425c0bd3'
+            //return 'userID3f776b9e9d9642328bc5ce53b3aeb7ed-1524810226026-eb777bd01e997ee88ce1e98094d7966d'
+            return state.user.token;
+        }
+    })
+    export default class TraningCamp extends wepy.page {
+        mixins = [loadingMixin]
+
+        computed = {
+            teamSortTab() {
+                if(this.adminTeamBeforList.length || this.adminTeamDoingList.length || this.adminTeamEndList.length) {
+                    return [{lable:'我参与的'},{lable:'我管理的'}]
+                }else {
+                    return [{lable:'我参与的'}]
+                }
+            }
+        }
+
+        components = {
+            'mloading': Loading,
+            'teamLearningCourse': TeamLearningCourse,
+            'jn-header': header,
+            'studying-bar': studyingBar
+        }
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            teamStatus: ['进行中', '未开始'],
+            isLoaded: false,
+            authorizationTips: '请授权授权。。。', // 授权提示
+            activedAssortmentIndex: 0, // 选中的系列index
+            activedAssortmentPage: 0, // 第几页
+            seriesPerPage: 2,
+            teamSort: [{
+                label: '我参与的'
+            },
+                {
+                    label: '我管理的'
+                }
+            ],//标题tab
+            adminTeam: {},
+            memberTeam: {},
+            teamCommendList: [],//为你推荐
+            adminTeamDoingList: [],//我管理的 课程
+            adminTeamEndList: [],//我管理的 已结束的
+            teamDoingList: [],//正在学习的课程
+            teamBeforList: [],//未开始的课程
+            adminTeamBeforList: [],//我管理的 未开始的
+            memberTeamStatus:'sign' //从未参加过 neverSign  曾经参加过sign
+        }
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
+        onShow() {
+            initializationDeligate({
+                initializeFunc: this.initialize.bind(this)
+            })
+        }
+
+        events = {
+            attendClass(courseID, resume, $event) {
+                try {
+                    wepy.navigateTo({
+                        url: `/pages/course-module/course-details?id=${courseID}&resume=${resume}`
+                    })
+                } catch (err) {
+                    console.log('handle attend classes err', err)
+                }
+            },
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            },
+            /**
+             * 监听是否要禁止滚动
+             * @param options
+             */
+            'on-studying-bar': (data) => {
+                let self = this
+                self.isScroll = data.isShow
+            }
+        }
+        methods = {
+            //点击 全部 去到 全部训练营 列表
+            goAllCampList() {
+                this.$navigate('/pages/training-camp-module/all-training');
+            },
+            handleAuthorizationSuccess() {
+                this.initialize()
+            }, // end handleAuthorizationSuccess
+
+            //当改变tab 触发下面的内容转变 触发
+            handleSwiperChanged({ detail: {current, source } }) {
+                if ('touch' !== source) return false // 不处理非手势滑动 切换
+                this.switchSeries({
+                    current,
+                    seriesPerPage: this.seriesPerPage
+                })
+            },
+
+            //点击 tab的时候触发
+            handleSelectSeries({ currentTarget: { dataset: { seriesIndex } } }) {
+                this.switchSeries({
+                    current: seriesIndex,
+                    seriesPerPage: this.seriesPerPage
+                })
+            },
+            //跳往详情页
+			handleTendToAttendTeamLearning({currentTarget: {dataset: {teamID}}}) 
+			{
+                this.$navigate('/pages/training-camp-module/coursr-list', {
+                    teamID
+                })
+            },
+            //跳去报名页
+			handleTendToAttendTeamLearningIntroduction({currentTarget: {dataset: {teamID}}})
+			{
+                this.$navigate('/pages/training-camp-module/registration', {
+                    teamID
+                })
+            },
+            //跳往管理页
+            handleTendToAttendTeamLearningManager({currentTarget: {dataset: {teamID}}}) {
+                this.$navigate('/pages/training-camp-module/my/main', {teamID})
+            },
+            /**
+             * 监听滚动条的位置
+             * @param
+             */
+            getScroll({ detail: { scrollTop } }) {
+                let self = this
+                setTimeout(() => {
+                    self.scrollTop = scrollTop
+                }, 100)
+            }
+        }
+        initialize() {
+            // 通知组件，生成图片预览
+            this.$broadcast('studying-bar')
+            practiceApi.getMyTeamListByTabByCommend({token: this.token})
+			.then(res => {
+				this.isLoaded = true
+				this.teamDoingList = res.memberTeam.memberTeamDoingList //正在学习的 课程
+				this.teamCommendList = res.memberTeam.memberTeamCommendList //为你推荐的 课程
+				this.teamBeforList = res.memberTeam.memberTeamBeforList //还没开始的 课程
+				this.adminTeamDoingList = res.adminTeam.adminTeamDoingList //我管理的 课程
+				this.adminTeamEndList = res.adminTeam.adminTeamEndList //我管理的 已结束的
+				this.memberTeamStatus = res.memberTeam.memberTeamStatus //是否参加过训练营
+				this.adminTeamBeforList = res.adminTeam.adminTeamBeforList
+				this.$apply()
+			})
+			.then(()=>{
+				wx.showTabBar()
+			})
+			.catch(error => {
+				throw error
+			})
+        }
+
+		switchSeries({current,seriesPerPage}) 
+		{
+            this.activedAssortmentIndex = current
+            this.activedAssortmentPage = `${current < seriesPerPage ? 0 : (current - seriesPerPage)}`
+        }
+    }
+</script>
+
+<style lang="less">
+	@import "../../assets/style/theme";
+	.ui-training-camp{
+		width:100%;height:100%;background-color:@background-white;
+		.ui-bar{
+			width:100%;height:96rpx;white-space:nowrap;overflow:hidden;border-bottom:2rpx solid @border-gray;padding-left:32rpx;
+			.cell-item{width:188rpx;height:96rpx;display:inline-block;position:relative;line-height:96rpx;letter-spacing:1.36rpx;font-size:30rpx;color:@color-blue;}
+			.cell-item.actived{font-weight: bold;font-size: 36rpx}
+		}
+	}
+	.ui-list{
+		width:100%;height:calc(~"100% - 96rpx");
+		.ui-scroll {
+			width:100%;height:100%;
+			.ui-item{width:670rpx;display:block;overflow:hidden;box-sizing:border-box;box-shadow:0rpx 12rpx 32rpx 10rpx rgba(109,130,143,.2);border-radius:@border-radius-16;margin-left:auto;margin-right:auto;background-color:@background-white;border:2rpx solid @border-gray;margin-bottom:48rpx;}
+			.cell-recommend-box {font-size: 40rpx;font-weight:700;color: @color-black;letter-spacing: 0.04rpx;margin:20rpx 0 30rpx 40rpx;padding-left:16rpx;height:48rpx;line-height:48rpx;}
+			.cell-recommend-box.has{ margin-top: 96rpx !important}
+			.ui-camp-item {
+				height: 210rpx;width: 686rpx;display: flex;margin: 0 32rpx 0 32rpx;border-bottom:2rpx solid @border-gray;align-items:center;box-sizing:border-box;position: relative;
+				&:last-of-type{border:none}
+				.ui-box {
+					margin-right: 20rpx;
+					.cell-img {width: 240rpx;height: 144rpx;border-radius: @border-radius-12;}
+
+				}
+				.ui-font {
+					height: 144rpx;display: flex;flex-direction: column;
+					.cell-title {font-family: PingFangSC-Medium;font-size: 32rpx;color: @color-black;line-height: 24px;width: 422rpx;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;height: 96rpx;}
+					.cell-date {
+						width: 422rpx;font-family: PingFangSC-Regular;font-size: 26rpx;color: @color-gray;margin-top: 6rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;
+						.cell-num{color: @color-black;}
+						.color-flag{color: @color-black;}
+					}
+				}
+			}
+			.ui-partin-title-box{
+				display: flex;height: 112rpx;width: 100;align-items:center;padding:0 40rpx;justify-content: space-between;
+				.ui-parin-your-camp {font-size: 40rpx;font-weight:700;color: @color-black;letter-spacing: 0.04rpx;line-height: 48rpx;}
+				.ui-parin-all-camp {
+					font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-blue;cursor: pointer;
+					.icon-right-arrow{font-size: 28rpx}
+				}
+			}
+			.ui-empty-list{
+				text-align: center;
+				.cell-text{margin-top:44rpx;font-family:PingFangSC-Regular;font-size:28rpx;color:@color-gray;}
+			}
+		}
+	}
+	.ui-list.empty{height:100%}
+	.ui-team-height{height:120rpx}
+</style>

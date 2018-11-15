@@ -1,0 +1,274 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <scroll-view class="module-sort-box" :class="{'is-phonex': isIphonex}"
+                 scroll-y
+                 scroll-top="{{scrollTop}}"
+                 scroll-with-animation="{{isScrollAnimation}}">
+        <view class="ui-content">
+            <view class="ui-thumb" wx:if="{{cardItem.bigimage}}">
+                <image mode="aspectFit" src="{{cardItem.bigimage}}"></image>
+            </view>
+            <view class="ui-title">{{cardItem.description}}</view>
+            <view class="ui-subtitle" wx:if="{{!isExercises}}">{{cardItem.singleChoiceDescribe}}</view>
+
+            <view class="ui-answer-list" style="height: {{ 152 * cardItem.select.length + 10 }}rpx;">
+                <repeat for="{{cardItem.select}}" key="index" index="index" item="item">
+                    <view class="ui-item"
+                          :class="{'is-selected': cardsList[cardIndex].selectedInfo[item.id].isSelected}"
+                          hover-class="{{!isAnswerOver && !cardItem.allowToNext ? 'ui-item-hover' : ''}}"
+                          style="top: {{(cardsList[cardIndex].selectedInfo[item.id] ? cardsList[cardIndex].selectedInfo[item.id].index : index) * 152}}rpx"
+                          data-item="{{ item }}"
+                          data-index="{{ index }}"
+                          @tap.stop="getSelected">
+                        <view class="cell-title cross-center">
+                            <text class="flex-box-0">{{cardsList[cardIndex].selectedInfo[item.id].isSelected ? (cardsList[cardIndex].selectedInfo[item.id].index + 1) : ''}}</text>
+                            <text class="flex-box-1">{{item.option}}</text>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+
+            <view class="module-exercises-result" :class="{'is-show': isExercises && isAnswerOver}">
+                <view class="main-justify">
+                    <view class="cell-exercises-title">题目解释</view>
+                    <button hover-class="cell-exercises-hover" class="cell-exercises-button" @tap.stop="getToDiscuss">参与讨论</button>
+                </view>
+                <view class="ui-description">{{description}}</view>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class sortCard extends wepy.component {
+        props = {
+            cardIndex: {
+                type: Number
+            },
+            cardItem: {
+                type: Object,
+                toway: true,
+                default: {}
+            },
+            cardsList: {
+                type: Array,
+                default: []
+            },
+            isExercises: {
+                type: Number,
+                default: 0
+            }
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            isScrollAnimation: false, // 滚动条是否要动画
+            scrollTop: 0, // 滚动条的位置
+            senceID: null,
+            oldIndex: -1, // 记录之前的卡片索引
+            selectedId: '', // 选中的顺序
+            sourceList: [], // 默认排序
+            orderList: [], // 用户选择后的排序
+            resultId: -1, // 正确的结果id
+            isAnswerOver: false, // 是否作答结束
+            description: '', // 选中的答案的解释详情
+        }
+
+        onLoad() {
+            let self = this
+            self.senceID = self.isExercises && self.$parent.paramsInfo.senceID
+        }
+
+        /**
+         * 初始化排序的初始顺序
+         * @param
+         */
+        __sortInit() {
+            let self = this
+            let selectedInfo = self.cardsList[self.cardIndex].selectedInfo = {}
+            _.each(self.cardItem.select, (data, index) => {
+                selectedInfo[data.id] = {
+                    index: index,
+                    isSelected: false,
+                    id: data.id,
+                    weight: data.weight
+                }
+                // 记录最开始的默认排序
+                self.sourceList.push({
+                    id: data.id,
+                    weight: data.weight
+                })
+            })
+        }
+
+        /**
+         * 排序动画
+         * @param item
+         */
+        __sortAnimation(item) {
+            let self = this
+            // 选中的个数
+            let maxList = []
+            let selectedInfo = self.cardsList[self.cardIndex].selectedInfo
+            _.mapObject(selectedInfo, (value, key) => {
+                value.isSelected && maxList.push(value)
+            })
+
+            let size = _.clone(maxList.length)
+            if (selectedInfo[item.id].isSelected) { // 选中
+                _.mapObject(selectedInfo, (value, key) => {
+                    if (value.isSelected && value.id === item.id) {
+                        value.index = maxList.length - 1
+                    } else if (!value.isSelected) {
+                        value.index = size
+                        size++
+                    }
+                    return value
+                })
+            } else { // 取消选中
+                _.mapObject(selectedInfo, (value, key) => {
+                    value.isSelected = value.index >= selectedInfo[item.id].index ? false : true
+                    return value
+                })
+            }
+
+            // 选中的排序
+            let sortList = _.sortBy(maxList, 'index')
+            self.selectedId = _.pluck(sortList, 'id').join(',')
+
+            if (maxList.length === self.cardItem.select.length) {
+                self.orderList = []
+                // 记录用户的排序
+                _.each(sortList, (data) => {
+                    self.orderList.push({
+                        id: data.id,
+                        weight: data.weight
+                    })
+                })
+                self.__sortSelected(item, 1)
+            } else {
+                self.__sortSelected(item)
+            }
+            self.$apply()
+        }
+
+        /**
+         * 通知选择好的排序
+         * @param item
+         */
+        __sortSelected(item, type) {
+            let self = this
+
+            let answerStatus = 2
+            let answerTitle = self.cardItem.feedbackType3.wrong.title
+            let answerDescription = self.cardItem.feedbackType3.wrong.description
+            if (self.cardItem.trueSequence == self.selectedId) {
+                answerStatus = 1
+                answerTitle = self.cardItem.feedbackType3.right.title
+                answerDescription = self.cardItem.feedbackType3.right.description
+            }
+
+            let data = {
+                isFinish: type ? true : false,
+                isAnswerOver: false,
+                id: self.cardItem.id,
+                selectedId: type ? self.selectedId : null,
+                selectedItem: type ? item : null,
+                fullImageBottomtText: type ? '我已选好' : '请选择先后顺序',
+                json: JSON.stringify({
+                    sourceList: self.sourceList,
+                    orderList: self.orderList
+                }),
+                answerStatus: answerStatus, // 1回答正确, 2回答错误
+                answerTitle: answerTitle,
+                answerDescription: answerDescription
+            }
+
+            self.$emit('on-interaction', data)
+            self.description = _.clone(answerDescription)
+            self.$apply()
+        }
+
+        methods = {
+            /**
+             * 选中某个选项
+             * @param event
+             * @returns {boolean}
+             */
+            getSelected(event) {
+                let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
+                _.isEmpty(self.cardsList[self.cardIndex].selectedInfo) && self.__sortInit() // 第一次点击
+
+                if (self.isAnswerOver
+                    && self.oldIndex === self.cardIndex
+                    || self.cardItem.allowToNext) {
+                    return false
+                }
+
+                let selectedInfo = self.cardsList[self.cardIndex].selectedInfo
+                selectedInfo[item.id].isSelected = !selectedInfo[item.id].isSelected
+                self.__sortAnimation(item)
+            },
+            /**
+             * 前往评论列表
+             * @param event
+             * @returns {boolean}
+             */
+            getToDiscuss() {
+                let self = this
+                wx.navigateTo({url: `/pages/course-module/course-discuss?practiceCardID=${self.cardItem.id}&senceID=${self.senceID}`})
+            }
+        }
+
+        events = {
+            /**
+             * 监听父级页面触发提交答案
+             * @param data
+             */
+            'broadcast-sort': (data) => {
+                let self = this
+                self.resultId = self.cardItem.trueSequence
+
+                self.isAnswerOver = true
+                self.oldIndex = _.clone(self.cardIndex)
+
+                if (self.isExercises) {
+                    self.scrollTop = 500
+                    self.isScrollAnimation = true
+                    setTimeout(()=>{
+                        self.isScrollAnimation = false
+                        self.$apply()
+                    }, 300)
+                }
+                self.$apply()
+            },
+            /**
+             * 监听父级，重置初始化数据
+             * @param data
+             */
+            'broadcast-reset-status': (data) => {
+                let self = this
+                self.scrollTop = 0
+                self.oldIndex = -1 // 记录之前的卡片索引
+                self.selectedId = 0 // 当前选中的那个选项
+                self.resultId = -1 // 正确的结果id
+                self.isAnswerOver = false // 是否作答结束
+                self.$apply()
+            }
+        }
+    }
+</script>

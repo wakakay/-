@@ -1,0 +1,192 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-weclome-box{
+        box-sizing:border-box;width:100%;height:100%;background-image:linear-gradient(0, #4601B1 0%, #2CB0C0 100%);background-size:cover;position:relative;left:0;top:0;
+        view{box-sizing:border-box;}
+        .ui-subtitle{padding:26rpx 0 20rpx;font-size:34rpx;color:rgba(255,255,255,.8);text-align:center;line-height:48rpx;}
+        .ui-logo{
+            width:100%;height:80rpx;
+            image{width:300rpx;height:80rpx;}
+        }
+
+        .ui-swiper-list{
+            width:100%;height:660rpx;margin-top:96rpx;
+            .ui-item{
+                image{width:100%;height:660rpx;}
+                .ui-content{padding:0 88rpx;}
+                .cell-title{padding-bottom:32rpx;font-size:40rpx;color:@color-white;text-align:center;line-height:56rpx;}
+                .cell-subtitle{font-size:30rpx;color:#DDE5E7;line-height:48rpx;}
+            }
+        }
+        .ui-indicator-list{
+            width:100%;height:32rpx;margin:18rpx 0;
+            text{
+                display:inline-block;width:16rpx;height:16rpx;margin:0 13rpx;background-color:rgba(255,255,255,.5);border-radius:50%;transition:all .2s ease;
+                &.active{background-color:@background-white;}
+            }
+        }
+
+        .ui-button{
+            width:100%;height:160rpx;position:fixed;left:0;bottom:0;
+            &.is-iphonex{height:248rpx;}
+            .cell-button{width:480rpx;height:88rpx;border-radius:@border-radius-20;background-color:@background-mask-white;font-size:36rpx;font-weight:700;color:@color-white;letter-spacing:1px;}
+            .cell-hover{background-color:@background-mask-normal}
+        }
+    }
+</style>
+
+<template>
+    <view class="ui-weclome-box">
+        <jn-header className="background-transparent" hiddenButton></jn-header>
+        <view class="ui-subtitle">欢迎来到</view>
+        <view class="ui-logo main-center">
+            <image mode="aspectFill" src="https://wx-small.runwise.cn/image/imageID061b59d5c03447b125c286172780.png"></image>
+        </view>
+
+        <swiper class="ui-swiper-list"
+                circular
+                current="{{swiperCurrent}}"
+                bindchange="getSwiperChange">
+            <repeat for="{{swiperList}}" key="index" index="index" item="item">
+                <swiper-item>
+                    <view class="ui-item">
+                        <view class="ui-thumb">
+                            <image mode="aspectFit" src="{{item.url}}"></image>
+                        </view>
+                    </view>
+                </swiper-item>
+            </repeat>
+        </swiper>
+
+        <view class="ui-indicator-list main-center">
+            <repeat for="{{swiperList}}" key="index" index="index" item="item">
+                <text :class="{'active': index===swiperCurrent}"></text>
+            </repeat>
+        </view>
+
+        <view class="ui-button main-center" :class="{'is-iphonex': isIphonex}">
+            <button class="cell-button main-center cross-center"
+                  open-type="getUserInfo"
+                  hover-class="cell-hover"
+                  bindgetuserinfo="getRegistered">免费定制课程</button>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import {CustomError} from '../../errors'
+    import {login} from '../../redux/models/user'
+    import {registered as fetchRegistered} from '../../api'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        },
+        entrance(state) { // 全局场景值
+            return state.entrance
+        }
+    })
+    export default class registeredWeclome extends wepy.page {
+        components = {
+            'jn-header': header
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            swiperCurrent: 0,
+            swiperList: [],
+            isClick: false
+        }
+
+        onLoad() {
+            let self = this
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            let postData = {
+                token: 'defaultToken',
+                imageType: 'useronboarding'
+            }
+            fetchRegistered.weclomeSwiper(postData).then((respone) => {
+                self.swiperList = respone.imageList
+                self.$apply()
+            }).catch(error => {
+
+            })
+        }
+
+        onShow() {
+            let self = this
+            self.isClick = false
+        }
+
+        methods = {
+            /**
+             * 轮番图切换
+             * @param event
+             */
+            getSwiperChange(event) {
+                let self = this
+                self.swiperCurrent = event.detail.current
+                self.$apply()
+            },
+            /**
+             * 微信授权登录
+             */
+            getRegistered(event) {
+                let self = this
+                console.log(event)
+                let {detail: {errMsg}} = event
+
+                wx.reportAnalytics('welcome_register', {
+                    username: self.systemInfo.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.systemInfo.role
+                })
+
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+                }).then((respone) => { // 授权成功
+                    self.__isGetGift()
+                }).catch(error => { // 拒接授权
+
+                })
+            }
+        }
+
+        /**
+         * 是否领取过新手礼包
+         * @private
+         */
+        __isGetGift() {
+            let self = this
+            if (self.isClick) {
+                return
+            }
+            self.isClick = true
+
+            let postData = {
+                token: self.systemInfo.token
+            }
+            fetchRegistered.userInfo(postData).then((respone) => {
+                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select'})
+                self.$apply()
+            }).catch(error => {
+                wx.showToast({
+                    icon: 'none',
+                    title: ' 网络错误 '
+                })
+            })
+        }
+
+        events = {}
+    }
+</script>

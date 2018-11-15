@@ -1,0 +1,101 @@
+<template>
+  <view class="flex-space-between-column whole-image-article">
+    <view class="feedback-article__body__fixed-top" @tap.stop="handleCloseFeedback">
+      <image class="feedback-article__body__fixed-top__icon" mode="scaleToFill" src="../../assets/img/icon-redo.svg"></image>
+      <text class="feedback-article__body__fixed-top__text" > 再做一次 </text>
+    </view><!-- feedback-article__body__fixed-top -->
+    <view class="whole-image-article__body {{isActived ? 'on' : ''}}" :class="{'image-loading': !imageLoaded}">
+      <image class="whole-image-article__body__icon" src="{{ bundle.fragment&&bundle.fragment.data.imageUrl }}" hidden="{{!imageLoaded}}" @load="handleImageLoaded" mode="widthFix" lazy-load="{{true}}"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import loadingMixin from '../../mixins/loading'
+
+
+  export default class WholeImageResponse extends wepy.component {
+    mixins = [loadingMixin] // end mixins
+
+    props = {
+      bundle: {
+        type: Object
+      },
+      isActived: {
+        type: Boolean
+      }
+    }
+
+    data = {
+    }
+
+    methods = {
+      handleCloseFeedback(event) {
+        this.$emit('closeFeedback', this.$index)
+      } // handleCloseFeedback
+    } // end methods
+  } // end class
+</script>
+
+<style lang="less">
+  .whole-image-article__header__title.on {
+    animation: zoomIn .3s ease-in 0s;
+  }
+  .whole-image-article__header__icon.on {
+    animation: zoomIn .3s ease-in .05s;
+  }
+  .whole-image-article__body.on {
+    animation: zoomIn .3s ease-in .1s;
+  }
+  .whole-image-article__header {
+    height: 74rpx;
+    /*background-color: #BA91E6;*/
+    /* text-indent: 48rpx;
+    line-height: 112rpx; */
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .whole-image-article__header__title{
+    /* height: 74rpx; */
+    /*background-color: #BA91E6;*/
+    text-indent: 48rpx;
+
+  }
+
+  .whole-image-article__header__icon{
+    width: 50rpx;
+    height: 50rpx;
+    margin-right: 15rpx;
+  }
+
+  .whole-image-article__body {
+    flex: 1;
+    /*background-color: #008FE8;*/
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .whole-image-article__body__icon {
+    /* height: 100%; */
+    width: 100%;
+    /*flex: 1;*/
+    display: block;
+  }
+  .whole-image-article__body {
+    flex: 1;
+    justify-content:center;
+  }
+
+  .whole-image-article {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: #FFF;
+    justify-content: center !important;
+  }
+</style>

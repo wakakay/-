@@ -1,0 +1,324 @@
+<style lang="less">
+    @import "../../assets/style/theme";
+    .ui-header-slot{width: 100%;text-align: center;}
+    .ui-practice-end{
+        .ui-user{
+            padding:0 40rpx;height: 90rpx;display: flex;align-items: center;position:absolute;top:176rpx;left: 0;z-index: 2;
+            .ui-img{
+                height: 90rpx;display: flex;align-items: center;
+                image{width: 72rpx;height: 72rpx;border-radius: 50%;margin-right: 20rpx}
+            }
+            .cell-name{font-size: 34rpx;@color:@color-black;}
+        }
+        .ui-content{
+            width: 100%;position:absolute;top:0;left: 0;
+            image{width:100%;}
+        }
+        .ui-bottom-btn{
+            position: fixed;bottom:0;left: 50%;transform: translate(-50%);width:100%;display:flex;justify-content:center;background-image:linear-gradient(180deg, rgba(255,255,255,0), #fff);
+            .cell-content{width: 710rpx;height: 100rpx;color:@color-white;background: @background-blue;line-height: 100rpx;border-radius: @border-radius-20;font-size: 34rpx;text-align: center;margin:5px 0 32px;}
+            .cell-share{width:100%;height:100%;position:absolute;top:0;bottom:0;left:0;background: transparent}
+        }
+    }
+    .ui-shade{
+        position: fixed;top: 0;right: 0;left: 0;right: 0;bottom:0;background: @background-mask-slightly;z-index: @z-index-mask;
+        .ui-item{
+            height: 1084rpx;width: 686rpx;background: @background-white;border-radius: @border-radius-16;position: absolute;top: 50%;left: 50%;transform: translate(-50%,-50%);
+            .ui-code{
+                background:  #EBF7FD;height: 912rpx;width: 100%;justify-content: center;border-top-left-radius: @border-radius-16;border-top-right-radius: @border-radius-16;
+                .ui-close{
+                    padding: 20rpx 20rpx 0 0 ;display: flex;justify-content: flex-end;width: 100%;color:@color-white;height: 76rpx;box-sizing:border-box;background: transparent;
+                    .cell-item{width: 56rpx;height: 56rpx;background: @background-gray-cc;color:@color-white;text-align: center;line-height: 56rpx;border-radius: 50%;}
+                }
+                .ui-content{height: 610rpx;
+                    image{width: 100%;height: 100%;}
+                }
+                .ui-btn{
+                    display: flex;justify-content: center;align-items: center;position: absolute;bottom: 40rpx;left: 50%;transform: translate(-50%);
+                    .cell-item-btn{width: 400rpx;height: 100rpx;border-radius: @border-radius-20;background: @background-blue;color: @color-white;text-align: center;line-height: 100rpx}
+                    .cell-hover{background: @background-blue-hover;}
+                }
+            }
+        }
+    }
+</style>
+
+<template>
+    <view catchtouchmove="{{!isLoaded}}">
+        <jn-header className="background-transparent"></jn-header>
+        <view class="ui-practice-end">
+            <view class="ui-user">
+                <view class="ui-img">
+                    <image src="{{avatar}}" />
+                </view>
+                <view class="cell-name">Hi， {{userName}}</view>
+            </view>
+            <view class="ui-content">
+                <image mode="widthFix" src="{{resultObj.resultImageURL}}" />
+            </view>
+            <view class="ui-bottom-btn" @tap.stop="getToShare" data-status="{{resultObj.buttonAttr}}">
+                <view class="cell-content">{{resultObj.buttonMsg}}</view>
+                <button wx:if="{{resultObj.buttonAttr === '分享'}}" class="cell-share" open-type="share"></button>
+            </view>
+        </view>
+        <view class="ui-shade" wx:if="{{isShowShade}}">
+            <view class="ui-item">
+                <view class="ui-code">
+                    <view class="ui-close">
+                        <view class="cell-item" @tap.stop="getCloseBtn">
+                            <text class="icon-back-close"></text>
+                        </view>
+                    </view>
+                    <view class="ui-content">
+                        <image src="{{resultObj.buttonFebackImageURL}}" />
+                    </view>
+                    <view class="ui-btn">
+                        <view class="cell-item-btn" hover-class="cell-hover" @tap.stop="getImg">保存图片并学课</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import {practice as practiceApi} from '../../api'
+    import {redirectToLesson} from '../../utils'
+
+    const store = getStore()
+
+    @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
+        userName(state) {
+            return state.user.name
+        },
+        token(state) {
+            // return 'userID0ac241e49ee7467ab11ce9d04f5f589a-1527492135193-6ea1036a154597f750e2b43156499940'
+            return state.user.token
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
+        },
+        windowHeight(state) {
+            return state.user.screenHeight
+        },
+        courseID(state) {
+            return state.practices.courseID
+        },
+        senceID(state) {
+            return state.practices.senceID
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
+        },
+    }) 
+    export default class PreviousPracticeEndingNew extends wepy.page {
+        components = {
+            'jn-header': header,
+            'mloading': Loading,
+        }
+
+        data = {
+            examID: '',
+            isLoaded: false,
+            senceID: '',
+            abilityList: [],
+            course: {},
+            description: '',
+            examFeedbackMsg: '',
+            examFeedbackMsgURL:'',
+            radarList: [],
+            subject: '',
+            subjectHeading: '',
+            userAvatarUrl: '',
+            userName: '',
+            radarParam: {},
+            radarInfo: {},
+            radarImage: null,
+            shareImage: null,
+            isShowShare: false,
+            isShowShade:false,
+            resultObj:{
+                buttonAttr:'',
+                buttonFebackImageURL:'',
+                buttonMsg:'',
+                resultImageURL:'',
+                subjectHeading:'',
+                shareImage:'',
+                course:'',
+                isNewCourseMap:[]
+            }
+
+        }
+
+        onLoad({senceID, examID}) {
+            this.senceID = senceID
+            this.examID = examID
+            wx.reportAnalytics('pre_test_end', {
+                username: this.userName,
+                examid: this.examID,
+                channel: this.entrance.mappers[this.entrance.scenceID]
+            })
+        }
+
+        onShow() {
+            this.initialize()
+                .catch(error => {
+                    console.log('fail to initialize begging practice', error)
+
+                    this.showErrorPage = true
+                    this.$apply()
+                })
+        }
+
+        onShareAppMessage(res) {
+            let self = this
+            console.log(res,'ui-bottom-btnui-bottom-btnui-bottom-btn')
+            return {
+                title: self.resultObj.subjectHeading,
+                path: `/pages/PreviousPracticeBeginning/index?examID=${self.examID}`,
+                imageUrl: self.resultObj.shareImage,
+                success: function(res) {
+                    wx.showShareMenu({
+                        withShareTicket: true
+                    });
+                    self.isShowShade = true
+
+                },
+                fail: function(res) {
+                    return wepy.showToast({
+                        title:  `分享失败`,
+                        icon: 'none'
+                    })
+                }
+            }
+        }
+
+        initialize() {
+            let self = this
+            return practiceApi.getUserExamScore({
+                token: this.token, examID: this.examID
+            }).then(data => {
+                    self.isLoaded = true
+                    self.resultObj.buttonAttr = data.buttonAttr
+                    self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
+                    self.resultObj.buttonMsg = data.buttonMsg
+                    self.resultObj.resultImageURL = data.resultImageURL
+                    self.resultObj.subjectHeading = data.subjectHeading
+                    self.resultObj.shareImage = data.shareImage
+                    self.resultObj.course = data.course
+                    self.resultObj.isNewCourseMap = data.isNewCourseMap
+
+                    this.$apply()
+                    wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
+                })
+
+        } 
+
+        getCourseDetail() {
+            let self = this
+            if(!self.resultObj.course) return;
+            let courseID = self.resultObj.course.courseID;
+            let courseName = self.resultObj.course.courseName;
+            let isNewCourseMap = self.resultObj.course[courseID]
+
+            try {
+                let isNewCourseMap = self.resultObj.isNewCourseMap[courseID]
+                let url = isNewCourseMap
+                    ? `/pages/course-module/course-new-details?id=${courseID}`
+                    : `/pages/course-module/course-details?id=${courseID}&name=${courseName}&courseName=${courseName}`
+
+                wepy.navigateTo({url: url})
+            } catch (err) {
+                console.log('handle attend classes err', err)
+            }
+
+        }
+
+        methods = {
+            handleToCourse() {
+                if (!this.course.courseID) return console.log('courseID is unusable')
+                wx.reportAnalytics('pre_test_next_course', {
+                        username: this.userName,
+                        examid: this.examID,
+                        channel: this.entrance.mappers[this.entrance.scenceID],
+                        courseid: this.course.courseID,
+                })
+                wx.navigateTo({url: `/pages/course-module/course-details?id=${this.course.courseID}`})
+            },
+            getCloseBtn() {
+                let self = this;
+                self.isShowShade = false
+                self.$apply()
+            },
+            getToShare({currentTarget: {dataset: {status}}}) {
+                let self = this;
+                if(status === '分享') return;
+                if(status === '学课') {
+                    return self.getCourseDetail()
+                }
+                setTimeout(()=>{
+                    self.isShowShade = true
+                    self.$apply()
+                }, 300)
+            },
+            getImg(){
+                let self = this;
+                let url = self.resultObj.buttonFebackImageURL
+                let urlReplace =''
+                if (-1 !== url.toString().indexOf('http://image.runwise.cn/')) {
+                    urlReplace = url.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
+                }
+                wx.downloadFile({
+                    url:urlReplace,
+                    success:function(res){
+                        let path = res.tempFilePath
+                        wx.saveImageToPhotosAlbum({
+                            filePath: path,
+                            success(res) {
+                                self.isShowShade = false
+                                self.getCourseDetail()
+                            },
+                            fail(res) {
+                                return wepy.showToast({
+                                    title:  `保存失败,${res}`,
+                                    icon: 'none'
+                                })
+                            },
+                            complete(res) {
+                                self.isShowShade = false
+                            }
+                        })
+                    },fail:function(res){
+                        console.log(res)
+                    }
+                })
+            }
+        }
+
+        events = {
+            'on-alert-visible': (data) => {
+                let self = this
+
+                self.isShowShare = data.isShow
+                self.$apply()
+            },
+
+            'on-card-share': () => {
+                let self = this
+                wx.reportAnalytics('pre_test_share', {
+                    username: self.userName,
+                    examid: self.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: '分享图片'
+                })
+            },
+        }
+    }
+</script>

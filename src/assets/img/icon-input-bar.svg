@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="351px" height="40px" viewBox="0 0 351 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>输入框</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="卡片" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="输入框">
+            <rect id="Rectangle-11-Copy" fill="#E4E6E8" x="0" y="0" width="351" height="40"></rect>
+            <rect id="Rectangle-18" fill="#FEFFFF" x="59" y="6" width="182" height="28" rx="4"></rect>
+            <g id="align-center" transform="translate(29.500000, 20.500000) rotate(-270.000000) translate(-29.500000, -20.500000) translate(15.000000, 6.000000)" stroke="#8793A1" stroke-linecap="round" stroke-linejoin="round">
+                <circle id="Oval" cx="14.5" cy="14.5" r="14.5"></circle>
+                <path d="M19,9 L10,9" id="Shape" stroke-width="2"></path>
+                <path d="M21.340019,14 L8,14" id="Shape" stroke-width="2"></path>
+                <path d="M19.0163752,19 L10.1304037,19" id="Shape" stroke-width="2"></path>
+            </g>
+            <g id="plus-circle" transform="translate(308.000000, 6.000000)" stroke="#8793A1" stroke-linecap="round" stroke-linejoin="round">
+                <circle id="Oval" cx="14.5" cy="14.5" r="14.5"></circle>
+                <path d="M14.5,8.92307692 L14.5,20.0769231" id="Shape" stroke-width="2"></path>
+                <path d="M8.92307692,14.5 L20.0769231,14.5" id="Shape" stroke-width="2"></path>
+            </g>
+            <g id="Group-9" transform="translate(263.000000, 5.000000)">
+                <ellipse id="Oval-6" fill="#8793A1" cx="9.5" cy="10" rx="1.5" ry="2"></ellipse>
+                <path d="M6,17 L22.9710764,17 C22.7122675,21.4616897 19.0121112,25 14.4855382,25 C9.95896523,25 6.2588089,21.4616897 6,17 Z" id="Combined-Shape" fill="#8793A1"></path>
+                <ellipse id="Oval-6-Copy" fill="#8793A1" cx="19.5" cy="10" rx="1.5" ry="2"></ellipse>
+                <circle id="Oval-5" stroke="#8793A1" cx="14.5" cy="14.5" r="14.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

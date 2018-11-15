@@ -1,0 +1,306 @@
+<template>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <view class="review-article" wx:if="{{ isLoaded }}">
+        <jn-header title="回顾" className="background-theme"></jn-header>
+        <view class="review-article-header">
+            <view class="review-article-header-subtitle">{{ courseName }} {{ senceIndex }}/{{ courseCount }}</view>
+            <view class="review-article-header-title">{{ title }}</view>
+            <view class="review-article-header-button-row">
+                <view class="review-article-header-tag">{{ skill }}</view>
+                <view class="review-article-flex">
+                    <view class="review-article-header-learn-again" @tap.stop="handleStudyAgain">再学一次</view>
+                    <text class="icon-right-arrow cell-icon"></text>
+                </view>
+            </view>
+        </view>
+
+        <view wx:if="{{ linkList.length }}" class="flex-space-between-row review-article-banner">
+            <image class="review-article-banner__icon" mode="scaleToFill"
+                   src="http://wx-small.runwise.cn/image/imageID5b06c8e3031488821cae44d1189b.svg"></image>
+            <text class="review-article-banner__title"> 扩展阅读</text>
+        </view>
+
+        <view wx:if="{{ linkList.length }}" class="flex-start-column reading-wrapper">
+            <image wx:for="{{ linkList }}" wx:key="{{ index }}" class="review-article-banner__photo" mode="widthFix"
+                   src="{{ item.imageUrl }}">
+                <button class="review-article-banner__photo__shade-btn" open-type="contact"
+                        data-index="{{ item.index }}" data-link="{{ item.linkUrl }}"
+                        @tap.stop="handleContactLink"></button>
+            </image>
+        </view>
+
+        <view class="review-article-body">
+            <view class="review-article-header-button-row" style="padding:48rpx 32rpx 20rpx;">
+                <view class="review-article-flex">
+                    <view class="cell-main">课程核心要点</view>
+                </view>
+                <text wx:if="{{ 'show'===showType }}" class="icon-share cell-icon" @tap.stop="handleShare"></text>
+            </view>
+            <image class="review-article__body__icon" src="{{bigimage}}" hidden="{{!imageLoaded}}"
+                   @load="handleImageLoaded" mode="widthFix"></image>
+        </view>
+
+    </view><!-- end article -->
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {course as courseApi, share as shareApi, contact as contactApi} from "../../api";
+    import {getStore, connect} from "wepy-redux";
+    import Loading from "../../components/common/loading";
+    import loadingMixin from "../../mixins/loading";
+    import header from '../../components/common/header'
+    import {NetworkError} from "../../errors";
+    import {showErrorPage, shareDictionary, redirectToLesson} from "../../utils";
+
+    @connect({
+        token(state) {
+            // return 'userIDeb41db7f6ab4b1b0c762b757d5cd-1510137591313-9e43745380a86be4cb605d4fe5454e65'
+            return state.user.token
+        },
+        currentCourseID(state) {
+            // return 'courseIDa1eb2733845484aa21b810f0b6f2'
+            return state.courses.currentID
+        },
+        currentSenceID(state) {
+            // return 'senceIDd75ae1f190b429a86ad000cdc979'
+            return state.sences.currentID
+        },
+        userName(state) {
+            return state.user.name
+        }, // mapState 即getters
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
+        },
+        currentSenceName(state) {
+            return state.sences.currentName
+        },
+        platform(state) {
+            return state.user.platform
+        }
+    })
+    export default class Review extends wepy.page {
+        mixins = [loadingMixin]; // end mixins
+
+        components = {
+            mloading: Loading,
+            'jn-header': header
+        }; // end components
+
+        data = {
+            courseID: 'courseID',
+            senceID: 'senceID',
+            isLoaded: false,
+            bigimage: "",
+            courseCount: 0,
+            courseName: "courseName",
+            senceIndex: 0,
+            title: "title",
+            skill: 'skill',
+            showType: 'hidden',
+            isNewSenceMap: {}, // 进入微课的新老界面判断
+            linkList: [{
+                imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
+                index: 1,
+                linkUrl: "https://www.kancloud.cn/yunye/axios/234845"
+            }],
+            initialState: {
+                summarySections: [
+                    {
+                        question: "耳机的用户属性可能有?",
+                        yourAnswer: "社会阶层，音质要求",
+                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
+                    },
+                    {
+                        question: "耳机的用户属性可能有?",
+                        yourAnswer: "社会阶层，音质要求",
+                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
+                    },
+                    {
+                        question: "耳机的用户属性可能有?",
+                        yourAnswer: "社会阶层，音质要求",
+                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
+                    },
+                    {
+                        question: "耳机的用户属性可能有?",
+                        yourAnswer: "社会阶层，音质要求",
+                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
+                    },
+                    {
+                        question: "耳机的用户属性可能有?",
+                        yourAnswer: "社会阶层，音质要求",
+                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
+                    }
+                ]
+            } // end initialState
+        } // end data
+
+        methods = {
+            handleContactLink({currentTarget: {dataset: {link, index}}}) {
+                console.log('tend to link', link, index)
+                contactApi.sendExtendLink({
+                    token: this.token,
+                    courseID: this.courseID,
+                    senceID: this.senceID,
+                    index
+                })
+                    .catch(error => console.log('contact error', error))
+            },
+            handleStudyAgain(event) {
+                console.log('this.platform', this.platform)
+                let isNewSence = this.isNewSenceMap && this.isNewSenceMap[this.senceID]
+                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, resumeLastRead: 'NO', isNewSence })
+
+            }, // end handleStudyAgain
+            handleShare(event) {
+                shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID})
+                    .then(({shareImage, shareImageCode}) => {
+                        // console.log(`shareImage: ${shareImage}, shareImageCode: ${shareImageCode}`)
+                        return {shareImage, shareImageCode}
+                    })
+                    .then(({shareImage}) => wepy.downloadFile({url: shareImage.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')}))
+                    .then(({tempFilePath, statusCode, errMsg}) => {
+                        if (200 !== statusCode) throw new Error(errMsg)
+                        return wepy.previewImage({current: tempFilePath, urls: [tempFilePath]})
+                    })
+                    .then(() => shareApi.reportSharing({
+                        token: this.token,
+                        type: shareDictionary.SHARE_CARD.type,
+                        courseID: this.courseID,
+                        senceID: this.senceID
+                    })) // 向后台上报分享行为
+                    .then(() => {
+                            console.log(this.role + this.userName + this.entrance.mappers[this.entrance.scenceID])
+                            wx.reportAnalytics('share_event', {
+                                role: this.role,
+                                nickname: this.userName,
+                                coursename: this.courseName,
+                                sencename: '/',
+                                channel: this.entrance.mappers[this.entrance.scenceID],
+                                type: shareDictionary.SHARE_CARD.type,
+                            })
+                        }
+                    ) //分享事件上报
+                    .catch(error => console.log('review error'))
+
+                return true
+                shareApi.getReviewShare({
+                    token: this.token,
+                    courseID: this.currentCourseID,
+                    senceID: this.currentSenceID
+                })
+                    .then(({shareImage, shareImageCode}) => {
+                        console.log(`shareImage: ${shareImage}, shareImageCode: ${shareImageCode}`)
+                        return {shareImage, shareImageCode}
+                    })
+                    .then(({shareImage, shareImageCode}) => Promise.all([shareImage, shareImageCode].map(url => wepy.downloadFile({url}))))
+                    .then(([shareImageSource, shareImageCodeSource]) => {
+                        console.log('shareImageSource', shareImageSource)
+                        console.log('shareImageCodeSource', shareImageCodeSource)
+                        if ("downloadFile:ok" !== (shareImageSource && shareImageSource.errMsg) || "downloadFile:ok" !== (shareImageCodeSource && shareImageCodeSource.errMsg)) throw new Error('fail to downloadFile')
+                        let {tempFilePath: imageTmp} = shareImageSource
+                        let {tempFilePath: codeTmp} = shareImageCodeSource
+                        this.$preload('sources', {imageTmp, codeTmp})
+                        this.$navigate('/pages/Canvas/index')
+                    })
+                    .catch(error => showErrorPage())
+            } // end handleShare
+        } // end methods
+
+        initialize({courseID, senceID, teamID}) {
+            this.courseID = 'defaultCourseID'
+            this.senceID = 'defaltSenceID'
+            this.teamID = teamID
+            this.showType = 'hidden'
+            this.bigimage = ''
+            this.title = 'title'
+            this.senceIndex = 0
+            this.courseCount = 0
+            this.courseName = 'courseName'
+            this.skill = 'skill'
+            this.isLoaded = false
+            courseApi
+                .getReview({token: this.token, courseID, senceID, teamID})
+                .then(({bigimage, title, senceIndex, courseCount, courseName, skill, showType, linkList, isNewSenceMap}) => {
+                    console.log(`bigimage: ${bigimage}, title: ${title}, senceIndex: ${senceIndex}, courseCount: ${courseCount}, courseName: ${courseName}, skill: ${skill}, showType: ${showType}, linkList: ${linkList}`)
+                    wepy.setNavigationBarColor({
+                        frontColor: "#000000",
+                        backgroundColor: "#2DB7B5",
+                        animation: {
+                            duration: 400,
+                            timingFunc: "easeIn"
+                        }
+                    })
+                    this.courseID = courseID
+                    this.senceID = senceID
+                    this.showType = showType
+                    this.bigimage = bigimage
+                    this.title = title
+                    this.senceIndex = senceIndex
+                    this.courseCount = courseCount
+                    this.courseName = courseName
+                    this.skill = skill
+                    this.isNewSenceMap = isNewSenceMap
+                    this.linkList = linkList
+                    this.isLoaded = true
+                    this.$apply()
+
+                    wepy.$instance.globalData.getLoadHuilder({pageTheme: this.courseName}) // ga统计
+                    wx.reportAnalytics('review', {
+                        role: this.role,
+                        nickname: this.userName,
+                        coursename: this.courseName,
+                        sencename: this.title,
+                        channel: this.entrance.mappers[this.entrance.scenceID]
+                    })
+                })
+                .catch(error => {
+                    console.log('get review error', error)
+                    showErrorPage()
+                })
+        } // end initialize
+
+        onLoad({courseID, senceID, teamID = 'defaultTeamID'}) {
+            console.log(`in review courseID:${courseID}, senceID: ${senceID}`)
+            this.initialize({courseID, senceID, teamID})
+
+        } // end onLoad
+    }
+</script>
+
+<style lang="less" scoped>
+@import "../../assets/style/theme";
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  color: transparent !important;
+}
+.cell-main{color:@color-black;font-size:32rpx; font-weight: bold;}
+.review-article-header {
+    width: 750rpx;background: @background-blue;
+    .cell-icon{color:@color-white;font-size:24rpx;}
+}
+.review-article {height: 100vh;display: block;box-sizing: border-box;}
+.review-article-header-subtitle {padding: 64rpx 0 0 24rpx;color: @color-white;font-size: 28rpx;line-height: 40rpx;font-family: PingFangSC-Regular;}
+.review-article-header-title {margin: 32rpx 0 0 24rpx;max-width: 500rpx;font-family: PingFangSC-Medium;color: @color-white;font-size: 48rpx;line-height: 66rpx;}
+.review-article-header-button-row {display: flex;justify-content: space-between;padding: 32rpx 24rpx 60rpx 24rpx;align-items: center;}
+.review-article-header-tag {height: 40rpx;line-height: 40rpx;border: 2rpx solid @border-white;border-radius: @border-radius-8;color: @color-white;font-family: PingFangSC-Regular;font-size: 24rpx;padding-left: 10rpx;padding-right: 10rpx;}
+.review-article-header-learn-again {color: @color-white;font-size: 28rpx;line-height: 40rpx;font-family: PingFangSC-Medium;}
+.review-article-body {
+    width: 750rpx;
+    .cell-icon{color:@color-blue;font-size:48rpx;margin-right:10rpx;}
+}
+.review-article-flex {display: flex;align-items: center;}
+.review-article__header {position: relative;height: 240rpx;}
+.review-article__body__icon {width: 702rpx;height: 896rpx;display: block;margin: 0 auto 80rpx;}
+.review-article-banner {padding: 44rpx 32rpx 20rpx;}
+.review-article-banner__icon {width: 40rpx;height: 40rpx;display: inline-block;vertical-align: top;margin: 0;}
+.review-article-banner__title {color: @color-black;font-size: 16px;font-weight: bold;margin-left: 12rpx;margin-right: auto;}
+.review-article-banner__photo {width: 100%;display: block;}
+.review-article-banner__photo {position: relative;}
+.review-article-banner__photo__shade-btn {position: absolute;left: 0;top: 0;width: 100%;height: 100%;background-color: inherit;border: 0 !important;}
+.review-article-banner__photo__shade-btn::after {border: 0 !important;}
+</style>

@@ -1,0 +1,273 @@
+<template>
+  <view class="flex-space-between-column hotspot-article">
+    <view class="hotspot-article__header {{isActived ? 'on' : ''}}">
+      <image class="hotspot-article__header__icon" src="{{ bundle.bigimage }}" mode="scaleToFill">
+        <view class="hotspot-article__header__icon__mask">
+            <!-- <view wx:for="{{ bundle&&bundle.hotSpotFlag }}" wx:for-index="$mhotspot$computedSpots$index" wx:for-item="$mhotspot$computedSpots$item" wx:key="$mhotspot$computedSpots$index" wx:if="{{ $mhotspot$computedSpots$item }}" data-offset="{{$mhotspot$computedSpots$index}}" data-valid="{{ $mhotspot$computedSpots$item }}" style="width: {{computedWidth}}; height: {{computedHeight}};left:{{computedPositionLeft*(($mhotspot$computedSpots$item-1)%7)}}%;top:{{computedPositionTop*parseInt((($mhotspot$computedSpots$item-1)/7))}}%" class="hotspot-article__header__icon__mask__grid-block" @tap.stop="handleTapMask">
+
+              <view wx:if="{{ $mhotspot$computedSpots$item }}" class="hotspot-article__header__icon__mask__grid-block__touch-indicator">
+                <view class="hotspot-article__header__icon__mask__grid-block__touch-indicator__inner"></view>
+              </view>
+            </view> -->
+            <view wx:for="{{ bundle&&bundle.hotSpotFlagCopy }}" wx:for-index="$mhotspot$computedSpots$index" wx:for-item="$mhotspot$computedSpots$item" wx:key="$mhotspot$computedSpots$index"  data-offset="{{$mhotspot$computedSpots$index}}" data-valid="{{ $mhotspot$computedSpots$item.index }}" style="width: {{computedWidth}}; height: {{computedHeight}};left:{{$mhotspot$computedSpots$item.left}}%;top:{{$mhotspot$computedSpots$item.top}}%" class="hotspot-article__header__icon__mask__grid-block" catchtap="handleTapMask">
+
+              <view wx:if="{{ $mhotspot$computedSpots$item }}" class="hotspot-article__header__icon__mask__grid-block__touch-indicator">
+                <view class="hotspot-article__header__icon__mask__grid-block__touch-indicator__inner"></view>
+              </view>
+            </view>
+        </view>
+      </image>
+    </view><!-- header -->
+
+    <view wx:if="{{bundle.title}}" class="text-subtitle hotspot-article_title {{isActived ? 'on' : ''}}">{{bundle.title}}</view>
+    <view wx:for="{{ bundle&&bundle.select }}" wx:for-index="$mhotspot$computedSpots$index" wx:for-item="$mhotspot$computedSpots$item" wx:key="$mhotspot$computedSpots$index" class="flex-space-between-column hotspot-article__preview {{ selectedSpotOffset===$mhotspot$computedSpots$item.index ? 'actived' : 'disactived' }} {{isActived ? 'on' : ''}}">
+      <view class="hot-area-feedback-body">
+        <view class="hotspot-article__header-feedback {{ selectedSpotOffset===$mhotspot$computedSpots$item.index ? 'show' : 'disactived' }}">
+          <image style="width:100%;" src="{{ $mhotspot$computedSpots$item.icon }}" mode="widthFix"></image>
+        </view><!-- header -->
+        <view class="hotspot-article__body">
+          <view class="text-subtitle" style="text-align:center;margin:4rpx auto;" wx:if="{{ $mhotspot$computedSpots$item.option }}">{{ $mhotspot$computedSpots$item.option }}</view>
+          <view class="text-body hotspot-article__body__description" wx:if="{{ $mhotspot$computedSpots$item.description }}">{{ $mhotspot$computedSpots$item.description }}</view><!-- description -->
+        </view><!-- end body -->
+      </view>
+      <view class="hotspot-article__footer">
+        <button class="orange-btn hotspot-btn btn-fill-orange" hover-class="hotspot-btn-hover" plain="{{true}}" catchtap="handleClosePreview"> 返回 </button>
+      </view><!-- footer -->
+    </view><!-- preview -->
+
+  </view><!-- end hotspot-article -->
+</template>
+
+<script>
+import wepy from "wepy";
+
+export default class Hotspot extends wepy.page {
+  props = {
+    bundle: {
+      type: Object
+    },
+    offset: {},
+    isActived: {
+      type: Boolean
+    }
+  }; // end props
+
+  data = {
+    spotsTotalCount: 70,
+    selectedSpotOffset: null
+  }; // end data
+
+  computed = {
+    computedPositionTop(){
+      return Number(100 / 10).toFixed(6);
+    },
+    computedPositionLeft(){
+      return Number(100 / 7).toFixed(6);
+    },
+    computedHeight() {
+      return Number(100 / 10).toFixed(6) + "%";
+    },
+    computedWidth() {
+      return Number(100 / 7).toFixed(6) + "%";
+    },
+    computedSpots() {
+      let mArr = [];
+      let offset = 1;
+      while (offset <= this.spotsTotalCount) {
+        mArr.push({ offset });
+        offset++;
+      }
+      return mArr;
+    },
+    isTimeToLeave() {
+      return true;
+    }
+  }; // end computed
+
+  methods = {
+    activateCard(currentCardOffset) {
+      // console.log('hotspot receive active', currentCardOffset)
+      if (this.$parent.cardSyncCurrent===currentCardOffset) return false // 本张卡不需要初始化
+      this.selectedSpotOffset = null
+    }, // activateCard
+    handleTapMask({ currentTarget: { dataset: { offset, valid } } }) {
+
+      if (''===valid) return false
+      this.selectedSpotOffset = valid-1;
+      this.$apply();
+      console.log(offset,valid,this.selectedSpotOffset)
+    }, // end handleTapMask
+    handleClosePreview(event) {
+      this.selectedSpotOffset = null;
+      this.$apply();
+    } // end handleClosePreview
+  }; // end methods
+
+  checkInAvailableOptionsRange(index) {
+    let availableOptions =
+      this.bundle["select"] && this.bundle["select"].map(item => item.index);
+    return availableOptions.some(item => index === item);
+  } // end checkInAvailableOptionsRange
+}
+</script>
+
+<style lang="less" scoped>
+.hot-area-feedback-body{
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.hotspot-article {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  background-color: #fff;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16rpx;
+}
+.hotspot-article__header.on {
+  animation: zoomIn .3s ease-in 0s;
+}
+.hotspot-article_title.on {
+  animation: zoomIn .3s ease-in .05s;
+}
+.hotspot-article_title.on {
+  animation: zoomIn .3s ease-in .1s;
+}
+.hotspot-article_title {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 156rpx;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.hotspot-article__preview {
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #fff;
+}
+.hotspot-article__preview > .hotspot-article__header.show {
+  animation: pulse 0.35s ease-out;
+}
+.disactived {
+  display: none !important;
+}
+
+.hotspot-article__header {
+  /* height: 600rpx; */
+  height: 100%;
+  width: 100%;
+  /*background-color: #A7ADF9;*/
+}
+.hotspot-article__header-feedback {
+  /* height: 600rpx; */
+  width: 100%;
+  /*background-color: #A7ADF9;*/
+}
+.hotspot-article__header__icon {
+  height: inherit !important;
+  width: 100%;
+  position: relative;
+}
+.hotspot-article__header__icon__mask {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(123, 124, 125, 0);
+}
+.hotspot-article__header__icon__mask-feedback {
+  width: 100%;
+  height: 600rpx;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(123, 124, 125, 0);
+}
+.hotspot-article__body {
+  /* flex: 1; */
+}
+.hotspot-article__body__description {
+  display: block;
+  line-height: 150%;
+  white-space: pre-line;
+  word-break: break-all;
+  width: 570rpx;
+  margin: 20rpx auto 0;
+}
+.hotspot-article__footer {
+  height: 120rpx;
+  /*background-color: #FBC2D3;*/
+}
+.btn-fill-orange {
+  color: #2db7b5 !important;
+  background-color: #f0f0f7 !important;
+  border: 0 !important;
+}
+.btn-fill-orange::after {
+  border: 0;
+}
+.hotspot-btn-hover {
+  background-color: rgba(0, 122, 255, .4) !important;
+}
+.hotspot-article__header__icon__mask__grid-block {
+  /* display: inline-block;
+
+  vertical-align: top;
+  position: relative; */
+    /* background-color: #7CFED2; */
+    display: block;
+    position: absolute;
+
+}
+
+.hotspot-article__header__icon__mask__grid-block__touch-indicator {
+  box-sizing: border-box;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: #ff7e67;
+  box-shadow: 0 6rpx 30rpx #000000;
+  animation: throb 1.5s ease 0.7s infinite normal;
+}
+
+.hotspot-article__header__icon__mask__grid-block__touch-indicator__inner {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: #FFF;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  animation: inner-throb 1.5s ease 0s infinite alternate;
+}
+
+.hotspot-article__footer > .fixed-footer__text {
+  width: 500rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

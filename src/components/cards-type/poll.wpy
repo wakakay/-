@@ -1,0 +1,161 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <scroll-view class="module-poll-box" :class="{'is-phonex': isIphonex}"
+                 scroll-y
+                 scroll-top="{{scrollTop}}"
+                 scroll-with-animation="{{isScrollAnimation}}">
+        <view class="ui-content">
+            <view class="ui-thumb" wx:if="{{cardItem.bigimage}}">
+                <image mode="aspectFit" src="{{cardItem.bigimage}}"></image>
+            </view>
+            <view class="ui-title">{{cardItem.title}}</view>
+
+            <view class="ui-answer-list">
+                <repeat for="{{cardItem.select}}" key="index" index="index" item="item">
+                    <view class="ui-item"
+                          hover-class="{{!isAnswerOver && !cardItem.allowToNext ? 'ui-item-hover' : ''}}"
+                          :class="{'is-selected': selectedId==item.id, 'is-selected-over': item.selected || cardsList[cardIndex].isDone && cardsList[cardIndex].selectedId==item.id}"
+                          data-item="{{ item }}"
+                          data-index="{{ index }}"
+                          @tap.stop="getSelected">
+                        <view class="ui-prop"
+                              style="width: {{ballotInfo[item.id] || item.prop}}%"></view>
+                        <view class="cell-title cross-center">
+                            <text>{{item.option}}</text>
+                            <view class="cell-pointer" wx:if="{{!(cardsList[cardIndex].isDone)}}"></view>
+                            <view class="cell-number" wx:if="{{cardsList[cardIndex].isDone}}">{{ballotInfo[item.id] || item.prop || 0}}%</view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import {parsePercentageForPoll} from '../../utils'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class pollCard extends wepy.component {
+        props = {
+            cardIndex: {
+                type: Number
+            },
+            cardItem: {
+                type: Object,
+                toway: true,
+                default: {}
+            },
+            cardsList: {
+                type: Array,
+                default: []
+            }
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            isScrollAnimation: false, // 滚动条是否要动画
+            scrollTop: 0, // 滚动条的位置
+            oldIndex: -1, // 记录之前的卡片索引
+            selectedId: '', // 选中的顺序
+            selectedInfo: {}, // 当前选中的那个选项
+            ballotInfo: {}, // 投票比例
+            ballotTotal: 0, // 全部票数
+            resultId: -1, // 正确的结果id
+            isAnswerOver: false, // 是否作答结束
+            description: '', // 选中的答案的解释详情
+        }
+
+        onLoad() {
+            let self = this
+        }
+
+        methods = {
+            /**
+             * 选中某个选项
+             * @param event
+             * @returns {boolean}
+             */
+            getSelected(event) {
+                let self = this
+                // poll只能投一次
+                if (self.cardItem.isDone
+                    || (self.isAnswerOver && self.oldIndex === self.cardIndex)) {
+                    return false
+                }
+
+                let {currentTarget: {dataset: {item, index}}} = event
+                self.selectedId = item.id
+                self.$apply()
+
+                let data = {
+                    isFinish: true,
+                    id: self.cardItem.id,
+                    selectedId: item.id,
+                    selectedItem: item,
+                    fullImageBottomtText: '我选好了'
+                }
+                self.$emit('on-interaction', data)
+            }
+        }
+
+        events = {
+            /**
+             * 监听父级页面触发提交答案
+             * @param data
+             */
+            'broadcast-poll': (data) => {
+                let self = this
+                let item = _.find(self.cardItem.select, {id: data.selectedId})
+                self.resultId = item.id
+                // 统计全部投票人数
+                let selectList = self.cardsList[self.cardIndex].select
+                let ballotTotal =_.reduce(self.cardItem.select, (memo, data) => {
+                    let add = data.id === item.id ? 1 : 0
+                    return memo + data.ballot + add
+                }, 0)
+                // 计算每个投票的比例
+                _.each(self.cardItem.select, (data) => {
+                    let add = data.id === item.id ? 1 : 0
+                    self.ballotInfo[data.id] = Math.floor((data.ballot+add) / ballotTotal * 1000) / 10
+                })
+
+                self.isAnswerOver = true
+                self.oldIndex = _.clone(self.cardIndex)
+                if (self.isExercises) {
+                    self.scrollTop = 500
+                    self.isScrollAnimation = true
+                    setTimeout(()=>{
+                        self.isScrollAnimation = false
+                        self.$apply()
+                    }, 300)
+                }
+                self.$apply()
+            },
+            /**
+             * 监听父级，重置初始化数据
+             * @param data
+             */
+            'broadcast-reset-status': (data) => {
+                let self = this
+                self.scrollTop = 0
+                self.oldIndex = -1 // 记录之前的卡片索引
+                self.selectedId = 0 // 当前选中的那个选项
+                self.resultId = -1 // 正确的结果id
+                self.isAnswerOver = false // 是否作答结束
+                self.$apply()
+            }
+        }
+    }
+</script>

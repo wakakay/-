@@ -1,0 +1,48 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-community-box{
+        width:100%;height:100%;
+        .cell-title{padding-top:268rpx;padding-bottom:28rpx;font-size:44rpx;color:@color-black;text-align:center;line-height:56rpx;animation-delay:.3s;}
+        .cell-subtitle{font-size:35rpx;color:@color-black;line-height:48rpx;text-align:center;animation-delay:.5s;}
+    }
+</style>
+
+<template>
+    <view class="ui-community-box">
+        <jn-header title="专属社群"></jn-header>
+        <view class="cell-title fadeInUpBig">敬请期待</view>
+        <view class="cell-subtitle fadeInUpBig">上线后会通知你哦</view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class community extends wepy.page {
+        components = {
+            'jn-header': header
+        }
+
+        data = {}
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
+        onShow() {
+
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>

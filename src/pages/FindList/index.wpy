@@ -1,0 +1,533 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-clear-button{width:160rpx;background-color:rgba(0,0,0,.3);font-size:24rpx;color:#fff;position:fixed;right:10rpx;top:20%;z-index:50;}
+    .ui-container{width:100%;height:100%;background-color:@background-white;}
+    .ui-clear{width:100%;height:70rpx;}
+    /* 头部 */
+    .ui-course-header{
+        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
+        .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
+        .ui-avatar{
+            image{width:72rpx;height:72rpx;border-radius:50%;}
+        }
+    }
+    .ui-empty{width:100%;margin:22rpx auto 120rpx;color:#14292c;font-family:PingFangSC-Regular;font-size:24rpx;opacity:.7;}
+    /* 新人礼包 */
+    .ui-gift{
+        width:160rpx;height:160rpx;position:fixed;right:28rpx;bottom:140rpx;z-index:35;
+        .cell-icon{
+            width:44rpx;height:44rpx;text-align:center;line-height:44rpx;position:absolute;right:-12rpx;top:-40rpx;
+            &::before{content:' ';width:24rpx;height:24rpx;background-color:@background-white;position:absolute;left:22rpx;top:22rpx;}
+            text{font-size:44rpx;color:rgba(0,0,0,.8);position:relative;}
+        }
+        button{background:none;}
+        image{width:160rpx;height:160rpx;}
+    }
+    .cell-find-dec{margin:4rpx 0 26rpx 40rpx;color:@color-black;text-align:left;font-size:34rpx;}
+    /* 内容 */
+    .ui-content{
+        .ui-item{
+            padding: 0 40rpx;margin-bottom:56rpx;
+            .ui-special-subject{
+                width: 100%;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-20;
+                image{width: 100%;height: 824rpx;border-radius: @border-radius-32}
+            }
+            .ui-evaluation{
+                height: 824rpx;width: 100%;border-radius: @border-radius-20;background-size:100% 606rpx;background-position:top left;background-repeat:no-repeat;display:flex;position: relative;display: flex;align-items:flex-end;box-sizing:border-box;box-shadow:@box-shadow-hight;
+                .ui-num{
+                    position: absolute;top:0;right: 30rpx;background-image: url('http://wx-small.runwise.cn/image/imageIDfc1c51b87e74b7abcc7e8c5d1ffd.png');background-size:100% 100%;
+                    .ui-cri{
+                        width: 180rpx;height: 120rpx;position: relative;font-size:30rpx;color:@color-white;text-align: center;
+                        .cell-item{font-weight: bold;font-size: 56rpx;height: 56rpx;line-height: 64rpx}
+                    }   
+                }
+                .ui-main{
+                    background: @background-white;font-size: 32rpx;text-align:left;padding:18rpx 40rpx 40rpx 40rpx;width: 100%;border-bottom-right-radius: @border-radius-20;border-bottom-left-radius: @border-radius-20;
+                    .cell-sence{color:@color-blue;}
+                    .cell-title{color:@color-black;font-weight: bold;font-size: 52rpx;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+                    .cell-dec{color:@color-gray}
+                }
+            }
+            .ui-tody-subject{
+                width: 100%;border-radius: @border-radius-20;padding:28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
+                .cell-tip{font-size: 32rpx;color:@color-gray;}
+                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
+                .ui-subject{
+                    .ui-subject-item{
+                        height: 176rpx;display: flex;align-items: center;
+                        .ui-img{
+                            margin-right: 26rpx;width: 112rpx;
+                            image{
+                                width: 112rpx;height: 112rpx;border-radius: @border-radius-20;
+                            }
+                        }
+                        &:last-of-type .ui-content{border-bottom: none;}
+                        .ui-content{
+                            box-sizing:border-box;display: flex;align-items: center;justify-content: space-between;flex:1;height: 164rpx;border-bottom:2rpx solid @border-gray;padding-top:10rpx;
+                            .ui-detail{
+                                width:312rpx;height:120rpx;
+                                .cell-name{font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                                .cell-dec{
+                                    font-size: 26rpx;color:@color-gray;margin-top:12rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+                                    text{color:@color-black;font-size: 28rpx}
+                                }
+                            }
+                            .ui-btn{
+                                display: flex;align-items:center;height: 100%;flex-direction: column;justify-content:center;
+                                .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 30rpx;}
+                                .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    .ui-more{
+        width:100%;height:80rpx;font-size:32rpx;color:@color-gray;
+        &.is-bar{margin-bottom:110rpx;}
+    }
+</style>
+
+<template>
+    <view catchtouchmove="{{!isScroll}}">
+        <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+        <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
+
+        <scroll-view
+                scroll-with-animation
+                scroll-y="{{isScroll}}"
+                bindscrolltoupper="getScrollRefresh"
+                bindscrolltolower="getScrollMore">
+            <jn-header hiddenButton className="background-transparent"></jn-header>
+
+            <form bindsubmit="handleSavePushCode" report-submit>
+                <view class="ui-course-header">
+                    <view class="cell-title">发现</view>
+                    <navigator class="ui-avatar"
+                               hover-class="none"
+                               url="/pages/user-module/mine?type=2"><image src="{{avatar}}"></image></navigator>
+                </view>
+                <view class="cell-find-dec">{{discoverPageTitle}}</view>
+                <view class="ui-content">
+                    <view class="ui-item" wx:for="{{informationList}}" wx:key="{{index}}" wx:index="{{index}}" >
+                        <view wx:if="{{item.type == 'editor'}}" class="ui-special-subject"
+                              hover-stay-time="100"
+                              @tap.stop="getItem" data-item="{{item}}">
+                            <image mode="aspectFit" src="{{item.coverImageURL}}" />
+                        </view>
+                        <view wx:if="{{item.type == 'noSkill'}}" class="ui-evaluation" style="background-image:url({{item.coverImageURL}})" @tap.stop="getItem" data-item="{{item}}">
+                            <view class="ui-num">
+                                <view class="ui-cri">
+                                    <view class="cell-item">{{item.userCount}}</view>
+                                    <view>人已参加</view>
+                                </view>
+                            </view>
+                            <view class="ui-main">
+                                <view class="cell-sence">{{item.sceneType}}</view>
+                                <view class="cell-title">{{item.name}}</view>
+                                <view class="cell-dec">{{item.subtitle}}</view>
+                            </view>
+                        </view>
+                        <view wx:if="{{item.type == 'subject'}}" class="ui-tody-subject">
+                            <view class="cell-tip">{{item.sceneType}}</view>
+                            <view class="cell-title">{{item.name}}</view>
+                            <view class="ui-subject">
+                                <view wx:for="{{item.senceList}}" wx:for-item="courseItem" wx:key="{{index}}" wx:index="{{index}}"
+                                      hover-stay-time="100"
+                                      class="ui-subject-item" @tap.stop="handleStartLesson"
+                                      data-course-item="{{courseItem}}" data-is-new-sence-map = "{{item.isNewSenceMap}}">
+                                    <view class="ui-img">
+                                        <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
+                                    </view>
+                                    <view class="ui-content">
+                                        <view class="ui-detail">
+                                            <view class="cell-name">{{courseItem.senceName}}</view>
+                                            <view class="cell-dec">{{courseItem.senceTarget}}</view>
+                                        </view>
+                                        <view class="ui-btn">
+                                            <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
+                                            <view class="cell-btn-tip" >{{courseItem.buttonStatus === 'finish' ? '已完成': '+1 即能币'}}</view>
+                                        </view>
+                                    </view>
+
+                                </view>
+                            </view>
+                        </view>
+
+                    </view>
+                </view>
+            </form>
+            <view class="ui-clear"></view>
+            <view class="ui-more main-center cross-center" :class="{'is-bar': hasStudyingBar}">{{!isNotMore ? '正在努力加载...' : '没有更多了'}}</view>
+
+            <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+        </scroll-view>
+
+        <form bindsubmit="handleSavePushCode" report-submit>
+            <view class="ui-gift" wx:if="{{isShowGift}}">
+                <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
+                <button formType="submit" hover-stay-time="100" @tap.stop="getGift">
+                    <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
+                </button>
+            </view>
+        </form>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import ga from 'wxapp-ga/ga'
+    import PushMixin from '../../mixins/push'
+    import loadingMixin from '../../mixins/loading'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import EvaluateModal from '../../components/EvaluateModal/index'
+    import studyingBar from '../../components/common/studying-bar'
+    import {share as shareApi, registered as fetch} from '../../api'
+    import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
+    import _ from 'underscore'
+
+    const GoogleAnalytics = ga.GoogleAnalytics
+    const HitBuilders = ga.HitBuilders
+    const store = getStore()
+    @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
+        userName(state) {
+            return state.user.name
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
+        },
+        token(state) {
+            return state.user.token
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) { // 全局场景值
+            return state.entrance
+        }
+    })
+    export default class FindList extends wepy.page  {
+        config = {
+            navigationBarTitleText: "下拉刷新",
+            enablePullDownRefresh: true,
+            backgroundTextStyle: "dark"
+        }
+
+        mixins = [PushMixin, loadingMixin]
+
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading,
+            'jn-evaluate': EvaluateModal,
+            'studying-bar': studyingBar
+        }
+
+        data = {
+            isLoaded: false,
+            isMoreLoaded: true,
+            isNotMore: false, // 全部加载完了
+            hasStudyingBar: false, // 是否有学习bar
+            page: 1,
+            courseType:['recommend','newcourse','hotcourse'],
+            courseName:['为你推荐','最新上线','热门课程'],
+            isScroll: true, // 是否能滚动
+            activityBundle: {
+                freeCourseID: 'defaultFreeCourseID',
+                imageBox: 'defaultImageBox',
+                imageTop: 'defaultImageTop',
+                isShowFreeCourse: 'defaultIsSHowFreeCourse'
+            },
+            scrollTop: 0,
+            swiperList: [],
+            swiperCurrent: 0,
+            isNewCourseMap: {},
+            courseSeriesList: [],
+            newCourseList: [],
+            hotCourseList: [],
+            personalInfo: {}, // 头部用户信息
+            recommendCourse:[],
+            isShowGift: false,
+            isShowEvaluate:false,
+            informationList:[],
+            discoverPageTitle:''
+        }
+
+        onLoad() {
+            let self = this
+            let pageNum = wx.getStorageSync('pageLoadNum')
+            self.isShowEvaluate = pageNum !== 2 ? false : true
+            let storageToken = wx.getStorageSync("token") || 'defaultToken'
+            if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
+                self.initialize(storageToken)
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
+            } else {
+                wx.redirectTo({url: '/pages/registered-module/weclome'})
+            }
+        }
+
+        onShow() {
+            let self = this
+        }
+
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
+            let self = this
+            self.scrollTop = res.scrollTop
+            self.$apply()
+        }
+
+        initialize(token) {
+            let self = this
+            // 通知组件
+            self.$broadcast('studying-bar')
+            self.__isGetGift(token)
+            self.__fetchCourses({token: token})
+        }
+
+        __fetchCourses(parmas) {
+            let self = this
+            let postData = {
+                token: parmas && parmas.token || self.token,
+                page: self.page,
+                pageSize: 10
+            }
+
+            if (parmas && !parmas.callBack) {
+                self.isMoreLoaded = false
+            }
+
+            fetch.discoverPage(postData).then((respone) => {
+                self.isLoaded = true
+                self.discoverPageTitle = respone.discoverPageTitle
+
+                if (parmas && parmas.callBack && _.isFunction(parmas.callBack)) {
+                    self.informationList = []
+                    self.informationList = respone.informationList
+                    parmas.callBack()
+                    return
+                }
+
+                self.isMoreLoaded = true
+                if (respone.informationList && respone.informationList.length) {
+                    self.informationList = self.informationList.concat(respone.informationList)
+                } else {
+                    self.isNotMore = true
+                }
+                self.$apply()
+            }).catch(error => {
+                self.isLoaded = true
+                self.isMoreLoaded = true
+                throw error
+            })
+        }
+
+        /**
+         * 是否领取过新手礼包
+         * @private
+         */
+        __isGetGift(token) {
+            let self = this
+            let analyticsInfo = {
+                username: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                role: self.role
+            }
+            let postData = {
+                token: token || self.token
+            }
+
+            fetch.userInfo(postData).then((respone) => {
+                let giftStatus = wx.getStorageSync('giftStatus')
+                // 没有记录缓存
+                if (!giftStatus) {
+                    self.isShowGift = !respone.hasGift
+                    wx.setStorageSync("giftStatus", {
+                        isShow: self.isShowGift,
+                        isReceive: respone.hasGift
+                    })
+                } else {
+                    if (!respone.hasGift) {
+                        self.isShowGift = giftStatus.isShow ? true : false
+                    } else {
+                        self.isShowGift = false
+                    }
+                }
+                self.isShowGift && wx.reportAnalytics('exclusive_gift', analyticsInfo)
+                self.$apply()
+            }).catch(error => {
+
+            })
+        }
+
+        methods = {
+            handleStartLesson(events) {
+                let self = this
+                let item = events.currentTarget.dataset.courseItem
+                let isNewSenceMap = events.currentTarget.dataset.isNewSenceMap
+                let courseID = item.courseID
+                let senceID = item.id
+                let buttonStatus = item.buttonStatus
+                let lessonType = item.lessonType
+                let source = 'discoverPage'
+                let senceName = item.senceName
+                let resume = item.resume
+                self.isNewSenceMap = isNewSenceMap
+
+                if (!this.isTokenSet) {
+                    return
+                }
+
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                if ('previewTest' === lessonType) {
+                    return self.$navigate(`/pages/PreviousPracticeBeginning/index`, {courseID, senceID, source})
+                }
+
+                if ('needPay' === buttonStatus) {
+                    return self.$navigate(`/pages/PayForLesson/index`, {senceID})
+                }
+                let isNewSence = self.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, resumeLastRead: resume, source, isNewSence})
+            },
+            /**
+             * 下拉刷新
+             * @param
+             */
+            getScrollRefresh() {
+                let self = this
+                self.scrollTop = 0
+                self.$apply()
+            },
+            /**
+             * 上拉加载
+             * @param
+             */
+            getScrollMore(event) {
+                let self = this
+            },
+            /**
+             * 关闭新人礼包
+             * @param
+             */
+            getCloseGift() {
+                let self = this
+                self.isShowGift = false
+                wx.setStorage({
+                    key: "giftStatus",
+                    data: {
+                        isShow: false,
+                        isReceive: false
+                    }
+                })
+            },
+            /**
+             * 去领取新人礼包
+             * @param
+             */
+            getGift() {
+                let self = this
+                wx.reportAnalytics('exclusive_gift_click', {
+                    username: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.role
+                })
+                wx.navigateTo({url: '/pages/registered-module/interest-select'})
+            },
+            getItem({currentTarget: {dataset: {item}}}) {
+                let self = this
+                let courseID = item.id
+                let examID = item.id
+                let type = item.type
+                
+                // 微信事件上报
+                wx.reportAnalytics('tap_discover_slogan', {
+                    role: self.role,
+                    nickname: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: type,
+                    id: courseID ? courseID : examID
+                })
+
+                if (type && type === 'noSkill') {
+                    return self.$navigate('/pages/PreviousPracticeBeginning/index', {examID})
+                }
+
+                return self.$navigate('/pages/SpecialCourse/index', {courseID})
+            }
+        }
+
+        events = {
+            /**
+             * 监听是否要禁止滚动
+             * @param options
+             */
+            'on-studying-bar': (data) => {
+                let self = this
+                self.isScroll = data.isShow
+            },
+
+            'on-is-studying-bar': (data) => {
+                let self = this
+                self.hasStudyingBar = data.isShowBar
+            },
+        }
+
+        /**
+         * 分享
+         * @param options
+         * @returns {{title: string, path: string, success: success, fail: fail}}
+         */
+        onShareAppMessage(options) {
+            return {
+                title: '即能，互联网微学习',
+                path: '/pages/FindList/index',
+                success(res) {
+                    getStorageAsync({key: 'name'}).then(name => {
+                        wx.reportAnalytics('share_event', {
+                            nickname: name,
+                            type: shareDictionary.SHARE_WE_APP.type,
+                        })
+
+                    }).catch(error => error)
+
+                    getStorageAsync({key: 'token'}).then(token => {
+                        shareApi.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+
+                    }).catch(error => error)
+                },
+                fail(res) {
+                    console.log('转发失败')
+                }
+            }
+        }
+
+
+        onPullDownRefresh() {
+            let self = this
+            self.page = 1
+            self.__fetchCourses({
+                callBack: ()=>{
+                    wx.stopPullDownRefresh()
+                }
+            })
+        }
+
+        onReachBottom() {
+            let self = this
+
+            if (self.isMoreLoaded) {
+                self.page++
+                self.__fetchCourses()
+            }
+        }
+    }
+</script>

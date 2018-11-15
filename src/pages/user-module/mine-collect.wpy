@@ -1,0 +1,170 @@
+<style lang="less">
+	@import "../../assets/style/theme";
+    /* 头部 */
+    .ui-mine-header{
+        display: flex;align-items: center;margin:16rpx 32rpx 0;border-bottom:2rpx solid @border-gray;box-sizing: border-box;
+        .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
+    }
+    /* 列表 */
+    .ui-collect-content{
+        .ui-content-header{
+            display: flex;padding:12rpx 38rpx 0 32rpx;
+            .ui-img{
+                margin-right: 24rpx;
+                image{width: 112rpx;height: 112rpx;border-radius: @border-radius-8;}
+            }
+            .ui-right{
+                display: flex;justify-content: space-between;align-items: center;flex:1;
+                .ui-detail{
+                    .cell-title{font-size: 32rpx;color: @color-black;font-weight: bold;}
+                    .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx}
+                }
+                .ui-arrow{color:@color-blue;}
+            }
+        }
+        .ui-scroll-list{
+            overflow:hidden;white-space:nowrap;width: 100%;padding-left:32rpx;box-sizing:border-box;margin-top:26rpx;
+            .ui-item{
+                display:inline-block;margin:0 20rpx 32rpx 0;
+                image{width: 300rpx;height: 400rpx;border-radius: @border-radius-20}
+            }
+        }
+        .cell-border{height: 2rpx;border-bottom: 2rpx solid @border-gray;box-sizing: border-box;margin: 0 32rpx 20rpx;}
+
+    }
+    .cell-margin{height: 110rpx;width: 100%;}
+</style>
+
+<template>
+    <mloading wx:if="{{ !isLoaded  }}"/>
+    <view class="ui-mine-collect" wx:if="{{isLoaded}}">
+		<jn-header title=""></jn-header>
+		<view>
+            <view class="ui-mine-header">
+                <view class="cell-title">收藏</view>
+            </view>
+            <view class="ui-collect-content" wx:for="{{ collectList }}"  wx:index="{{ index }}" wx:key="{{ index }}">
+                <view class="ui-content-header">
+                    <view class="ui-img">
+                        <image src="{{item.image}}" />
+                    </view>
+                    <view class="ui-right">
+                        <view class="ui-detail">
+                            <view class="cell-title">{{item.title}}</view>
+                            <view class="cell-dec">{{item.dec}}</view>
+                        </view>
+                        <view class="ui-arrow">
+                            <text class="icon-right-arrow"></text>
+                        </view>
+                    </view>
+                </view>
+
+                <scroll-view class="ui-scroll-list" scroll-x>
+                    <view class="ui-item" wx:for="{{item.senceList}}" wx:for-item="senceItem" wx:index="{{ senceIndex }}" wx:key="{{ senceIndex }}">
+                        <image src="{{senceItem.img}}"/>
+                    </view>
+                </scroll-view>
+                 <view class="cell-border"></view>
+            </view>
+            <view class="cell-margin"></view>
+        </view>
+    </view>
+</template>
+
+<script>
+	import wepy from 'wepy'
+	import {getStore,connect} from "wepy-redux"
+	import Loading from '../../components/common/loading'
+	import loadingMixin from '../../mixins/loading'
+	import header from '../../components/common/header'
+    import {navigateToLesson} from '../../utils'
+	
+	const store = getStore();
+	@connect({
+		userName(state) {
+			return state.user.name;
+		},
+		avatar(state) {
+			return state.user.avatar;
+		},
+		token(state) {
+            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1541068218630-83241001d91ea28129df345c6094f3b5'
+			return state.user.token;
+		},
+	})
+	export default class MineCollect extends wepy.page {
+		mixins = [loadingMixin]
+		components = {
+			'mloading': Loading,
+			'jn-header': header
+		}
+
+		data = {
+			isLoaded: true,
+            isNewSenceMap: {}, // 进入微课的新老界面判断
+            collectList:[
+                {
+                    title:'内容生产方法论',
+                    dec:'内容生产方法',
+                    image:'http://wx-small.runwise.cn/image/imageID73920988f8e43ba83e14cc5d9550.png',
+                    senceList:[
+                        {img:'http://wx-small.runwise.cn/image/imageID59d3f0e466449199aa74a0776486.png'},
+                        {img:'http://wx-small.runwise.cn/image/imageID1765a7a9eba42c81f07207cebf49.png'},
+                        {img:'http://wx-small.runwise.cn/image/imageID64ff40740bd404a69d29594e052d.png'},
+                        {img:'http://wx-small.runwise.cn/image/imageID59d3f0e466449199aa74a0776486.png'},
+                    ]
+
+                },
+                {
+                    title:'内容营销团队',
+                    dec:'内容生产方法',
+                    image:'http://wx-small.runwise.cn/image/imageID17882c567744ca8006fb7f05979f.png',
+                    senceList:[
+                        {img:'http://wx-small.runwise.cn/image/imageID59d3f0e466449199aa74a0776486.png'},
+                        {img:'http://wx-small.runwise.cn/image/imageID62796f0dac347689e2a1b10ffd81.png'},
+                    ]
+
+                },
+            ]
+		}
+		onLoad() {
+            this.isNewSenceMap = []
+		}
+		onShow() {
+
+		}
+
+		methods = {
+			//跳去微课详情页
+			handleSencePage({currentTarget:{dataset:{courseID, senceID}}}){
+                let isNewSence = this.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, isNewSence})
+			},
+            // 跳去课程详情页
+            getCourseDetail({currentTarget: {dataset: {item}}}) {
+                let self = this
+                let courseID = item.courseID;
+                let courseType = item.courseType;
+                let name = item.name;
+                let resume = item.resume ? item.resume : ''
+                let courseName = item.courseName ? item.courseName : item.name
+
+                wepy.$instance.globalData.getHuilder(`课程页/${courseName}`,'click',`${name}`)
+                try {
+                    let isNewCourseMap = self.isNewCourseMap[courseID]
+                    let url = isNewCourseMap
+                        ? `/pages/course-module/course-new-details?id=${courseID}&source=${courseType}`
+                        : `/pages/course-module/course-details?id=${courseID}&resume=${resume}&courseType=${courseType}&name=${name}&courseName=${courseName}`
+
+                    wepy.navigateTo({url: url})
+                } catch (err) {
+                    console.log('handle attend classes err', err)
+                }
+
+            }
+        }
+		
+
+	}
+</script>
+

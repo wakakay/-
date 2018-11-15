@@ -1,0 +1,51 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <scroll-view class="module-front-box"
+                 scroll-y>
+        <view class="ui-thumb main-center cross-center">
+            <image mode="aspectFit" src="{{cardItem.bigimage || 'http://wx-small.runwise.cn/image/imageID3514ab7ecdf4df919a2c50508470.svg'}}"></image>
+        </view>
+
+        <view class="ui-content">
+            <view class="ui-description">
+                <text>{{cardItem.description}}</text>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class frontCard extends wepy.component {
+        props = {
+            cardIndex: {
+                type: Number
+            },
+            cardItem: {
+                type: Object,
+                default: {}
+            }
+        }
+
+        data = {}
+
+        onLoad() {
+            let self = this
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>

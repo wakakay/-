@@ -1,0 +1,240 @@
+<template>
+    <scroll-view
+        scroll-y="{{isScroll}}"
+        enable-back-to-top="{{ true }}"
+        scroll-with-animation="{{ true }}"
+        bindscroll="getScroll"
+        class="mine-article__body">
+        <jn-header title="更改手机号码"></jn-header>
+        <view class="ui-edit-phone">
+            <view class="ui-form">
+                <view class="ui-phone">
+                    <input value="{{phoneNumber}}" type="number" maxlength="11" placeholder="手机号码" placeholder-class="cell-phone"
+                        bindinput="getPhoneWrite"/>
+                    <button
+					class="cell-auto"
+					open-type="getPhoneNumber" @getphonenumber.stop="getPhoneNumber">自动填写</button>
+                </view>
+                <view class="ui-code">
+                    <input value="{{codeNum}}" maxlength="4" placeholder="验证码" bindinput="getVerifyWrite"/>
+                    <button :class="{'cell-code-false': !isPhone || isDownTime }" disabled="{{!isPhone || isDownTime}}" @tap.stop="getVerifyCode" >{{!isDownTime ? '获取验证码' : againTime+'s'}}</button>
+                </view>
+            </view>
+            <view class="ui-button">
+                <button :class="{'cell-sure-false' : !isPhone || codeNum.length!== 4}"  class="cell-sure" @tap.stop="getSave">确定</button>
+            </view>
+        </view>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {getStore, connect} from "wepy-redux";
+    import {auth as authApi, registered as fetchRegistered,report as reportApi} from "../../api";
+    import fetchPhoneMixin from "../../mixins/fetchPhone";
+    import {setPhone, renewWechatCode} from '../../redux/models/user'
+    import header from '../../components/common/header'
+
+    const store = getStore();
+    @connect({
+        token(state) {
+            //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+    })
+    export default class MineEditPhone extends wepy.page {
+        mixins = [fetchPhoneMixin]; // end mixins
+
+        data = {
+            headerHeigth: 68,
+            scrollTop: 0,
+            isScroll: true, // 是否能滚动
+            phoneNumber: '',
+            phoneCode:'',
+            codeNum: '',
+            againTime: 0,
+            isPhone:false,
+            isDownTime: false,
+        }
+
+        components = {
+            'jn-header': header,
+        }
+        methods = {
+            /**
+             * 监听输入手机号码
+             * @param event
+             */
+            getPhoneWrite(event) {
+                let self = this
+                let {detail: {value}} = event
+                let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+                if(!value) return 
+                self.isPhone = !reg.test(value) ? false : true
+                self.phoneNumber = value
+                self.$apply()
+            },
+             /**
+             * 监听输入验证码
+             * @param event
+             */
+            getVerifyWrite(event) {
+                let self = this
+                let {detail: {value}} = event
+                self.codeNum = value
+            },
+            /**
+             * 再次获取短信验证码倒计时
+             */
+            getVerifyCode() {
+                let self = this
+                if(!self.isPhone || self.isDownTime) return
+                self.isDownTime = true
+                self.againTime = 60
+                let timer = setInterval(() => {
+                    self.againTime--
+                    self.$apply()
+                    if (!self.againTime) {
+                        self.isDownTime = false
+                        clearInterval(timer)
+                        self.$apply()
+                    }
+                }, 1000)
+
+                self.__phoneCode()
+                
+            },
+            /**
+             * 自动填写手机号码，授权手机
+             */
+            getPhoneNumber(event) {
+                let self = this
+                let {detail: {encryptedData, errMsg, iv}} = event
+                // 拒绝授权手机号码
+                if ('getPhoneNumber:ok' !== errMsg) {
+                    return console.log(errMsg)
+                }
+
+                let postData = {
+                    token: self.token,
+                    code: self.code,
+                    encryptedData,
+                    iv
+                }
+                // 拿到手机加密的号码跟私钥，由后台解密
+                authApi.sendPhoneNumber(postData).then((respone) => {
+                    let {phone} = respone
+                    self.phoneNumber = phone
+                    self.isPhone = true
+                    renewWechatCode(store.dispatch) // 更新登录code
+                    self.$apply()
+                    if (phone) {
+                        let setData = {
+                            status: "success",
+                            response: phone
+                        }
+                        store.dispatch(setPhone(setData))
+                    }
+                    self.$apply()
+                }).catch(error => {
+                    renewWechatCode(store.dispatch) // 更新登录code
+                })
+            },
+            getSave(){
+                let self = this
+                if(!self.isPhone || self.codeNum.length!=4) {
+                    return wepy.showToast({
+                        title: '手机号码或验证码不正确',
+                        icon:'none'
+                    })
+                }else {
+                    reportApi.saveUserCenterInfo({ 
+                        token:self.token, 
+                        json: {mobile:self.phoneNumber,verCode:self.codeNum}, 
+                        flag:'mobile'
+                    })
+                    .then((res) => {
+                        if(res.success === 0) {
+                            return wepy.showToast({
+                                title: '手机号码或验证码不正确',
+                                icon:'none'
+                            })
+                        }else {
+                            wx.navigateBack()
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+                }
+            }
+           
+        };
+        /**
+         * 获取验证码
+         * @private
+         */
+        __phoneCode() {
+            let self = this
+            let postData = {
+                token: self.token,
+                mobile: self.phoneNumber
+            }
+            fetchRegistered.setVerCode(postData).then((respone) => {
+                let message = respone.data.message || '验证码已发送'
+                wx.showToast({
+                    icon: 'none',
+                    title: message
+                })
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+
+        onLoad(options) {
+            let self = this
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            if(!options.phone) return
+            self.phoneNumber = options.phone
+            self.isPhone = true
+            self.$apply()
+        }
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .mine-article__body {height: 100%;background-color: @background-gray-F4;position: relative;overflow-x: hidden;}
+    .ui-edit-phone{
+        margin-top:20rpx;font-size: 32rpx;
+        .ui-form{
+            background-color: @background-white;
+             .ui-phone{
+                display: flex;justify-content: space-between;height: 128rpx;align-items:center;padding-right:40rpx;box-sizing:border-box;border-bottom:2rpx solid @border-gray;margin-left:40rpx;font-size:32rpx;color:@color-black;
+                .cell-auto{width: 160rpx;height: 52rpx;background: @background-blue;border-radius:@border-radius-8;font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-white;text-align: center;line-height: 52rpx;margin: 0;padding: 0;}
+                .cell-phone{font-family: PingFangSC-Regular;color: @color-gray;}
+            }
+            .ui-code{
+                display: flex;justify-content: space-between;height: 128rpx;align-items:center;padding-right:40rpx;box-sizing:border-box;margin-left:40rpx;color:@color-black;
+                button{width:160rpx;height:52rpx;font-size:28rpx;padding:0;text-align:center;line-height:52rpx;background:  @background-blue;color: @color-white;margin: 0}
+                button.cell-code-false{opacity: 0.2;}
+            }
+            input{width: 500rpx;}
+        }
+        .ui-button{
+            display:flex;justify-content:center;
+            .cell-sure{width: 400rpx;height: 100rpx;background: @background-blue;border-radius: @border-radius-20;color:@color-white;font-family: PingFangSC-Medium;font-size:36rpx;letter-spacing: 0.04rpx;text-align: center;line-height: 100rpx;margin-top: 110rpx}
+            .cell-sure.cell-sure-false {opacity: 0.2;}
+        }
+    }
+</style>

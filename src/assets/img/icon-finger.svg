@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>小手指-白</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="小手指-白">
+            <rect id="Rectangle-12" fill="#000000" opacity="0.02" x="0" y="0" width="24" height="24"></rect>
+            <g id="Hand-Copy-2" transform="translate(4.000000, 0.000000)" fill="#FFFFFF">
+                <rect id="Rectangle-3" x="4.94117647" y="0" width="3.52941176" height="17.6470588" rx="1.76470588"></rect>
+                <rect id="Rectangle-3" x="7.76470588" y="9.88235294" width="3.52941176" height="8.47058824" rx="1.76470588"></rect>
+                <rect id="Rectangle-3-Copy" x="10.5882353" y="9.88235294" width="3.52941176" height="8.47058824" rx="1.76470588"></rect>
+                <rect id="Rectangle-3-Copy-2" x="13.4117647" y="10.5882353" width="3.52941176" height="7.05882353" rx="1.76470588"></rect>
+                <path d="M5.10598382,14.9091673 L2.63539558,12.4385791 C2.05062349,11.853807 1.10252061,11.853807 0.517748524,12.4385791 L0.517748524,12.4385791 C-0.0932511767,13.0495788 -0.172966086,14.0127551 0.329272574,14.7158892 L5.32128622,21.7047083 C6.07213228,22.7558928 7.28441569,23.3797555 8.5762201,23.3797555 L12.6094636,23.3797604 C14.4771287,23.3797604 16.0962079,22.0873054 16.5100398,20.266065 C16.9073358,18.5175973 17.1059838,17.0967355 17.1059838,16.0034795 C17.1059838,14.3208043 17.1059838,13.0078303 17.1059838,12.0645575 L6.73497941,12.0645575 L5.10598382,14.9091673 Z" id="Path-2"></path>
+            </g>
+        </g>
+    </g>
+</svg>

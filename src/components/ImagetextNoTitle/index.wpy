@@ -1,0 +1,99 @@
+<template>
+    <view class="imagetextNoTitle-article">
+        <view wx:if="{{bundle.layoutStatus.imageTop==='text'}}" class="imagetextNoTitle-article-desc-m {{bundle.description.length>34?'font-size-s':'font-size-b'}} {{isActived ? 'on' : ''}}" >
+            <rich-text nodes="{{bundle.richTextNodeList}}"></rich-text>
+        </view>
+        <view class="imagetextNoTitle-article-img {{isActived ? 'on' : ''}}" :class="{'image-loading': !imageLoaded}">
+            <image class="imagetextNoTitle-article-img" @load="handleImageLoaded" src="{{bundle.bigimage}}" hidden="{{!imageLoaded}}" mode="widthFix"></image>
+        </view>
+        <view wx:if="{{bundle.layoutStatus.imageTop==='image'}}" class="imagetextNoTitle-article-desc-b {{bundle.description.length>34?'font-size-s':'font-size-b'}} {{isActived ? 'on' : ''}}">
+            <rich-text nodes="{{bundle.richTextNodeList}}"></rich-text>
+        </view>
+        <view class="imagetextNoTitle-article-point-text {{isActived ? 'on' : ''}}" wx:if="{{bundle.layoutStatus.extraDescShow}}">{{bundle.layoutStatus.extraDesc}}</view>
+
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import loadingMixin from '../../mixins/loading'
+    export default class ImagetextNoTitle extends wepy.component {
+        mixins = [loadingMixin] // end mixins
+        props = {
+            offset: {},
+            bundle: {
+                type: Object
+            },
+            isActived: {
+              type: Boolean
+            }
+        }
+        data = {}
+        methods = {
+        }
+    }
+</script>
+
+<style lang="less">
+    .imagetextNoTitle-article {
+        height: 100%;
+        width: 100%;
+        background-color: #FFF;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .imagetextNoTitle-article-desc-m.on {
+        animation: zoomIn .3s ease-in 0s;
+    }
+    .imagetextNoTitle-article-img.on {
+        animation: zoomIn .3s ease-in .05s;
+    }
+    .imagetextNoTitle-article-desc-b.on {
+        animation: zoomIn .3s ease-in .1s;
+    }
+    .imagetextNoTitle-article-point-text.on {
+        animation: zoomIn .3s ease-in .15s;
+    }
+
+    .font-size-s{
+        font-size: 32rpx;
+    }
+    .font-size-b{
+        font-size: 36rpx;
+    }
+    .imagetextNoTitle-article-img{
+        width: 100%;
+    }
+    .imagetextNoTitle-article-desc-m{
+        margin: 0 72rpx 48rpx 72rpx;
+        color: #2c3f49;
+        font-family: 'PingFangSC-Regular';
+        text-align: justify;
+        line-height: 56rpx;
+        word-break: break-all;
+        white-space: pre-line;
+        /* font-size: 40rpx; */
+    }
+    .imagetextNoTitle-article-desc-b{
+        margin: 48rpx 72rpx 0 72rpx;
+        color: #2c3f49;
+        font-family: 'PingFangSC-Regular';
+        text-align: justify;
+        line-height: 56rpx;
+        word-break: break-all;
+        white-space: pre-line;
+        /* font-size: 40rpx; */
+    }
+    .imagetextNoTitle-article-point-text{
+        color: #303f48;
+        font-family: 'PingFangSC-Medium';
+        font-size: 40rpx;
+        line-height: 56rpx;
+        margin: 48rpx 72rpx 0rpx 72rpx;
+        word-break: break-all;
+        white-space: pre-line;
+    }
+</style>

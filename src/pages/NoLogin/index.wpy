@@ -1,0 +1,135 @@
+<template>
+    <jn-header title="即能"></jn-header>
+    <view class="flex-start-column no-login-article">
+        <image class="no-login-article__poster"
+               src="http://wx-small.runwise.cn/image/imageID529e38ab46b42c84a24be9e494dd.png" mode="widthFix"></image>
+        <text class="no-login-article__tips">登录后才可以学习哦</text>
+        <button class="no-login-article__btn" open-type="getUserInfo" hover-class="no-login-article__btn-hover"
+                bindgetuserinfo="handleGetUserInfo">登录
+        </button>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {CustomError} from '../../errors'
+    import {sleep} from '../../utils'
+    import {auth as authApi} from '../../api'
+    import {getStore, connect} from 'wepy-redux'
+    import {
+        login,
+        checkLoginStatus,
+        renewUserRole
+    } from '../../redux/models/user'
+    import header from '../../components/common/header'
+
+    const store = getStore()
+
+    @connect({
+        token(state) {
+            return state.user.token
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
+        },
+        phone(state) {
+            return '13636641408'
+            return state.user.phone
+        }
+    })
+    export default class NoLogin extends wepy.page {
+        data = {}
+
+        components = {
+            'jn-header': header
+        }
+
+        methods = {
+            handleGetUserInfo(event) {
+                return new Promise((resolve, reject) => {
+                    if (event.detail && event.detail.errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (event.errMsg && event.errMsg.indexOf('fail')) throw new CustomError('用户授权失败')
+                    resolve(event)
+                })
+                // .catch(error => {
+                //   return authApi.doAuthorization()
+                // })
+                    .then(userInfo => {
+                        return store.dispatch(login())
+                    })
+                    .then(() => {
+                        return sleep(0.5)
+                    })
+                    .then(() => {
+                        wx.navigateBack({
+                            delta: 1
+                        })
+                    })
+                    .catch(error => {
+                        console.log('catch auth error________', error)
+                        // if ('authDeny'===error) return wx.openSetting()
+                        wepy.showModal({
+                            title: '提示',
+                            content: '登录才能即学即练哦',
+                            showCancel: false,
+                            confirmText: "知道了"
+                        })
+                    }) // end catch
+
+            } // handleGetUserInfo
+        } // end methods
+
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+  .no-login-article {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+  }
+
+  .no-login-article__poster {
+    width: 719.4rpx;
+    display: block;
+    margin-top: 81.6rpx;
+    margin-bottom: 11.8rpx;
+  }
+
+  .no-login-article__tips {
+    display: block;
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    text-align: center;
+    color: #5A696B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .no-login-article__btn {
+    width: 614rpx;
+    height: 88rpx;
+    margin-top: 64rpx;
+    display: block;
+    background: #2DB7B5;
+    box-shadow: 0 4rpx 12rpx 0 rgba(45,183,181,0.50);
+    border-radius: 64rpx;
+    font-family: PingFangSC-Semibold;
+    font-size: 36rpx;
+    color: #FFFFFF;
+    letter-spacing: 1.64rpx;
+    text-align: center;
+  }
+
+  .no-login-article__btn-hover {
+    background-color: #269B9A;
+    box-shadow: 0 4rpx 12rpx 0 rgba(38,155,154,0.50);
+  }
+</style>

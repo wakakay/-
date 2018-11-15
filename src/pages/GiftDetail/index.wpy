@@ -1,0 +1,391 @@
+<template>
+    <scroll-view class="gift-article-body">
+        <jn-header :title.sync="naviTitle"></jn-header>
+        <view class="gift-new-top-wapper">
+            <image class="gift-new-top-img" wx:if="{{!type}}" mode="widthFix" src="http://wx-small.runwise.cn/image/imageID5af78559d52441b03bde78d9b25d.png"></image>
+            <!-- <image class="gift-new-top-img" mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID1a4506457dc4ec9f0be754328993.png"></image> -->
+            <view class="gift-new-top-digit" style="display:none;">
+                <view class="gift-new-top-digit-block">
+                    <view class="gift-new-top-digit-num" style="color:#FE417B">{{couponOnLineCount}}</view>
+                    <view class="gift-new-top-digit-desc" @tap.stop="handleModal">微课券在路上<image mode="scaleToFill" class="tip-icon" src="http://wx-small.runwise.cn/image/imageID5047d11428f439b7e27356f39dad.png"/></view>
+                    <view class="gift-new-top-digit-num-desc">张</view>
+                </view>
+                <view class="gift-new-top-digit-block">
+                    <view class="gift-new-top-digit-num" style="color:#FE417B">{{couponCount}}</view>
+                    <view class="gift-new-top-digit-desc">累积获得</view>
+                    <view class="gift-new-top-digit-num-desc">张</view>
+                </view>
+                <view class="gift-new-top-digit-block">
+                    <view class="gift-new-top-digit-num" style="color:#2DB7B5">{{receiveUserCount}}</view>
+                    <view class="gift-new-top-digit-desc">接受邀请</view>
+                    <view class="gift-new-top-digit-num-desc">人</view>
+                </view>
+            </view>
+        </view>
+        <view class="gift-article-top-wrapper" style="display:none;">
+            <image src="{{backGroundImageURL}}" class="gift-article-bg" mode="scaleToFill"/>
+            <view class="gift-article-top-img">
+            </view>
+            <view class="gift-article-top-ticket-data">
+                <view class="gift-article-top-ticket-data-item">
+                    <view class="gift-article-top-ticket-data-item-img">
+                        <image class="gift-article-top-ticket-data-item-img" mode="widthFix" src="http://wx-small.runwise.cn/image/imageID6c30f3cdd8d44eabd14586e3fdce.png"/>
+                        <view class="gift-article-digit-count" >{{couponOnLineCount}}</view>
+                    </view>
+                    <view class="gift-article-top-ticket-data-item-text" @tap.stop="handleModal">在路上的券</view>
+                </view>
+                <view class="gift-article-top-ticket-data-item">
+                    <view class="gift-article-top-ticket-data-item-img">
+                        <image class="gift-article-top-ticket-data-item-img" mode="widthFix" src="http://wx-small.runwise.cn/image/imageIDa76e4131f7b4bc8ff9f0eae0a83c.png"/>
+                        <view class="gift-article-digit-count" >{{couponCount}}</view>
+                    </view>
+                    <view class="gift-article-top-ticket-data-item-text">累计获得</view>
+                </view>
+                <view class="gift-article-top-ticket-data-item">
+                    <view class="gift-article-top-ticket-data-item-img">
+                        <image class="gift-article-top-ticket-data-item-img" mode="widthFix" src="http://wx-small.runwise.cn/image/imageID6e2e60e06fa481965b02242ac21f.png"/>
+                        <view class="gift-article-digit-count" >{{receiveUserCount}}</view>
+                    </view>
+                    <view class="gift-article-top-ticket-data-item-text">接受邀请</view>
+                </view>
+            </view>
+        </view>
+        <view class="gift-article-list-warpper" wx:if="{{ giftingList&&giftingList.length }}">
+            <view class="gift-article-list-title" wx:if="{{!type}}">赠送中微课</view>
+            <view class="course__section-cell flex-space-between-row" wx:for="{{ giftingList }}" wx:for-index="index" wx:for-item="item" wx:key="index" >
+                <view class="course__section-cell__icon-wrapper">
+                    <image class="my-lessen__article__body__bar-cell-wrapper__image" mode="aspectFill" src="{{item.image}}"></image>
+                </view><!-- my-lessen__article__body__bar-cell__icon-wrapper -->
+                <view class="course__section-cell__middle-block {{index===0?'my-lesson__article__body__will-get__bar-cell-noborder':''}}">
+                    <text class="" style="color:#294657;max-width:328rpx"> {{ item.name }} </text>
+                    <text class="" style="white-space:pre;">已获 <text style="color:#2db7b5 !important;">{{item.giftBonus}}</text> 即能币 | <text style="color:#2db7b5 !important">{{item.receiveUserCount}}</text> 人领取</text>
+                </view><!-- my-lessen__article__body__bar-cell__description -->
+                <view class="course__section-cell__right__block {{index===0?'my-lesson__article__body__will-get__bar-cell-noborder':''}}">
+                    <button class="my-course__article__body__bar-cell__operation__btn" style="width:180rpx;" data-course-i-d="{{item.courseID}}" data-gift-i-d="{{item.giftID}}" @tap.stop="handleToSendPage"> 继续赠送 </button>
+                </view><!-- my-lessen__article__body__bar-cell__operation -->
+            </view>
+        </view>
+
+        <view class="gift-article-list-warpper" wx:if="{{ prepareGiftList&&prepareGiftList.length&&!type }}">
+            <view class="gift-article-list-title">可赠送微课</view>
+            <view class="course__section-cell flex-space-between-row" wx:for="{{ prepareGiftList }}" wx:for-index="index" wx:for-item="item" wx:key="index" >
+                <view class="course__section-cell__icon-wrapper">
+                    <image class="my-lessen__article__body__bar-cell-wrapper__image" mode="aspectFill" src="{{item.image}}"></image>
+                </view><!-- my-lessen__article__body__bar-cell__icon-wrapper -->
+                <view class="course__section-cell__middle-block {{index===0?'my-lesson__article__body__will-get__bar-cell-noborder':''}}">
+                    <text class="" style="color:#294657;max-width:400rpx"> {{ item.name }}</text>
+                    <text class="gift-article-showpoint"> {{ item.showPoint }} </text>
+                </view><!-- my-lessen__article__body__bar-cell__description -->
+                <view class="course__section-cell__right__block {{index===0?'my-lesson__article__body__will-get__bar-cell-noborder':''}}">
+                    <button class="my-course__article__body__bar-cell__operation__btn" data-sence-i-d="{{ item.senceID }}" data-course-i-d="{{item.courseID}}" data-gift-i-d="{{item.giftID}}" @tap.stop="handleToSendPage"> 去赠送 </button>
+                </view><!-- my-lessen__article__body__bar-cell__operation -->
+            </view>
+        </view>
+
+
+        <view class="gift-article-bottom-line"/>
+    </scroll-view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import loadingMixin from "../../mixins/loading"
+    import header from '../../components/common/header'
+    import {
+        showErrorPage
+    } from '../../utils'
+    import Toast from "wepy-com-toast"
+    import {
+        course as courseApi
+    } from "../../api"
+    import {
+        NetworkError
+    } from "../../errors"
+    import {
+        getStore,
+        connect
+    } from "wepy-redux"
+    import {
+        renewWechatCode,
+        login,
+        checkLoginStatus,
+        renewUserRole
+    } from "../../redux/models/user";
+    // import FavouriteCourse from '../../components/FavouriteCourse/index'
+    const store = getStore();
+    const state = store.getState();
+    @connect({
+        userName(state) {
+            return state.user.name;
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar;
+        },
+        token(state) {
+            // return 'userIDcef89ebd694454a19e2a45101099-1519885452805-08d3f3287cbc25e5c18896bca596ef46'
+            return state.user.token;
+        },
+        code(state) {
+            return state.user.code;
+        },
+        phone(state) {
+            return '13636641408'
+            return state.user.phone
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) { //全局场景值
+            return state.entrance
+        }
+    })
+    export default class GiftDetail extends wepy.page {
+        mixins = [loadingMixin]; // end mixins
+
+        data = {
+            giftingList: [{}, {}, {}],
+            prepareGiftList: [{}, {}, {}],
+            couponCount: 0,
+            couponOnLineCount: 0,
+            receiveUserCount: 0,
+            backGroundImageURL: '',
+            type: '',
+            naviTitle: '赠一得一'
+        }; // end data
+        components = {
+            'jn-header': header
+        }; // end components
+        onUnload() {
+        }
+
+        onLoad({type}) {
+            this.type = type
+            // if(type){
+            //     this.naviTitle = '赠送记录'
+            // }
+            wepy.setNavigationBarTitle({
+                title: '赠一得一 · 一起学习'
+            })
+
+        }
+
+        onShow() {
+            this.initialize()
+        }
+
+        methods = {
+            handleModal() {
+                wx.showModal({
+                    // title: '提示',
+                    content: '好友已开始学习，待TA完成学习，你就能得微课券，快提醒好友学习吧。',
+                    confirmText: '知道了',
+                    showCancel: false,
+                    success: function (res) {
+                        if (res.confirm) {
+                            console.log('用户点击确定')
+                        } else if (res.cancel) {
+                            console.log('用户点击取消')
+                        }
+                    }
+                })
+            },
+            handleToSendPage({target: {dataset: {giftID, courseID, senceID}}}) {
+                return wepy.navigateTo({
+                    url: `/pages/Largess/index?giftID=${giftID}&courseID=${courseID}&senceID=${senceID}`
+                })
+            }
+        } // end methods
+        events = {} // end events
+        initialize() {
+            return courseApi.getGiftDetail({token: this.token})
+                .then(({backGroundImageURL, couponCount, couponOnLineCount, giftingList, prepareGiftList, receiveUserCount}) => {
+                    this.backGroundImageURL = backGroundImageURL
+                    // this.couponCount = couponCount
+                    // this.couponOnLineCount = couponOnLineCount
+                    this.giftingList = giftingList
+                    this.prepareGiftList = prepareGiftList
+                    // this.receiveUserCount = receiveUserCount
+                    this.$apply()
+
+                })
+                .catch(error => {
+                    throw error
+                })
+        }
+
+    }
+</script>
+
+<style lang="less" scoped>
+.gift-article-bg{
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    position: absolute;
+}
+.gift-article-body{
+    width: 100%;
+    /* height: 100%; */
+}
+.gift-article-top-wrapper{
+    width: 100%;
+    height: 1000rpx;
+    position: relative;
+    /* background-color: greenyellow; */
+    /* opacity: .5; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+.gift-article-top-img{
+    margin-top: 368rpx;
+    width: 386rpx;
+    height: 390rpx;
+    /* background-color: rgba(255, 0, 0, .5); */
+}
+.gift-article-top-ticket-data{
+    /* margin: 0 60rpx; */
+    width: calc(~"100% - 195rpx");
+    height: 242rpx;
+    /* background-color: rgba(0, 255, 255, .3); */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.gift-article-top-ticket-data-item{
+    width: 120rpx;
+    text-align: center;
+}
+.gift-article-top-ticket-data-item-img{
+    width: 120rpx;
+    height: 120rpx;
+    position: relative;
+    /* background-color: purple; */
+    /* opacity: 0.5; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.gift-article-digit-count{
+    position: absolute;
+    color: white;
+    font-family: PingFangSC-Medium;
+    font-size: 60rpx;
+    top: 10rpx;
+}
+.gift-article-top-ticket-data-item-text{
+    color: rgba(255, 255, 255, .8);
+    font-family: PingFangSC-Regular;
+    font-size: 24rpx;
+    margin-top: 36rpx;
+}
+.gift-article-list-title{
+    width: 100%;
+    height: 128rpx;
+    background-color: #fff;
+    padding-left: 24rpx;
+    color: #294657;
+    font-family: 'PingFangSC-Medium';
+    font-weight: bold;
+    font-size: 40rpx;
+    line-height: 128rpx;
+}
+.gift-article-list-warpper{
+    width: calc(~"100% - 48rpx");
+    border-bottom: 20rpx solid #f1f2f5;
+    padding: 0 24rpx 48rpx 24rpx;
+}
+
+.gift-article-bottom-line{
+    width: 100%;
+    height: 100rpx;
+    background-color: #f1f2f5;
+}
+
+.my-lessen__article__body__bar-cell-wrapper__image{
+    width: 128rpx;
+    height: 128rpx;
+    border-radius: 16rpx;
+}
+.my-lesson__article__body__will-get__bar-cell-noborder{
+  border: 0 !important;
+}
+.course__section-cell {
+display:flex;
+flex-direction:row;
+justify-content:space-between;
+align-items:center;
+height:180rpx;
+position:relative;
+
+}
+.gift-article-showpoint{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.gift-new-top-wapper{
+    /* height: 898rpx; */
+    position: relative;
+    width: 100%;
+    background-color: white;
+    text-align: center;
+}
+.gift-new-top-img{
+    height: 750rpx;
+    width: 100%;
+    /* background-color: tomato; */
+}
+.gift-new-top-digit{
+    position: absolute;
+    bottom: 48rpx;
+    left: 24rpx;
+    height: 200rpx;
+    width: 702rpx;
+    background-color: white;
+    border-radius: 16rpx;
+    box-shadow: 0 4rpx 32rpx #aaa;
+    display: flex;
+    justify-content: space-between;
+
+}
+.gift-new-top-digit-block{
+    height: 200rpx;
+    width: 234rpx;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.gift-new-top-digit-num{
+    margin-top: 40rpx;
+    color: #000;
+    font-family: PingFangSC-Medium;
+    font-size: 60rpx;
+    line-height: 60rpx;
+}
+.gift-new-top-digit-desc{
+    margin-top: 36rpx;
+    color: #778d9a;
+    font-family: PingFangSC-Regular;
+    font-size: 24rpx;
+    line-height: 24rpx;
+    display: flex;
+    align-items: center;
+}
+.gift-new-top-digit-num-desc{
+    position: absolute;
+    color: #778d9a;
+    font-family: PingFangSC-Regular;
+    font-size: 20rpx;
+    right: 58rpx;
+    top: 58rpx;
+}
+.tip-icon{
+    width: 28rpx;
+    height: 28rpx;
+    margin-left: 8rpx;
+}
+</style>

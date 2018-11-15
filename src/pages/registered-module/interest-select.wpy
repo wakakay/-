@@ -1,0 +1,386 @@
+<style lang="less" scoped>
+@import "../../assets/style/theme";
+.ui-interest-box{
+    box-sizing:border-box;width:100%;height:100%;background:url(https://wx-small.runwise.cn/image/imageID955af01ef694ebb44d6de551ce30.png);background-size:cover;position:relative;left:0;top:0;
+    view{box-sizing:border-box;}
+    .ui-title{width:100%;padding:62rpx 0 32rpx;font-size:48rpx;font-weight:700;color:#fff;text-align:center;line-height:48rpx;}
+    .ui-subtitle{width:100%;font-size:28rpx;font-weight:700;color:rgba(255,255,255,.8);text-align:center;line-height:28rpx;}
+    .ui-lists-box{position:relative;}
+    .ui-interest-lists{
+        width:100%;padding:50rpx 25rpx 0;position:absolute;left:0;top:0;opacity:0;transform:translateY(-40rpx);
+        .ui-item{
+            width:336rpx;height:136rpx;margin:44rpx 7rpx 0;float:left;border-radius:20rpx;border:8rpx solid rgba(255,255,255,0);overflow:hidden;
+            .ui-content{width:100%;height:100%;padding:36rpx 36rpx;background:rgba(0,0,0,.5);border-radius:20rpx;position:relative;transition:all .2s ease;}
+            .cell-flag{
+                display:block;width:48rpx;height:100%;margin-right:36rpx;transition:all .2s ease;
+                text{font-size:48rpx;color:#fff;}
+            }
+            .cell-text{font-size:34rpx;color:#fff;white-space:pre-wrap;word-break:break-all;}
+            .cell-selected{
+                width:44rpx;height:44rpx;line-height:48rpx;position:absolute;right:24rpx;opacity:0;transform:translateX(20rpx);transition:all .2s ease;
+                .cell-pointer{width:34rpx;height:34rpx;margin:6rpx;background-color:#fff;border-radius:50%;}
+                text{display:block;font-size:44rpx;color:@color-blue;position:absolute;left:0;top:0;}
+            }
+            &.cell-hover{
+                border-color:rgba(255,255,255,.43);
+                .ui-content{border-radius:0;}
+            }
+            &.is-selected{
+                .ui-content{padding:36rpx 24rpx;}
+                .cell-flag{margin-right:20rpx;}
+                .cell-selected{opacity:1;transform:translateX(0);}
+            }
+        }
+    }
+    .ui-study-list{
+        width:100%;padding:58rpx 30rpx 0;position:absolute;left:0;top:0;opacity:0;
+        .ui-item{
+            width:212rpx;height:96rpx;margin:36rpx 8rpx 0;float:left;border-radius:20rpx;border:8rpx solid rgba(255,255,255,0);overflow:hidden;
+            .ui-content{
+                width:100%;height:100%;padding:0 12rpx;background:rgba(0,0,0,.5);text-align:center;border-radius:20rpx;position:relative;
+                text:nth-of-type(1){display:block;width:100%;font-size:30rpx;color:#fff;transform:translateX(0);transition:all .2s ease;}
+                .cell-selected{
+                    width:44rpx;height:44rpx;line-height:48rpx;position:absolute;right:10rpx;opacity:0;transform:translateX(20rpx);transition:all .2s ease;display:flex;align-items:center;
+                    text{display:block;font-size:36rpx;color:@color-blue;position:absolute;left:20rpx;top:-2rpx;}
+                    .cell-pointer{width:24rpx;height:24rpx;background-color:#fff;border-radius:50%;position:absolute;transform:translateX(20rpx);transition:all .3s ease;top:11rpx;left:30rpx;}
+                }
+            }
+            &.cell-hover{
+                border-color:rgba(255,255,255,.43);
+                .ui-content{border-radius:0;}
+            }
+            &.is-selected{
+                .ui-content{
+                    text:nth-of-type(1){transform:translateX(-20rpx);}
+                    .cell-pointer{transform:translateX(-20rpx);transition:all .1s ease;}
+                    .cell-selected{
+                        opacity:1;transform:translateX(0);
+                    }
+                }
+                .cell-flag{margin-right:20rpx;}
+            }
+        }
+    }
+    .is-zindex{z-index:2;}
+    .ui-button{
+        width:100%;height:128rpx;position:fixed;left:0;bottom:0;
+        &.is-iphonex{height:164rpx;}
+        .cell-button{
+            width:686rpx;height:100rpx;border-radius:@border-radius-20;background:@background-mask-white;font-size:30rpx;color:@color-white;transition:all .2s ease-in;font-weight: bold;
+            &.is-finish{background:@background-mask-deep-white;color:@color-blue;}
+        }
+        .cell-hover{background:@background-gray-hover}
+    }
+
+    @keyframes fadeInUp{
+        0%{opacity:0;transform:translateY(40rpx);}
+        100%{opacity:1;transform:translateY(0);}
+    }
+    .fadeInUp{animation-name:fadeInUp;animation-fill-mode:both;animation-duration:.8s;}
+    @keyframes fadeOutDown{
+        0%{opacity:1;transform:translateY(0);}
+        100%{opacity:0;transform:translateY(-40rpx);}
+    }
+    .fadeOutDown{animation-name:fadeOutDown;animation-fill-mode:both;animation-duration:.8s;}
+}
+</style>
+
+<template>
+    <view class="ui-interest-box">
+        <jn-header hiddenButton className="background-transparent">
+            <button slot="cursor-button" class="cell-back" @tap.stop="getBackStep">
+                <text class="icon-back"></text>
+            </button>
+        </jn-header>
+        <view class="ui-title">{{textInfo[step].title}}</view>
+        <view class="ui-subtitle">{{textInfo[step].subtitle}}</view>
+
+        <view class="ui-lists-box">
+            <view class="ui-interest-lists" :class="{'is-zindex': step===0, 'fadeInUp': step===0, 'fadeOutDown': step===1}">
+                <repeat for="{{interestList}}" key="index" index="index" item="item">
+                    <view class="ui-item cross-center"
+                          :class="{'is-selected': item.isActive}"
+                          hover-class="cell-hover"
+                          data-item="{{item}}" data-index="{{index}}"
+                          @tap.stop="getSelectInterest">
+                        <view class="ui-content dir-left">
+                            <view class="cell-flag"><text class="icon-{{item.icon}}"></text></view>
+                            <view class="main-justify">
+                                <text class="cell-text">{{item.labelName}}</text>
+                                <view class="cell-selected">
+                                    <view class="cell-pointer"></view>
+                                    <text class="icon-correctly"></text>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+
+            <view class="ui-study-list" :class="{'is-zindex': step===1, 'fadeOutDown': step===0 && !isInit, 'fadeInUp': step===1 && !isInit}">
+                <repeat for="{{studyList}}" key="index" index="index" item="item">
+                    <view class="ui-item"
+                          :class="{'is-selected': item.isActive}"
+                          hover-class="cell-hover"
+                          data-item="{{item}}"
+                          @tap.stop="getSelectStudy">
+                        <view class="ui-content cross-center">
+                            <text>{{item.labelName}}</text>
+                            <view class="cell-selected">
+                                <view class="cell-pointer"></view>
+                                <text class="icon-correctly"></text>
+                            </view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+        </view>
+
+        <view class="ui-button main-center" :class="{'is-iphonex': isIphonex}">
+            <view class="cell-button main-center cross-center"
+                :class="{'is-finish':isInterest}"
+                wx:if="{{step == 0}}"
+                hover-class="cell-hover"
+                @tap.stop="getNext">
+                {{isInterest ? textInfo[step].buttonText : '最多选择2个兴趣噢'}}
+            </view>
+            <view class="cell-button main-center cross-center"
+                :class="{'is-finish':isComplate}"
+                wx:else
+                hover-class="cell-hover"
+                @tap.stop="getNext">
+                {{isComplate ? textInfo[step].buttonText : '最多选择3个能力噢'}}
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import {registered as fetchRegistered} from '../../api'
+    import {initializationDeligate} from '../../utils'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        },
+        entrance(state) { // 全局场景值
+            return state.entrance
+        }
+    })
+    export default class registeredInerestSelect extends wepy.page {
+        config = {
+            disableScroll: true
+        }
+
+        components = {
+            'jn-header': header
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            step: 0, // 当前步骤
+            isInit: true,
+            isFinish: true,
+            interestList: [],
+            studyList: [],
+            isInterest:false,
+            isComplate:false,
+            textInfo: [
+                {
+                    title: '选择你感兴趣的领域',
+                    subtitle: '根据你的选择，即能将为你推荐合适的能力',
+                    buttonText: '下一步',
+                },
+                {
+                    title: '选择你想提升的能力',
+                    subtitle: '可免费获得一门为你定制的课程',
+                    buttonText: '查看课程推荐',
+                }
+            ]
+        }
+
+        onLoad() {
+            let self = this
+            self.initialize()
+        }
+
+        onShow() {
+            let self = this
+            let number = _.filter(self.interestList, {isActive: true}).length
+            self.isInterest = number >-1 ? true : false
+            self.$apply()
+        }
+
+        initialize() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token
+            }
+            fetchRegistered.profileList(postData).then((respone) => {
+                self.interestList = respone.positionList
+                let number = _.filter(self.interestList, {isActive: true}).length
+                self.isInterest = number >-1 ? true : false
+                self.$apply()
+            }).catch(error => {
+
+            })
+        }
+
+        methods = {
+            /**
+             * 底部按钮
+             */
+            getNext() {
+                let self = this
+                switch (self.step) {
+                    case 0:
+                        let lists = _.filter(self.interestList, {isActive: true})
+                        if (!lists.length) {
+                            wx.showToast({
+                                icon: 'none',
+                                title: ' 请选择感兴趣的领域 '
+                            })
+                            return false
+                        }
+                        self.isComplate = false
+                        self.isInit = false
+                        self.step = 1
+                        
+                        self.studyList = []
+                        _.each(lists, (data) => {
+                            _.each(data.interestList, (item) => {
+                                let index = _.findIndex(self.studyList, {labelID: item.labelID})
+                                if (-1 === index) {
+                                    item.isActive = false
+                                    self.studyList.push(item)
+                                }
+                            })
+                        })
+                        self.$apply()
+
+                        wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-能力选择页', pageTheme: ''})
+                        wx.reportAnalytics('interest_select_next', {
+                            username: self.systemInfo.userName,
+                            channel: self.entrance.mappers[self.entrance.scenceID],
+                            role: self.systemInfo.role
+                        })
+                        break;
+                    case 1:
+                        
+                        let sLists = _.filter(self.studyList, {isActive: true})
+                        if (!sLists.length) {
+                            wx.showToast({
+                                icon: 'none',
+                                title: ' 请选择您想提升的能力 '
+                            })
+                            return false
+                        }
+
+                        self.isFinish && self.__finish()
+                        break;
+                }
+            },
+            /**
+             * 头部返回按钮
+             */
+            getBackStep() {
+                let self = this
+                switch (self.step) {
+                    case 0:
+                        wx.navigateBack()
+                        break;
+                    case 1:
+                        self.step = 0
+                        break;
+                }
+            },
+            /**
+             * 选中兴趣领域
+             */
+            getSelectInterest(event) {
+                let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
+                let data = self.interestList[index]
+                let number = _.filter(self.interestList, {isActive: true}).length
+                
+                
+                if (number >= 2 && !data.isActive) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 最多选择2个 '
+                    })
+                    return false
+                }
+
+                data.isActive = !data.isActive
+                let interesNum = _.filter(self.interestList, {isActive: true}).length
+                if(interesNum >0){
+                    self.isInterest = true 
+                }else{
+                    self.isInterest = false 
+                }
+                self.$apply()
+            },
+            /**
+             * 选中提升能力
+             */
+            getSelectStudy(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                let data = _.find(self.studyList, {labelID: item.labelID})
+
+                let number = _.filter(self.studyList, {isActive: true}).length
+                if (number >= 3 && !data.isActive) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 最多选择3个 '
+                    })
+                    return false
+                }
+                data.isActive = !data.isActive
+                let studyNum = _.filter(self.studyList, {isActive: true}).length
+                self.isComplate = studyNum > 0 ? true : false
+                self.$apply()
+            }
+        }
+
+        /**
+         * 完成
+         */
+        __finish() {
+            let self = this
+            let list = _.filter(self.interestList, (data) => {
+                return data.isActive
+            })
+            self.isFinish = false
+
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            wx.reportAnalytics('capability_select_complete', {
+                username: self.systemInfo.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                role: self.systemInfo.role
+            })
+
+            let postData = {
+                token: self.systemInfo.token,
+                positionList: list
+            }
+            fetchRegistered.userProfile(postData).then((respone) => {
+                self.isFinish = true
+                wx.navigateTo({
+                    url: '/pages/registered-module/recommend'
+                })
+            }).catch(error => {
+                self.isFinish = true
+            })
+        }
+
+        events = {}
+    }
+</script>

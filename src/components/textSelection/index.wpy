@@ -1,0 +1,206 @@
+<!--components/textSelection/textSelection.wxml-->
+<template>
+  <view class="text-selection-article flex-space-between-column" animation="{{animation}}">
+    <view class="text-selection-article__header" :class="{'image-loading': !imageLoaded}">
+      <image wx:if="{{bundle.bigimage}}" src="{{bundle.bigimage}}" alt="" class="text-selection-article__header-icon" hidden="{{!imageLoaded}}" @load="handleImageLoaded" mode="widthFix"></image>
+      <image wx:else src="http://wx-small.runwise.cn/image/imageID7cf9220ba1149e98efc3a3b964df.png" class="text-selection-article__header-icon" mode="widthFix"></image>
+    </view><!-- end text-selection-article__header -->
+    <view class="text-selection-article__body">
+      <text class="text-subtitle text-selection-article__body__title"> {{ bundle.title }} </text><!-- end text-subtitle -->
+    </view><!-- end text-selection-article__body -->
+    <view class="text-selection-article__footer">
+
+      <view class="btn-group" wx:if="{{ 'transit'===bundle.cardStatus }}">
+        <block wx:for="{{bundle.descriptionList}}" wx:for-index="$mtextselection$index" wx:for-item="$mtextselection$item" wx:key="$mtextselection$index" wx:if="{{ $mtextselection$item }}">
+          <button class="btn-plain text-selection-article__footer__btn" hover-class="btn-plain-hover" type="default" plain="{{true}}"  data-status="{{ bundle.cardStatus }}" data-feedback="{{ bundle.feedback }}" @tap.stop="handleCollectTransition"> {{$mtextselection$item}} </button>
+        </block>
+      </view><!-- end btn-group -->
+      <view class="btn-group" wx:elif="{{ 'neutral'===bundle.cardStatus }}">
+        <block wx:for="{{bundle.descriptionList}}" wx:for-index="$mtextselection$index" wx:for-item="$mtextselection$item" wx:key="$mtextselection$index" wx:if="{{ $mtextselection$item }}">
+          <button class="btn-plain text-selection-article__footer__btn" hover-class="btn-plain-hover" type="default" plain="{{true}}"  data-status="{{ bundle.cardStatus }}" data-feedback="{{ bundle.feedbackNeutral }}" @tap.stop="handleCollectNeutralResponse"> {{$mtextselection$item}} </button>
+        </block>
+      </view><!-- end btn-group -->
+      <view class="btn-group" wx:else>
+        <block wx:for="{{bundle.select}}" wx:for-index="$mtextselection$index" wx:for-item="$mtextselection$item" wx:key="$mtextselection$index" wx:if="{{ $mtextselection$item.option }}">
+          <button class="btn-plain text-selection-article__footer__btn" hover-class="btn-plain-hover" type="default" plain="{{true}}" data-status="{{ bundle.cardStatus }}" data-id="{{$mtextselection$item&&$mtextselection$item.id}}" data-flag="{{ $mtextselection$item&&$mtextselection$item.isanswer }}" data-feedback="{{ $mtextselection$item&&$mtextselection$item.feedback }}" @tap.stop="handleCollection"> {{$mtextselection$item.option}} </button>
+        </block>
+      </view><!-- end btn-group -->
+
+    </view><!-- end text-selection-article__footer -->
+  </view><!-- end text-selection-article -->
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { getStore, connect } from 'wepy-redux'
+  import loadingMixin from '../../mixins/loading'
+  //import Feedback from '../../components/Feedback/index'
+  //import Transition from '../../components/Transition/index'
+
+  const store = getStore()
+
+  export default class TextSelection extends wepy.component {
+    components = {
+      //'textselectionfeedback': Feedback,
+      //'textselectionTransit': Transition
+    } // end components
+
+    mixins = [loadingMixin] // end mixins
+
+    props = {
+      offset: {},
+      bundle: {
+        type: Object
+      },
+      isActived: {
+        type: Boolean
+      }
+    } // end props
+
+    methods = {
+      handleCollection({target: {dataset: {status, id, flag, feedback}}}) {
+        this.$emit('feedback', {  offset: this.$index, feedbackBundle: {feedbackType: status, flag: Boolean(flag), ...feedback} })
+        this.$emit('shuffleTextSelect', this.$index) // 乱序
+      }, // end handleCollection
+      handleCollectTransition({target: {dataset: { status, feedback}}}) {
+        // console.log('handleCollectTransition', this.$index, status, feedback)
+        this.$emit('transition', { offset: this.$index, feedbackBundle: feedback })
+      }, // end handleCollection
+      handleCollectNeutralResponse({target: {dataset: { feedback}}}) {
+        this.$emit('neutralResponse', {
+            offset: this.$index,
+            feedbackBundle: feedback
+        })
+        this.$emit('shuffleTextSelect', this.$index) // 乱序
+      } // handleCollectNeutralResponse
+    } // end methods
+
+    clearAnimation() {
+      this.rotate(0, 1)
+    }
+
+    events = {
+      closeFeedback(offset, $event) {
+      },
+      cardSwitch(current, $event) {
+        // console.log('card switch______')
+        this.presentSection = current
+        this.$apply()
+      } // end cardSwitch
+    } // end events
+
+    data = {
+      animation: {},
+      icons: {
+        'right': '../../assets/img/feedback_right.svg',
+        'wrong': '../../assets/img/feedback_wrong.svg'
+      }, // end icons
+      presentSection: -1
+    }
+
+    rotate(deg, opacity) {
+      this.animation = wx.createAnimation({
+        duration: 350,
+        timingFunction: 'ease',
+      })
+      this.animation.rotateY(deg).opacity(opacity).step()
+      this.animation = this.animation.export()
+      this.$apply()
+    } // end reverse
+
+    computed = {
+    } // end computed
+  }
+</script>
+
+<style lang="less">
+  /* components/textSelection/textSelection.wxss */
+  .init {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .text-selection-article__feedback__wrapper {
+    height: 100%;
+  }
+
+  .text-selection-article {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 16rpx;
+    overflow: hidden;
+  }
+
+  .text-selection-article__header-icon {
+    width: 100%;
+    height: 360rpx;
+  }
+
+  .text-selection-article__header {
+    flex: 9;
+    /*background-color: #E06EB5;*/
+  }
+
+  .text-selection-article__body {
+    flex: 9;
+    /*background-color: #E44D63;*/
+  }
+
+  .text-selection-article__body > .text-selection-article__body__title {
+    font-family: PingFangSC-Medium;
+  }
+
+  .text-selection-article__body > .text-subtitle {
+    display: block;
+    text-align: justify;
+    padding: 40rpx 72rpx;
+    text-align: center;
+    color: #303f48;
+    font-size: 40rpx;
+    line-height: 56rpx;
+  }
+
+  .btn-group {
+    width: 558rpx;
+    height: 250rpx;
+    /*background-color: yellow;*/
+    margin: 0 auto;
+  }
+
+  .btn-group > .btn-plain {
+    height: 88rpx;
+    width: 248rpx;
+    padding: 0 20rpx;
+    margin-bottom: 0rpx;
+    vertical-align: top;
+    display: inline-block;
+    font-size: 28rpx;
+    line-height: 88rpx;
+    color: #fff !important;
+    font-family: PingFangSC-Medium;
+    border-radius: 16rpx;
+    /* border: 3rpx solid #FF7E67 !important; */
+    background-color: #2db7b5;
+    /*-webkit-animation: brgiht 2.4s linear .1s infinite alternate;
+    -o-animation: brgiht 2.4s linear .1s infinite alternate;
+    animation: brgiht 2.4s linear .1s infinite alternate;*/
+  }
+
+  .btn-plain:nth-child(2n-1) {
+    margin-right: 60rpx;
+  }
+
+  .btn-plain:nth-child(-n+2) {
+    margin-bottom: 40rpx;
+  }
+
+  .text-selection-article__footer {
+    flex: 7;
+    /*background-color: #43D8CC;*/
+  }
+
+  .btn-group > .btn-plain.text-selection-article__footer__btn {
+    font-size: 28rpx;
+  }
+</style>

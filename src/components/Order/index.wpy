@@ -1,0 +1,226 @@
+<!--order.wxml-->
+<template>
+    <scroll-view
+        class="order-article flex-space-between-column"
+        scroll-into-view="{{ scrollPosition }}"
+        scroll-with-animation="{{ scrollWithAnimation }}"
+        scroll-y
+        scroll-top="{{ scrollTop }}"
+        scroll-left="{{ scrollLeft }}"
+        upper-threshold="{{ headLine }}"
+        lower-threshold="{{ bottomLine }}"
+        bindscrolltoupper="handleScrollToTop"
+        bindscrolltolower="handleScrollToBottom"
+        animation="{{animation}}"
+    >
+
+        <view class="order-article-body-title-view" id="start-o">
+            <view class="order-article-body-title">{{bundle.description}}</view>
+            <view class="order-article-body-subtitle">{{bundle.operatetip}}</view>
+        </view>
+
+        <view class="order-article-body-orderitem__wrapper" style="height: {{ 160 * bundle.sourceList.length + 40 }}rpx;">
+            <view @tap.stop="handleSelect" wx:for="{{bundle.sourceList}}" wx:for-index="$morder$index" wx:for-item="$morder$item" wx:key="$morder$index" data-id="{{ $morder$item.id }}" data-status="{{ bundle.cardStatus }}" data-feedback="{{ bundle.feedback }}" data-feedbackNeutral="{{ bundle.feedbackNeutral }}" data-card-i-d="{{ bundle.id }}" data-ability-skill="{{ $morder$item.abilitySkill }}" data-ability-group="{{ $morder$item.abilityGroup }}" data-message="{{ $morder$item.option }}" data-weight="{{ $morder$item.weight }}" data-mark="{{ bundle.score }}" class="order-article-body-orderitem" style="top: {{ 160 * bundle.mapper[$morder$item.id]['order'] }}rpx;">
+                <view class="order-article-body-orderitem-num" wx:if="{{ bundle.mapper[$morder$item.id]['isAnswer'] }}">{{bundle.mapper[$morder$item.id]['order'] + 1}}</view>
+                <view class="order-article-body-orderitem-num-null" wx:else></view>
+                <view class="order-article-body-orderitem-text">{{ $morder$item.option }}</view>
+            </view>
+        </view><!-- wrapper -->
+        <view class="ageagea" id="gg"></view>
+
+    </scroll-view><!-- end article -->
+    <view class="anchor-footer" wx:if="{{ 'order'===bundle.type && bundle.isAnchorFooterShown }}">
+      <image class="anchor-footer__indicator" src="http://wx-small.runwise.cn/image/imageID3067bbb50dd4a3aa922b41ba6a6c.svg" mode="scaleToFill" @tap.stop="handleAnchorTap"></image>
+    </view><!-- footer -->
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { sleep } from '../../utils'
+
+  export default class Step extends wepy.component {
+    props = {
+      bundle: {
+        type: Object
+      }
+    } // end props
+
+    data = {
+        scrollTop: 100,
+        scrollPosition: 'jj',
+        scrollWithAnimation: true,
+        bottomLine: 30
+    } // data
+
+    methods = {
+        activateCard(currentCardOffset) {
+            this.scrollPosition = 'start-o'
+            sleep(0.1)
+              .then(() => {
+                this.scrollPosition = ''
+                this.$apply()
+              })
+        },
+        handleSelect({currentTarget: {dataset: {comIndex, status, id: optionID, feedback,feedbackneutral, abilitySkill, abilityGroup, weight, message, mark, cardID}}}) {
+            let mMapper = JSON.parse(JSON.stringify(this.$parent.cards[comIndex]['mapper']))
+            let mOrderList = JSON.parse(JSON.stringify(this.$parent.cards[comIndex]['orderList']))
+            let mOffset = mOrderList.findIndex(item => optionID===item.optionID)
+            if (!mOrderList[mOffset]['isAnswer']) {
+                // console.log('false to true')
+                let mTmp = JSON.parse(JSON.stringify(mOrderList[mOffset]))
+                mOrderList.splice(mOffset, 1)
+                let mTarget = mOrderList.filter(item => item.isAnswer).length
+                mOrderList.splice(mTarget, 0, {...mTmp, isAnswer: true})
+            } else {
+                // console.log('true to false')
+                for (let [index, item] of mOrderList.entries()) {
+                    if (index >= mOffset) mOrderList[index]['isAnswer'] = false
+                }
+            }
+            for (let [index, item] of mOrderList.entries()) {
+                mMapper[item.optionID] = { order: index, isAnswer: item.isAnswer }
+            }
+            this.$emit('reorder', { componentOffset: comIndex, orderList: mOrderList, mapper: mMapper })
+            // console.log('status', status, this.$parent.cards[comIndex]['feedbackType3'])
+            const mTendToFeedback = mOrderList.filter(item => item.isAnswer).length === mOrderList.length
+            let mQuery = JSON.stringify({
+                sourceList: this.$parent.cards[comIndex]['sourceList'].map(item => ({ id: item.id, weight: item.weight })),
+                orderList: mOrderList.map(item => ({ id: item.optionID, weight: item.weight }))
+            })
+            if (!mTendToFeedback) return
+            const mFlag = this.checkOrder(mOrderList)
+            const mKey = mFlag ? 'right' : 'wrong'
+            if ('neutral'===status) this.$emit('neutralResponse', { offset: this.$index, feedbackBundle: feedbackneutral })
+            else this.$emit('feedback', { offset: comIndex, feedbackBundle: {...this.$parent.cards[comIndex]['feedbackType3'][mKey], feedbackType: status, flag: mFlag} })
+            this.$emit('shuffleOrder', comIndex)
+            null!==mark && this.$emit('reportCardScore', { json: mQuery, cardID, score: mark, abilityGroup, abilitySkill })
+        }, // end handleSelect
+        handleAnchorTap() {
+            this.scrollPosition = 'jj'
+            sleep(0.1)
+              .then(() => {
+                this.scrollPosition = ''
+                this.$apply()
+              })
+        },
+        handleScrollToTop() {
+            // console.log('anchorShow')
+            this.$emit('anchorShow', this.$index)
+        },
+        handleScrollToBottom() {
+            // console.log('anchorHide')
+            this.$emit('anchorHide', this.$index)
+        }
+    } // end methods
+
+    checkOrder(pArr){
+        if (''===this.$parent.cards[this.$index]['trueSequence']) return false
+        if (0===pArr.length) return false
+        return this.$parent.cards[this.$index]['trueSequence'] === pArr.map(item => item.optionID).join(',')
+    } // end checkOrder
+
+  }
+</script>
+
+<style lang="less">
+.order-article{
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.order-article-body-title-view{
+    padding-top: 114rpx;
+    width: 574rpx;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+.order-article-body-title{
+    color: #303f48;
+    font-family: PingFangSC-Semibold;
+    font-size: 40rpx;
+    line-height: 56rpx;
+}
+.order-article-body-subtitle{
+    color: #778d9a;
+    font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    line-height: 40rpx;
+    margin: 72rpx 0 48rpx 0;
+}
+.order-article-body-orderitem__wrapper {
+    width: 702rpx;
+    position: relative;
+}
+.order-article-body-orderitem {
+    height: 128rpx;
+    width: 606rpx;
+    margin: 0 48rpx 32rpx 48rpx;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #2db7b5;
+    border-radius: 16rpx;
+    transition: all .15s ease-in;
+    text-align: left;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.order-article-body-orderitem.actived {
+    -webkit-animation: fadeInLeft .5s ease-out 0s;
+    -o-animation: fadeInLeft .5s ease-out 0s;
+    animation: fadeInLeft .5s ease-out 0s;
+}
+/*.order-article-body-orderitem:active {
+    animation: shrinkOut .2s;
+}
+*/
+.order-article-body-orderitem.shrink-out {
+    animation: fadeOutLeft .5s;
+}
+.order-article-body-orderitem.falling {
+    animation: slideOutDown .7s;
+}
+.order-article-body-orderitem-num{
+    width: 54rpx;
+    height: 54rpx;
+    border-radius: 27rpx;
+    background-color: #fff;
+    text-align: center;
+    line-height: 54rpx;
+    font-size: 40rpx;
+    color: #2db7b5;
+    margin: 0 24rpx 0 20rpx;
+}
+.order-article-body-orderitem-num-null{
+    width: 54rpx;
+    height: 54rpx;
+    border-radius: 27rpx;
+    background-color: #fff;
+    text-align: center;
+    line-height: 54rpx;
+    font-size: 40rpx;
+    color: #fff;
+    margin:0 36rpx 0 24rpx;
+}
+.order-article-body-orderitem-text{
+    /*width: 532rpx;*/
+    width: 448rpx;
+    box-sizing: border-box;
+    padding-right: 44rpx;
+    text-align: left;
+    color: #fff;
+    font-family: PingFangSC-Medium;
+    font-size: 32rpx;
+    line-height: 44rpx;
+}
+</style>

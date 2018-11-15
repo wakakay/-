@@ -1,0 +1,1105 @@
+<template>
+    <mloading wx:if="{{!isLoaded}}"></mloading>
+    <view wx:else class="course-article">
+        <CustomModal></CustomModal>
+        <CustomModal2></CustomModal2>
+            <scroll-view
+                class="course-article__body"
+                scroll-y="{{ true }}"
+                upper-threshold="{{scrollView.ceil}}"
+                lower-threshold="{{scrollView.floor}}"
+                enable-back-to-top="{{true}}"
+                scroll-with-animation="{{ scrollView.allowScrollAnimation }}"
+                scroll-into-view="{{ intoView }}"
+                bindscrolltoupper="handleApproachCeil"
+                bindscroll="handleScroll"
+                bindscrolltolower="handleApproachFloor"
+                wx:if="{{ isLoaded }}">
+                <jn-header title="即能"></jn-header>
+                <view class="course-article__body__icon__wrapper" :class="{'image-loading': !imageLoaded}">
+                    <image class="course-article__body__icon" src="{{ image }}" mode="widthFix"
+                           hidden="{{!imageLoaded}}" @load="handleImageLoaded">
+                        <view class="course-cover-cover"/>
+                        <view class="course-article__body__icon__caption-wrapper__footer flex-start-row">
+                            <view class="course-article__body__icon__caption-wrapper__footer__tag"> {{ gradeName }}
+                            </view>
+                            <view class="course-article__body__icon__caption-wrapper__footer__tag"> {{ courseSkill }}
+                            </view>
+                        </view>
+                        <view class="course-article__body__icon__title"> {{ name }}</view>
+                        <view class="course-article__body__icon__point"> {{ showPoint }}</view>
+
+                    </image>
+                </view>
+                <view class="flex-space-between-row course-article__body__panel">
+                    <image wx:for="{{ userAvatarUrlList }}" wx:if="{{ userAvatarUrlList.length }}" wx:key="{{ index }}"
+                           class="course-article__body__panel__avatar" src="{{ item.avatarUrl }}"
+                           mode="scaleToFill"></image>
+                    <text class="course-article__body__panel__count"> {{ userCount }}人正在学</text>
+                    <text class="icon-share course-article__body__panel__share">
+                        <button class="course-article__body__icon__caption-wrapper__header__share-btn"
+                                data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
+                                data-role="{{role}}" data-course-i-d="{{courseID}}" data-sence-i-d="{{ senceID }}"
+                                data-name="{{name}}" data-token="{{ token }}" formType="submit" size="default"
+                                type="warn" plain="{{ true }}" open-type="share"></button>
+                    </text>
+                </view>
+
+                <form bindsubmit="handleSavePushCode" report-submit>
+                    <view class="course-article__body__will-get">
+                    <text class="course-article__body__will-get__title"> 你将学到</text>
+                    <view class="course-article__body__will-get__bar-cell flex-space-between-row"
+                          wx:for="{{ senceList }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+                        <button class="course-article__body__will-get__bar-cell__shade-btn" plain="{{ true }}"
+                                data-course-i-d="{{ courseID }}" data-sence-i-d="{{ item.id }}"
+                                data-resume="NO" data-button-status="{{ item.buttonStatus }}"
+                                data-lesson-type="{{ item.lessonType }}" data-is-token-set="{{ isTokenSet }}"
+                                data-source="{{source}}" data-sence-name="{{item.senceName}}"
+                                @tap.stop="handleStartLesson"></button>
+                        <button wx:if="{{ !isTokenSet }}" class="course__section-cell__whole-shade-btn"
+                                plain="{{ true }}" open-type="getUserInfo" bindgetuserinfo="handleAuthorize"></button>
+
+                        <view class="course-article__body__will-get__bar-cell__icon-wrapper">
+                            <image class="course-article__body__will-get__bar-cell-wrapper__image" mode="aspectFill"
+                                   src="{{ item.imageUrl }}"></image>
+                        </view>
+                        <view
+                            class="course-article__body__will-get__bar-cell__description {{index===0?'course-article__body__will-get__bar-cell-noborder':''}}">
+                            <text class="course-article__body__will-get__bar-cell__description__title"> {{
+                                item.senceName || 'senceName' }}
+                            </text>
+                            <text class="course-article__body__will-get__bar-cell__description__skill-point"> {{
+                                item.senceTarget || 'senceTarget' }}
+                            </text>
+                        </view>
+                        <view
+                            class="course-article__body__will-get__bar-cell__operation {{index===0?'course-article__body__will-get__bar-cell-noborder':''}}">
+                            <view class="course__section-cell__progress-wapper" wx:if="{{item.progress}}">
+                                <progress percent="{{item.progress}}" class="course__section-cell__progress"
+                                          stroke-width="4" color="#007AFF" background-color="#b7d9fe"
+                                          wx:if="{{'continue'===item.buttonStatus}}"></progress>
+                            </view>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'finish'===item.buttonStatus }}"
+                                     data-sence-name="{{item.senceName}}"
+                                    class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}" data-source="{{source}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    @tap.stop="handleReviewLesson"> 回顾
+                            </button>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'continue'===item.buttonStatus }}"
+                                    data-sence-name="{{item.senceName}}"
+                                    class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}" data-source="{{source}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="YES"
+                                    @tap.stop="handleContinueLesson">继续
+                            </button>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBegin'===item.buttonStatus }}"
+                                    class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}"  data-sence-name="{{item.senceName}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    data-button-status="{{ item.buttonStatus }}"  data-source="{{source}}"
+                                    @tap.stop="handleStartLesson"> 即学
+                            </button>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBeginOrTry'===item.buttonStatus }}"
+                                    class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}"  data-source="{{source}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    data-sence-name="{{item.senceName}}"
+                                    data-button-status="{{ item.buttonStatus }}"
+                                    @tap.stop="handleStartTrial"> 免费学
+                            </button>
+
+                            <button wx:if="{{ 'previewTest'===item.lessonType }}" class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}" data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    data-button-status="{{ item.buttonStatus }}"
+                                    data-source="{{source}}"
+                                    data-sence-name="{{item.senceName}}"
+                                    @tap.stop="handleDoPreviousPractice"> 课前练习
+                            </button>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPayToTry'===item.buttonStatus }}"
+                                    class="payment-button"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="handleAuthorize" formType="submit"
+                                    data-course-i-d="{{ courseID }}"
+                                    data-sence-name="{{item.senceName}}" data-source="{{source}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    data-button-status="{{ item.buttonStatus }}"
+                                    @tap.stop="handleStartLesson"> 试学
+                            </button>
+
+                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}"
+                                    class="payment-button"
+                                    isTokenSet
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}" formType="submit"
+                                    data-course-i-d="{{ courseID }}"
+                                    data-sence-name="{{item.senceName}}" data-source="{{source}}"
+                                    data-sence-i-d="{{ item.id }}" data-resume="NO"
+                                    @tap.stop="handlePayForLesson">获取
+                            </button>
+
+                            <view class="price-text-red"
+                                  wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}">{{
+                                item.sencePrice }} 即能币
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                </form>
+                <view class="course-article__body__access-block flex-space-between-row" hidden="{{true}}">
+                    <view class="course-article__body__access-block__difficulty flex-space-between-column">
+                        <text class="course-article__body__access-block__difficulty__label"> 难度</text>
+                        <text class="course-article__body__access-block__difficulty__value"> {{ gradeName }}</text>
+                    </view>
+                    <view class="course-article__body__access-block__adaptation flex-space-between-column">
+                        <text class="course-article__body__access-block__adaptation__label"> 适合</text>
+                        <text class="course-article__body__access-block__adaptation__value"> {{ gradeText }}</text>
+                    </view>
+                </view>
+
+                <view class="course-article__body__help-block" wx:if="{{ false&&pointList.length }}">
+                    <text class="course-article__body__help-block__title"> 帮你解决</text>
+                    <view class="course-article__body__help-block__row" wx:for="{{ pointList }}" wx:key="{{ index }}"
+                          wx:if="{{ item }}">
+                        <view class="course-article__body__help-block__row__li"></view>
+                        <text class="course-article__body__help-block__row__text"> {{ item }}</text>
+                    </view>
+                </view>
+
+                <view wx:if="{{ false&&informationList.length }}" class="course-article__body__core-methods">
+                    <text class="course-article__body__core-mathods__title"> 课程精华</text>
+                    <scroll-view class="course-article__body__core-mathods__scroll-view" scroll-x="{{ true }}">
+                        <view wx:for="{{ informationList }}" wx:key="{{ index }}"
+                              class="course-article__body__core-mathods__scroll-view__wrapper">
+                            <image class="course-article__body__core-mathods__scroll-view__wrapper-image"
+                                   src="{{ item.bigImage }}" data-status="{{ item.bigImageStatus }}"
+                                   data-image-url="{{ item.bigImage }}" mode="scaleToFill"
+                                   @tap.stop="handlePreviewCoreImage">
+                                <image class="course-article__body__core-mathods__scroll-view__wrapper-image__tips"
+                                       src="../../assets/img/icon-preview.svg" mode="scaleToFill"></image>
+                            </image>
+                        </view>
+                    </scroll-view>
+                </view>
+                <view class="course-article__body__help-block" wx:if="{{ pointList.length }}">
+                    <text class="course-article__body__help-block__title"> 你将收获</text>
+                    <view style="margin-bottom:64rpx;width:100%;">
+                        <view class="course-article__body_get-subtitle" wx:if="{{showPointTitle}}">{{showPointTitle}}
+                        </view>
+                        <view class="course-article__body__help-block__row" wx:for="{{ pointList }}"
+                              wx:key="{{ index }}" wx:if="{{ item }}">
+                            <view class="course-article__body__help-block__row__text"> {{ item }}</view>
+                        </view>
+                    </view>
+                    <view class="course-article__body_get-subtitle" wx:if="{{templetTitle}}">{{templetTitle}}</view>
+
+                </view>
+                <scroll-view class="course-article__body__core-mathods__scroll-view" scroll-x="{{ true }}">
+                    <view wx:for="{{ informationList }}" wx:key="{{ index }}"
+                          class="course-article__body__core-mathods__scroll-view__wrapper">
+                        <image class="course-article__body__core-mathods__scroll-view__wrapper-image"
+                               src="{{ item.bigImage }}" data-status="{{ item.bigImageStatus }}"
+                               data-image-url="{{ item.bigImage }}" mode="scaleToFill"
+                               @tap.stop="handlePreviewCoreImage">
+                            <image class="course-article__body__core-mathods__scroll-view__wrapper-image__tips"
+                                   src="../../assets/img/icon-preview.svg" mode="scaleToFill"></image>
+                        </image>
+                    </view>
+                </scroll-view>
+
+                <view wx:if="{{ feedbackList.length }}" class="course-article__body__resure_block">
+                    <view class="flex-space-between-row course-article__body__resure_block__header"
+                          style="margin-bottom:32rpx;">
+                        <text class="course-article__body__resure_block__header__title"> 精选评论</text>
+                        <text class="course-article__body__resure_block__header__caption" hidden="{{ true }}">
+                            97%学过的人觉得有用
+                        </text>
+                    </view>
+
+                    <scroll-view class="course-article__body__resure_block__comments-scroll-view" scroll-x="{{true}}">
+                        <view class="course-article__body__resure_block__comments-scroll-view__block"
+                              wx:for="{{ feedbackList }}" wx:key="{{ index }}">
+                            <view class="course-article__body__resure_block__comments-scroll-view__block__title"> {{ '《'
+                                + item.name + '》' }}
+                            </view>
+                            <view class="course-article__body__resure_block__comments-scroll-view__block__description">
+                                {{ item.showMessage }}
+                            </view>
+                            <view
+                                class="flex-space-between-row course-article__body__resure_block__comments-scroll-view__block__footer">
+                                <view class="ui-star">
+                                    <text wx:for="{{ [1, 2, 3, 4, 5] }}"  wx:key="{{ index }}"  wx:for-item="star" data-score="3" 
+                                    :class="{'icon-selete-star' :star <= item.star , 'icon-not-star' :star > item.star}" ></text>
+                                </view>
+                                <image
+                                    class="course-article__body__resure_block__comments-scroll-view__block__footer__avatar"
+                                    src="{{ item.avatarUrl }}" mode="scaleToFill"></image>
+                            </view>
+                        </view>
+                    </scroll-view>
+                </view>
+
+                <view wx:if="{{ courseLink.length }}" class="course-article__body__relative-course"
+                      style="border-top:10px solid #EFEFF4;">
+                    <text class="course-article__body__relative-course__title"> 猜你需要</text>
+                    <view class="course-article__body__relative-course__body" wx:for="{{ courseLink }}"
+                          wx:key="{{ index }}" wx:if="{{ item }}" data-course-i-d="{{ item.courseID }}"
+                          @tap.stop="handleJumpInCourse">
+                        <button wx:if="{{ !isTokenSet }}" class="course__section-cell__whole-shade-btn"
+                                plain="{{ true }}" open-type="getUserInfo" bindgetuserinfo="handleAuthorize"></button>
+                        <image mode="aspectFill" class="course-article__body__relative-course__body-img"
+                               src="{{item.courseImage}}"></image>
+                        <view class="course-article__body__relative-course__body-label">{{item.courseSkill}}</view>
+                        <text class="course-article__body__relative-course__body-title"> {{ item.courseName }}</text>
+                        <view class="course-article__body__relative-course__body__stars-wrapper">
+                            <text wx:for="{{ [1, 2, 3, 4, 5] }}"  wx:key="{{ index }}"  wx:for-item="star" data-score="3" 
+                                :class="{'icon-selete-star' :star <= item.courseStar , 'icon-not-star' :star > item.courseStar}" >
+                            </text>
+                        </view>
+                    </view>
+                </view>
+
+            </scroll-view>
+        <toast/>
+    </view>
+    <view class="course-article__footer flex-space-between-row" wx:if="{{ !isFooterHidden }}">
+        <view class="ui-content" :class="{ isiphonex : ipX}">
+            <view class="ui-content-top">
+              <view class="course-article__footer__money"> {{price?price:''}}
+                <text>即能币</text>
+              </view>
+              <text class="course-article__footer__exchange" wx:if="{{ 'isCoupon'===isCoupon }}"
+                    @tap.stop="handleExchangeCourse"> 课程券兑换
+              </text>
+              <button class="course-article__footer__btn"
+                      type="warn" size="default"
+                      plain="{{true}}" data-course="{{courseID}}"
+                      open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                      bindgetuserinfo="handleAuthorize"
+                      @tap.stop="handleDoPay"> {{price?'一键获取':'已获取'}}
+              </button>
+            </view>
+            <view class="ui-content-bottom" wx:if="{{ipX}}"></view>
+        </view>
+    </view>
+
+</template>
+
+<script>
+    import wepy from "wepy";
+    import {
+        auth as authApi,
+        sence as senceApi,
+        payment as paymentApi,
+        push as pushApi,
+        share as shareApi,
+        course as courseApi,
+        report as reportApi
+    } from "../../api/index";
+    import {getStore, connect} from "wepy-redux";
+    import {renewWechatCode, login} from "../../redux/models/user";
+    import {fetchSences, setCurrentSenceID} from "../../redux/models/sences";
+    import Toast from "wepy-com-toast";
+    import {setCurrentCourseID, setCurrentCourseName} from "../../redux/models/courses";
+    import {
+        showErrorPage,
+        toast,
+        doDecrpytPhone,
+        shareDictionary,
+        navigateToLesson,
+        initializationDeligate
+    } from "../../utils/index";
+    import {NetworkError, CustomError, LessonPermissionDenyError} from '../../errors/index'
+    import Loading from "../../components/common/loading";
+    import loadingMixin from "../../mixins/loading";
+    import header from '../../components/common/header'
+    import FetchPhoneMixin from "../../mixins/fetchPhone";
+    import PushMixin from "../../mixins/push";
+    import NavigatorMixin from '../../mixins/navigator'
+
+    import CustomModal from '../../components/CustomModal/index'
+
+    const store = getStore();
+
+    @connect({
+        userName(state) {
+            return state.user.name
+        }, // mapState 即getters
+        avatar(state) {
+            return state.user.avatar
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
+        },
+        token(state) {
+            return state.user.token
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
+        },
+        code(state) {
+            return state.user.code
+        },
+        windowHeight(state) {
+            return state.user.windowHeight
+        },
+        phone(state) {
+            return state.user.phone
+        },
+        serverSences(state) {
+            // return state.sences.sections.findIndex(item => item.id===state.sences.currentID) + 1
+            // return state.sences.sections.map(item => item.id)
+            return state.sences
+        },
+        platform(state) {
+            return state.user.platform === 'android'
+        },
+        ipX(state) {
+            return state.user.equipmentModel.startsWith('iPhone X')
+        }
+    })
+    export default class Course extends wepy.page {
+        mixins = [loadingMixin, PushMixin, FetchPhoneMixin, NavigatorMixin];
+
+        components = {
+            toast: Toast,
+            //"m-course-cell": courseCell,
+            mloading: Loading,
+            //mhomecourse: homeCourse,
+            //Homecoursefavour:HomeCourseFavour,
+            'CustomModal': CustomModal,
+            'CustomModal2': CustomModal,
+            'jn-header': header
+        }
+
+        data = {
+            buyBtnMsg: '',
+            source: '',//数据来源
+            timestamp: 0,
+            showGiftTip: '',
+            courseID: "",
+            lockStatus: 'disPlay',
+            sectionOffsetOfHotCourses: 1,
+            courseLinkIsShow: false,
+            triggerTop: 0,
+
+            isCoupon: 'isCoupon', // 是否有课程券
+            couponCount: 0, // 可用课程券
+            gradeName: "gradeName", // 难度
+            gradeText: "gradeText", // 适合人群
+            name: "", // 课程名称
+            image: "../../assets/img/icon-home.svg", // 课程封面图片
+            price: 0, // 课程价格
+            paySign: '', // 价格签名
+            payPrice: 0, // 价格
+            showPoint: 'showPoint', // tag 1
+            courseSkill: "courseSkill", // tag2
+            userAvatarUrlList: [{
+                avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/FQQA0icGXUvJyXh7Snu7ZDT2cibTVC38Y1fW1qAoHjOypXoIzsr9uI9SOOtrR34mltHn7u09VYqk0DNhoX7mibnQA/0',
+                courseID: 'courseIDb1892a5613147089e4fd2e4ce3df',
+                userID: 'userID168e1f597ff8425986e716daf6679fca'
+            }], // 当前学习用户头像集合
+            userCount: 0, // 当前学习用户数量
+            senceList: [{
+                buttonStatusMsg: "buttonStatus",
+                senceTarget: "senceTarget",
+                imageUrl: "http://wx-small.runwise.cn/image/imageID7c26a291c6f4b1b9449d4732b468.svg",
+                buttonStatus: "buttonStatus",
+                lessonType: 'previewTest',
+                id: "id",
+                minuteTime: 0,
+                senceName: "senceName"
+            }], // 你将学到
+            pointList: [
+                'pointList1',
+                'pointList2',
+                'pointList3'
+            ], // 帮你解决
+            informationList: [{
+                bigImageStatus: 'unLock',
+                bigImage: 'http://wx-small.runwise.cn/image/imageID2889c40e59148895bb059b12686a.svg'
+            }], // 核心方法预览图
+            previewList: [],
+            feedbackList: [{
+                star: 3,
+                avatarUrl: 'avatarUrl',
+                showMessage: 'showMessage',
+                name: 'name'
+            }], // 评论列表
+            courseLink: [{
+                gradeName: "gradeName",
+                courseName: "courseName",
+                courseImage: "http://wx-small.runwise.cn/image/imageID1c430dfb45348d9c00bfeb32d701.png",
+                courseSkill: "courseSkill",
+                courseStar: 0,
+                courseID: "courseID"
+            }], // 猜你需要
+            unlockAnimation: {
+                title: "恭喜你，\r\n已成功领取课程~",
+                image: "../../assets/img/icon-unlock.svg"
+            },
+            isFooterHidden: true,
+            scrollView: {
+                ceil: 80,
+                floor: 80,
+                allowScrollAnimation: true,
+                intoView: ""
+            }, // end scrollView
+            intoView: "",
+            isFirstLoaded: true, // 第一次加载数据
+            isLoaded: false, // on show加载数据
+            coursePayStatus: 'hidden',
+            courseLabelList: [],
+            seriesName: '',
+            previewTestLinkCourseID: '',
+            previewTestLinkIsShow: '',
+            previewTestLinkSenceID: '',
+            showPointTitle: '',
+            templetTitle: '',
+            isNewSenceMap: {}, // 进入微课的新老界面判断
+            courseTitle:'',
+            senceTitle:'',
+            wxPushType:''
+        }
+
+        methods = {
+            getUserInfo(event) {
+                let self = this
+                let errMsg = event.detail.errMsg
+
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+                }).then(() => { // 授权成功
+                    initializationDeligate({initializeFunc: this.initialize.bind(this, this.courseID), callWhatever: true})
+                }).catch(error => { // 拒接授权
+
+                })
+            },
+            handleAuthorize({detail: {errMsg}}) {
+                console.log(`authentication errMsg: ${errMsg}`)
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+                    resolve(errMsg)
+                })
+                    .then(userInfo => {
+                        this.isLoaded = false
+                        this.$apply()
+                        return store.dispatch(login())
+                    })
+                    .then(() => {
+                        this.initialize(this.courseID)
+                    }).catch(error => {
+                        console.log(`<<<<<<<<<<<<< -- 小节授权: ${error} -- >>>>>>>>>>>>>>`)
+                    }) // end catch
+            }, // end handleAuthorize
+            handleToGiftDetail() {
+                // this.$navigate('/pages/Largess/index',{courseID:this.courseID})
+                this.$navigate('/pages/GiftDetail/index')
+            },
+            handleExchangeCourse(event) {
+                console.log('tend to exchange', wepy)
+                wepy.showModal({
+                    title: '使用课程券',
+                    content: `${ this.couponCount }张课程券可用`,
+                })
+                    .then(({errMsg, confirm}) => {
+                        if (!confirm) throw new CustomError('取消购买')
+                        if (0 === this.couponCount) throw new CustomError('零课程券，无法购买')
+                        return courseApi.exchangeCourse({
+                            token: this.token,
+                            courseID: this.courseID
+                        })
+                    })
+                    .then(() => {
+                        return wepy.showToast({
+                            title: '购买成功',
+                            icon: 'success'
+                        })
+                    })
+                    .then(() => {
+                        this.initialize(this.courseID)
+                    })
+                    .then(() => {
+                        this.coursePayStatus = "hidden"
+                        this.isFooterHidden = true // 隐藏bottom bar
+                        this.$apply()
+                    }).then(() => {
+                    }).catch(error => {
+                        console.log('modal error', error)
+                        let mTitle = error instanceof CustomError ? error.message : '购买失败，请联系营长'
+                        return wepy.showToast({
+                            title: mTitle,
+                            icon: 'none'
+                        }) // reuturn
+                    }) // end catch
+            }, // end handleExchangeCourse
+            handleLoadMore() {
+                this.courseLinkIsShow = true;
+                this.setData({'intoView': 'courseLinkView'});
+                this.$apply()
+                this.setData({'intoView': 'courseLinkView'});
+                this.$apply()
+                // this.intoView = "courseLinkView"
+                // this.$apply()
+            },
+            handleCloseLoadMore() {
+                this.courseLinkIsShow = false;
+            },
+            handleMove(event) {
+                console.log("move scrollView");
+            }, // end handleMove
+            handleApproachCeil() {
+                // console.log('approach ceil')
+                if (this.isFooterHidden) return false;
+                // console.log('tend to confirm footer is hidden')
+                this.isFooterHidden = true;
+                this.$apply();
+            }, // handleApproachCeil
+            handleApproachFloor() {
+                // console.log('approach floor')
+                if (!this.isFooterHidden) return false;
+                // console.log('tend to confirm footer is show')
+                this.isFooterHidden = false;
+                this.$apply();
+            }, // end handleApproachCeil
+            handleScroll({detail: {scrollTop}}) {
+                // console.log('scrolling top', scrollTop, this.coursePayStatus, this.triggerTop)
+                if ('hidden' === this.coursePayStatus) {
+                    console.log("because of freeOrPayed, foot should be hidden");
+                    if (false === this.isFooterHidden) this.isFooterHidden = true;
+                    return
+                }
+                // console.log('still here behind')
+                if (scrollTop < this.triggerTop && false === this.isFooterHidden) {
+                    return this.isFooterHidden = true
+                }
+                if (scrollTop >= this.triggerTop && true === this.isFooterHidden) {
+                    return this.isFooterHidden = false
+                }
+            }, // end handleScroll
+            handleOpenLesson({senceID}) {
+                let mIndex = this.sences.findIndex(item => senceID === item.id);
+                store.dispatch(setCurrentSenceID(senceID));
+                this.$apply()
+            }, // handleChangeLearnStatus
+            handleApproachCeil() {
+                // console.log('touch ceil')
+            }, // end handleApproachCeil
+            handleApproachFloor() {
+                // console.log('touch floor')
+            }, // end handleApproachFloor
+            handleDoPay({target, currentTarget: {dataset: {course: courseID}}}) {
+                return this.$navigate('/pages/PayForLesson/index', {courseID: courseID})
+            },
+            handleHotCoursesScroll({detail: {scrollLeft, scrollWidth}}) {
+                let {
+                    trueSequence,
+                    visbleSequence
+                } = this.calculateWhichSectionIsShowInScrollView({
+                    scrollLeft,
+                    scrollWidth,
+                    coursesLength: this.courseLink.length
+                });
+                if (this.sectionOffsetOfHotCourses !== visbleSequence)
+                    this.sectionOffsetOfHotCourses = visbleSequence;
+            }, // handleHotCoursesScroll
+            handlePreviewCoreImage({currentTarget: {dataset: {imageUrl, status}}}) {
+                console.log('tend to preivew core image', imageUrl, status)
+                if ('lock' === status) return wepy.showModal({
+                    title: "提示",
+                    content: "需要购买后才能体验哦!",
+                    showCancel: false,
+                    confirmText: "知道了"
+                })
+
+                reportApi.sendUserEventLog({
+                    token: this.token,
+                    body: {
+                        type: '打开课程精华事件',
+                        courseID: this.courseID
+                    }
+                }).then(data => {
+                    console.log('课程精华预览事件上报')
+                })
+                return wepy.previewImage({current: imageUrl, urls: this.previewList})
+            }, // end handlePreviewCoreImage
+            handleDoPreviousPractice({target: {dataset: {courseID, senceID, resume, source,senceName}}}) {
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, source)
+                // if(this.previewTestLinkIsShow){return this.navigateToPreviewTest()}
+                this.$navigate(`/pages/PreviousPracticeBeginning/index`, {courseID, senceID})
+            }, // end handleDoPreviousPractice 课前练习
+            handleStartTrial({target: {dataset: {courseID, senceID, resume, buttonStatus, source,senceName}}}) {
+                if (!this.isTokenSet) return
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, buttonStatus)
+                let isNewSence = this.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, resumeLastRead: resume, source, isNewSence})
+            }, // handleStartTrial 试学
+            handleStartLesson({target: {dataset: {courseID, senceID, resume, buttonStatus, lessonType, source,senceName}}}) {
+                if (!this.isTokenSet) return
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, buttonStatus)
+                if ('previewTest' === lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                    courseID,
+                    senceID,
+                    source
+                })
+
+                if ('needPay' === buttonStatus) {
+                    return this.$navigate(`/pages/PayForLesson/index`, {senceID})
+                }
+                let isNewSence = this.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, resumeLastRead: resume, source, isNewSence})
+            }, // handleStartLesson 即学
+            handlePayForLesson({target: {dataset: {courseID, senceID, resume, buttonStatus,source,senceName}}, detail}) {
+                if (!this.isTokenSet) return
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, buttonStatus)
+                this.$navigate(`/pages/PayForLesson/index`, {senceID})
+            }, // handlePayForLesson 购买课程
+            handleContinueLesson({target: {dataset: {courseID, senceID, resume, buttonStatus, source,senceName}}}) {
+                if (!this.isTokenSet) return
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, buttonStatus)
+                console.log('继续', resume)
+                // if(this.previewTestLinkIsShow){return this.navigateToPreviewTest()}
+                let isNewSence = this.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, resumeLastRead: resume, source, isNewSence})
+            }, // handleContinueLesson // 继续
+            handleReviewLesson({target: {dataset: {courseID, senceID, resume, buttonStatus, source,senceName}}}) {
+                if (!this.isTokenSet) return
+                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                this.reportButtonTap(courseID, senceID, buttonStatus, source)
+                console.log('回顾')
+                // if(this.previewTestLinkIsShow){return this.navigateToPreviewTest()}
+                this.$navigate(`/pages/Review/index`, {courseID, senceID})
+            }, // handleReviewLesson // 回顾
+            handleJumpInCourse({currentTarget: {dataset: {courseID}}}) {
+                // if (!this.isTokenSet) return console.log('没有合法token, 不允许进入课程')
+                reportApi.sendUserEventLog({
+                    token: this.token,
+                    body: {
+                        type: '查看关联课程事件',
+                        courseID: this.courseID,
+                        targetCourseID: courseID
+                    }
+                })
+                    .then(data => {
+                        console.log('查看关联课程事件上报')
+                    })
+                this.$redirect(`/pages/course-module/course-details`, {id: courseID})
+            },
+        }
+
+        navigateToPreviewTest() {
+            let that = this
+            return this.$invoke('CustomModal2', 'CustomModalToPreviewTest',
+                {
+                    content: `你即将开始学习${this.seriesName}系列课程，为了达到更好的学习效果，我们邀请你参加学前测试，并将根据测试结果推荐合适的课程给你~`,
+                    confirmText: '去测试',
+                    success: () => {
+                        that.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                            courseID: that.previewTestLinkCourseID,
+                            senceID: that.previewTestLinkSenceID
+                        })
+                    }
+                })
+        }
+
+        reportButtonTap(courseID, senceID, buttonStatus, source) {
+            wx.reportAnalytics('tap_to_lesson', {
+                role: this.role,
+                nickname: this.userName,
+                channel: this.entrance.mappers[this.entrance.scenceID],
+                courseid: courseID,
+                senceid: senceID,
+                buttonstatus: buttonStatus,
+                source: source
+            })
+        }
+
+        events = {
+            async attendClass(courseID, resume, $event) {
+                try {
+                    await wepy.navigateTo({
+                        url: `/pages/course-module/course-details?id=${courseID}&resume=${resume}`
+                    })
+                } catch (err) {
+                    console.log('handle attend classes err', err)
+                }
+            }, // end attendClass
+            async review(courseID, $event) {
+                return console.log('tend to review, no way')
+                try {
+                    if ('finish' !== showStatus) return false
+                    await wepy.navigateTo({
+                        url: `/pages/Review/index?senceID=${senceID}`
+                    })
+                } catch (err) {
+                    console.log('err', err)
+                }
+            }
+        }
+
+        calculateWhichSectionIsShowInScrollView({scrollLeft, scrollWidth, coursesLength}) {
+            let sectionWidth = Math.floor(scrollWidth / coursesLength); // 每个section的高度
+            let sectionOffsetWidth = scrollLeft % sectionWidth; // 每个section的上啦高度
+            let sectionIndex = Math.floor(scrollLeft / sectionWidth); // 实际展示的section下标
+            let halfOfSectionWidth = Math.ceil(sectionWidth / 2);
+            let mOffset =
+                sectionOffsetWidth > halfOfSectionWidth ? sectionIndex + 1 : sectionIndex;
+            if (mOffset <= 0) mOffset = 0;
+            // console.log('scroll event happen, total width: %s, each section width is: %s, left: %s, now is the %d senction', scrollWidth, sectionWidth, scrollLeft, mOffset)
+            return {trueSequence: mOffset, visbleSequence: mOffset + 1};
+        }
+
+        doPay({courseID, paySign, payPrice}) {
+            return paymentApi
+                .requestPreviousPaymentWithSignature({
+                    token: this.token,
+                    code: this.code,
+                    courseID,
+                    paySign,
+                    payPrice
+                })
+                .then(response => {
+                    console.log("预支付成功", response);
+                    renewWechatCode(store.dispatch)
+                    return response;
+                })
+                .then(
+                    ({
+                         appId,
+                         nonceStr,
+                         package: pkg,
+                         paySign,
+                         prepay_id,
+                         return_code,
+                         return_msg,
+                         timeStamp
+                     }) => {
+                        console.log("after previous payment, now in payment");
+                        return paymentApi.requestPayment({
+                            timeStamp,
+                            nonceStr,
+                            pkg,
+                            paySign
+                        });
+                    }
+                )
+                .then(({errMsg}) => {
+                    if ("requestPayment:ok" !== errMsg) throw new Error("支付失败");
+                    return this.initialize(courseID)
+                })
+                .then(() => {
+                    this.coursePayStatus = "hidden"
+                    this.isFooterHidden = true // 隐藏bottom bar
+                    this.$apply()
+                })
+                .catch(error => {
+                    renewWechatCode(store.dispatch)
+                    return Promise.reject("fail in payment", error)
+                })
+        }
+
+        changeLearnedPercent({senceID, learned}) {
+            console.log("change senceID: %s, learned: %s", senceID, learned);
+            let mIndex = this.sences.findIndex(item => senceID === item.id);
+            if (mIndex) return (this.sences[mIndex]["learned"] = learned);
+        }
+
+        onUnload() {
+            let timestampxxx = new Date().getTime() - this.timestamp
+            this.reportStayTimestamp(timestampxxx)
+        }
+
+        onHide() {
+            let timestampxxx = new Date().getTime() - this.timestamp
+            this.reportStayTimestamp(timestampxxx)
+        }
+
+        reportStayTimestamp(time) {
+            if ('defaultToken' === this.token) {
+                return
+            }
+            courseApi.sendCoursePageTime({token: this.token, pageTime: time, courseID: this.courseID})
+                .then(response => {
+                    console.log('sendCoursePageTime report success! ' + time)
+                })
+        }
+
+        onLoad(options) {
+            console.log('课程详情url参数', options)
+            this.timestamp = new Date().getTime()
+            const {id = "defaultCourseID", lockStatus = 'disPlay', resume = "NO", scene = 'defaultScene', courseType, courseName, wxPushType} = options
+            this.courseLink = [] // 关联课程
+            this.sectionOffsetOfHotCourses = 1
+            this.courseLinkIsShow = false
+            this.scrollView.intoView = ""
+            this.source = courseType // 课程来源
+            this.courseTitle = courseName
+            this.wxPushType = wxPushType
+            this.senceTitle = options.name
+            this.courseID = 'defaultCourseID' === id ? decodeURIComponent(scene) : id
+            this.lockStatus = lockStatus
+            this.isFirstLoaded = true
+            this.isNewSenceMap = []
+            
+            reportApi.sendUserEventLog({
+                token: this.token,
+                body: {
+                    type: '打开课程精华事件',
+                    courseID: this.courseID
+                }
+            }).then(data => {
+                console.log('课程精华预览事件上报')
+            })
+
+            wx.createSelectorQuery().selectViewport().fields({
+                size: true,
+            }).exec(([{width, height}]) => {
+                this.triggerTop = height * 0.2
+            })
+        }
+
+        onShow() {
+            initializationDeligate({initializeFunc: this.initialize.bind(this, this.courseID), callWhatever: true})
+        }
+
+        onShareAppMessage({from, target: {dataset: {token, courseID, senceID, role, nickname, name, channel}}}) {
+            wepy.$instance.globalData.getHuilder('课程详情页/课程分享','click',`${name}/微信分享`)
+            console.log(`share title: ${this.name}, share path: ${this.courseID}`);
+            return {
+                title: '我在即能学习',
+                path: `/pages/course-module/course-details?id=${this.courseID}`,
+                success: function (res) {
+                    // 转发成功
+                    console.log("转发成功");
+                    console.log(`/pages/course-module/course-details?id=${this.courseID}`);
+
+                    shareApi.reportSharing({
+                        token,
+                        type: shareDictionary.SHARE_COURSE.type,
+                        courseID,
+                        senceID
+                    }) // 向后台上报分享行为
+
+                    //课程分享事件上报
+                    console.log(`分享事件上报:场景名称:${channel},用户分类:${role},昵称:${nickname},课程名称:${name}`);
+                    wx.reportAnalytics('share_event', {
+                        role: role,
+                        nickname: nickname,
+                        coursename: name,
+                        sencename: '/',
+                        channel: channel,
+                        type: shareDictionary.SHARE_COURSE.type,
+                    });
+                },
+                fail: function (res) {
+                    // 转发失败
+                    console.log("转发失败");
+                }
+            };
+        }
+
+        initialize(courseID = 'defaultCourseID', lockStatus = 'disPlay', source = '') {
+            return new Promise((resolve, reject) => {
+                if (null == courseID) return reject("缺少课程ID");
+                courseApi.getCourseDetail({
+                    token: this.token,
+                    courseID: this.courseID,
+                    source: this.source,
+                    wxPushType: this.wxPushType
+                }).then(({isCoupon, couponCount, coursePayStatus, coursePayStatusMsg, gradeName, gradeText, courseLink, name, image, price, showPoint, userAvatarUrlList, userCount, courseSkill, senceList, pointList, informationList, feedbackList, paySign, payPrice, showGiftTip, courseLabelList, seriesName, previewTestLinkCourseID, previewTestLinkIsShow, previewTestLinkSenceID, showPointTitle, templetTitle, isNewSenceMap}) => {
+                        this.isLoaded = true
+
+                        this.isNewSenceMap = isNewSenceMap
+                        this.showPointTitle = showPointTitle
+                        this.templetTitle = templetTitle
+                        this.seriesName = seriesName
+                        this.previewTestLinkCourseID = previewTestLinkCourseID
+                        // this.previewTestLinkIsShow = previewTestLinkIsShow
+                        this.previewTestLinkSenceID = previewTestLinkSenceID
+                        this.showGiftTip = showGiftTip
+                        this.isCoupon = isCoupon
+                        this.couponCount = couponCount
+                        this.gradeName = gradeName
+                        this.gradeText = gradeText
+                        this.courseLink = courseLink
+                        this.name = name
+                        this.image = image
+                        this.price = price
+                        this.paySign = paySign
+                        this.payPrice = payPrice
+                        this.coursePayStatus = coursePayStatus
+                        this.showPoint = showPoint
+                        this.userAvatarUrlList = userAvatarUrlList
+                        this.userCount = userCount
+                        this.courseSkill = courseSkill
+                        this.senceList = senceList
+                        this.pointList = pointList
+                        this.informationList = informationList
+                        this.previewList = []
+                        for (let img of this.informationList) {
+                            this.previewList.push(img.bigImage)
+                        }
+                        this.feedbackList = feedbackList
+                        // this.courseLink = courseLink
+                        this.courseLabelList = courseLabelList
+                        store.dispatch(setCurrentCourseID(courseID))
+                        store.dispatch(setCurrentCourseName(name))
+                        this.$apply()
+
+                        'play' === lockStatus && setTimeout(() => {
+                            this.$invoke("toast", "show", {
+                                title: this.unlockAnimation.title,
+                                img: this.unlockAnimation.image
+                            });
+                        }, 500)
+
+                        console.log('课程是否需要付费!!!', 'show' === this.coursePayStatus)
+
+                        wepy.$instance.globalData.getLoadHuilder({pageTheme: this.name}) // ga统计
+                        //访问课程详情页事件上报-xuqifeng-20171201
+                        console.log("访问课程详情页事件上报,课程名称:" + this.name);
+                        wx.reportAnalytics('coursedetail', {
+                            role: this.role,
+                            nickname: this.userName,
+                            coursename: this.name,
+                            coursetype: '课程',
+                            channel: this.entrance.mappers[this.entrance.scenceID]
+                        })
+                    })
+                    .catch(error => reject(error));
+            })
+        }
+    }
+</script>
+
+<style lang="less">
+@import "../../assets/style/theme";
+.course-article__body__relative-course__body__stars-wrapper text{margin-right:11rpx;font-size:24rpx;color:@color-blue;
+}
+::-webkit-scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
+.course-article__body::-webkit-scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
+.course-article__body {height: 100vh;}
+.course-article__body__header {margin-top: 80rpx;position: relative;}
+.course-article__body__icon__wrapper {width: 750rpx;}
+.course-article__body__icon {width: 750rpx;height: 375rpx;position: relative;}
+.course-cover-cover{width: 100%;height: 100%;background-color: rgba(0, 0, 0, .3);top:0;left:0;position: absolute;}
+.course-article__body__icon__caption-wrapper {position: absolute;left: 0;top: 0;background-color: rgba(0, 0, 0, .5);width: 100%;height: 100%;display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: flex-start;align-items: center;}
+.course-article__body__icon__caption-wrapper__header {width: 100%;margin-bottom: auto;margin-top: 40rpx;box-sizing: border-box;padding: 0 40rpx;position: relative;justify-content: space-between;}
+  .course-article__body__icon__caption-wrapper__header__title {color: #FFF;font-family: PingFangSC-Medium;font-size: 48rpx;line-height: 66rpx;}
+  .course-article__body__icon__caption-wrapper__header__share-icon {width: 60rpx;height: 60rpx;}
+  .course-article__body__icon__caption-wrapper__header__share-btn {width: 60rpx;height: 60rpx;position: absolute;top: 0;left: 0;border: 0 !important;}
+.course-article__body__icon__title {position: absolute;top: 120rpx;left: 40rpx;color: @color-white;font-family: PingFangSC-Heavy;font-size: 60rpx;line-height: 80rpx;max-width: 520rpx;font-weight: bold;}
+.course-article__body__icon__point {width:100%;height:84rpx;line-height:84rpx;position:absolute;left:0;bottom:0;color:@color-white;font-family:PingFang-SC-Medium;font-size:28rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;padding-left:48rpx;}
+.course-article__body__icon__caption-wrapper__footer {position: absolute;left: 40rpx;top: 40rpx;margin-right: 32rpx}
+.course-article__body__icon__caption-wrapper__footer__tag {height: 45rpx;line-height: 49rpx;padding: 0 16rpx;border: 0;background-color: @background-white;border-radius: @border-radius-20;color: @color-blue;font-family: PingFangSC-Regular;font-size: 26rpx;margin-right: 16rpx;}
+.course-article__body__container-wrapper {padding: 0 40rpx;}
+.course-article__body__header__share-icon {display: block;width: 68rpx;height: 68rpx;}
+.course-article__body__header__share-btn {width: 66rpx;height: 66rpx;position: absolute;right: 0;top: 0;border: 0 !important;}
+.course-article__body__desc-section {min-height: 30rpx;width: 100%;justify-content: flex-start;}
+.course-article__body__star-section {margin-top: 40rpx;}
+.course-article__body__tag-section {margin-top: 24rpx;overflow: hidden;}
+.course-article__body__desc-section__icon {width: 30rpx;height: 30rpx;margin-right: 12rpx;vertical-align: top;}
+.course-article__body__access-block {width: 750rpx;height: 96rpx;padding-left: 40rpx;margin-top: 80rpx;margin-bottom: 80rpx;justify-content: flex-start;}
+.course-article__body__access-block__difficulty__label,
+.course-article__body__access-block__adaptation__label {font-size: 28rpx;line-height: 40rpx;color: #a0afb9;font-family: PingFangSC-Regular;}
+.course-article__body__access-block__difficulty {padding-right: 20rpx;border-right: 2rpx solid @border-gray;}
+.course-article__body__access-block__adaptation {padding-left: 20rpx;}
+.course-article__body__access-block__adaptation__value,
+.course-article__body__access-block__difficulty__value {max-width: 600rpx;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 32rpx;line-height: 52rpx;font-family: PingFangSC-Regular;color: #294657;}
+.course-article__body__help-block {padding: 36rpx 40rpx 0rpx;}
+.course-article__body__help-block__title {display: block;margin-bottom: 36rpx;color: @color-black;font-family: PingFangSC-Semibold;font-size: 48rpx;line-height: 78rpx;font-weight: 800;}
+.course-article__body__help-block__row {margin-bottom: 20rpx;}
+.course-article__body__help-block__row:last-child {margin-bottom: 0;}
+.course-article__body__help-block__row__text::before {content: '';width: 12rpx;height: 12rpx;position: absolute;left: 26rpx;top: 16rpx;background: @color-gray;border-radius: 50%;}
+.course-article__body__help-block__row__text {position: relative;padding-left: 56rpx;vertical-align: top;font-family: PingFangSC-Regular;color: @color-gray;font-size: 30rpx;line-height: 44rpx;}
+.course-article__footer {width: 750rpx;height: 118rpx;}
+.course-article__footer .ui-content{width: 750rpx;border-top: 2rpx solid @border-gray;position: fixed;left: 0;bottom: 0;height: 118rpx;background-color: @background-mask-deep-white;-webkit-animation: fadeIn 0.3s;animation: fadeIn 0.3s;color: @color-black;font-family: PingFangSC-Semibold;}
+.course-article__footer .ui-content.isiphonex{height: 186rpx;}
+.course-article__footer .ui-content .ui-content-top{width: 750rpx;display: inline-flex;flex-direction: row;justify-content: space-between;align-items: center;height: 118rpx;}
+.course-article__footer .ui-content .ui-content-bottom{height: 68rpx;}
+.course-article__footer__money {min-width: 40rpx;padding-left: 48rpx;width: auto;height: 100%;display: flex;align-items: center;line-height: 118rpx;text-align: flex-end;box-sizing: border-box;font-size: 48rpx;}
+.course-article__footer__money text{font-family: PingFangSC-Medium;font-size: 24rpx;color: @color-black;letter-spacing: 0.55px;margin-left: 4rpx;margin-top: 20rpx;}
+.course-article__footer__exchange {font-size: 32rpx;margin-left: 48rpx;margin-right: 48rpx;}
+.course-article__footer__btn {width: 260rpx;height: 88rpx;display: inline-block;margin: 0;margin-right: 40rpx;padding: 0 20rpx;line-height: 88rpx;border: 0 !important;border-radius: @border-radius-20;background-color: @background-blue !important;color: @color-white!important;font-size: 32rpx;font-family: PingFang-SC-Medium;}
+.loading {height: 100%;}
+.course-article__pulltoloadmore {width: 100%;margin: 40rpx auto;text-align: center;}
+.home-container {background-color: #e5f0f6;position: relative;height: 100%;}
+.home-container__section__header {width: 750rpx;height: 84rpx;box-sizing: border-box;padding-top: 0;padding-left: 54rpx;position: relative;}
+.home-container__ceil-section > .home-container__section__header {height: 120rpx;padding-top: 36rpx;}
+.home-article__body::-webkit-scrollbar {width: 0 !important;height: 0 !important;color: transparent !important;}
+.section__body {width: 750rpx;height: 100%;white-space: nowrap;}
+.course-article__body__core-methods {width: 100%;height: 860rpx;border-top: 20rpx solid @border-gray;border-bottom: 20rpx solid @border-gray;}
+.course-article__body__core-mathods__title {display: block;padding-top: 48rpx;padding-bottom: 48rpx;padding-left: 40rpx;color: #2C3F49;font-family: PingFangSC-Semibold;font-size: 48rpx;line-height: 93.6rpx;font-weight: 800;}
+.course-article__body__core-mathods__scroll-view {width: 100%;height: 620rpx;white-space: nowrap;margin-bottom: 72rpx;}
+.course-article__body__core-mathods__scroll-view__wrapper {width: 472rpx;height: 600rpx;overflow: hidden;background-color: #fff;border-radius: 16rpx;display: inline-block;vertical-align: top;margin-left: 40rpx;}
+.course-article__body__core-mathods__scroll-view__wrapper-image {width: 100%;height: 100%;position: relative;border-radius: 16rpx;}
+.course-article__body__core-mathods__scroll-view__wrapper-image::after {content: ' ';width: 100%;height: 100%;border-radius: 16rpx;background-color: rgba(25, 40, 85, .1);position: absolute;left: 0;top: 0;}
+.course-article__body__core-mathods__scroll-view__wrapper-image__tips {position: absolute;top: 24rpx;right: 24rpx;width: 48rpx;height: 48rpx;}
+  .course-article__body__will-get {padding: 48rpx 32rpx 40rpx;border-bottom: 20rpx solid @border-gray;}
+  .course-article__body__will-get__title {display: block;width: 100%;box-sizing: border-box;padding-bottom: 40rpx;color: @color-black;font-family: PingFangSC-Semibold;font-size: 48rpx;line-height: 78rpx;font-weight:800;}
+  .course-article__body__will-get__bar-cell {align-items: center;height: 180rpx;position: relative;}
+  .course-article__body__will-get__bar-cell__shade-btn {position: absolute;left: 0;top: 0;width: calc(~"100% - 148rpx");height: 100%;border: 0 !important;}
+  .course-article__body__will-get__bar-cell:last-child {padding-bottom: 0;border-bottom: 0;}
+  .course-article__body__will-get__bar-cell__icon-wrapper {width: 128rpx;height: 128rpx;margin-right: 4rpx;position: relative;background-color: #FFF;}
+  .course-article__body__will-get__bar-cell__icon-wrapper::before {content: ' ';background-color: #FFF;width: 100%;height: 4rpx;position: absolute;left: 0;top: -6rpx;}
+  .course-article__body__will-get__bar-cell-wrapper__image {width: inherit;height: inherit;background-color: #FFF;border-radius:@border-radius-20;}
+  .course-article__body__will-get__bar-cell-noborder{border-top:0 !important;}
+  .course-article__body__will-get__bar-cell__description {height: 100%;display: flex;width: 100%;padding-right: 5%;flex-direction: column;flex-wrap: nowrap;justify-content: center;align-items: flex-start;margin-left: 24rpx;margin-right: auto;border-top: 1rpx solid @border-gray;}
+  .course-article__body__will-get__bar-cell__description__title {color: @color-black;font-family: PingFangSC-Regular;font-weight: bold;font-size: 32rpx;line-height: 38.4rpx;text-align: left;}
+  .course-article__body__will-get__bar-cell__description__skill-point {color: @color-gray;font-family: PingFangSC-Regular;font-size: 24rpx;line-height: 32rpx;margin-top: 20rpx;}
+  .course-article__body__will-get__bar-cell__operation {display: flex;flex-direction: column;flex-wrap: nowrap;justify-content: center;align-items: center;height: 100%;border-top: 1rpx solid @border-gray;}
+  .course-article__body__will-get__bar-cell__operation__minute {color: @color-gray;font-family: PingFangSC-Regular;font-size: 24rpx;line-height: 25.6rpx;margin-bottom: 8rpx;}
+  .course-article__body__will-get__bar-cell__operation__lock {width: 40rpx;height: 40rpx;display: inline-block;vertical-align: middle;}
+  .course-article__body__resure_block {border-top: 20rpx solid @border-gray;padding: 48rpx 0 40rpx;}
+  .course-article__body__resure_block__header {width: 100%;align-items: center;}
+  .course-article__body__resure_block__header__title {color: @color-black;font-family: PingFangSC-Semibold;font-size: 48rpx;line-height: 78rpx;margin-left: 40rpx;margin-right: auto;font-weight: 800;}
+  .course-article__body__resure_block__header__caption {color: @color-gray;font-family: PingFangSC-Regular;font-size: 28rpx;line-height: 28rpx;margin-right: 40rpx;}
+  .course-article__body__resure_block__comments-scroll-view {width: 100%;height: 420rpx;padding: 24rpx 0 28rpx;display: block;white-space: nowrap;}
+  .course-article__body__resure_block__comments-scroll-view__block {width: 600rpx;height: 380rpx;box-sizing: border-box;padding: 24rpx 36rpx 0;overflow: hidden;background-color: @border-gray;border-radius: 16rpx;display: inline-block;vertical-align: top;margin-right: 40rpx;position: relative;}
+  .course-article__body__resure_block__comments-scroll-view__block:first-child {margin-left: 40rpx;}
+  .course-article__body__resure_block__comments-scroll-view__block__title {font-size: 26rpx;line-height: 28rpx;margin-left: -10rpx;font-family: PingFangSC-Regular;color: @color-gray;}
+  .course-article__body__resure_block__comments-scroll-view__block__description {position: absolute;height: 200rpx;width: 528rpx;bottom: 48rpx;left: 36rpx;word-break: break-all;white-space: pre-line;display: block;font-family: PingFangSC-Regular;font-size: 30rpx;line-height: 48rpx;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp:4;overflow: hidden;color: @color-black;letter-spacing: 0.68px;text-align: justify;}
+  .course-article__body__resure_block__comments-scroll-view__block__footer {align-items: center;}
+  .course-article__body__resure_block__comments-scroll-view__block__footer__avatar {width: 60rpx;height: 60rpx;border-radius: 50%;display: block;position: absolute;right: 36rpx;top: 24rpx;}
+.ui-star text{display: inline-block;vertical-align: middle;margin-right: 11rpx;color:@color-blue;font-size: 26rpx}
+.course-article__body__relative-course {width: 100%;}
+.course-article__body__relative-course__title {display: block;padding-top: 48rpx;padding-bottom: 48rpx;padding-left: 40rpx;color: @color-black;font-family: PingFangSC-Semibold;font-size: 48rpx;line-height: 78rpx;font-weight: 800;}
+.course-article__body__relative-course__body{display: inline-block;vertical-align: top;margin: 0rpx 0rpx 60rpx 37.5rpx;width: 320rpx;position: relative;}
+.course-article__body__relative-course__body-img{width: 320rpx;height: 192rpx;border-radius: 16rpx;}
+.course-article__body__relative-course__body-label{color: @color-gray;font-size: 18rpx;line-height: 28rpx;border: 2rpx solid @border-gray-94;padding: .5rpx 4rpx;width: fit-content;border-radius: 6rpx;margin-top: 9rpx;}
+.course-article__body__relative-course__body-title{display: block;color: @color-black;font-family: PingFangSC-medium;font-size: 28rpx;line-height: 40rpx;height: 80rpx;overflow: hidden;margin-top: 10rpx;text-align: left;}
+.course-article__body__panel {align-items: center;padding: 48rpx 32rpx 40rpx;}
+.course-article__body__panel__avatar {width: 72rpx;height: 72rpx;border-radius: 50%;margin-right: -18rpx;border: 2rpx solid #fff;}
+.course-article__body__panel__count {margin-left: 40rpx;margin-right: auto;color:@color-black;font-family: PingFangSC-Regular;font-size: 26rpx;}
+.course-article__body__panel__share {color:@color-blue;font-size: 52rpx}
+.course-article__body_get-subtitle{margin: 0 0rpx 32rpx;padding-left: 16rpx;border-left: 6rpx solid @color-blue;font-family: PingFangSC-Medium;font-size: 34rpx;color: @color-black;line-height: 34rpx;white-space: nowrap;overflow: hidden;}
+
+</style>

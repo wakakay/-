@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_hotspot_toast</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Annotation" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="练习类未完成-toast-标注" transform="translate(-1779.000000, -644.000000)">
+            <g id="Toast-Copy-3" transform="translate(1751.000000, 628.000000)">
+                <g id="icon_hotspot_toast" transform="translate(28.000000, 16.000000)">
+                    <rect id="Rectangle" fill="#585858" opacity="0.01" x="0" y="0" width="64" height="64"></rect>
+                    <g id="Wave" transform="translate(4.000000, 4.000000)">
+                        <circle id="Oval-3" fill="#FF895A" opacity="0.200000003" cx="20" cy="20" r="20"></circle>
+                        <circle id="Oval-3" fill="#FF895A" opacity="0.800000012" cx="20" cy="20" r="10"></circle>
+                        <circle id="Oval-3" fill="#FFFFFF" cx="20" cy="20" r="5"></circle>
+                    </g>
+                    <g id="Hand" transform="translate(39.500000, 40.500000) rotate(-16.000000) translate(-39.500000, -40.500000) translate(27.000000, 24.000000)" fill="#FFFFFF">
+                        <rect id="Rectangle-3" x="8" y="0" width="5" height="25" rx="2.5"></rect>
+                        <rect id="Rectangle-3" x="12" y="11" width="5" height="12" rx="2.5"></rect>
+                        <rect id="Rectangle-3-Copy" x="16" y="13" width="5" height="12" rx="2.5"></rect>
+                        <rect id="Rectangle-3-Copy-2" x="20" y="15" width="5" height="10" rx="2.5"></rect>
+                        <path d="M8,21 L4.5,17.5 L4.5,17.5 C3.67157288,16.6715729 2.32842712,16.6715729 1.5,17.5 L1.5,17.5 L1.5,17.5 C0.634417091,18.3655829 0.521487636,19.7300827 1.2329924,20.7261894 L9.40176885,32.1624764 L9.40176885,32.1624764 C9.77719188,32.6880686 10.3833336,33 11.0292358,33 L21.4866438,33 L21.4866438,33.000007 C22.3881038,33.000007 23.1781514,32.3969467 23.4158624,31.527393 C24.4719541,27.6641792 25,24.6718067 25,22.5502756 C25,20.1664858 25,18.3064393 25,16.9701361 L10.3077438,16.9701361 L8,21 Z" id="Path-2"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

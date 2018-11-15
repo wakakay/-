@@ -1,0 +1,269 @@
+<style lang="css" src="./assets/iconfont/iconfont.css"></style>
+<style lang="css" src="assets/style/layout.css"></style>
+<style lang="css" src="./assets/style/animation.css"></style>
+<style lang="less">
+    @import "./assets/style/common";
+    .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+</style>
+
+<script>
+    import wepy from 'wepy'
+    import 'wepy-async-function'
+    import {store} from './redux/store'
+    import {setStore} from 'wepy-redux'
+    import {setSceneID, setPath, setQuery} from './redux/models/entrance'
+    import {auth as authApi} from './api'
+    import config from './api/config'
+    import {shareDictionary} from './utils'
+    import {ROUTERS} from './utils/router-dictionary'
+    import ga from 'wxapp-ga/ga'
+
+    const GoogleAnalytics = ga.GoogleAnalytics
+    const HitBuilders = ga.HitBuilders
+    export default class extends wepy.app {
+        config = {
+            pages: [
+
+                /* 发现模板 */
+                'pages/FindList/index',
+                'pages/PreviousPracticePage/index',
+                'pages/PreviousPracticeBeginning/index',
+                'pages/PreviousPracticeEnding/index',
+                'pages/PreviousPracticeNewEnding/index',
+                'pages/SpecialCourse/index',
+
+                /* 课程模板 */
+                'pages/course-module/course',
+                'pages/course-module/assortment',
+                'pages/course-module/course-details',
+                'pages/course-module/course-new-details',
+                'pages/course-module/course-learning',
+                'pages/course-module/course-exercises',
+                'pages/course-module/course-discuss',
+                'pages/course-module/course-complete',
+                'pages/course-module/course-level-instructions',
+
+                /* 注册模块 */
+                'pages/registered-module/weclome',
+                'pages/registered-module/interest-select',
+                'pages/registered-module/recommend',
+
+                /* 个人中心 */
+                'pages/user-module/mine',
+                'pages/user-module/mine-edit',
+                'pages/user-module/mine-edit-phone',
+                'pages/user-module/mine-edit-email',
+                'pages/user-module/mine-edit-interest',
+                'pages/user-module/mine-edit-target',
+                'pages/user-module/mine-edit-status',
+                'pages/user-module/mine-feedback',
+                'pages/user-module/skill-board',
+                'pages/user-module/lesson-list',
+                'pages/user-module/apply-for-test',
+                'pages/user-module/score-detail',
+                'pages/user-module/score-rules',
+                'pages/user-module/mine-collect',
+
+                /* 其他模板 */
+                'pages/other-module/work-template',
+                'pages/other-module/job-skills',
+                'pages/other-module/community',
+                /* 活动 */
+                'pages/Evaluation/index',
+                'pages/Largess/index',
+                'pages/Lesson/index',
+                'pages/LessonForAndroid/index',
+                'pages/NoLogin/index',
+                'pages/Mistake/index',
+                'pages/Review/index',
+                'pages/Sorting/index',
+                'pages/SingleSelection/index',
+                'pages/PayForLesson/index',
+                'pages/GiftDetail/index',
+
+                'pages/training-camp-module/index', // 训练营-首页
+                'pages/training-camp-module/all-training', // 查看全部训练营
+                'pages/training-camp-module/introduce', // 训练营介绍
+                'pages/training-camp-module/registration', // 训练营-报名
+                'pages/training-camp-module/registration-info', // 训练营-报名信息
+                'pages/training-camp-module/coursr-list', // 训练营-课程列表
+                'pages/training-camp-module/release-message', // 训练营-发布消息
+                'pages/training-camp-module/add-task', // 添加任务
+                'pages/training-camp-module/invite-friends', // 邀请好友
+                'pages/training-camp-module/skill-levels', // 技能水平
+                'pages/training-camp-module/evaluation', // 评价
+                'pages/training-camp-module/ranking-list', // 排行榜
+                'pages/training-camp-module/transcript', // 成绩单
+                'pages/training-camp-module/learning-result', // 学习成果
+                'pages/training-camp-module/task-list', // 全部任务
+                'pages/training-camp-module/my/main', // 我管理-管理
+                'pages/training-camp-module/my/edit', // 我管理-编辑训练营
+                'pages/training-camp-module/my/students-list', // 我管理-学员列表
+                'pages/training-camp-module/my/students-management', // 我管理-学员管理
+                'pages/training-camp-module/my/release-task', // 我管理-发布任务
+                'pages/training-camp-module/my/share-link', // 我管理-分享链接
+                'pages/training-camp-module/my/course-evaluation', // 我管理-课程评价
+                'pages/training-camp-module/my/release-poll', // 我管理-发布投票
+                'pages/training-camp-module/my/learning-goals', // 我管理-学习目标
+            ],
+            window: {
+                navigationStyle: 'custom',
+                backgroundTextStyle: "light",
+                navigationBarBackgroundColor: "#294657",
+                navigationBarTitleText: "即能",
+                navigationBarTextStyle: "black",
+            },
+            "tabBar": {
+                "color": "#8F8E94",
+                "backgroundColor": "#FFFFFF",
+                "selectedColor": "#007AFF",
+                "list": [
+                    {
+                        "pagePath": "pages/FindList/index",
+                        "text": "发现",
+                        "iconPath": "assets/img/discover-off.png",
+                        "selectedIconPath": "assets/img/discover-on.png"
+                    },
+                    {
+                        "pagePath": "pages/course-module/course",
+                        "text": "课程",
+                        "iconPath": "assets/img/tab-study-off.png",
+                        "selectedIconPath": "assets/img/tab-study-on.png"
+                    },
+                    {
+                        "pagePath": "pages/training-camp-module/index",
+                        "text": "训练营",
+                        "iconPath": "assets/img/tab-train-off.png",
+                        "selectedIconPath": "assets/img/tab-train-on.png"
+                    }
+                ]
+            },
+            networkTimeout: {
+                "request": 30000,
+                "downloadFile": 30000
+            },
+            workers: "workers"
+        }
+
+        globalData = {
+            newCourseDetailTempele: {},
+            getTracker() {
+                let self = this
+                let tracker = {}
+                // 初始化GoogleAnalytics Tracker
+                tracker = GoogleAnalytics.getInstance(self)
+                    .setAppName('即能')
+                    .setAppVersion('v1.0')
+                    .newTracker('UA-124925915-2') // 用你的 Tracking ID 代替 test：UA-124925915-2 product： UA-127840357-1
+                tracker.setTrackerServer("https://wx-small.runwise.cn") // 使用自己的合法域名做跟踪数据转发
+                return tracker
+            },
+            getHuilder(category, action, label) {
+                var trackerInfo = this.getTracker()
+                let builder = {}
+                // console.log('ga----', category, action, label)
+                if (action === 'click') {
+                    builder = new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build()
+                } else {
+                    trackerInfo.setScreenName(category)
+                    builder = new HitBuilders.ScreenViewBuilder().build()
+                }
+                trackerInfo.send(builder)
+            },
+            getLoadHuilder(options) {
+                let parmas = options || {}
+                let rounter = getCurrentPages()
+                let page = rounter[rounter.length - 1]
+                let title = ROUTERS[page.route]
+
+                if (parmas.screenName || title) {
+                    // Google Analytics 统计
+                    var trackerInfo = this.getTracker()
+                    let builder = {}
+                    // console.log('ga----', parmas.screenName || title.screenName, parmas.pageTheme)
+                    trackerInfo.setScreenName(parmas.screenName || title.screenName)
+                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parmas.pageTheme || '-').build()
+                    trackerInfo.send(builder)
+                }
+            },
+            userInfo: null,
+            firstAccessForUserProfile: true,
+        }
+
+        constructor() {
+            super()
+            setStore(store)
+            this.use('requestfix')
+            this.use('promisify')
+        }
+
+        sleep(s) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve('promise resolved')
+                }, s * 1000)
+            })
+        }
+
+        async testAsync() {
+            const data = await this.sleep(3)
+        }
+
+        onLaunch(option) {
+            let {scene: sceneID, path, query} = option
+            const mDictionary = {
+                'pages/LessonForAndroid/index': shareDictionary.SHARE_TEAM,
+                'pages/Lesson/index': shareDictionary.SHARE_TEAM,
+                'pages/course-module/course-details?': shareDictionary.SHARE_COURSE,
+            }
+            store.dispatch(setSceneID(sceneID))
+            store.dispatch(setPath(path))
+            store.dispatch(setQuery(query))
+
+            // 强制更新
+            const updateManager = wx.getUpdateManager()
+            updateManager.onCheckForUpdate(function (res) {
+                // 请求完新版本信息的回调
+                // console.log(res.hasUpdate)
+            })
+
+            updateManager.onUpdateReady(function () {
+                wx.showModal({
+                    title: '更新提示',
+                    content: '新版本已经准备好，是否重启应用？',
+                    success: function (res) {
+                        if (res.confirm) {
+                            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                            updateManager.applyUpdate()
+                        }
+                    }
+                })
+
+            })
+
+            updateManager.onUpdateFailed(function () {
+                // 新的版本下载失败
+                wx.showModal({
+                    title: '更新提示',
+                    content: '新版本下载失败',
+                    showCancel: false
+                })
+            })
+        }
+
+        onShow(option) {
+            // 设置缓存 第几次进入小程序
+            let key = wx.getStorageSync('pageLoadNum')
+            key = key ? key+1 : 1
+            wx.setStorageSync('pageLoadNum', key)
+        }
+
+    }
+</script>

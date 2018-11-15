@@ -1,0 +1,287 @@
+<template>
+	<jn-header title="训练营报名" openType="reLaunch"></jn-header>
+	<mloading wx:if="{{ !isLoaded }}"/>
+	
+	<view wx:else class="ui-team-introduction">
+		<image class="cell-banner" src="{{ imageUrl }}" mode="aspectFill"></image>
+		<view class="cell-name">{{ name }}</view>
+		<view class="ui-dec">
+			<text class="icon-clock cell-icon"></text>
+			<text class="cell-tip">{{ time }}</text>
+		</view>
+		<view class="ui-dec">
+			<text class="icon-mermber cell-icon"></text>
+			<text class="cell-tip">{{ signUpUserCount }}人报名</text>
+		</view>
+
+		<view wx:if="{{ targetList.length&&targetList[0] }}" class="cell-title">学习目标</view>
+		<view wx:if="{{ targetList.length&&item }}" wx:for="{{ targetList }}" wx:key="{{ index }}" class="cell-li">
+			{{ item }}
+		</view>
+
+		<view wx:if="{{ courseImageList.length }}" class="cell-title">训练营介绍</view>
+		<image wx:if="{{ courseImageList.length }}" wx:for="{{ courseImageList }}" wx:key="{{ index }}"
+			class="cell-poster" src="{{ item }}" mode="widthFix"></image>
+
+		<view wx:if="{{ teacherImage }}" class="cell-title">导师介绍</view>
+		<image wx:if="{{ teacherImage }}" class="cell-poster" src="{{ teacherImage }}" mode="widthFix"></image>
+
+		<view class="ui-company">
+			<image class="cell-img"
+				src="http://wx-small.runwise.cn/image/imageID8e72549be764a9bca9fe8ca95973.png" mode="widthFix"></image>
+			<text class="cell-content">提供技术支持</text>
+		</view>
+		<view class="ui-empty"></view>
+		<view class="ui-button">
+			<!-- <button wx:if="{{ !isTokenSet && 'allowSignUp'===buttonStatus }}" plain="{{ true }}"
+					data-is-goto-team-detail-page="{{ isGotoTeamDetailPage }}" open-type="getUserInfo"
+					bindgetuserinfo="handleAuthorize" class="cell-shade"  open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                        bindgetuserinfo="getAuthorize"
+                        hover-stay-time="100">
+			</button> -->
+			<button
+				class="ui-item {{ 'allowSignUp'===buttonStatus? 'cell-column': '' }}"
+				plain="{{ true }}"  data-role="{{ role }}"  
+				open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                bindgetuserinfo="getAuthorize"
+                hover-stay-time="100"
+				data-team-i-d="{{ teamID }}" data-share-flag="{{ shareFlag }}" data-name="{{ name }}"
+				@tap.stop="handleTapFooterBtn">
+				<text class="cell-text">{{ computedBtnText }}</text>
+				<text wx:if="{{ 'allowSignUp'===buttonStatus }}" class="cell-tip">{{buttonTip }}</text>
+			</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	import wepy from 'wepy'
+	import {getStore, connect} from 'wepy-redux'
+	import {initializationDeligate } from "../../utils"
+	import {team as teamApi } from '../../api'
+	import {login} from '../../redux/models/user'
+    import {CustomError} from '../../errors'
+	import AuthorizationModal from '../../components/AuthorizationModal/index'
+	import Loading from "../../components/common/loading";
+	import header from '../../components/common/header'
+	const store = getStore()
+	@connect({
+		userName(state) {
+			return state.user.name;
+		},
+		avatar(state) {
+			return state.user.avatar;
+		},
+		role(state) {
+			return state.user.role;
+		},
+		isTokenSet(state) {
+			return state.user.token.startsWith('userID')
+		},
+		token(state) {
+			// return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
+			return state.user.token;
+		},
+		code(state) {
+			return state.user.code;
+		},
+		entrance(state) {
+			return state.entrance
+		}
+  	})
+  	export default class TeamLearningIntroduction extends wepy.page {
+		config = {
+			navigationBarBackgroundColor: "#ffffff",
+			navigationBarTextStyle: "black",
+			navigationBarTitleText: '训练营报名'
+		}
+
+		components = {
+			'jn-header': header,
+			mloading: Loading,
+			AuthorizationModal
+		}
+
+		data = {
+			isLoaded: false,
+            wxPushType: '',
+			teamID: 'defaultTeamID',
+			shareFlag: 'defaultShareFlag', // 分享标记
+			shareTarget: 'defaultShareFlag', // 团队角色
+			name: 'defaultName', // 团队学习标题
+			buttonStatus: 'defaultButtonStatus', // allowSignUp   学员允许报名状态; teamManagerByConfirm 营长待确认 teamTeacherByConfirm 老师待确认
+			buttonTip: 'defaultButtonTips', // 按钮提示
+			isGotoTeamDetailPage: false, // 是否直接跳到团队详情页
+			courseImageList: ['defaultImageListUri'], // 课程目标海报
+			teacherImage: 'defaultTeacherImage', // 老师简介海报
+			imageUrl: 'defaultImageUrl', // 团队学习海报
+			signUpUserCount: 0, // 已报名人数
+			time: 'defualtTime', // 报名时间
+			targetList: ['xxx'], // end 课程介绍
+			isClose:false
+		}
+
+		computed = {
+			computedBtnText() {
+				return 'allowSignUp'===this.buttonStatus? '马上报名': 'teamManagerByConfirm'===this.buttonStatus? '确认担任营长': 'teamTeacherByConfirm'===this.buttonStatus? '确认担任导师': '未定义'
+			}
+		}
+		// 点击马上报名
+		getCommit() {
+			let self = this
+            if ('defaultToken' === self.token || !self.token) {
+                return
+            }
+            wx.reportAnalytics('team_learning_button_click', {
+                nickname: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                role: self.role,
+                teamname: self.name,
+			})
+			
+			// 已经报名了 直接跳转详情页
+			if (self.isGotoTeamDetailPage) {
+				let teamID = self.teamID;
+			 	self.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+                return
+			}
+
+			self.$navigate(`/pages/training-camp-module/registration-info`, {
+		    	teamID: self.teamID,
+		    	buttonStatus:self.buttonStatus,
+		    	roleType: self.shareTarget,
+				name:self.name,
+				isClose:self.isClose
+			})
+		}
+
+    	methods = {
+			/**
+             * 授权登录信息
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getAuthorize(event) {
+                let self = this
+                let {detail: {errMsg}} = event
+                if ('defaultToken' !== self.token) {
+                    return
+                }
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+				}).then((respone) => { // 授权成功
+					initializationDeligate({ initializeFunc: this.initialize.bind(this, this.teamID), callWhatever: true })
+					self.getCommit()
+                }).catch(error => { // 拒接授权
+
+                })
+			},
+			handleTapFooterBtn(){
+				let self =this
+				self.getCommit()
+			}
+			
+		}
+
+		onLoad(parmas) {
+            if (parmas) {
+                this.teamID = parmas.teamID
+                this.wxPushType = parmas.wxPushType
+            } else {
+                this.teamID = 'defaultTeamID'
+            }
+			
+			let [ realTeamID, shareFlag='defaultShareFlag', shareTarget=0 ] = this.teamID.split('-')
+			this.teamID = realTeamID
+			this.shareFlag = shareFlag
+			this.shareTarget = shareTarget
+            wepy.$instance.globalData.getLoadHuilder()
+		}
+
+		onShow() {
+			initializationDeligate({ initializeFunc: this.initialize.bind(this, this.teamID), callWhatever: true })
+		}
+		initialize(teamID) {
+			let self = this
+        	let postData = {
+                token: this.token,
+                shareFlag: this.shareFlag,
+                roleType: this.shareTarget,
+                teamID
+			}
+			
+            if (this.wxPushType) {
+                postData.wxPushType = this.wxPushType
+			}
+			
+            teamApi.getMyTeamIntroduction(postData).then(({ name, buttonStatus, buttonTip, isGotoTeamDetailPage, courseImageList, teacherImage, imageUrl, signUpUserCount, time, targetList,isClose }) => {
+				// 已经报名了 直接跳转详情页
+				if (isGotoTeamDetailPage) {
+					return this.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+				}
+				// 未报名 获取初始值
+				this.isLoaded = true
+				this.name = name
+				this.buttonStatus = buttonStatus
+				this.buttonTip = buttonTip
+				this.isGotoTeamDetailPage = isGotoTeamDetailPage
+				this.courseImageList = courseImageList
+				this.teacherImage = teacherImage
+				this.imageUrl = imageUrl
+				this.signUpUserCount = signUpUserCount
+				this.time = time
+				this.isClose = isClose ? isClose : false
+				this.targetList = targetList
+				this.$apply()
+
+        	})
+    	}
+
+  	}
+</script>
+
+<style lang="less">
+	@import "../../assets/style/theme"; 
+	.ui-team-introduction{
+		width: 100%;height: 100%;box-sizing: border-box;padding: 30rpx;
+		.cell-banner{width: 750rpx;height: 400rpx;margin-left: -36rpx;}
+		.cell-name{width: 660rpx;padding: 24rpx 0 16rpx 0;font-family: PingFangSC-Semibold;font-size: 48rpx;color: @color-black;}
+		.ui-dec{
+			width: 100%;height: 96rpx;align-items: center;border-bottom: 2rpx solid @border-gray;display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;
+			.cell-icon{font-size:42rpx;color:@color-gray;margin-right: 28rpx;display: block;}
+			.cell-tip{font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-gray;line-height: 32rpx;}
+		}
+		.cell-title{width: 268rpx;margin: 50rpx 0 42rpx;position: relative;white-space: nowrap;font-size: 44rpx;color: @color-black;font-weight: bold;}
+		.cell-li{
+			width: 598rpx;margin-left: 64rpx;margin-bottom: 16rpx;position: relative;font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;
+			&::before{content: ' ';width: 12rpx;height: 12rpx;position: absolute;left: -22rpx;top: 14rpx;border-radius: 50%;background-color:  @color-black;}
+		}
+		.cell-poster{width: 100%;display: block;}
+		.ui-company{
+			margin-top: 182rpx;margin-bottom: 48rpx;text-align: center;display: block;
+			.cell-img{width: 196rpx;display: block;margin: 0 auto;}
+			.cell-content{width: 240rpx;font-family: PingFangSC-Regular;font-size: 26rpx;color: @color-gray;letter-spacing: 8rpx;text-align: center;line-height: 36rpx;}
+		}
+		.ui-empty{width: 100%;height: 140rpx;}
+		.ui-button{
+			width: 100%;height: 140rpx;position: fixed;left: 0;bottom: 0;display: flex;justify-content: center;align-items: center;background-color: @background-white;border-top: @border-gray 2rpx solid;z-index: 1100;
+			.cell-shade{z-index: 1200;}
+			.ui-item{
+				width: 702rpx;height: 100rpx;align-self: center;background-color: @background-blue;border: 0;border-radius:@border-radius-20;
+				&::after {border-radius: 0;}
+				.cell-text{margin-bottom: 4rpx;font-family: PingFangSC-Medium;font-size: 36rpx;color: @color-white;text-align: center;}
+				.cell-tip{margin-top: 4rpx;font-family: PingFangSC-Regular;font-size: 22rpx;color: @color-white;line-height: 100%;}
+			}
+  			.ui-item.cell-column {
+				display: flex;justify-content: center;align-items: center;flex-direction: column;
+				.cell-text{line-height: 100%;}
+			}
+
+		}
+	}
+
+</style>

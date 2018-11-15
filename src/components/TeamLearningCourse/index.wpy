@@ -1,0 +1,261 @@
+<template>
+  	<form catchsubmit="handleSavePushCode" report-submit>
+		<!-- 若角色为学员 -->
+    	<view class="ui-item-box" wx:if="{{role==='学员'}}">
+      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"></button>
+      		<view>
+				<view class="ui-image" :class="{'image-loading': !imageLoaded}">
+					<image class="cell-item"
+						src="{{ image }}" mode="aspectFill"
+						hidden="{{!imageLoaded}}"
+						@load="handleImageLoaded"
+						@tap.stop="handleTendToAttendClassC"
+						data-team-i-d="{{id}}"
+						data-status="{{status}}"
+						data-name="{{name}}"
+						formType="submit">
+					</image>
+				</view>
+      		</view>
+      		<view class="ui-content" :class="{'unstart' : statusMsg !=='进行中'}">
+        		<view class="cell-title"> {{ name }} </view>
+				<view class="ui-tip">
+					<text wx:if="{{statusMsg !== '进行中'}}" class="iconfont icon-time"></text>
+					<text>{{startDate+' - '+endDate}}</text>
+					<text wx:if="{{statusMsg ==='进行中'}}"> / {{ userCount }}人已报名</text>
+				</view>
+      		</view>
+
+			<view class="ui-progress" wx:if="{{statusMsg ==='进行中'}}">
+				<view class="ui-box">
+					<view class="cell-current" style="width:{{taskMyProgress}}%"></view>
+					<view class="ui-point-box"  style="left:{{taskPlanProgress}}%;margin-left:-10rpx;">
+						<view class="cell-item"/>
+						<view class="cell-tip" style="left:{{taskPlanProgress < 18 ? '0' : taskPlanProgress<82 ? '-36rpx':'-68rpx'}}">计划进度</view>
+					</view>
+					<view class="cell-num" style="left:{{taskMyProgress}}%;margin-left:-40rpx;">
+						{{taskMyProgress ? taskMyProgress : '0'}}%
+					</view>
+				</view>
+			</view>
+
+      		<view class="ui-people" wx:if="{{statusMsg !=='进行中'}}">
+        		<view class="ui-avatar">
+          			<image wx:for="{{ userAvatarUrlList }}" wx:key="{{ index }}"   src="{{item.avatarUrl }}" mode="scaleToFill"/>
+        		</view>
+        		<text class="ui-content" wx:if="{{count}}"> {{ count }}人已报名 </text>
+        		<view class="cell-date">{{beginDateTip}}</view>
+      		</view>
+
+      		<view  wx:if="{{statusMsg ==='进行中'}}" class="cell-bottom-tip">{{taskTip}}</view>
+
+    	</view>
+
+		<!-- 若角色不为学员 -->
+    	<view class="ui-item-box" wx:else>
+      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"></button>
+
+      		<view>
+        		<view class="ui-image" :class="{'image-loading': !imageLoaded}">
+          			<image class="cell-item" src="{{ image }}" mode="aspectFill" hidden="{{!imageLoaded}}" @load="handleImageLoaded" @tap.stop="handleTendToAttendClassC" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"/>
+        		</view>
+      		</view>
+
+      		<view class="ui-content" :class="{'unAdminStart' : statusMsg !=='进行中'}">
+        		<view class="cell-title"> {{ name }} </view>
+        		<view  class="ui-tip">
+            		<text class="iconfont icon-time"></text>
+            		<text>{{startDate+' - '+endDate}}</text>
+            		<text wx:if="{{statusMsg!=='进行中'}}"> {{ beginDateTip }}</text>
+        		</view>
+        		<view wx:if="{{statusMsg==='进行中'}}" class="ui-complete">
+            		<text class="iconfont icon-mermber"></text>
+					<block>
+						<text>完成比例 </text>
+						<text>{{percent+'% '}}</text>
+						<block >
+							<text>，平均评分 </text>
+							<text>{{tipText}}</text>
+						</block>
+					</block>
+        	</view>
+			<view class="ui-people">
+				<view class="ui-avatar">
+					<image wx:for="{{ userAvatarUrlList }}" wx:key="{{ index }}"   src="{{item.avatarUrl }}" mode="scaleToFill" />
+				</view>
+				<text class="ui-content" style="margin-left:-110rpx;" wx:if="{{count && statusMsg !== '进行中'}}"> {{ count}}人已报名 </text>
+				<text class="ui-content" style="margin-left:-110rpx;" wx:if="{{count && statusMsg === '进行中'}}"> {{ count }}人正在学 </text>
+				<view class="ui-button" @tap.stop="handleManager" data-team-i-d="{{id}}">管理</view>
+			</view>
+      	</view>
+
+      
+
+    </view>
+  </form>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import PushMixin from '../../mixins/push'
+  import loadingMixin from '../../mixins/loading'
+
+  export default class teamLearningCourse extends wepy.component {
+    mixins = [ PushMixin, loadingMixin ] // end mixins
+
+    props = {
+		teamLearnCourse:{
+			type:Object
+		},
+		teamStatus:{
+			type:String
+		},
+		notStart:{
+			type:Boolean,
+			default:false
+		},
+		offset: {
+			type: Number
+		},
+		id: {
+			type: String
+		},
+		newLabel: {
+			type: String
+		},
+		beginDateTip: {
+			type: String
+		},
+		headerIsShow: {
+			type: Boolean,
+			default: true
+		},
+		courseStatus: {
+			type: String
+		},
+		taskTip: {
+			type: String
+		},
+		gradeName: {
+			type: String
+		}, // end tags
+		skill: {
+			type: String
+		},
+		image: {
+			type: String
+		},
+		name: {
+			type: String
+		},
+		showPoint: {
+			type: String
+		},
+		percent: {
+			type: Number,
+			default:'-'
+		},
+		label: {
+			type: String
+		},
+		score: {
+			type: Number
+		},
+		price: {
+		},
+		payType:{
+			type: String
+		},
+		startDate:{},
+		endDate:{},
+		status:{},
+		statusMsg:{},
+		count:{},
+		limit:{},
+		role:{
+			type: String
+		},
+		userCount:{},
+		percent:{},
+		index:{},
+		allIndex:{},
+		tipText:{},
+		scoreAVG:{},
+		taskMyProgress: {
+			type: Number
+		},
+		taskPlanProgress: {
+			type: Number
+		},
+    }
+
+    data = {
+      	scoreTest: 4
+    }
+
+    methods = {
+      	handleManager(event){
+    		this.$emit('tendToAttendTeamLearningManager', event)
+      	},
+		handleTendToAttendTeamLearning(event) {
+			this.$emit('tendToAttendTeamLearning', event)
+		},
+		handleTendToAttendClassC(event) {
+			event.target = event.currentTarget
+			this.$emit('tendToAttendTeamLearning', event)
+		},
+		handleTendToReview({target: {dataset: {courseID}}, detail}) {
+		}
+    }
+  }
+</script>
+
+<style lang="less" scoped>
+	@import "../../assets/style/theme"; 
+  	.color-flag{color:  #FE417B;}
+  	.ui-item-box {
+		width: 100%;min-width: 670rpx;height: 100%;box-sizing: border-box;position: relative;text-align: left;
+		.cell-shade {position: absolute;left: 0;top: 0;width: 100%;height: 100%;background-color: transparent;}
+		.ui-image{
+			width: 100%;height: 286rpx;border-top-right-radius: 24rpx;border-top-left-radius: 24rpx;overflow: hidden;
+			.cell-item{width: 100%;height: 286rpx;position: relative;display: block;border-top-left-radius: 16rpx;border-top-right-radius: 16rpx;}
+		}
+		.ui-content{
+			display: flex;flex-direction: column;justify-content: center;flex-wrap: nowrap;align-self: center;padding: 24rpx 0 16rpx 0;overflow: hidden;
+			.cell-title{width: 676rpx;line-height: 60rpx;box-sizing: border-box;padding: 0 32rpx;color: @color-black;font-size: 40rpx;font-weight:700;text-align: justify; overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+			.ui-tip{
+				margin: 12rpx 0;color:@color-gray;font-family: SFProText-Medium;font-size: 28rpx;line-height: 40rpx;display: flex;align-items: center;justify-content: flex-start;padding:0rpx 32rpx;white-space: pre;height: 40rpx;
+				.icon-time{font-size:38rpx;margin-right: 16rpx}
+			}
+			.ui-complete{
+				margin-bottom:20rpx;color:@color-gray;font-family: SFProText-Medium;font-size: 28rpx;line-height: 40rpx;display: flex;align-items: center;justify-content: flex-start;padding:0rpx 32rpx;white-space: pre;height: 40rpx;
+				.icon-mermber {font-size:38rpx;margin-right: 16rpx}
+			}
+		}
+		.ui-progress{
+			width: 100%;height: 120rpx;display: flex;align-items: center;justify-content: center;position: relative;
+			.ui-box{
+				position: relative;width: 608rpx;height: 10rpx;border-radius: @border-radius-20;background-color:@background-gray-F4;
+				.cell-current{width: 0rpx;height: 100%;background-color: @background-blue;border-radius: @border-radius-20;}
+				.ui-point-box{
+					position: absolute;top: -8rpx;
+					.cell-item{background-color: @background-gray-cc;border: 6rpx solid @background-gray-F4;height: 24rpx;width: 24rpx;box-sizing: border-box;border-radius: 50%;}
+					.cell-tip{font-size: 24rpx;color: @color-gray;width:103rpx;position:absolute;top:28rpx;}
+				}
+				.cell-num{position:absolute;top:-73rpx;text-align:center;font-size:18rpx;line-height:4.2;color:@color-white;background:url('http://wx-small.runwise.cn/image/imageID3b626c2fae64ee9af376b66baedd.svg');width:88rpx;height:72rpx;background-repeat:no-repeat;background-size:100% 100%;}
+			}
+		}
+		.ui-people{
+			display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between;width:598rpx;height:128rpx;margin:0 auto;position:relative;box-sizing:border-box;border-top:1rpx solid @border-gray;align-items:center;
+			.ui-avatar{
+				height: 100%;margin-right: auto;display: flex;flex-direction: row;justify-content: flex-start;align-items: center;flex-wrap: nowrap;
+				image{width: 64rpx;height: 64rpx;border-radius: 50%;display: inline-block;vertical-align: top;margin-right: -16rpx;border:2rpx solid @border-white;}
+			}
+			.ui-content{margin-left: -55rpx;font-family: PingFangSC-Regular;font-size: 26rpx;color: @color-gray;margin-left:-110rpx;}
+			.cell-date{font-family: PingFangSC-Regular;font-size: 26rpx;color: @color-black;text-align: right;margin-right: 32rpx;margin-left: auto}
+			.ui-button{margin-left: auto;color: @color-blue;font-family: PingFangSC-Medium;font-size: 28rpx;height:60rpx;line-height:60rpx;border-radius:@border-radius-32;background-color: @background-gray-F4;width:148rpx;text-align:center}
+
+		}
+		.cell-bottom-tip{width: 100%;height: 60rpx;box-sizing: border-box;padding-left: 24rpx;text-align: left;font-family: PingFangSC-Regular;font-size: 24rpx;color: @color-gray;margin-top:20rpx}
+	}
+</style>

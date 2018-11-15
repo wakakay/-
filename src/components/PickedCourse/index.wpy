@@ -1,0 +1,321 @@
+<template>
+    <view class="picked-course__article"
+          style="{{cardType==='图片'?'height:750rpx !important':'height:800rpx !important'}}">
+        <view class="picked-course__article" wx:if="{{cardType==='图片'}}">
+            <image src="{{image}}" class="picked-course__article-fullimg" mode="scoleToFill"/>
+            <view class="picked-course__article-fullimg-subtitle">{{skillPoint}}</view>
+            <view class="picked-course__article-fullimg-title">{{title}}</view>
+        </view>
+        <view class="picked-course__article" wx:else>
+            <view class="picked-course__article__header">
+                <text class="picked-course__article__header__skill-point"> {{ skillPoint }}</text>
+                <view class="picked-course__article__header__title"> {{ title }}</view>
+                <!-- picked-course__article__header__title -->
+            </view>
+            <!-- picked-course__article__header -->
+            <view class="picked-course__article__body">
+                <view class="course__section-cell picked" wx:for="{{ sences }}" wx:if="{{index<3}}"
+                      wx:for-index="$pickedcourse$index" wx:for-item="$pickedcourse$item" wx:key="$pickedcourse$index">
+                    <view class="course__section-cell__icon-wrapper">
+                        <image mode="aspectFill" src="{{ $pickedcourse$item.imageUrl }}"></image>
+                    </view>
+                    <!-- picked-course__article__body__bar-cell__icon-wrapper -->
+                    <view
+                        class="course__section-cell__middle-block {{index===0?'picked-course__body__will-get__bar-cell-noborder':''}}">
+                        <text style="color:#294657 !important"> {{ $pickedcourse$item.senceName }}</text>
+                        <text> {{ $pickedcourse$item.skillGroup }}</text>
+                    </view>
+                    <!-- picked-course__article__body__bar-cell__description -->
+                    <view
+                        class="course__section-cell__right__block {{index===0?'picked-course__body__will-get__bar-cell-noborder':''}}">
+                        <!-- <text wx:if="{{'finish'!==$pickedcourse$item.buttonStatus}}"> {{ $pickedcourse$$pickedcourse$item.minuteTime }}min </text> -->
+                        <view class="course__section-cell__progress-wapper">
+                            <progress percent="{{item.progress}}" class="course__section-cell__progress"
+                                      stroke-width="4" backgroundColor="#6BB2FF" activeColor="#b7d9fe"
+                                      wx:if="{{'continue'===item.buttonStatus}}"></progress>
+                        </view>
+                        <!-- <button data-course-i-d="{{ courseID }}" data-sence-i-d="{{ $pickedcourse$$pickedcourse$item.senceID }}" data-resume="NO" @tap.stop="handleTapCell"> 即学 </button> -->
+                        <button wx:if="{{ 'practice'===$pickedcourse$item.buttonStatus }}"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="NO"
+                                @tap.stop="handleTapPractice"> 练习
+                        </button>
+                        <button wx:if="{{ 'finish'===$pickedcourse$item.buttonStatus }}"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="NO"
+                                @tap.stop="handleTapReview"> 回顾
+                        </button>
+                        <button wx:if="{{ 'continue'===$pickedcourse$item.buttonStatus }}"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="YES"
+                                @tap.stop="handleTapContinue"> 继续
+                        </button>
+                        <button wx:if="{{ 'notBegin'===$pickedcourse$item.buttonStatus }}"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="NO"
+                                data-phone="{{ phone }}" data-button-status="{{ $pickedcourse$item.buttonStatus }}"
+                                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
+                                @tap.stop="handleTapBegin" @getphonenumber.stop="handleDescryptPhoneNumber"> 即学
+                        </button>
+                        <button wx:if="{{ 'notBeginOrTry'===$pickedcourse$item.buttonStatus }}"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="NO"
+                                data-phone="{{ phone }}" data-button-status="{{ item.buttonStatus }}"
+                                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
+                                @getphonenumber.stop="handleDescryptPhoneNumber" @tap.stop="handleTapTry"> 试学
+                        </button>
+                        <button wx:if="{{ 'needPay'===item.buttonStatus }}"
+                                class="SpecialCourse__article__body__bar-cell__operation__price"
+                                data-course-i-d="{{ $pickedcourse$item.courseID }}"
+                                data-sence-i-d="{{ $pickedcourse$item.senceID }}" data-resume="NO"
+                                @tap.stop="handlePayForLesson">
+                            ¥{{ $pickedcourse$item.sencePrice }}
+                        </button>
+                    </view>
+                    <!-- picked-course__article__body__bar-cell__operation -->
+                </view>
+                <!-- picked-course__article__body__bar-cell -->
+            </view>
+            <!-- picked-course__article__body -->
+        </view>
+        <!-- picked-course__article -->
+    </view>
+</template>
+
+<script>
+import wepy from "wepy";
+import { getStore, connect } from 'wepy-redux'
+const store = getStore()
+@connect({
+  phone(state) {
+    return state.user.phone
+  }
+})
+
+export default class PickedCourse extends wepy.component {
+  props = {
+    offset: {
+      type: Number
+    },
+    courseID: {
+      type: String
+    },
+    skillPoint: {
+      type: String
+    },
+    title: {
+      type: String
+    },
+    sences: {
+      type: Array
+    },
+    image:{
+      type: String
+    },
+    cardType: {
+      type: String
+    },
+  }
+  data = {
+    type:false
+  }
+  methods = {
+    handlePayForLesson({target:{dataset:{senceID}}}){
+        wepy.navigateTo({url:`/pages/PayForLesson/index?senceID=${senceID}`})
+    },
+    handleTapCell({
+      currentTarget: {
+        dataset: { comIndex: moduleOffset, courseID, senceID, resume }
+      }
+    }) {
+      console.log("tap cell", moduleOffset, courseID, senceID, resume);
+      this.$emit("beginLesson", courseID, senceID);
+    }, // end handleTapCell
+
+      handleTapPractice(event) {
+        this.$emit("handleTapPractice", event);
+      },
+      handleTapReview(event) {
+        this.$emit("handleTapReview", event);
+      },
+      handleTapContinue(event) {
+        this.$emit("handleTapContinue", event);
+      },
+      handleTapBegin(event) {
+        let mPhone = event.target.dataset.phone
+        if ('deadNumber'===mPhone || null==mPhone) return false
+        this.$emit("handleTapBegin", event);
+      },
+      handleTapTry(event) {
+        if ('deadNumber'===mPhone || null==mPhone) return false
+        this.$emit("handleTapTry", event);
+      },
+      handleDescryptPhoneNumber(event) {
+        this.$emit("descryptPhone", event)
+      }
+  }; // end methods
+}
+</script>
+
+<style lang="less">
+  .picked-course__body__will-get__bar-cell-noborder{
+    border-top:0 !important;
+  }
+  .picked-course__article-fullimg{
+      width: 100%;
+      height: 100%;
+      /* background-color: wheat; */
+  }
+  .picked-course__article-fullimg-subtitle{
+    position: absolute;
+    top: 48rpx;
+    left: 40rpx;
+    color: white;
+    font-family: PingFangSC-Regular;
+    font-size: 28rpx;
+    max-width: 480rpx;
+  }
+  .picked-course__article-fullimg-title{
+    position: absolute;
+    top: 120rpx;
+    left: 40rpx;
+    color: white;
+    font-family: PingFangSC-Heavy;
+    font-size: 56rpx;
+    line-height: 90rpx;
+    max-width: 480rpx;
+    font-weight: bold;
+    text-align: left;
+  }
+.picked-course__article {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display:flex;
+  flex-direction:column;
+  position: relative;
+}
+.picked-course__article__header {
+  padding: 40rpx 36rpx 0;
+
+}
+.picked-course__article__header__skill-point {
+  color: #778d9a;
+  font-family: PingFangSC-Regular;
+  font-size: 28rpx;
+  display: block;
+  line-height: 100%;
+  text-align: left;
+}
+.picked-course__article__header__title {
+  display: block;
+  width: 588rpx;
+  font-weight: bold;
+  overflow: hidden;
+  /* white-space: nowrap; */
+  /* text-overflow: ellipsis; */
+  padding-top: 32rpx;
+  /* color: #294657; */
+  color: #294657;
+  text-align: left;
+  font-family: PingFangSC-Medium;
+  font-size: 48rpx;
+  line-height: 64rpx;
+}
+.picked-course__article__body {
+  box-sizing: border-box;
+  /*padding-left: 20rpx;*/
+  /*padding-right: 32rpx;*/
+  padding: 16rpx 32rpx 20rpx;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.course__section-cell.picked {
+  min-height: 159rpx;
+  height: auto;
+  flex: 1;
+}
+.picked-course__article__body__bar-cell {
+  align-items: center;
+  height: auto;
+  /* padding-top: 4rpx;
+  padding-bottom: 4rpx; */
+  border-bottom: 1rpx solid #cdced3;
+}
+.picked-course__article__body__bar-cell:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.picked-course__article__body__bar-cell__icon-wrapper {
+  width: 128rpx;
+  height: 128rpx;
+  margin-right: 4rpx;
+  position: relative;
+}
+.picked-course__article__body__bar-cell__icon-wrapper::before {
+  content: " ";
+  background-color: #fff;
+  width: 100%;
+  height: 3rpx;
+  position: absolute;
+  left: 0;
+  top: -6rpx;
+}
+.picked-course__article__body__bar-cell-wrapper__image {
+  width: inherit;
+  height: inherit;
+  /*border-radius: 50%;*/
+}
+.picked-course__article__body__bar-cell__description {
+  height: 110rpx;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 0;
+  margin-right: auto;
+}
+.picked-course__article__body__bar-cell__description__title {
+  color: #303f48;
+  font-family: PingFangSC-Regular;
+  font-size: 32rpx;
+  line-height: 38.4rpx;
+  margin-bottom: 12rpx;
+  text-align: left;
+}
+.picked-course__article__body__bar-cell__description__skill-point {
+  color: #778d9a;
+  font-family: PingFangSC-Regular;
+  font-size: 24rpx;
+  line-height: 25.6rpx;
+}
+.picked-course__article__body__bar-cell__operation {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+.picked-course__article__body__bar-cell__operation__minute {
+  color: #778d9a;
+  font-family: PingFangSC-Regular;
+  font-size: 24rpx;
+  line-height: 25.6rpx;
+  margin-bottom: 8rpx;
+}
+.picked-course__article__body__bar-cell__operation__btn {
+  width: 128rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 131.2rpx;
+  color: #4cd9ba;
+  font-family: PingFangSC-Semibold;
+  font-size: 30rpx;
+  background-color: rgba(76, 217, 186, 0.1);
+}
+.picked-course__article__body__bar-cell__operation__btn::after {
+  border: 0 !important;
+}
+</style>

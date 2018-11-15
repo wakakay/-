@@ -1,0 +1,154 @@
+<template>
+  <view wx:if="{{modalShow}}" class="flex-center-column author-modal-wrapper"  catch:tap="handleCancel">
+    <view class="author-modal-wrapper__box" catch:tap="handleContent">
+      <view class="author-modal-wrapper__box__title" wx:if="{{title}}">{{title}}</view>
+      <view class="author-modal-wrapper__box__body"> {{ content }} </view>
+      <view class="author-modal-wrapper__box__footer" style="color:{{confirmTextColor}}"
+      catch:tap="handleConfirm">{{confirmText}}</view>
+    </view><!-- box -->
+  </view><!-- wrapper -->
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { sleep } from '../../utils'
+  import { getStore, connect } from 'wepy-redux'
+  import { CustomError } from '../../errors'
+  const store = getStore()
+
+  export default class CustomModal extends wepy.component {
+    props = {
+      content: {
+        type: String,
+        default: 'bala bala bala'
+      },
+      title: {
+        type: String
+      },
+      confirmText:{
+        type: String,
+        default: '确定'
+      },
+      cancelText:{
+        type: String,
+        default: '取消'
+      },
+      isConfirmButtonShow:{
+        type: Boolean,
+        default: true
+      },
+      isCancelButtonShow:{
+        type: Boolean,
+        default: true
+      },
+      confirmTextColor:{
+        type: String,
+        default: 'rgb(60, 197, 31)'
+      },
+      defaultType:{
+        type: String
+      }
+    } // end props
+
+    data = {
+      modalShow:false,
+      success:()=>{},
+    } // end data
+
+    onLoad() {
+
+    } // end onLoad
+
+    methods = {
+      handleContent(){},
+      handleConfirm(){
+        this.modalShow = false
+        this.$emit('confirm')
+        if(this.success)this.success()
+
+      },
+      handleCancel(){
+        console.log('cancel and close modal')
+        this.$emit('cancel')
+        this.modalShow = false
+      },
+      CustomModal({type}){
+        this.modalShow = true
+        if(type==='pay'){
+          this.title = '请前往即能 APP 购买'
+          this.content = '基于微信小程序平台运营规则，即能小程序暂不支持购买，请前往即能 APP 完成购买'
+          this.confirmText = '知道了'
+        }
+      },
+      CustomModalToPreviewTest({title,content,success,confirmText}){
+        this.modalShow = true
+        this.success = success
+        this.title = title
+        this.content = content
+        this.confirmText = confirmText
+      }
+    } // end methods
+
+  }
+</script>
+
+<style lang="less">
+  .author-modal-wrapper {
+    width: 750rpx;
+    height: 100vh;
+    z-index: 10000;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .7);
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+
+  .author-modal-wrapper__box {
+    width: 600rpx;
+    height: auto;
+    border-radius: 16rpx;
+    background-color: #FFF;
+  }
+
+  .author-modal-wrapper__box__title {
+    padding: 46rpx 40rpx 0;
+    /*background-color: yellow;*/
+    font-family: PingFangSC-Semibold;
+    font-size: 36rpx;
+    color: #294657;
+    text-align: center;
+    line-height: 48rpx;
+    font-weight: 600;
+  }
+
+  .author-modal-wrapper__box__body {
+    padding: 46rpx 40rpx;
+    /*background-color: yellow;*/
+    font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    color: #294657;
+    text-align: justify;
+    line-height: 48rpx;
+  }
+
+  .author-modal-wrapper__box__footer {
+    height: 100rpx;
+    position: static;
+    border-top: 2rpx solid #F1F2F5;
+    line-height: 100rpx;
+    text-align: center;
+    font-family: PingFangSC-Semibold;
+    font-size: 32rpx;
+    color: rgb(60, 197, 31);
+    letter-spacing: 1.4rpx;
+    background-color: #FFF !important;
+    border-radius: 16rpx;
+  }
+
+  .author-modal-wrapper__box__footer::before {
+    display: none;
+    border: 0 !important;
+  }
+
+</style>
