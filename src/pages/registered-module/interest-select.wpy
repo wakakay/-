@@ -160,7 +160,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import {registered as fetchRegistered} from '../../api'
+    import {registered as fetchRegistered, report as reportApi} from '../../api'
     import {initializationDeligate} from '../../utils'
     import _ from 'underscore'
 
@@ -191,6 +191,8 @@
             studyList: [],
             isInterest:false,
             isComplate:false,
+            isFirst: false,
+            wxPushType: '',
             textInfo: [
                 {
                     title: '选择你感兴趣的领域',
@@ -205,15 +207,17 @@
             ]
         }
 
-        onLoad() {
+        onLoad(parmas) {
             let self = this
-            self.initialize()
+            self.wxPushType = parmas.wxPushType
         }
 
         onShow() {
             let self = this
+            self.initialize()
+
             let number = _.filter(self.interestList, {isActive: true}).length
-            self.isInterest = number >-1 ? true : false
+            self.isInterest = number > -1 ? true : false
             self.$apply()
         }
 
@@ -226,10 +230,34 @@
                 self.interestList = respone.positionList
                 let number = _.filter(self.interestList, {isActive: true}).length
                 self.isInterest = number >-1 ? true : false
+                self.__report()
                 self.$apply()
             }).catch(error => {
 
             })
+        }
+        /**
+         * 数据上报
+         */
+        __report() {
+            let self = this
+            if (self.isFirst) {
+                return
+            }
+            self.isFirst = true
+            let postData = {
+                token:self.systemInfo.token,
+                body:{
+                    json: {
+                        pageType: "职能选择",
+                        EventType: "服务通知点击",
+                        ComponentName: "giftPackageGivenNotice",
+                        senceID: "",
+                        CpnPresentName: "giftPackageGivenNotice"
+                    }
+                }
+            }
+            reportApi.doUserBehaviourLog(postData)
         }
 
         methods = {
