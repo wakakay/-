@@ -152,8 +152,7 @@
                 resultImageURL:'',
                 subjectHeading:'',
                 shareImage:'',
-                course:'',
-                isNewCourseMap:[]
+                course:''
             }
 
         }
@@ -213,7 +212,6 @@
                     self.resultObj.subjectHeading = data.subjectHeading
                     self.resultObj.shareImage = data.shareImage
                     self.resultObj.course = data.course
-                    self.resultObj.isNewCourseMap = data.isNewCourseMap
                     self.$apply()
                     wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
                 })
@@ -225,15 +223,9 @@
             if(!self.resultObj.course) return;
             let courseID = self.resultObj.course.courseID;
             let courseName = self.resultObj.course.courseName;
-            let isNewCourseMap = self.resultObj.course[courseID]
 
             try {
-                let isNewCourseMap = self.resultObj.isNewCourseMap[courseID]
-                let url = isNewCourseMap
-                    ? `/pages/course-module/course-new-details?id=${courseID}`
-                    : `/pages/course-module/course-details?id=${courseID}&name=${courseName}&courseName=${courseName}`
-                self.$apply()
-                wepy.navigateTo({url: url})
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             } catch (err) {
                 console.log('handle attend classes err', err)
             }

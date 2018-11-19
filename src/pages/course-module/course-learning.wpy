@@ -755,7 +755,7 @@
             let self = this
             return {
                 title: '自定义转发标题',
-                path: `/pages/course-module/course-new-details?id=${self.courseID}`,
+                path: `/pages/course-module/course-details?id=${self.courseID}`,
                 success(res) {
                     console.log('分享成功')
                 },

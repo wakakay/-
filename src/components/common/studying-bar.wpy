@@ -200,7 +200,6 @@
             learningSenceList: [],
             newContinueSenceInfo: {},
             newLearningSenceList: [],
-            isNewCourseMap: {}, // 进入课程详情页的新老界面判断
             isNewSenceMap: {}, // 进入微课的新老界面判断
             source:'continueList',
             courseType:['button','list'],
@@ -217,7 +216,6 @@
         __learningSenceList() {
             let self = this
             courseApi.getMyLearningSenceList({token: self.systemInfo.token}).then(response => {
-                self.isNewCourseMap = response.isNewCourseMap
                 self.isNewSenceMap = response.isNewSenceMap
                 self.isRefresh = !response.learningSenceList.length
                 // 是否没有待学习课
@@ -434,9 +432,8 @@
                 let {currentTarget: {dataset: {item}}} = event
                 wepy.$instance.globalData.getHuilder('待学习页/课程','click',`${item.courseName}`)
                 self.__refreshData()
-                let isNewCourseMap = self.isNewCourseMap[item.courseID]
                 wx.navigateTo({
-                    url: `/pages/course-module/${isNewCourseMap ? 'course-new-details' : 'course-details'}?id=${item.courseID}`
+                    url: `/pages/course-module/course-details?id=${item.courseID}`
                 })
             }
         }
