@@ -33,7 +33,7 @@
                 image{width: 100%;height: 824rpx;border-radius: @border-radius-32}
             }
             .ui-evaluation{
-                height: 824rpx;width: 100%;border-radius: @border-radius-20;background-size:100% 606rpx;background-position:top left;background-repeat:no-repeat;display:flex;position: relative;display: flex;align-items:flex-end;box-sizing:border-box;box-shadow:@box-shadow-hight;
+                height: 824rpx;width: 100%;border-radius: @border-radius-32;background-size:100% 606rpx;background-position:top left;background-repeat:no-repeat;display:flex;position: relative;display: flex;align-items:flex-end;box-sizing:border-box;box-shadow:@box-shadow-hight;
                 .ui-num{
                     position: absolute;top:0;right: 30rpx;background-image: url('http://wx-small.runwise.cn/image/imageIDfc1c51b87e74b7abcc7e8c5d1ffd.png');background-size:100% 100%;
                     .ui-cri{
@@ -49,7 +49,7 @@
                 }
             }
             .ui-tody-subject{
-                width: 100%;border-radius: @border-radius-20;padding:28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
+                width: 100%;border-radius: @border-radius-32;padding:28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
                 .cell-tip{font-size: 32rpx;color:@color-gray;}
                 .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
                 .ui-subject{
@@ -130,7 +130,7 @@
                                 <view class="cell-dec">{{item.subtitle}}</view>
                             </view>
                         </view>
-                        <view wx:if="{{item.type == 'subject'}}" class="ui-tody-subject">
+                        <view wx:if="{{item.type == 'subject' || item.type == 'todayTask'}}" class="ui-tody-subject">
                             <view class="cell-tip">{{item.sceneType}}</view>
                             <view class="cell-title">{{item.name}}</view>
                             <view class="ui-subject">
@@ -148,7 +148,9 @@
                                         </view>
                                         <view class="ui-btn">
                                             <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
-                                            <view class="cell-btn-tip" >{{courseItem.buttonStatus === 'finish' ? '已完成': '+1 即能币'}}</view>
+                                            <view class="cell-btn-tip" wx:if="{{item.type == 'todayTask'}}" >
+                                                {{courseItem.giftStatus}}
+                                            </view>
                                         </view>
                                     </view>
 
@@ -256,7 +258,10 @@
             isShowGift: false,
             isShowEvaluate:false,
             informationList:[],
-            discoverPageTitle:''
+            discoverPageTitle:'',
+            courseID:null,
+            senceID:null
+
         }
 
         onLoad() {
@@ -266,7 +271,6 @@
             let storageToken = wx.getStorageSync("token") || 'defaultToken'
             if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
-                wepy.$instance.globalData.getLoadHuilder() // ga统计
             } else {
                 wx.redirectTo({url: '/pages/registered-module/weclome'})
             }
@@ -274,6 +278,7 @@
 
         onShow() {
             let self = this
+            self.informationList.length && self.$broadcast('studying-bar')
         }
 
         /**
@@ -323,6 +328,7 @@
                 } else {
                     self.isNotMore = true
                 }
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
                 self.$apply()
             }).catch(error => {
                 self.isLoaded = true
@@ -368,14 +374,13 @@
 
             })
         }
-
         methods = {
             handleStartLesson(events) {
                 let self = this
                 let item = events.currentTarget.dataset.courseItem
                 let isNewSenceMap = events.currentTarget.dataset.isNewSenceMap
-                let courseID = item.courseID
-                let senceID = item.id
+                self.courseID = item.courseID
+                self.senceID = item.id
                 let buttonStatus = item.buttonStatus
                 let lessonType = item.lessonType
                 let source = 'discoverPage'
@@ -389,14 +394,23 @@
 
                 wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
                 if ('previewTest' === lessonType) {
-                    return self.$navigate(`/pages/PreviousPracticeBeginning/index`, {courseID, senceID, source})
+                    return self.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                        courseID:self.courseID, 
+                        senceID:self.senceID, 
+                        source})
                 }
 
                 if ('needPay' === buttonStatus) {
-                    return self.$navigate(`/pages/PayForLesson/index`, {senceID})
+                    return self.$navigate(`/pages/PayForLesson/index`, {senceID:self.senceID})
                 }
-                let isNewSence = self.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: resume, source, isNewSence})
+                let isNewSence = self.isNewSenceMap[self.senceID]
+                navigateToLesson({
+                    courseID:self.courseID, 
+                    senceID:self.senceID, 
+                    resumeLastRead: resume,
+                    source, 
+                    isNewSence
+                })
             },
             /**
              * 下拉刷新
@@ -474,7 +488,6 @@
                 let self = this
                 self.isScroll = data.isShow
             },
-
             'on-is-studying-bar': (data) => {
                 let self = this
                 self.hasStudyingBar = data.isShowBar
@@ -509,8 +522,6 @@
                 }
             }
         }
-
-
         onPullDownRefresh() {
             let self = this
             self.page = 1
@@ -520,7 +531,6 @@
                 }
             })
         }
-
         onReachBottom() {
             let self = this
 

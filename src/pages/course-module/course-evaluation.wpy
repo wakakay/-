@@ -1,0 +1,827 @@
+<template>
+    <view class="evaluation-article">
+        <scroll-veiw class="evaluation-article__wrapper" scroll-y="{{ true }}">
+            <jn-header title="评价"></jn-header>
+            <view class="ui-unable-edit-box" wx-if="{{!isAbleToEdit}}">
+                <view class="ui-star-box" :class="{'ipx':ipX}">
+                    <view class="cell-star-title">你愿意将本课推荐给朋友吗？</view>
+                    <view class="ui-star-item">
+                        <text wx:for="{{ [1, 2, 3, 4, 5] }}" wx:key="{{ index }}"
+                              data-score="{{ item }}"
+                              class="{{item <= score ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                    </view>
+                    <view class="cell-star-tip" v-if="score">{{starTip[score-1]}}</view>
+                </view>
+                <view class="ui-more-demand">
+                    <view class="cell-demand-title">更多需求</view>
+                    <view class="ui-demand-box">
+                        <view
+                                class="cell-demand-item"
+                                wx:for="{{ extraNeed }}"
+                                wx:key="{{ index }}"
+                                wx:if="{{index < 6}}"
+                                data-label="{{ item.text }}"
+                                data-index="{{ index }}"
+                                :class="{ actived: item['active'] }">
+                            {{ item['text'] }}
+
+                        </view>
+                    </view>
+                    <view class="ui-view-box">
+                        <div class="cell-view-div" :class="{'cell-view-div-has':comment}">{{ comment ? comment :'欢迎分享你对本课的看法~'}}</div>
+                        <view class="cell-view-area-tip" wx-if="{{comment.length < 16}}"> 还差{{15 - comment.length}}个字可获赠3个即能币！</view>
+                        <view class="cell-view-area-tip" wx-if="{{comment.length >= 16}}"> 还差0个字可获赠3个即能币！</view>
+                    </view>
+                </view>
+                <view class="ui-listen-box" :class="{'ipx':ipX}">
+                    <view class="cell-listen-title">
+                        <view class="cell-listen-title-item">倾听您的个人评价</view>
+                        <view class="cell-listen-content" wx-if="{{ipX}}" >
+                            <view>Hi，我们是即能课程组，</view>
+                            <view>悄悄告诉我们你对本课的评价吧</view>
+                        </view>
+                    </view>
+                    <view class="ui-anonym-box-ipx"  wx-if="{{!ipX}}">
+                        <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
+                        匿名评价
+                    </view>
+                </view>
+                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="cell-evaluation-title">本课让你容易学习吗?</view>
+                    <view class="ui-evaluation-face dir-left">
+                        <image wx:for="{{ participationEvaluation }}" wx:key="{{ index }}"
+                               class="cell-evaluation-face"
+                               data-offset="{{ index }}"
+                               src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                               mode="scaleToFill"></image>
+                    </view>
+                    <view class="ui-evaluation-content">
+                        <view
+                                wx-if="{{isParticipationtNum > -1}}"
+                                class="cell-evaluation-content"
+                                wx:for="{{ participationEvaluation[participationNum].options }}" wx:key="{{ index }}"
+                                data-option-i-d="{{ item.id }}" data-offset="{{participationNum}}" data-source="{{participationEvaluation[participationNum].options}}" data-list-title="participationEvaluation"
+                                data-evaluation-offset="{{ index }}"
+                                :class="{ actived: item['actived'] }">
+                            {{ item['label'] }}
+                        </view>
+                    </view>
+                </view>
+                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="cell-evaluation-title">本课让你收获了有效技能吗？</view>
+                    <view class="ui-evaluation-face dir-left">
+                        <image wx:for="{{ contentEvaluation }}" wx:key="{{ index }}"
+                            class="cell-evaluation-face"
+                            data-offset="{{ index }}"
+                            src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                            mode="scaleToFill"></image>
+                    </view>
+                    <view class="ui-evaluation-content">
+                        <view
+                                wx-if="{{isContentNum > -1}}"
+                                class="cell-evaluation-content"
+                                wx:for="{{ contentEvaluation[contentNum].options }}" wx:key="{{ index }}"
+                                data-option-i-d="{{ item.id }}" data-offset="{{contentNum}}"  data-source="{{contentEvaluation[contentNum].options}}"
+                                data-evaluation-offset="{{ index }}" data-list-title="contentEvaluation"
+                                :class="{ actived: item['actived'] }">
+                            {{ item['label'] }}
+                        </view>
+                    </view>
+                </view>
+                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="cell-evaluation-title">本课可以启发/指引你在工作中应用吗？</view>
+                    <view class="ui-evaluation-face dir-left">
+                        <image wx:for="{{ applcationEvaluation }}" wx:key="{{ index }}"
+                            class="cell-evaluation-face"
+                            data-offset="{{ index }}"
+                            src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                            mode="scaleToFill"></image>
+                    </view>
+                    <view class="ui-evaluation-content">
+                        <view
+                                wx-if="{{isApplcationNum > -1}}"
+                                class="cell-evaluation-content"
+                                wx:for="{{ applcationEvaluation[applcationNum].options }}" wx:key="{{ index }}"
+                                data-list-title="applcationEvaluation"  data-offset="{{applcationNum}}"
+                                data-option-i-d="{{ item.id }}" data-source="{{applcationEvaluation[applcationNum].options}}"
+                                data-evaluation-offset="{{ index }}"
+                                :class="{ actived: item['actived'] }">
+                            {{ item['label'] }}
+                        </view>
+                    </view>
+
+                </view>
+                <view class="cell-anonym-box" wx-if="{{ipX}}">
+                    <view>匿名评价</view>
+                    <view>
+                        <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
+                    </view>
+                    <view class="cell-anonym-tip" wx-if="{{isAnonymous}}">{{isAnonymous ? '你的评价将以匿名的形式展现~' : ''}}</view>
+                </view>
+            </view>
+            <swiper wx-if="{{isAbleToEdit}}"
+            current="{{ activedIndex }}"
+            vertical="{{true}}" interval="1000" duration="500"
+            style="height: calc(100% - {{headerHeigth}}px)"
+            bindchange="getScrollPage">
+                <block style="height: calc(100% - {{headerHeigth}}px)">
+                <swiper-item  bindtouchstart="getTouchStart" bindtouchmove="getTouchMove"  data-swiper-item-id="item-{{ index }}">
+                    <view class="ui-star-box" :class="{'ipx':ipX}" wx-if="{{!isShowArea}}">
+                        <view class="cell-star-title">你愿意将本课推荐给朋友吗</view>
+                        <view class="ui-star-item">
+                            <text wx:for="{{ [1, 2, 3, 4, 5] }}" wx:key="{{ index }}"  data-score="{{ item }}"
+                                class="{{item <= score ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                        </view>
+                        <view class="cell-star-tip" v-if="score">{{starTip[score-1]}}</view>
+                    </view>
+
+                    <view class="ui-more-demand">
+                        <view class="cell-demand-title">更多需求</view>
+                        <view class="ui-demand-box">
+                            <view
+                                    class="cell-demand-item"
+                                    wx:for="{{ extraNeed }}"
+                                    wx:key="{{ index }}"
+                                    wx:if="{{index < 6}}"
+                                    data-label="{{ item.text }}"
+                                    data-index="{{ index }}"
+                                    @tap.stop="handleSelectExtraNeed"
+                                    :class="{ actived: item['active'] }">
+                                {{ item['text'] }}
+                            </view>
+                        </view>
+                        <view class="ui-view-box" @tap="handleCommentfocus">
+                            <div class="cell-view-div" @tap="handleCommentfocus" :class="{'cell-view-div-has':comment , 'cell-view-div-unshow' : !isShowDiv}">{{ comment ? comment :'欢迎分享你对本课的看法~'}}</div>
+                            <textarea class="cell-view-area" placeholder="欢迎分享你对本课的看法~" placeholder-class="cell-view-placeholder"  value="{{comment}}"  :class="{'cell-view-area-show':isShowArea}" bindblur="handleCommentblur" focus="{{isShowArea}}"
+                                    bindinput="handleCommentInput" fixed="{{true}}" bindfocus="handleCommentfocus"/>
+                            <view class="cell-view-area-tip" wx-if="{{comment.length < 16}}"> 还差{{15 - comment.length}}个字可获赠3个即能币！</view>
+                            <view class="cell-view-area-tip" wx-if="{{comment.length >= 16}}"> 还差0个字可获赠3个即能币！</view>
+                        </view>
+                    </view>
+                    <view class="ui-scroll-box" @tap="switchPage">
+                        <image class="cell-scroll-item"   animation="{{animationData}}" src="http://wx-small.runwise.cn/image/imageID125168b2749464afdb0b4efa0c3a.png" />
+                    </view>
+                </swiper-item>
+            </block>
+            <block  style="height: calc(100% - {{headerHeigth}}px)" wx-if="{{isChoiceDemand}}">
+                <swiper-item  data-swiper-item-id="item-{{ index }}">
+                    <view class="ui-listen-box" :class="{'ipx':ipX}">
+                        <view class="cell-listen-title">
+                            <view class="cell-star-title">倾听您的个人评价</view>
+                            <view class="cell-listen-content" wx-if="{{ipX}}" >
+                                <view>Hi，我们是即能课程组，</view>
+                                <view>悄悄告诉我们你对本课的评价吧</view>
+                            </view>
+                        </view>
+                        <view class="ui-anonym-box-ipx"  wx-if="{{!ipX}}" @tap="getAnonymous">
+                            <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
+                            匿名评价
+                        </view>
+
+                    </view>
+                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                        <view class="cell-evaluation-title">本课让你容易学习吗?</view>
+                        <view class="ui-evaluation-face dir-left">
+                            <image wx:for="{{ participationEvaluation }}" wx:key="{{ index }}"
+                                class="cell-evaluation-face"
+                                data-offset="{{ index }}"
+                                src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                                @tap.stop="handleParticipationEvaluate" mode="scaleToFill"></image>
+                        </view>
+                        <view class="ui-evaluation-content">
+                            <view
+                                    wx-if="{{isShowParticipation}}"
+                                    class="cell-evaluation-content"
+                                    wx:for="{{ participationEvaluation[participationNum].options }}" wx:key="{{ index }}"
+                                    data-option-i-d="{{ item.id }}" data-offset="{{participationNum}}" data-source="{{participationEvaluation[participationNum].options}}" data-list-title="participationEvaluation"
+                                    data-evaluation-offset="{{ index }}" @tap.stop="handleSelectOption"
+                                    :class="{ actived: item['actived'] }">
+                                {{ item['label'] }}
+                            </view>
+                        </view>
+
+                    </view>
+                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                        <view class="cell-evaluation-title">本课让你收获了有效技能吗？</view>
+                        <view class="ui-evaluation-face dir-left">
+                            <image wx:for="{{ contentEvaluation }}" wx:key="{{ index }}"
+                                class="cell-evaluation-face"
+                                data-offset="{{ index }}"
+                                src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                                @tap.stop="handleContentEvaluate" mode="scaleToFill"></image>
+                        </view>
+                        <view class="ui-evaluation-content">
+                            <view wx-if="{{isShowContent}}"
+                                class="cell-evaluation-content"
+                                wx:for="{{ contentEvaluation[contentNum].options }}" wx:key="{{ index }}"
+                                data-option-i-d="{{ item.id }}" data-offset="{{contentNum}}"  data-source="{{contentEvaluation[contentNum].options}}"
+                                data-evaluation-offset="{{ index }}" data-list-title="contentEvaluation" @tap.stop="handleSelectOption"
+                                :class="{ actived: item['actived'] }">
+                                {{ item['label'] }}
+                            </view>
+                        </view>
+                    </view>
+                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                        <view class="cell-evaluation-title">本课可以启发/指引你在工作中应用吗？</view>
+                        <view class="ui-evaluation-face dir-left">
+                            <image wx:for="{{ applcationEvaluation }}" wx:key="{{ index }}"
+                                class="cell-evaluation-face"
+                                data-offset="{{ index }}"
+                                src="../../assets/img/{{ item.score }}-{{ item.actived? 'actived': 'disactived' }}.svg"
+                                @tap.stop="handleApplcationEvaluate" mode="scaleToFill"></image>
+                        </view>
+                        <view class="ui-evaluation-content">
+                            <view wx-if="{{isShowApplcation}}"
+                                class="cell-evaluation-content"
+                                wx:for="{{ applcationEvaluation[applcationNum].options }}" wx:key="{{ index }}"
+                                data-list-title="applcationEvaluation"  data-offset="{{applcationNum}}"
+                                data-option-i-d="{{ item.id }}" data-source="{{applcationEvaluation[applcationNum].options}}"
+                                data-evaluation-offset="{{ index }}" @tap.stop="handleSelectOption"
+                                :class="{ actived: item['actived'] }">
+                                {{ item['label'] }}
+                            </view>
+                        </view>
+
+                    </view>
+                    <view class="cell-anonym-box" wx-if="{{ipX}}" @tap="getAnonymous">
+                        <view>匿名评价</view>
+                        <view>
+                            <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
+                        </view>
+                        <view class="cell-anonym-tip" wx-if="{{isAnonymous}}">{{isAnonymous ? '你的评价将以匿名的形式展现~' : ''}}</view>
+                    </view>
+                    <view class="ui-commit-box">
+                        <view class="cell-commit-item" hover-class="cell-commit-hover" :class="{ active : isCommit}" @tap="getEvaluationButton">提交
+                        </view>
+                    </view>
+                </swiper-item>
+            </block>
+        </swiper>
+    </scroll-veiw>
+    <ScoreModal />
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import { getStore, connect } from 'wepy-redux'
+    import { share as shareApi, auth as authApi, sence as senceApi } from '../../api'
+    import Loading from '../../components/common/loading'
+    import loadingMixin from '../../mixins/loading'
+    import header from '../../components/common/header'
+    import { showErrorPage } from '../../utils'
+    import ScoreModal from '../../components/ScoreModal/index'
+    const store = getStore()
+
+    @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
+        userName(state) {
+            return state.user.name
+        }, // mapState 即getters
+        token(state) {
+            return state.user.token
+        },
+        entrance(state) {
+            return state.entrance
+        },
+        role(state) {
+            return state.user.role
+        },
+        entranceScenceID(state) {
+            return state.entrance.scenceID
+        },
+        ipX(state) {
+            return state.user.equipmentModel.startsWith('iPhone X')
+        }
+    })
+    export default class Evaluation extends wepy.page {
+        components = {
+            ScoreModal,
+            'jn-header': header
+        }
+
+        data = {
+            activedIndex:0,//默认index
+            isShowArea:false,
+            isShowDiv:true,
+            animationData: {},
+            headerHeigth:0,
+            startPoint:[0,0],
+            starTip:[
+                '“不愿意，本课对我无帮助”',
+                '“不太愿意，课程有待改善”',
+                '“或许我会推荐给需要的朋友”',
+                '“还不错，应该会推荐”',
+                '“很棒，很愿意会推荐”'
+            ],
+            isChoiceDemand:false,
+            isShowParticipation:false,
+            isShowContent:false,
+            isContentNum:0,
+            isParticipationtNum:0,
+            isApplcationNum:0,
+            isShowApplcation:false,
+            participationNum:0,
+            contentNum:0,
+            applcationNum:0,
+            isLoaded: false,
+            isAbleToEdit: true,
+            isAnonymous: false, // 是否匿名
+            courseID: 'defaltCourseID',
+            senceID: 'defaltSenceID',
+            teamID: 'defaultTeamID',
+            submitIsShown: true,
+            comment: '',
+            score: 0,
+            participationScore: 1,
+            contentScore: 1,
+            applcationScore: 1,
+            participationEvaluation: [
+                {
+                    score: 1,
+                    actived: false,
+                    options: ['labelIDe0a8f529c8ea4c1ba980d5b7d64b7f7b_1', 'labelIDfde8a884066f4f9a82d32f3ac180bc59_1', 'labelIDa119784c09e541ad938a6eaea22a6ca1_1']
+                }, {
+                    score: 2,
+                    actived: false,
+                    options: ['labelID2256caed597b4ae3813ee387899e74bb_2', 'labelIDa5f8950a9d6e4a32aa1889752189c580_2', 'labelID9364ab5193b941d99a53e91d2d8fe765_2']
+                }, {
+                    score: 3,
+                    actived: false,
+                    options: ['labelID633287596ffa45948f32430dfc6a4fed_3', 'labelID213a77d1a12b4078af4ce2c366189ff8_3', 'labelIDc9996a34f2614f22883792773df85182_3']
+                }, {
+                    score: 4,
+                    actived: false,
+                    options: ['labelIDb58fdaf5d9f24447b51752a5bd5dddde_4', 'labelIDd23a32c6ddc04a73a92e8ed0a9272eb3_4', 'labelIDd67f6b6a35e34987817f1fa235eb8d08_4']
+                }, {
+                    score: 5,
+                    actived: false,
+                    options: ['labelID91bb427bc9484302a5eaff84330af1d0_5', 'labelID24dcb3eeaab14679ae555f357f01d536_5', 'labelIDc9f21c42085a4c44ae2d6f25c0910c04_5']
+                }
+            ], // 参与度
+            contentEvaluation: [
+                {
+                    score: 1,
+                    actived: false,
+                    options: ['labelID124ed645e16f4f1ca81099149ba606e7_1', 'labelID23f5910199004d53b8a9c1754f6fa82d_1', 'labelIDfd35fb1935e04654a07acf44a9794623_1']
+                }, {
+                    score: 2,
+                    actived: false,
+                    options: ['labelID14624680f76a4c6b97bfd14c25634c18_2', 'labelID72468ab3a8bd40e6a789f60d121b7632_2', 'labelID01f061e7d0d64526af9f780cc5a7e031_2']
+                }, {
+                    score: 3,
+                    actived: false,
+                    options: ['labelID7af4009f01864d2fab76a7d58094d306_3', 'labelIDdb8da843e7e046598316b04dfa2798f2_3', 'labelIDb2806879ecb54b5195cad969fdc5074a_3']
+                }, {
+                    score: 4,
+                    actived: false,
+                    options: ['labelID4c13532ed56d4a7882e10e5067fdd7fe_4', 'labelID71c5a426e2e94c87a894a67274644d5a_4', 'labelID3d188ec682b74188a4630651637b3764_4']
+                }, {
+                    score: 5,
+                    actived: false,
+                    options: ['labelID72cea7c90fd84c4da29f04dd1701b117_5', 'labelID61e2fba4e8cb4c3c96341854c911de77_5', 'labelIDe17e800e6b844cf9ba284f3a292fc83d_5']
+                }
+            ],
+            applcationEvaluation: [
+                {
+                    score: 1,
+                    actived: false,
+                    options: ['labelID916019d539fa43db894d0c5110cc5b24_1', 'labelIDea3ef5a92f0a482b8eaa32757dadf4cb_1', 'labelIDa84af64b6e73456187db93aaa289fe88_1']
+                }, {
+                    score: 2,
+                    actived: false,
+                    options: ['labelIDec975ccf02c345e3b07194a869bfcc85_2', 'labelID54414575e23e4b37a1435a1a5792fc66_2', 'labelIDf127b19ddbb34d79abd8622a72a28c0d_2']
+                }, {
+                    score: 3,
+                    actived: false,
+                    options: ['labelID1198ee25f3de4024aa250f74dd6ed37a_3', 'labelIDbf403227ddb24bbba1f16691165bb34f_3', 'labelIDd6e5a521923649d4a1414ec530ec38d7_3']
+                }, {
+                    score: 4,
+                    actived: false,
+                    options: ['labelID0785570f59f4454fa642bd332bf6f048_4', 'labelID9089a85c6c7649808cf80876002a8e7a_4', 'labelID885df948e28742c6866711385ef910d2_4']
+                }, {
+                    score: 5,
+                    actived: false,
+                    options: ['labelID1baca2943a02438db3bbf204bd73e2a4_5', 'labelID363be32713184314a5c16b7ece7ca0c5_5', 'labelID68085cc8337846478d1217d74067d441_5']
+                }
+            ],
+            extraNeed:[],
+            imageModeType: {
+                0: 'top left',
+                1: 'top right',
+                2: 'center',
+                3: 'bottom left',
+                4: 'bottom right'
+            }
+        } // end data
+        computed = {
+            computeStrLength(){
+                return 15-this.comment.replace(/\s/g,"").length
+            },
+            isCommit() {
+                return  this.participationScore && this.contentScore && this.applcationScore
+            },
+            isChoiceDemand() {
+                let tmp = this.extraNeed.findIndex(item => item.active)
+                if(tmp > -1) {
+                    return true
+                }else {
+                    return false
+                }
+            }
+        }
+
+        methods = {
+            //按箭头跳转下一页
+            switchPage(){
+                if(!this.isChoiceDemand) {
+                    return setTimeout(() => {
+                        wepy.showToast({
+                            title: '请至少选择一个需求～',
+                            icon: 'none'
+                        })
+                    }, 500)
+                }
+                this.activedIndex = 1
+            },
+            //移动
+            getTouchStart(e) {
+                if(this.isChoiceDemand) return false
+                this.startPoint = [e.touches[0].clientX,e.touches[0].clientY]
+            },
+            getTouchMove(e) {
+                if(this.isChoiceDemand) return false
+                let curPoint =  [e.touches[0].clientX,e.touches[0].clientY]
+                if(this.startPoint[1] > curPoint[1]) {
+                    setTimeout(() => {
+                        wepy.showToast({
+                            title: '请至少选择一个需求～',
+                            icon: 'none'
+                        })
+                    }, 500)
+                }
+            },
+            //失去焦点
+            handleCommentblur() {
+                this.isShowArea = false
+                this.isShowDiv = true
+            },
+            //获得焦点
+            handleCommentfocus() {
+                this.isShowArea = true;
+                this.isShowDiv = false
+            },
+            // 是否匿名
+            getAnonymous() {
+                this.isAnonymous = !this.isAnonymous
+            },
+            getScrollPage(event) {
+                let detail = event.detail
+                if(detail.current === 1) {
+                    let mParticipationEvaluation = { ...this.formatSelection(this.participationEvaluation) }
+
+                    let mContentEvaluation = { ...this.formatSelection(this.contentEvaluation) }
+
+                    let mApplcationEvaluation = { ...this.formatSelection(this.applcationEvaluation) }
+                    let mBundle = {
+                        courseID: this.courseID,
+                        senceID: this.senceID,
+                        comment: this.comment,
+                        score: this.score,
+                        participationEvaluation: mParticipationEvaluation,
+                        contentEvaluation: mContentEvaluation,
+                        applcationEvaluation: mApplcationEvaluation,
+                        teamID: this.teamID,
+                        extraNeed:this.extraNeed,
+                        isAnonymous:this.isAnonymous
+                    }
+                    senceApi.sendEvaluation({
+                        token: this.token,
+                        body: mBundle
+                    })
+                        .then((data) => {
+
+                        })
+                        .catch(error => {
+                            console.log('submit evaluation error', error)
+                        })
+                }
+            },
+            handleSelectExtraNeed({ currentTarget: { dataset: { label, index } } }){
+                this.extraNeed[index].active = !this.extraNeed[index].active
+                wx.reportAnalytics('evaluate_downarrow_click', {
+                    username: this.userName,
+                    channel: this.entrance.mappers[this.entrance.scenceID],
+                    role: this.role
+                })
+                this.$apply()
+            },
+            // 点击提交按钮触发
+            getEvaluationButton() {
+                if(!this.isCommit)  return
+                wx.reportAnalytics('evaluate_submit_click', {
+                    username: this.userName,
+                    channel: this.entrance.mappers[this.entrance.scenceID],
+                    role: this.role
+                })
+                this.handleSubmit()
+            },
+            //点击星星触发
+            handleScore({ currentTarget: { dataset: { score } } }) {
+                if (!this.isAbleToEdit) return false
+                this.score = score - 0
+            },
+            //点击no.3笑脸
+            handleApplcationEvaluate({ currentTarget: { dataset: { offset } } }) {
+                this.isShowApplcation = true
+                this.applcationNum = offset
+                if (this.applcationEvaluation[offset]['actived']) return false
+                this.applcationEvaluation = this.applcationEvaluation.map(item => ({...item, actived: false}))
+                let tmp = this.applcationEvaluation.map(item => {
+                    item.options.map(itemi => {
+                        itemi.actived = false
+                    })
+                })
+                this.applcationEvaluation[offset]['actived'] = true
+                this.applcationScore = this.applcationEvaluation.findIndex(item => item.actived) + 1
+                this.isCommit = this.participationScore && this.contentScore && this.applcationScore
+                this.$apply()
+            },
+            //点击no.2笑脸
+            handleContentEvaluate({ currentTarget: { dataset: { offset } } }) {
+                this.isShowContent = true
+                this.contentNum = offset;
+                if (this.contentEvaluation[offset]['actived']) return false
+                this.contentEvaluation = this.contentEvaluation.map(item => ({...item, actived: false}))
+                let tmp = this.contentEvaluation.map(item => {
+                    item.options.map(itemi => {
+                        itemi.actived = false
+                    })
+                })
+                this.contentEvaluation[offset]['actived'] = true
+                this.contentScore = this.contentEvaluation.findIndex(item => item.actived) + 1
+                this.isCommit =  this.participationScore && this.contentScore && this.applcationScore
+                this.$apply()
+            },
+            //点击no.1笑脸
+            handleParticipationEvaluate({ currentTarget: { dataset: { offset } } }) {
+                this.isShowParticipation = true
+                this.participationNum = offset;
+                if (this.participationEvaluation[offset]['actived']) return false
+                this.participationEvaluation = this.participationEvaluation.map(item => ({...item, actived: false}))
+                let tmp = this.participationEvaluation.map(item => {
+                    item.options.map(itemi => {
+                        itemi.actived = false
+                    })
+                })
+                this.participationEvaluation[offset]['actived'] = true
+                this.participationScore = this.participationEvaluation.findIndex(item => item.actived) + 1
+                this.isCommit =  this.participationScore && this.contentScore && this.applcationScore
+                this.$apply()
+            },
+            //点击标签
+            handleSelectOption({ currentTarget: { dataset: { optionID, source, evaluationOffset, listTitle, offset } } }) {
+                let tmp = source.findIndex(item => optionID===item.id)
+                this[listTitle][offset].options[evaluationOffset].actived = !this[listTitle][offset].options[evaluationOffset].actived
+            },
+            handleCommentInput({ detail: { value } }) {
+                this.comment = value
+            },
+        } // end methods
+        handleSubmit() {
+            let mParticipationEvaluation = { ...this.formatSelection(this.participationEvaluation) }
+
+            let mContentEvaluation = { ...this.formatSelection(this.contentEvaluation) }
+
+            let mApplcationEvaluation = { ...this.formatSelection(this.applcationEvaluation) }
+
+            let mBundle = {
+                courseID: this.courseID,
+                senceID: this.senceID,
+                comment: this.comment,
+                score: this.score,
+                participationEvaluation: mParticipationEvaluation,
+                contentEvaluation: mContentEvaluation,
+                applcationEvaluation: mApplcationEvaluation,
+                teamID: this.teamID,
+                extraNeed:this.extraNeed,
+                isAnonymous:this.isAnonymous
+            } // end mBundle
+
+
+
+            wx.reportAnalytics('evaluate', {
+                role: this.role,
+                nickname: this.userName,
+                channel: this.entrance.mappers[this.entrance.scenceID],
+            });
+
+            senceApi.sendEvaluation({
+                token: this.token,
+                body: mBundle
+            })
+                .then((data) => {
+                    if(data.isPlayBonusToast){
+                        this.$invoke('ScoreModal', 'toggleModal', { flag: true, title: data.title, score: data.addBonus })
+                            .then(()=>{
+                                return wepy.navigateBack({
+                                    delta: 1
+                                })
+                            })
+                    }else{
+                        return wepy.navigateBack({
+                            delta: 1
+                        })
+                    }
+
+                })
+                .catch(error => {
+                    console.log('submit evaluation error', error)
+                })
+
+        }
+        formatSelection(pBundle) {
+            let mTarget = pBundle.filter(item => item.actived)[0]
+            if (!mTarget) return { score: 0, options: [] }
+            let mOptions = mTarget['options'].filter(item => item.actived).map(item => item.id.split('_').shift())
+            return { score: mTarget['score'], options: mOptions }
+        }
+
+        onShow() {
+            var animation = wx.createAnimation({
+                duration: 500,
+                timingFunction: 'ease',
+            })
+            this.animation = animation
+            this.setData({
+                animationData: animation.export()
+            })
+
+            var m = true;
+            setInterval(function () {
+                if(m){
+                    this.animation.translateY(14).step()
+                    m = !m;
+                } else {
+                    this.animation.translateY(0).step()
+                    m = !m;
+                }
+
+                this.setData({
+                    animationData: this.animation.export()
+                })
+            }.bind(this), 500)
+
+        }
+
+
+        onLoad({courseID, senceID, teamID='defaultTeamID',score, skillName}) {
+            this.courseID = courseID
+            this.senceID = senceID
+            this.teamID = teamID
+            wepy.$instance.globalData.getLoadHuilder({pageTheme: skillName}) // ga统计
+            this.$apply()
+            if(score)this.score = score
+            senceApi.prepareEvaluation({ courseID, senceID, token: this.token })
+                .then(({ extraNeed, applcationEvaluation, contentEvaluation, participationEvaluation, score, comment, isAbleToEdit, isAnonymous }) => {
+                    this.isAbleToEdit = isAbleToEdit
+                    if(score){this.score = score}
+                    this.comment = comment
+                    this.applcationEvaluation = applcationEvaluation
+                    this.applcationNum = this.applcationEvaluation.findIndex(item => item.actived)
+                    this.applcationScore = this.applcationNum + 1
+                    this.contentEvaluation = contentEvaluation
+                    this.contentNum = this.contentEvaluation.findIndex(item => item.actived)
+                    this.contentScore = this.contentNum  + 1
+
+
+                    this.participationEvaluation = participationEvaluation
+                    this.participationNum = this.participationEvaluation.findIndex(item => item.actived)
+                    this.participationScore = this.participationNum + 1
+                    this.extraNeed = extraNeed
+                    this.isAnonymous = isAnonymous
+                    if(this.participationNum > -1) {
+                        this.isParticipationtNum = this.participationEvaluation[this.participationNum].options.findIndex(item => item.actived)
+                    }
+                    if(this.contentNum > -1) {
+                        this.isContentNum = this.contentEvaluation[this.contentNum].options.findIndex(item => item.actived)
+                    }
+                    if(this.applcationNum > -1) {
+                        this.isApplcationNum = this.applcationEvaluation[this.applcationNum].options.findIndex(item => item.actived)
+                    }
+                    this.$apply()
+                })
+                .catch(error => {
+                    console.log('get evalutaion error', error)
+                    showErrorPage()
+                })
+        } // end onLoad
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>
+
+<style lang="less">
+    @import "../../assets/style/theme";
+    .ui-unable-edit-box {padding-bottom: 120rpx}
+    .ui-listen-box {
+        display: flex;align-items: center;padding: 40rpx;border-bottom:2rpx solid #f1f2f5;justify-content: space-between;
+        .cell-listen-title-item{font-size:36rpx;color:@color-black;opacity:.9;font-family:PingFangSC-Medium}
+    }
+    .ui-listen-box.ipx{height: 200rpx;padding: 18rpx 0;justify-content:center}
+    .cell-listen-title {font-size: 36rpx;opacity: 0.9;font-family: PingFangSC-Medium;color: @color-black;}
+    .cell-listen-content{font-family: PingFangSC-Regular;font-size: 24rpx;color: #abb5b6;text-align:center;margin-top: 28rpx}
+    .cell-anonym-img {width: 32rpx;height: 32rpx;margin-right: 8rpx}
+    .ui-anonym-box{font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-black;display: flex;height: 32rpx;align-items: center;}
+    .ui-evaluation-box {
+        padding: 16rpx 0 30rpx 40rpx;border-bottom:2rpx solid #f1f2f5;
+    }
+    .ui-evaluation-box.ipx {padding: 32rpx 0 40rpx 40rpx;}
+    .cell-anonym-box{
+        display: flex;font-size: 32rpx;color: @color-black;align-items: center;border-bottom:2rpx solid #f1f2f5;padding: 30rpx 40rpx;
+        .cell-anonym-img{display: flex;align-items: center;margin-left: 8rpx}
+        .cell-anonym-tip{font-size: 28rpx;color: #B6BBC1;}
+    }
+    .cell-evaluation-title {opacity: 0.9;font-family: PingFangSC-Medium;font-size: 32rpx;color: @color-black;margin-bottom: 32rpx}
+    .cell-evaluation-face{width: 64rpx;height: 64rpx;margin-right: 40rpx}
+    .ui-evaluation-content {
+        display: flex;flex-wrap: wrap;margin-top:18rpx;
+        .cell-evaluation-content {font-family: PingFangSC-Medium;font-size: 24rpx;color: @color-black;background: #F1F2F5;border-radius: 4px;width: 200rpx;height: 60rpx;line-height: 60rpx;text-align: center;margin-right: 24rpx;margin-top: 16rpx}
+        .cell-evaluation-content.actived{background: @color-blue;color: #fff}
+    }
+    .ui-commit-box{
+        position:absolute;width:100%;display: flex;justify-content: center;bottom:24rpx;
+        .cell-commit-item{background:@background-gray-F4;border-radius: @border-radius-20;width:702rpx;height: 100rpx;color:#8E8E93;font-family: PingFangSC-Semibold;font-size: 36rpx;text-align: center;line-height: 100rpx}
+        .cell-commit-item.active{background: @color-blue;color:@color-white}
+        .cell-commit-item.active.cell-commit-hover{background: @background-blue-hover}
+    }
+    .ui-star-box {width: 100%;height: 440rpx;padding-top: 30rpx;display: flex;flex-direction: column;align-items:center;border-top: 2rpx solid #f1f2f5;border-bottom:  2rpx solid #f1f2f5;box-sizing: border-box}
+    .ui-star-box.ipx {height: 520rpx;padding-top: 60rpx;}
+    .cell-star-title{font-size: 36rpx;color: @color-black;opacity: 0.9;font-family: PingFangSC-Medium;}
+    .ui-star-item {
+        margin: 72rpx 0;
+        text{margin: 0 15rpx;font-size: 70rpx;color:@color-blue;}
+    }
+    .cell-star-tip {font-size: 30rpx;color: @color-gray;width: 100%;text-align: center}
+
+    .ui-more-demand {width: 100%;height: 598rpx;border-bottom:2rpx solid #f1f2f5;box-sizing: border-box;padding: 32rpx 40rpx}
+    .cell-demand-title {font-size: 36rpx;color: @color-black;opacity: 0.9;font-family: PingFangSC-Medium;margin-bottom: 48rpx}
+    .ui-demand-box{display: flex;flex-wrap: wrap;}
+    .cell-demand-item {background: #EFEFF4;border-radius: @border-radius-8;font-size: 24rpx;color: @color-black;width: 200rpx;height: 64rpx;display: flex;justify-content: center;align-items: center;margin: 0 20rpx 32rpx 0}
+    .cell-demand-item.actived {background: @color-blue;color:#fff}
+    .cell-view-area{background:#F1F2F5;border-radius: @border-radius-8;width:670rpx;height:240rpx;font-size: 32rpx;padding: 24rpx 26rpx;box-sizing: border-box;display:none;position:absolute;top:0;z-index:3;color: #5A696B;display:none;line-height: 40rpx}
+    .cell-view-div{color: @color-black;box-sizing: border-box;z-index: 2;background:#F1F2F5;border-radius: 8rpx;width:670rpx;height:240rpx;font-size: 32rpx;padding: 24rpx 26rpx;box-sizing: border-box;position:absolute;top:0;line-height: 40rpx}
+    .cell-view-area-show{display:flex; align-items:flex-start;line-height: 40rpx;color:@color-black;}
+    .cell-view-div-unshow {display: none;}
+    .cell-view-div.cell-view-div-has{color:@color-black;}
+    .ui-view-box{position: relative;width: 670rpx;height:240rpx;}
+    .cell-view-area-tip{font-size: 26rpx;color:@color-gray;position: absolute;bottom: 20rpx;right:24rpx;z-index: 4; }
+    .cell-view-placeholder{font-size: 32rpx;color: @color-gray;}
+    .cell-scroll-item{width: 70rpx;height: 70rpx;}
+    .ui-scroll-item{text-align: center}
+    .ui-scroll-box{height: 100rpx;padding-top:72rpx;box-sizing: border-box;display:flex;justify-content:center;position: absolute;bottom: 70rpx;left:50%;transform:translate(-50%,0);width: 100%;}
+
+    .evaluation-article {width: 100%;height: 100%;background-color: #FFF;box-sizing: border-box;}
+    .evaluation-article__wrapper {width: 100%;}
+    .evaluation-article__wrapper::-webkit-scrollbar {width: 0 !important;height: 0 !important;display: none;color: transparent !important; }
+    .evaluation-article__title {line-height: 100%;margin-right: 40rpx;display: inline-block;font-weight: bolder;font-size: 40rpx;color: #000;font-family: PingFangSC-Semibold;}
+    .evaluation-article__wrapper__header {height: 240rpx;padding: 32rpx 0  40rpx 44rpx;box-sizing: border-box;align-items: center;border-bottom: 20rpx solid #F1F2F5;flex-wrap: wrap;align-content: space-between;}
+    .ui-evaluation-title {font-family: PingFangSC-Medium;font-size: 18px;color: @color-black;line-height: 18px;}
+    .evaluation-tips {color: #F5A623;font-family: PingFangSC-Regular;font-size: 28rpx}
+    .evaluation-article__wrapper__header-star {width: 74rpx;height: 70rpx;padding: 50rpx 30rpx 0 0;}
+    .evaluation-article__wrapper__header-star.first-child {padding-left: 0;}
+    .evaluation-article__wrapper__evaluated-section__anonymous-container {height: 100rpx;align-items: center;width: 100%;border-bottom: 2rpx solid #F1F2F5;}
+    .evaluation-article__wrapper__evaluated-section__anonymous-container__text {line-height: 100%;margin-right: 20rpx;margin-left: 40rpx;}
+    .evaluation-article__wrapper__evaluated-section__anonymous-container__icon {width: 40rpx;height: 40rpx;margin-right: 40rpx;}
+    .evaluation-article__wrapper__evaluated-section__anonymous-container__tip {color: #B6BBC1;font-family: PingFangSC-Regular;font-size: 28rpx;}
+    .evaluation-article__wrapper__evaluated-section {width: 100%;padding: 0 40rpx;box-sizing: border-box;align-items: flex-start;border-bottom: 2rpx solid #F1F2F5;}
+    .evaluation-article__wrapper__evaluated-section.last-one {border-bottom: 20rpx solid #F1F2F5;}
+    .evaluation-article__wrapper__evaluated-section__title {margin-top: 48rpx;margin-bottom: 16rpx;color: @color-black;font-family: PingFangSC-Mediu;font-size: 36rpx;font-weight: bold;}
+    .evaluation-article__wrapper__evaluated-section__subtitle {color: #294657;font-family: PingFangSC-Regular;font-size: 28rpx;}
+    .evaluation-article__wrapper__evaluated-section__expression-wrapper {padding: 48rpx 0;box-sizing: content-box;}
+    .evaluation-article__wrapper__evaluated-section__expression-wrapper__icon {width: 64rpx;height: 64rpx;margin-right: 40rpx;}
+    .evaluation-article__wrapper__evaluated-section__btn-group {flex-wrap: wrap;align-content: flex-start;box-sizing: content-box;}
+    .evaluation-article__wrapper__evaluated-section__btn-group-btn {height: 56rpx;line-height: 56rpx;color: #2db7b5 !important;font-family: PingFangSC-Semibold;font-size: 24rpx;background-color: #F0F0F7 !important;border: 0 !important;margin-left: 0;margin-right: 24rpx;margin-bottom: 24rpx;padding-left: 20rpx;padding-right: 20rpx;}
+    .evaluation-article__wrapper__evaluated-section__btn-group-btn:last-child {margin-bottom: 48rpx;}
+    .evaluation-article__wrapper__evaluated-section__btn-group-btn.actived {background-color: #2db7b5 !important;color: #fff !important;}
+    .evaluation-article__wrapper__comment-detail {padding: 48rpx 40rpx 120rpx;box-sizing: content-box;}
+    .evaluation-article__wrapper__comment-detail-title {margin-bottom: 48rpx;color: @color-black;font-family: PingFangSC-Mediu;font-size: 36rpx;font-weight: bold;}
+    .evaluation-article__wrapper__comment-detail-textarea {width: calc(~"100% - 48rpx");padding: 24rpx 24rpx 0;height: 264rpx;background-color: #F1F2F5;border-top-right-radius: 8rpx;border-top-left-radius: 8rpx;font-size: 32rpx;line-height: 40rpx;text-align: justify;color: #294657;font-family: PingFangSC-Regular;opacity: .5;}
+    .evaluation-article__wrapper__comment-detail-textarea-tip{width: calc(~"100% - 48rpx");background-color: rgba(241,242,245, .5);font-family: PingFangSC-Regular;font-size: 12px;color: #A1A9AB;text-align: right;line-height: 50rpx;height: 50rpx;border-bottom-left-radius: 8rpx;border-bottom-right-radius: 8rpx;padding:10rpx 24rpx;}
+    .evaluation-article__wrapper__fixed-footer {width: 400rpx;height: 100rpx;line-height: 100rpx;margin: 0 auto;background-color: #2db7b5 !important;border: 0 !important;border-radius: 50rpx;color: #FFF !important;font-family: PingFangSC-Semibold;font-size: 36rpx;}
+    .button-disabled{background-color: rgba(45,183,181, .2) !important;}
+    .evaluation-article__wrapper__fixed-footer::after {border-radius: 0 !important;}
+    .evaluation-article__wrapper__empty-view {height: 120rpx;background-color: transparent;}
+    .evaluation-article__message-board-label{margin-top: 40rpx;margin-bottom: 56rpx;color: #294657;font-family: PingFangSC-Regular;font-size: 32rpx;}
+    .evaluation-article__message-board-cb-item{display: flex;margin-right: -12rpx;margin-bottom: 24rpx;}
+    .evaluation-article__message-board-cb-item::after{
+        border: 0 !important;}
+    .evaluation-article__message-board-cb-bridge{width: 32rpx;height: 32rpx;border: #2db7b5 solid 2rpx;border-radius: 50%;position: relative;right: 18rpx;top: -18rpx;background-color: #ffffff;color: #2db7b5;font-family: PingFangSC-Medium;font-size: 20rpx;display: flex;justify-content: center;align-items: center;}
+</style>

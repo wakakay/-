@@ -47,43 +47,33 @@
             'jn-header': header
         }
 
+        onLoad() {
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+        }
+
         methods = {
             handleGetUserInfo(event) {
                 return new Promise((resolve, reject) => {
                     if (event.detail && event.detail.errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
                     if (event.errMsg && event.errMsg.indexOf('fail')) throw new CustomError('用户授权失败')
                     resolve(event)
+                }).then(userInfo => {
+                    return store.dispatch(login())
+                }).then(() => {
+                    return sleep(0.5)
+                }).then(() => {
+                    wx.navigateBack({
+                        delta: 1
+                    })
+                }).catch(error => {
+                    wepy.showModal({
+                        title: '提示',
+                        content: '登录才能即学即练哦',
+                        showCancel: false,
+                        confirmText: "知道了"
+                    })
                 })
-                // .catch(error => {
-                //   return authApi.doAuthorization()
-                // })
-                    .then(userInfo => {
-                        return store.dispatch(login())
-                    })
-                    .then(() => {
-                        return sleep(0.5)
-                    })
-                    .then(() => {
-                        wx.navigateBack({
-                            delta: 1
-                        })
-                    })
-                    .catch(error => {
-                        console.log('catch auth error________', error)
-                        // if ('authDeny'===error) return wx.openSetting()
-                        wepy.showModal({
-                            title: '提示',
-                            content: '登录才能即学即练哦',
-                            showCancel: false,
-                            confirmText: "知道了"
-                        })
-                    }) // end catch
-
-            } // handleGetUserInfo
-        } // end methods
-
-        onLoad() {
-            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            }
         }
     }
 </script>

@@ -295,6 +295,7 @@
                             this.payway = 'ticket'
                         }
                         this.userJinengBinTip = data.userJinengBinTip
+                        wepy.$instance.globalData.getLoadHuilder({pageTheme: this.name}) // ga统计
                         this.$apply()
                     })
             } else if (this.courseID) {
@@ -316,11 +317,10 @@
                             this.payway = 'ticket'
                         }
                         this.userJinengBinTip = data.userJinengBinTip
-
+                        wepy.$instance.globalData.getLoadHuilder({pageTheme: this.name}) // ga统计
                         this.$apply()
                     })
             }
-            wepy.$instance.globalData.getLoadHuilder({pageTheme: this.name}) // ga统计
         }
 
         onShow() {
@@ -336,13 +336,13 @@
             },
             handleToggleBounsTips() {
                 this.isBounsTipsShow = !this.isBounsTipsShow
-            }, // end handleCloseBounsTips
+            },
             handleToggleBounsUsage() {
                 this.isBounsUsageShow = !this.isBounsUsageShow
-            }, // end handleToggleBounsUsage
+            },
             handleRefuseTap() {
                 return false
-            }, // end handleRefuseTap
+            },
             handleSelectBonus({currentTarget: {dataset: {usageShouldBe}}}) {
                 if (!this.payByWXWithBonus['available']) return false // invalid的时候不允许更换
                 this.changePayWay({
@@ -350,7 +350,6 @@
                 })
             },
             handleDoPayByTicket() {
-                // wx.showLoading()
                 paymentApi.payByJinengBin({
                     token: this.token,
                     senceID: this.senceID,
@@ -358,97 +357,138 @@
                     paySign: this.paySign,
                     payMoney: this.price,
                     code: 'defaultCode'
+                }).then(data => {
+                    wx.showToast({
+                        title: '购买成功',
+                        icon: 'success',
+                        duration: 1500
+                    })
+                    setTimeout(() => {
+                        wepy.navigateBack({
+                            delta: 1
+                        })
+                    }, 1500);
+
+                    wx.reportAnalytics('paycourse', {
+                        role: this.role,
+                        nickname: this.userName,
+                        coursename: this.name,
+                        channel: this.entrance.mappers[this.entrance.scenceID],
+                        paytype: '技能币支付',
+                        sencename: this.name,
+                        goods: '',
+                    });
+                }).catch(error => {
+                    wepy.showModal({
+                        title: "提示",
+                        content: "很遗憾，未购买成功",
+                        showCancel: false,
+                        confirmText: "知道了"
+                    })
                 })
-                    .then(data => {
-                        // wx.hideLoading()
-                        wx.showToast({
-                            title: '购买成功',
-                            icon: 'success',
-                            duration: 1500
-                        })
-                        setTimeout(() => {
-                            wepy.navigateBack({
-                                delta: 1
-                            })
-                        }, 1500);
-
-                        // console.log("支付完成事件上报,微课名称:");
-                        // console.log(this.name);
-                        wx.reportAnalytics('paycourse', {
-                            role: this.role,
-                            nickname: this.userName,
-                            coursename: this.name,
-                            channel: this.entrance.mappers[this.entrance.scenceID],
-                            paytype: '技能币支付',
-                            sencename: this.name,
-                            goods: '',
-                        });
-
-                    })
-                    .catch(error => {
-                        // wx.hideLoading()
-                        wepy.showModal({
-                            title: "提示",
-                            content: "很遗憾，未购买成功",
-                            showCancel: false,
-                            confirmText: "知道了"
-                        })
-                    })
             },
             radioChange: function (e) {
-                // console.log('radio发生change事件，携带value值为：', e.detail.value)
                 this.payway = e.detail.value
                 this.changePayWay({payWay: 'wechat' === e.detail.value ? 'payByWXWithBonus' : 'payByCoupon'})
             },
-            handleDoPay({
-                            target,
-                            currentTarget: {
-                                dataset: {
-                                    phone
-                                }
-                            }
-                        }) {
+            handleDoPay({target, currentTarget: {dataset: {phone}}}) {
                 console.log('handleDoPay' + phone)
                 if ('deadNumber' === phone || null == phone) return
                 return new Promise((resolve, reject) => {
-                    renewWechatCode(store.dispatch)
-                        .then(({
-                                   code,
-                                   errMsg
-                               }) => {
-                            console.log('code getttt by do pay', this.code)
-                            if (-1 === errMsg.indexOf('ok')) return reject({
-                                flag: false,
-                                errMsg: `未获取到新的code: ${errMsg}`
-                            })
-                            return resolve({
-                                flag: true,
-                                errMsg,
-                                code
-                            });
+                    renewWechatCode(store.dispatch).then(({code, errMsg}) => {
+                        console.log('code getttt by do pay', this.code)
+                        if (-1 === errMsg.indexOf('ok')) return reject({
+                            flag: false,
+                            errMsg: `未获取到新的code: ${errMsg}`
                         })
-                })
-                    .then(({
-                               flag
-                           }) => {
-                        return flag && this.doPay({
-                            courseID: this.courseID,
-                            senceID: this.senceID,
-                            paySign: this.paySign,
-                            payPrice: this.price
+                        return resolve({
+                            flag: true,
+                            errMsg,
+                            code
                         });
                     })
-                    .then(flag => {
-                        if (!flag) return false
-                        //toast here
-                        return wepy.showToast({
-                            title: '支付成功!',
-                            icon: 'none',
-                            duration: 1200,
-                            mask: true
-                        }).then(() => wepy.navigateBack({
-                            delta: 1
+                }).then(({flag}) => {
+                    return flag && this.doPay({
+                        courseID: this.courseID,
+                        senceID: this.senceID,
+                        paySign: this.paySign,
+                        payPrice: this.price
+                    });
+                }).then(flag => {
+                    if (!flag) return false
+                    //toast here
+                    return wepy.showToast({
+                        title: '支付成功!',
+                        icon: 'none',
+                        duration: 1200,
+                        mask: true
+                    }).then(() => wepy.navigateBack({
+                        delta: 1
+                    }))
+                    console.log("支付完成事件上报,微课名称:");
+                    console.log(this.name);
+                    wx.reportAnalytics('paycourse', {
+                        role: this.role,
+                        nickname: this.userName,
+                        coursename: '/',
+                        channel: this.entrance.mappers[this.entrance.scenceID],
+                        paytype: '微信支付',
+                        sencename: this.name,
+                        goods: this.senceID ? '微课购买' : '课程购买',
+                    });
+                }).catch(error => {
+                    console.log(error)
+                    wepy.showModal({
+                        title: "提示",
+                        content: "很遗憾，未购买成功",
+                        showCancel: false,
+                        confirmText: "知道了"
+                    })
+                    return false
+                })
+            },
+            handleSendPhoneAndDoPay({detail: {encryptedData, errMsg: phoneErrMsg, iv}, target, currentTarget: {dataset: {}}}) {
+                console.log('handleSendPhoneAndDoPay')
+                return authApi.sendPhoneNumber({
+                    token: this.token,
+                    code: this.code,
+                    encryptedData,
+                    iv
+                }).then(({phone}) => {
+                    console.log("succeed in sending phone", phone);
+                    phone && store.dispatch(
+                        setPhone({
+                            status: "success",
+                            response: {phone}
                         }))
+                }).catch(error => {
+                    return wepy.showModal({
+                        title: "提示",
+                        content: "手机号解析失败，请重试",
+                        showCancel: false,
+                        confirmText: "知道了"
+                    }).then(() => {
+                        throw new Error('fail in decrypting phone')
+                    })
+                }).then(() => this.doPay({
+                    courseID: this.courseID,
+                    senceID: this.senceID,
+                    paySign: this.paySign,
+                    payPrice: this.price
+                })).catch(error => {
+                    console.log(error)
+                    wepy.showModal({
+                        title: "提示",
+                        content: "很遗憾，未购买成功",
+                        showCancel: false,
+                        confirmText: "知道了"
+                    })
+                    return false
+                }).then((flag) => {
+                    if (flag) {
+                        wepy.navigateBack({
+                            delta: 1
+                        })
                         console.log("支付完成事件上报,微课名称:");
                         console.log(this.name);
                         wx.reportAnalytics('paycourse', {
@@ -458,172 +498,44 @@
                             channel: this.entrance.mappers[this.entrance.scenceID],
                             paytype: '微信支付',
                             sencename: this.name,
-                            goods: this.senceID ? '微课购买' : '课程购买',
-                        });
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        wepy.showModal({
-                            title: "提示",
-                            content: "很遗憾，未购买成功",
-                            showCancel: false,
-                            confirmText: "知道了"
-                        })
-                        return false
-                    }) // end catch
-                // authApi.stayWechatLoginStatus()
-            }, // handleDoPay
-            handleSendPhoneAndDoPay({
-                                        detail: {
-                                            encryptedData,
-                                            errMsg: phoneErrMsg,
-                                            iv
-                                        },
-                                        target,
-                                        currentTarget: {
-                                            dataset: {}
-                                        }
-                                    }) {
-                console.log('handleSendPhoneAndDoPay')
-                return authApi.sendPhoneNumber({
-                    token: this.token,
-                    code: this.code,
-                    encryptedData,
-                    iv
-                }) // end sendPhoneNumber
-                    .then(({
-                               phone
-                           }) => {
-                        console.log("succeed in sending phone", phone);
-                        (phone &&
-                            store.dispatch(
-                                setPhone({
-                                    status: "success",
-                                    response: {
-                                        phone
-                                    }
-                                })
-                            ))
-                    })
-                    .catch(error => {
-                        return wepy.showModal({
-                            title: "提示",
-                            content: "手机号解析失败，请重试",
-                            showCancel: false,
-                            confirmText: "知道了"
-                        }).then(() => {
-                            throw new Error('fail in decrypting phone')
-                        })
-                    })
-                    .then(() => this.doPay({
-                        courseID: this.courseID,
-                        senceID: this.senceID,
-                        paySign: this.paySign,
-                        payPrice: this.price
-                    }))
-                    .catch(error => {
-                        console.log(error)
-                        wepy.showModal({
-                            title: "提示",
-                            content: "很遗憾，未购买成功",
-                            showCancel: false,
-                            confirmText: "知道了"
-                        })
-                        return false
-                    }) // end catch
-                    .then((flag) => {
-                        if (flag) {
-                            //toast here
-                            wepy.navigateBack({
-                                delta: 1
-                            })
-                            console.log("支付完成事件上报,微课名称:");
-                            console.log(this.name);
-                            wx.reportAnalytics('paycourse', {
-                                role: this.role,
-                                nickname: this.userName,
-                                coursename: '/',
-                                channel: this.entrance.mappers[this.entrance.scenceID],
-                                paytype: '微信支付',
-                                sencename: this.name,
-                                goods: '微课购买',
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    }) // end catch
-            } // handleSendPhoneDoPay
-        } // end methods
-        events = {} // end events
-        doPay({
-                  courseID,
-                  senceID,
-                  paySign,
-                  payPrice
-              }) {
-            return paymentApi
-                .payByPaySignByJinengBin({
-                    token: this.token,
-                    code: this.code,
-                    senceID,
-                    courseID,
-                    payMoney: payPrice,
-                    paySign
-                })
-                .then(response => {
-                    let {paymentResponseCode} = response
-                    console.log("预支付成功", paymentResponseCode)
-                    if ('cancellation' === paymentResponseCode) throw new PaymentCancellationBecauseOfFreementError()
-                    renewWechatCode(store.dispatch)
-                    return response
-                })
-                .then(
-                    ({
-                         appId,
-                         nonceStr,
-                         package: pkg,
-                         paySign,
-                         prepay_id,
-                         return_code,
-                         return_msg,
-                         timeStamp
-                     }) => {
-                        console.log("after previous payment, now in payment");
-                        return paymentApi.requestPayment({
-                            timeStamp,
-                            nonceStr,
-                            pkg,
-                            paySign
+                            goods: '微课购买',
                         });
                     }
-                )
-                // .catch(error => {
-                //   if (error instanceof PaymentCancellationBecauseOfFreementError) return { errMsg: 'requestPayment:ok' }
-                //   throw error
-                // }) // 拦截不需要支付的纯积分扣除操作
-                .then(({
-                           errMsg
-                       }) => {
-                    if ("requestPayment:ok" !== errMsg) throw new Error("支付失败");
-                    console.log("支付成功");
-                    return true
+                }).catch(error => {
+                    console.log(error)
                 })
-                .catch(error => {
-                    return Promise.reject("fail in payment", error)
-                })
-        } // end doPay
+            }
+        }
+        events = {}
+        doPay({courseID, senceID, paySign, payPrice}) {
+            return paymentApi.payByPaySignByJinengBin({token: this.token, code: this.code, senceID, courseID, payMoney: payPrice, paySign}).then(response => {
+                let {paymentResponseCode} = response
+                console.log("预支付成功", paymentResponseCode)
+                if ('cancellation' === paymentResponseCode) throw new PaymentCancellationBecauseOfFreementError()
+                renewWechatCode(store.dispatch)
+                return response
+            }).then(({appId, nonceStr, package: pkg, paySign, prepay_id, return_code, return_msg, timeStamp}) => {
+                console.log("after previous payment, now in payment");
+                return paymentApi.requestPayment({timeStamp, nonceStr, pkg, paySign});
+            }).then(({errMsg}) => {
+                if ("requestPayment:ok" !== errMsg) throw new Error("支付失败");
+                console.log("支付成功");
+                return true
+            }).catch(error => {
+                return Promise.reject("fail in payment", error)
+            })
+        }
 
-        changePayWay({payWay}) { // payByCoupon payByWXNoBonus payByWXWithBonus
+        changePayWay({payWay}) {
             if (['payByCoupon', 'payByWXNoBonus', 'payByWXWithBonus'].every(item => item !== payWay)) throw new Error('chose invalid pay way')
             const validPayWay = (() => 'payByWXNoBonus' !== payWay && this[payWay]['available'] ? payWay : 'payByWXNoBonus')()
-            // console.log('valid', this[payWay]['available'], validPayWay)
+
             this.payOut = this[validPayWay]['payOut']
             this.payLess = this[validPayWay]['payLess']
             this.payText = !this[payWay]['available'] ? '暂无可用' : 'payByWXNoBonus' === payWay ? `可抵${this[payWay]['payOut']}元` : `-¥ ${this[payWay]['payOut']}`
             'payByWXNoBonus' === payWay && (this.bounsUsage = false)
             'payByWXWithBonus' === payWay && (this.bounsUsage = this.payByWXWithBonus['available'])
-        } // end changePayWay
+        }
     }
 </script>
 

@@ -55,20 +55,17 @@
 
     @connect({
         token(state) {
-            // return 'userIDeb41db7f6ab4b1b0c762b757d5cd-1510137591313-9e43745380a86be4cb605d4fe5454e65'
             return state.user.token
         },
         currentCourseID(state) {
-            // return 'courseIDa1eb2733845484aa21b810f0b6f2'
             return state.courses.currentID
         },
         currentSenceID(state) {
-            // return 'senceIDd75ae1f190b429a86ad000cdc979'
             return state.sences.currentID
         },
         userName(state) {
             return state.user.name
-        }, // mapState 即getters
+        },
         role(state) {
             return state.user.role
         },
@@ -83,12 +80,12 @@
         }
     })
     export default class Review extends wepy.page {
-        mixins = [loadingMixin]; // end mixins
+        mixins = [loadingMixin];
 
         components = {
             mloading: Loading,
             'jn-header': header
-        }; // end components
+        };
 
         data = {
             courseID: 'courseID',
@@ -135,8 +132,8 @@
                         referenceAnswer: "社会阶层，年龄，性别，音质要求"
                     }
                 ]
-            } // end initialState
-        } // end data
+            }
+        }
 
         methods = {
             handleContactLink({currentTarget: {dataset: {link, index}}}) {
@@ -154,61 +151,33 @@
                 let isNewSence = this.isNewSenceMap && this.isNewSenceMap[this.senceID]
                 redirectToLesson({ courseID:this.courseID, senceID:this.senceID, resumeLastRead: 'NO', isNewSence })
 
-            }, // end handleStudyAgain
+            },
             handleShare(event) {
-                shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID})
-                    .then(({shareImage, shareImageCode}) => {
-                        // console.log(`shareImage: ${shareImage}, shareImageCode: ${shareImageCode}`)
+                shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID}).then(({shareImage, shareImageCode}) => {
                         return {shareImage, shareImageCode}
-                    })
-                    .then(({shareImage}) => wepy.downloadFile({url: shareImage.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')}))
-                    .then(({tempFilePath, statusCode, errMsg}) => {
-                        if (200 !== statusCode) throw new Error(errMsg)
-                        return wepy.previewImage({current: tempFilePath, urls: [tempFilePath]})
-                    })
-                    .then(() => shareApi.reportSharing({
-                        token: this.token,
-                        type: shareDictionary.SHARE_CARD.type,
-                        courseID: this.courseID,
-                        senceID: this.senceID
-                    })) // 向后台上报分享行为
-                    .then(() => {
-                            console.log(this.role + this.userName + this.entrance.mappers[this.entrance.scenceID])
-                            wx.reportAnalytics('share_event', {
-                                role: this.role,
-                                nickname: this.userName,
-                                coursename: this.courseName,
-                                sencename: '/',
-                                channel: this.entrance.mappers[this.entrance.scenceID],
-                                type: shareDictionary.SHARE_CARD.type,
-                            })
-                        }
-                    ) //分享事件上报
-                    .catch(error => console.log('review error'))
-
-                return true
-                shareApi.getReviewShare({
+                }).then(({shareImage}) => {
+                    wepy.downloadFile({url: shareImage.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')})
+                }).then(({tempFilePath, statusCode, errMsg}) => {
+                    if (200 !== statusCode) throw new Error(errMsg)
+                    return wepy.previewImage({current: tempFilePath, urls: [tempFilePath]})
+                }).then(() => shareApi.reportSharing({
                     token: this.token,
-                    courseID: this.currentCourseID,
-                    senceID: this.currentSenceID
-                })
-                    .then(({shareImage, shareImageCode}) => {
-                        console.log(`shareImage: ${shareImage}, shareImageCode: ${shareImageCode}`)
-                        return {shareImage, shareImageCode}
+                    type: shareDictionary.SHARE_CARD.type,
+                    courseID: this.courseID,
+                    senceID: this.senceID
+                })).then(() => {
+                    console.log(this.role + this.userName + this.entrance.mappers[this.entrance.scenceID])
+                    wx.reportAnalytics('share_event', {
+                        role: this.role,
+                        nickname: this.userName,
+                        coursename: this.courseName,
+                        sencename: '/',
+                        channel: this.entrance.mappers[this.entrance.scenceID],
+                        type: shareDictionary.SHARE_CARD.type,
                     })
-                    .then(({shareImage, shareImageCode}) => Promise.all([shareImage, shareImageCode].map(url => wepy.downloadFile({url}))))
-                    .then(([shareImageSource, shareImageCodeSource]) => {
-                        console.log('shareImageSource', shareImageSource)
-                        console.log('shareImageCodeSource', shareImageCodeSource)
-                        if ("downloadFile:ok" !== (shareImageSource && shareImageSource.errMsg) || "downloadFile:ok" !== (shareImageCodeSource && shareImageCodeSource.errMsg)) throw new Error('fail to downloadFile')
-                        let {tempFilePath: imageTmp} = shareImageSource
-                        let {tempFilePath: codeTmp} = shareImageCodeSource
-                        this.$preload('sources', {imageTmp, codeTmp})
-                        this.$navigate('/pages/Canvas/index')
-                    })
-                    .catch(error => showErrorPage())
-            } // end handleShare
-        } // end methods
+                }).catch(error => console.log('review error'))
+            }
+        }
 
         initialize({courseID, senceID, teamID}) {
             this.courseID = 'defaultCourseID'
@@ -261,13 +230,13 @@
                     console.log('get review error', error)
                     showErrorPage()
                 })
-        } // end initialize
+        }
 
         onLoad({courseID, senceID, teamID = 'defaultTeamID'}) {
             console.log(`in review courseID:${courseID}, senceID: ${senceID}`)
             this.initialize({courseID, senceID, teamID})
 
-        } // end onLoad
+        }
     }
 </script>
 

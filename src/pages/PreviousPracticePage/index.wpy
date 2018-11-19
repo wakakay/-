@@ -246,18 +246,17 @@
                 self.prePracticeObj.imageResultURL = res.imageResultURL
                 self.prePracticeObj.practiceList = res.practiceList
                 self.tempList[0] = _.first(self.prePracticeObj.practiceList);
+
+                // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.prePracticeObj.examTitle})
+                // 微信统计
+                wx.reportAnalytics('pre_test_ing', {
+                    username: this.userName,
+                    examid: this.examID,
+                    channel: this.entrance.mappers[this.entrance.scenceID],
+                });
                 self.$apply()
             })
-
-            // ga统计
-            wepy.$instance.globalData.getLoadHuilder({pageTheme: self.prePracticeObj.examTitle})
-
-            // 微信统计
-            wx.reportAnalytics('pre_test_ing', {
-                username: this.userName,
-                examid: this.examID,
-                channel: this.entrance.mappers[this.entrance.scenceID],
-            });
         }
 
         onLoad({examID}) {

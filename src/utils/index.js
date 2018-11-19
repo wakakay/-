@@ -293,28 +293,32 @@ export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
             }) // end catch
     } // end doDecrpytPhone
 
-export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isNewSence=false}) => {
+export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isNewSence=false, isRedirectTo=false}) => {
     const { user: { platform } } = getStore().getState()
-    let url = '/pages/LessonForAndroid/index'
+    let url = '/pages/course-module/lesson-for-android'
     // 是否是ppt卡片进去
     if (isNewSence) {
         url = '/pages/course-module/course-learning'
     } else {
-        url = 'android' === platform ? '/pages/LessonForAndroid/index' : '/pages/Lesson/index'
+        url = 'android' === platform ? '/pages/course-module/lesson-for-android' : '/pages/course-module/lesson'
     }
     url += `?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&source=${source}&isNewSence=${isNewSence}`
     //console.log('confirm navigation', mUrl)
-    return wepy.navigateTo({ url: url })
+    if (!isRedirectTo) {
+        return wepy.navigateTo({ url: url })
+    } else {
+        return wepy.redirectTo({ url: url })
+    }
 }
 
 export const redirectToLesson = ({ courseID, senceID, teamID = 'defaultTeamID', resumeLastRead = 'NO' , isNewSence=false }) => {
     const { user: { platform } } = getStore().getState()
-    let url = '/pages/LessonForAndroid/index'
+    let url = '/pages/course-module/lesson-for-android'
     // 是否是ppt卡片进去
     if (isNewSence) {
         url = '/pages/course-module/course-learning'
     } else {
-        url = 'android' === platform ? '/pages/LessonForAndroid/index' : '/pages/Lesson/index'
+        url = 'android' === platform ? '/pages/course-module/lesson-for-android' : '/pages/course-module/lesson'
     }
     url += `?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&isNewSence=${isNewSence}`
     return wepy.redirectTo({ url: url })
@@ -331,13 +335,6 @@ export const navigateToPractice = practiceOffset => {
 
 export const redirectToPractice = practiceOffset => {
     let { practices: { sections, courseID, senceID, teamID }, cards: { requestFlag: lessonRequestFlag }, user: { token } } = getStore().getState()
-        // let pages = getCurrentPages()
-        // let target = pages.find(item => 'pages/Lesson/index' === item.__route__ || 'pages/LessonForAndroid/index' === item.__route__)
-        // let { data: { currentCourseID: courseID, currentSenceID: senceID, teamID } } = target
-        // if (!courseID) courseID = target.data.courseID
-        // if (!senceID) senceID = target.data.senceID
-        // console.log('senceID', senceID)
-
     sections[practiceOffset - 1] && practiceApi.sendDoneAPractice({
             token,
             senceID,
@@ -346,10 +343,6 @@ export const redirectToPractice = practiceOffset => {
         })
         .catch(error => console.log('fail to send a done information of practice', error))
     if (!sections[practiceOffset]) {
-        // let pages = getCurrentPages()
-        // if (pages[pages.length - 2]['route'] === 'pages/Lesson/index' || pages[pages.length - 2]['route'] === 'pages/LessonForAndroid/index')
-        //     wepy.navigateBack({ delta: 1 })
-
         return wepy.redirectTo({ url: `/pages/course-module/course-complete?courseID=${courseID}&senceID=${senceID}&teamID=${teamID}` })
             .then(() => getStore().dispatch(setCurrentPracticeOffset(0)))
 

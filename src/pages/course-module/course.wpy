@@ -359,7 +359,6 @@
             let storageToken = wx.getStorageSync("token") || 'defaultToken'
             if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
-                wepy.$instance.globalData.getLoadHuilder() // ga统计
             } else {
                 wx.redirectTo({url: '/pages/registered-module/weclome'})
             }
@@ -367,6 +366,7 @@
 
         onShow() {
             let self = this
+            self.recommendCourseList.length && self.$broadcast('studying-bar')
         }
 
         initialize(token) {
@@ -389,6 +389,7 @@
                     self.isNewCourseMap = respone.isNewCourseMap
                     self.$apply()
 
+                    wepy.$instance.globalData.getLoadHuilder() // ga统计
                     wx.reportAnalytics('discovery', {
                         role: self.role,
                         nickname: self.userName,

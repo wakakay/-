@@ -30,56 +30,27 @@
     export default class extends wepy.app {
         config = {
             pages: [
-
                 /* 发现模板 */
                 'pages/FindList/index',
                 'pages/PreviousPracticePage/index',
                 'pages/PreviousPracticeBeginning/index',
-                'pages/PreviousPracticeEnding/index',
                 'pages/PreviousPracticeNewEnding/index',
                 'pages/SpecialCourse/index',
-
                 /* 课程模板 */
-                'pages/course-module/course',
-                'pages/course-module/assortment',
-                'pages/course-module/course-details',
-                'pages/course-module/course-new-details',
-                'pages/course-module/course-learning',
-                'pages/course-module/course-exercises',
-                'pages/course-module/course-discuss',
-                'pages/course-module/course-complete',
-                'pages/course-module/course-level-instructions',
-
-                /* 注册模块 */
-                'pages/registered-module/weclome',
-                'pages/registered-module/interest-select',
-                'pages/registered-module/recommend',
-
-                /* 个人中心 */
-                'pages/user-module/mine',
-                'pages/user-module/mine-edit',
-                'pages/user-module/mine-edit-phone',
-                'pages/user-module/mine-edit-email',
-                'pages/user-module/mine-edit-interest',
-                'pages/user-module/mine-edit-target',
-                'pages/user-module/mine-edit-status',
-                'pages/user-module/mine-feedback',
-                'pages/user-module/skill-board',
-                'pages/user-module/lesson-list',
-                'pages/user-module/apply-for-test',
-                'pages/user-module/score-detail',
-                'pages/user-module/score-rules',
-                'pages/user-module/mine-collect',
-
-                /* 其他模板 */
-                'pages/other-module/work-template',
-                'pages/other-module/job-skills',
-                'pages/other-module/community',
+                'pages/course-module/course', // 课程首页
+                'pages/course-module/assortment', // 系列详情
+                'pages/course-module/course-details', // 课程旧详情
+                'pages/course-module/course-new-details', // 课程详情
+                'pages/course-module/course-learning', // 新微课学习
+                'pages/course-module/lesson', // 旧ios微课学习
+                'pages/course-module/lesson-for-android', // 旧android微课学习
+                'pages/course-module/course-exercises', // 微课课后练习题
+                'pages/course-module/course-discuss', // 微课课后练习题→讨论区
+                'pages/course-module/course-complete', // 微课完成
+                'pages/course-module/course-level-instructions', // 微课完成-等级说明
+                'pages/course-module/course-evaluation', // 微课评价
                 /* 活动 */
-                'pages/Evaluation/index',
                 'pages/Largess/index',
-                'pages/Lesson/index',
-                'pages/LessonForAndroid/index',
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
                 'pages/Review/index',
@@ -87,7 +58,7 @@
                 'pages/SingleSelection/index',
                 'pages/PayForLesson/index',
                 'pages/GiftDetail/index',
-
+                /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营
                 'pages/training-camp-module/introduce', // 训练营介绍
@@ -112,6 +83,29 @@
                 'pages/training-camp-module/my/course-evaluation', // 我管理-课程评价
                 'pages/training-camp-module/my/release-poll', // 我管理-发布投票
                 'pages/training-camp-module/my/learning-goals', // 我管理-学习目标
+                /* 个人中心 */
+                'pages/user-module/mine',
+                'pages/user-module/mine-edit',
+                'pages/user-module/mine-edit-phone',
+                'pages/user-module/mine-edit-email',
+                'pages/user-module/mine-edit-interest',
+                'pages/user-module/mine-edit-target',
+                'pages/user-module/mine-edit-status',
+                'pages/user-module/mine-feedback',
+                'pages/user-module/skill-board',
+                'pages/user-module/lesson-list',
+                'pages/user-module/apply-for-test',
+                'pages/user-module/score-detail',
+                'pages/user-module/score-rules',
+                'pages/user-module/mine-collect',
+                /* 注册模块 */
+                'pages/registered-module/weclome',
+                'pages/registered-module/interest-select',
+                'pages/registered-module/recommend',
+                /* 其他模板 */
+                'pages/other-module/work-template',
+                'pages/other-module/job-skills',
+                'pages/other-module/community',
             ],
             window: {
                 navigationStyle: 'custom',
@@ -219,8 +213,8 @@
         onLaunch(option) {
             let {scene: sceneID, path, query} = option
             const mDictionary = {
-                'pages/LessonForAndroid/index': shareDictionary.SHARE_TEAM,
-                'pages/Lesson/index': shareDictionary.SHARE_TEAM,
+                'pages/course-module/lesson-for-android': shareDictionary.SHARE_TEAM,
+                'pages/course-module/lesson': shareDictionary.SHARE_TEAM,
                 'pages/course-module/course-details?': shareDictionary.SHARE_COURSE,
             }
             store.dispatch(setSceneID(sceneID))

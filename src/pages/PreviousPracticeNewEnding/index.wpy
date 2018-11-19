@@ -3,7 +3,7 @@
     .ui-header-slot{width: 100%;text-align: center;}
     .ui-practice-end{
         .ui-user{
-            padding:0 40rpx;height: 90rpx;display: flex;align-items: center;position:absolute;top:176rpx;left: 0;z-index: 2;
+            padding:0 40rpx;height: 90rpx;display: flex;align-items: center;position:absolute;top:146rpx;left: 0;z-index: 2;
             .ui-img{
                 height: 90rpx;display: flex;align-items: center;
                 image{width: 72rpx;height: 72rpx;border-radius: 50%;margin-right: 20rpx}
@@ -27,11 +27,11 @@
             .ui-code{
                 background:  #EBF7FD;height: 912rpx;width: 100%;justify-content: center;border-top-left-radius: @border-radius-16;border-top-right-radius: @border-radius-16;
                 .ui-close{
-                    padding: 20rpx 20rpx 0 0 ;display: flex;justify-content: flex-end;width: 100%;color:@color-white;height: 76rpx;box-sizing:border-box;background: transparent;
+                    padding: 20rpx 20rpx 0 0 ;display: flex;justify-content: flex-end;width: 100%;color:@color-white;height: 76rpx;box-sizing:border-box;background: transparent;position:absolute;
                     .cell-item{width: 56rpx;height: 56rpx;background: @background-gray-cc;color:@color-white;text-align: center;line-height: 56rpx;border-radius: 50%;}
                 }
-                .ui-content{height: 610rpx;
-                    image{width: 100%;height: 100%;}
+                .ui-content{height: 912rpx;
+                    image{width: 100%;height: 912rpx;}
                 }
                 .ui-btn{
                     display: flex;justify-content: center;align-items: center;position: absolute;bottom: 40rpx;left: 50%;transform: translate(-50%);
@@ -47,7 +47,7 @@
     <view catchtouchmove="{{!isLoaded}}">
         <jn-header className="background-transparent"></jn-header>
         <view class="ui-practice-end">
-            <view class="ui-user">
+            <view class="ui-user" style="position:absolute;top:{{headerHeigth}}px">
                 <view class="ui-img">
                     <image src="{{avatar}}" />
                 </view>
@@ -144,6 +144,7 @@
             shareImage: null,
             isShowShare: false,
             isShowShade:false,
+            headerHeigth:68,
             resultObj:{
                 buttonAttr:'',
                 buttonFebackImageURL:'',
@@ -158,20 +159,20 @@
         }
 
         onLoad({senceID, examID}) {
-            this.senceID = senceID
-            this.examID = examID
+            let self = this
+            self.senceID = senceID
+            self.examID = examID
             wx.reportAnalytics('pre_test_end', {
                 username: this.userName,
                 examid: this.examID,
                 channel: this.entrance.mappers[this.entrance.scenceID]
             })
+            self.$apply()
         }
 
         onShow() {
             this.initialize()
                 .catch(error => {
-                    console.log('fail to initialize begging practice', error)
-
                     this.showErrorPage = true
                     this.$apply()
                 })
@@ -179,7 +180,6 @@
 
         onShareAppMessage(res) {
             let self = this
-            console.log(res,'ui-bottom-btnui-bottom-btnui-bottom-btn')
             return {
                 title: self.resultObj.subjectHeading,
                 path: `/pages/PreviousPracticeBeginning/index?examID=${self.examID}`,
@@ -189,7 +189,7 @@
                         withShareTicket: true
                     });
                     self.isShowShade = true
-
+                    self.$apply()
                 },
                 fail: function(res) {
                     return wepy.showToast({
@@ -214,8 +214,7 @@
                     self.resultObj.shareImage = data.shareImage
                     self.resultObj.course = data.course
                     self.resultObj.isNewCourseMap = data.isNewCourseMap
-
-                    this.$apply()
+                    self.$apply()
                     wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
                 })
 
@@ -233,7 +232,7 @@
                 let url = isNewCourseMap
                     ? `/pages/course-module/course-new-details?id=${courseID}`
                     : `/pages/course-module/course-details?id=${courseID}&name=${courseName}&courseName=${courseName}`
-
+                self.$apply()
                 wepy.navigateTo({url: url})
             } catch (err) {
                 console.log('handle attend classes err', err)
@@ -284,15 +283,17 @@
                             success(res) {
                                 self.isShowShade = false
                                 self.getCourseDetail()
+                                self.$apply()
                             },
                             fail(res) {
                                 return wepy.showToast({
-                                    title:  `保存失败,${res}`,
+                                    title:  `保存失败,没有授权权限`,
                                     icon: 'none'
                                 })
                             },
                             complete(res) {
                                 self.isShowShade = false
+                                self.$apply()
                             }
                         })
                     },fail:function(res){
@@ -305,7 +306,6 @@
         events = {
             'on-alert-visible': (data) => {
                 let self = this
-
                 self.isShowShare = data.isShow
                 self.$apply()
             },
@@ -319,6 +319,11 @@
                     type: '分享图片'
                 })
             },
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
         }
     }
 </script>

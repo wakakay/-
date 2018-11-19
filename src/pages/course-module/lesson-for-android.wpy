@@ -160,7 +160,7 @@
 <script>
     import wepy from 'wepy'
     import Toast from "wepy-com-toast"
-    import {card as cardApi, course as courseApi, push as pushApi, share as shareApi, report as reportApi} from '../../api'
+    import {card as cardApi, course as courseApi, push as pushApi, share as shareApi, report as reportApi} from '../../api/index'
     import {getStore, connect} from 'wepy-redux'
     import {
         setName, setEquipmentPhone, fetchToken
@@ -243,7 +243,7 @@
     import Poll from '../../components/Poll/index'
     import MultiplePoll from '../../components/MultiplePoll/index'
 
-    import {NetworkError, CustomError, LessonPermissionDenyError} from '../../errors'
+    import {NetworkError, CustomError, LessonPermissionDenyError} from '../../errors/index'
     import {
         showErrorPage,
         sleep,
@@ -255,7 +255,7 @@
         serialize,
         initializationDeligate,
         parsePercentageForPoll
-    } from '../../utils'
+    } from '../../utils/index'
     import cardShareImage from '../../components/shareImages/card'
 
     const UNLOCK_WITH_NO_PERMISSION_IMAGE = '../../assets/img/icon-choice-toast.svg'

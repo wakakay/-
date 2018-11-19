@@ -42,7 +42,7 @@ export const fetchSharePageData = ({ token, giftID = '', courseID = '', senceID 
 }
 
 export const fetchLargessData = ({ token, giftID = '', courseID = '', senceID = '' }) => {
-        if ('defaultToken' === token || null == token || ''===token) throw new UnAuthenticationError()
+        //if ('defaultToken' === token || null == token || ''===token) throw new UnAuthenticationError()
         return wepy.request({
                 url: `${config.baseUrl}MVP3/sharePageByProgressBySenceByBonus?token=${token}&courseID=${courseID}&senceID=${senceID}&giftID=${giftID}`,
                 method: 'POST'

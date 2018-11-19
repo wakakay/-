@@ -9,21 +9,9 @@
             image{width:300rpx;height:80rpx;}
         }
 
-        .ui-swiper-list{
+        .ui-banner{
             width:100%;height:660rpx;margin-top:96rpx;
-            .ui-item{
-                image{width:100%;height:660rpx;}
-                .ui-content{padding:0 88rpx;}
-                .cell-title{padding-bottom:32rpx;font-size:40rpx;color:@color-white;text-align:center;line-height:56rpx;}
-                .cell-subtitle{font-size:30rpx;color:#DDE5E7;line-height:48rpx;}
-            }
-        }
-        .ui-indicator-list{
-            width:100%;height:32rpx;margin:18rpx 0;
-            text{
-                display:inline-block;width:16rpx;height:16rpx;margin:0 13rpx;background-color:rgba(255,255,255,.5);border-radius:50%;transition:all .2s ease;
-                &.active{background-color:@background-white;}
-            }
+            image{width:100%;height:660rpx;}
         }
 
         .ui-button{
@@ -43,25 +31,8 @@
             <image mode="aspectFill" src="https://wx-small.runwise.cn/image/imageID061b59d5c03447b125c286172780.png"></image>
         </view>
 
-        <swiper class="ui-swiper-list"
-                circular
-                current="{{swiperCurrent}}"
-                bindchange="getSwiperChange">
-            <repeat for="{{swiperList}}" key="index" index="index" item="item">
-                <swiper-item>
-                    <view class="ui-item">
-                        <view class="ui-thumb">
-                            <image mode="aspectFit" src="{{item.url}}"></image>
-                        </view>
-                    </view>
-                </swiper-item>
-            </repeat>
-        </swiper>
-
-        <view class="ui-indicator-list main-center">
-            <repeat for="{{swiperList}}" key="index" index="index" item="item">
-                <text :class="{'active': index===swiperCurrent}"></text>
-            </repeat>
+        <view class="ui-banner">
+            <image mode="aspectFit" src="{{banner}}"></image>
         </view>
 
         <view class="ui-button main-center" :class="{'is-iphonex': isIphonex}">
@@ -98,8 +69,8 @@
 
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
-            swiperCurrent: 0,
             swiperList: [],
+            banner: null,
             isClick: false
         }
 
@@ -111,7 +82,7 @@
                 imageType: 'useronboarding'
             }
             fetchRegistered.weclomeSwiper(postData).then((respone) => {
-                self.swiperList = respone.imageList
+                self.banner = respone.imageList[0].url
                 self.$apply()
             }).catch(error => {
 
@@ -125,20 +96,10 @@
 
         methods = {
             /**
-             * 轮番图切换
-             * @param event
-             */
-            getSwiperChange(event) {
-                let self = this
-                self.swiperCurrent = event.detail.current
-                self.$apply()
-            },
-            /**
              * 微信授权登录
              */
             getRegistered(event) {
                 let self = this
-                console.log(event)
                 let {detail: {errMsg}} = event
 
                 wx.reportAnalytics('welcome_register', {

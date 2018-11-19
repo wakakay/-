@@ -206,9 +206,9 @@
                     role: this.role,
                     nickname: this.userName,
                     channel: this.entrance.mappers[this.entrance.scenceID],
-                    courseid: courseID,
-                    senceid: senceID,
-                    buttonstatus: buttonStatus,
+                    courseid: dataset.courseid,
+                    senceid: dataset.item.id,
+                    buttonstatus: dataset.item.buttonStatus,
                     source:'系列详情'
                 })
             }

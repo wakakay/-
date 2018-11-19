@@ -20,6 +20,10 @@ const getTracker = () => {
 }
 
 const getShareHuilder = (entr, code) => {
+    if (!entr || !code) {
+        return
+    }
+
     let data = {
         "utm_source" : code,
         "utm_medium" : entr
@@ -102,7 +106,7 @@ export const getUserInfo = () => {
         let entr = getStore().getState().entrance.scenceID + ''
         let path = getStore().getState().entrance.path
         let query = getStore().getState().entrance.query // 二维码进来的参数
-        console.log('页面路径', query)
+
         switch (entr) {
             case '1005':
             case '1006':
@@ -149,7 +153,7 @@ export const getUserInfo = () => {
                     urlEnd = '&source=preTestShare' // 学前测评
                 } else if (path === 'pages/user-module/skill-board') {
                     urlEnd = '&source=skillBoard' // 即能看板
-                } else if (path === 'pages/Lesson/index' || path === 'pages/LessonForAndroid/index' || path === 'pages/course-module/course-learning') {
+                } else if (path === 'pages/course-module/lesson' || path === 'pages/course-module/lesson-for-android' || path === 'pages/course-module/course-learning') {
                     urlEnd = '&source=CardsShare' // 微课分享
                 } else {
                     urlEnd = '&source=QRcode' // 二维码分享

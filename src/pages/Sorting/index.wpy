@@ -20,8 +20,6 @@
         </view><!-- wrapper -->
 
     </view><!-- article -->
-    <!-- capture-catch:touchstart="handleTouchBoxStart" capture-catch:touchmove="handleTouchBoxMove" capture-catch:touchend="handleTouchBoxEnd" -->
-    <!-- {{ 0===yTouchStart? 'display: flex;': 'transform: translate3d(0,'+ (yTouchDistance > 0? yTouchDistance: 0) + 'px, 0);' }} -->
     <view hidden="{{ !isModalShow }}" class="flex-end-column sorting-response-box-wrapper" @tap.stop="handleCloseModal">
         <view
             class="flex-space-between-column sorting-response-box {{ isFeedbackBoxShow? 'open': 'close' }} {{ 0===yTouchStart? 'touchend': 'touching' }} {{feedbackType=='right'?'sorting-response-right':'sorting-response-wrong'}}"
@@ -153,25 +151,21 @@
 
             handleCatchInvalidModalTouch() {
                 return false
-            }, // end handleCatchInvalidModalTouch
-
+            },
             handleTouchBoxStart({changedTouches: [{clientY}]}) {
                 this.yTouchStart = clientY
-            }, // end handlef
-
+            },
             handleTouchBoxMove({changedTouches: [{clientY}]}) {
                 this.yTouchDistance = clientY - this.yTouchStart
-            }, // end handleTouchBoxMove
-
+            },
             handleTouchBoxEnd() {
                 this.yTouchStart = 0
                 this.yTouchDistance = 0
-            }, // end handleTouchBoxEnd
-
+            },
             handleCloseModal() {
                 this.triggerFeedback(false)
-            } // end handleCloseModal
-        } // end methods
+            }
+        }
 
         initialize() {
             const {
@@ -225,9 +219,6 @@
             this.orderList = orderList
             this.mapper = mapper
 
-            /*wepy.setNavigationBarTitle({
-                title: `即学即练 ${this.currentPracticeOffset - 0 + 1}/${this.practiceCount}`
-            })*/
             this.headerTitle = `即学即练 ${this.currentPracticeOffset - 0 + 1}/${this.practiceCount}`
             wepy.$instance.globalData.getLoadHuilder({pageTheme: currentName}) // ga统计
             this.$apply()
@@ -248,17 +239,14 @@
                         this.isFeedbackBoxShow = mFlag
                         this.$apply()
                     })
-            } // end if
+            }
 
             this.isFeedbackBoxShow = mFlag
-            return sleep(0.2)
-                .then(() => {
+            return sleep(0.2).then(() => {
                     this.isModalShow = mFlag
                     this.$apply()
                 })
-
-        } // end triggerFeedback
-
+        }
     }
 </script>
 

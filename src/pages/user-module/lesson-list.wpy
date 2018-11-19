@@ -144,9 +144,8 @@
 			handleSencePage({currentTarget:{dataset:{courseID, senceID}}}){
                 let isNewSence = this.isNewSenceMap[senceID]
                 navigateToLesson({courseID, senceID, isNewSence})
-				//this.$navigate(this.platform === 'ios' ? '/pages/Lesson/index' : '/pages/LessonForAndroid/index', {senceID: senceID, courseID: courseID,token: this.token})
 			}
-		} // end methods
+		}
 
 		gainAllList() {
 			senceApi.myFinishSenceList({

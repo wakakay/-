@@ -1,5 +1,4 @@
 <template>
-    <!-- <form catchsubmit="handleSavePushCode" report-submit>  -->
     <mloading wx:if="{{ !isLoaded }}"/>
     <!-- 授权层 -->
     <view hidden="{{ !isRulesModalShow }}" class="flex-space-between-column payforlesson__rule__wrapper"
@@ -12,10 +11,10 @@
                 </text>
 
                 <button class="payforlesson__rule__btn" @tap.stop="handleToggleRulesModal"> 知道了</button>
-            </view><!-- body -->
+            </view>
 
-        </view><!-- rule -->
-    </view><!-- wrapper -->
+        </view>
+    </view>
 
     <view class="largess-article" wx:if="{{ isLoaded }}">
         <jn-header title="赠一得一" className="background-grass"></jn-header>
@@ -28,7 +27,7 @@
                 <view class="largess-article__fixed-block__tags-wrapper__tag largess-article__header-block__tag"> {{
                     skillText }}
                 </view>
-            </view><!-- header-block -->
+            </view>
             <view wx:for="{{ myLearnList }}" wx:key="{{ index }}" class="largess-article__header-caption"> {{ item }}
             </view>
             <view class="flex-space-between-row largess-article__header-footer">
@@ -38,8 +37,8 @@
                 <text class="largess-article__header-footer__span"> {{ learnUserCount }} 人学过</text>
                 <text class="largess-article__header-footer__price"> 原价 ¥{{ price }}</text>
                 <text class="largess-article__header-footer__free-span"> 免费</text>
-            </view><!-- footer -->
-        </view><!-- end largess-article__header -->
+            </view>
+        </view>
 
         <view wx:if="{{ isShowTimeLess }}" class="flex-space-between-column largess-article-image-box__inner-block">
             <text class="largess-article-image-box__inner-block__tips"> 赠课有效时间</text>
@@ -52,8 +51,8 @@
                 <text class="largess-article-image-box__inner-block__time__black-span">分</text>
                 <text class="largess-article-image-box__inner-block__time__red-span">{{ deltaSecond }}</text>
                 <text class="largess-article-image-box__inner-block__time__black-span">秒</text>
-            </view><!-- time -->
-        </view><!-- inner-block -->
+            </view>
+        </view>
 
         <view wx:if="{{ false&&'gifter'===urole }}" class="flex-space-between-row largess-article__accouncement-box">
             <image class="largess-article__accouncement-box__icon"
@@ -62,7 +61,7 @@
             <view class="largess-article__accouncement-box__span">赠送本课最多可赚
                 <text class="largess-article__accouncement-box__red-span">{{ maxBonus }}即能币 = {{ maxMoney }}元</text>
             </view>
-        </view><!-- box -->
+        </view>
 
         <view wx:if="{{ 'receiver'===urole&&!isShowTimeLess }}" class="largess-article__accouncement-tips">{{
             computedTips }}
@@ -73,19 +72,27 @@
             ，并有机会获得
             <text>即能币奖励</text>
             。好友最多可通过此途径
-            <text>领取2个微课</text>
-            。
+            <text>领取2个微课</text>。
         </view>
 
         <button wx:if="{{ 'receiver'===urole }}" class="largess-article__btn {{ computedIsOpacityClass }}"
-                hover-class="largess-article__btn-hover" style="color: white !important;" formType="submit"
-                data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}" data-course-name="{{ courseName }}"
-                data-token="{{ token }}" data-gift-i-d="{{ giftID }}" data-share-image="{{ shareImage }}"
-                data-role="{{ role }}" @tap.stop="handleDeliverOrReceive" data-user-name="{{ userName }}"
-                data-skill-text="{{ skillText }}" disabled="{{ computedBtnIsDisabled }}" data-phone="{{ phone }}"
-                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                @getphonenumber.stop="handleReceiveAndDescryptPhoneNumber"> {{ computeButtonText }}
-        </button><!-- largess-article__btn -->
+                hover-class="largess-article__btn-hover" style="color: white !important;"
+                data-course-i-d="{{ courseID }}"
+                data-sence-i-d="{{ senceID }}"
+                data-course-name="{{ courseName }}"
+                data-token="{{ token }}"
+                data-gift-i-d="{{ giftID }}"
+                data-share-image="{{ shareImage }}"
+                data-role="{{ role }}"
+                data-user-name="{{ userName }}"
+                data-skill-text="{{ skillText }}"
+                data-phone="{{ phone }}"
+                disabled="{{ computedBtnIsDisabled }}"
+                form-type="{{isTokenSet ? 'submit': ''}}"
+                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                bindgetuserinfo="getAuthorize"
+                @tap.stop="handleDeliverOrReceive" > {{ computeButtonText }}
+        </button>
         <button wx:else class="largess-article__btn {{ computedIsOpacityClass }}" data-course-i-d="{{ courseID }}"
                 data-sence-i-d="{{ senceID }}" data-course-name="{{ courseName }}" data-token="{{ token }}"
                 data-gift-i-d="{{ giftID }}" data-share-image="{{ shareImage }}"
@@ -94,7 +101,7 @@
                 data-skill-text="{{ skillText }}"
                 open-type="{{ ('gifterUseUp'===buttonStatus||'gifterTimeOut'===buttonStatus)? 'nil': 'share' }}"
                 formType="submit" disabled="{{ computedBtnIsDisabled }}"> {{ computeButtonText }}
-        </button><!-- largess-article__btn -->
+        </button>
 
         <view hidden="{{ 'receiverGet2SenceNoThisGiftSence'===buttonStatus }}"
               class="flex-space-between-row largess-article__illustrate">
@@ -102,14 +109,14 @@
             <image @tap.stop="handleToggleRulesModal" class="largess-article__illustrate__icon"
                    src="http://wx-small.runwise.cn/image/imageID42e0ad57e1e42c81bb28d8aab121.png"
                    mode="scaleToFill"></image>
-        </view><!-- illustrate -->
+        </view>
 
         <view class="largess-article__share-moments" @tap.stop="handleShareMoments" data-course-i-d="{{ courseID }}"
               data-sence-i-d="{{ senceID }}" data-gift-i-d="{{ giftID }}">
             <text class="largess-article__share-moments__text">分享到朋友圈</text>
             <image class="largess-article__share-moments__icon" mode="scaleToFill"
                    src="../../assets/img/icon-largess-arrow-right.png"></image>
-        </view><!-- share-moments -->
+        </view>
 
         <view hidden="{{ 'receiverGet2SenceNoThisGiftSence'===buttonStatus }}" class="largess-article__deadline gg">
             <text></text>
@@ -125,7 +132,7 @@
                     <image class="largess-article__footer__friend-row__avatar" src="{{ item.avatarUrl }}"
                            mode="scaleToFill"></image>
                     <text class="largess-article__footer__friend-row__name"> {{ item.nickName }}</text>
-                </view><!-- largess-article__footer__friend-row__avatar-wrapper -->
+                </view>
                 <view class="course__section-cell__progress-wapper largess"
                       :class="{cover: ''!==item.senceFinishCount}">
                     <view percent="{{ item.percent }}" class="course__section-cell__progress" stroke-width="4"
@@ -135,14 +142,11 @@
                     </view>
                 </view>
                 <text class="largess-article__footer__friend-row__avatar__date"> {{ item.createTime }}</text>
-            </view><!-- end largess-article__footer__friend-row -->
-        </view><!-- end largess-article__footer -->
+            </view>
+        </view>
 
-        <canvas canvas-id="draw-sharing"
-                style="border: 1px solid yellow; box-sizing: border-box; width: {{ canvasWindowWidth }}px; height: {{ canvasWindowHeight }}px; position: absolute; top: 0; left: -150%; background-color: #B2CED6; display: block;"></canvas>
-
-    </view><!-- end largess-article -->
-    <!-- </form>   -->
+        <canvas canvas-id="draw-sharing" style="border: 1px solid yellow; box-sizing: border-box; width: {{ canvasWindowWidth }}px; height: {{ canvasWindowHeight }}px; position: absolute; top: 0; left: -150%; background-color: #B2CED6; display: block;"></canvas>
+    </view>
 </template>
 
 <script>
@@ -224,7 +228,7 @@
             'mloading': Loading,
             AuthorizationModal,
             'jn-header': header
-        } // end components
+        }
 
         data = {
             reload: true,
@@ -241,8 +245,7 @@
             isShowTimeLess: true, // 是否显示过期时间
             localComments: '',
             commentsAutoFocus: false,
-            buttonStatus: 'share', // gifterNotBeginShare未赠送 gifterShareNotReceive已送出未有人领取 gifterShare已送出正常情况,小于10人领取 gifterUseUp用完机会耗尽 gifterTimeOut已过期
-            // receiverNotOneReceive收到邀请但还没有人领取, 就是第一个 receiverOpenSence已有人领取但受赠者还没领取 receiverGetThisCourse 接受邀请且已经开始学习 receiverHadLearnFinishThisCourse接受邀请且已经开始学习（学完） receiverHadPayThisCourse 受赠者已购买过 receiverGet2Course 获赠机会已用尽 receiverUseUp已有10人领取 receiverTimeOut领取有效期已过  receiverGet2SenceNoThisGiftSence 受赠人，已领取了2个微课。按钮文案(打开即能，赠一得一),受赠人转换为赠送人 重load
+            buttonStatus: 'share',
             giftRuleList: [],
             maxMoney: 0, // 最大兑换金额
             maxBonus: 0, // 最大兑换积分
@@ -291,7 +294,7 @@
             deltaMinute: 0,
             deltaSecond: 0,
             isNewSenceMap: {}, // 进入微课的新老界面判断
-        } // end data
+        }
 
         computed = {
             computedIsDeadlineShow() {
@@ -323,7 +326,7 @@
                 if ('gifterTimeOut' === this.buttonStatus || 'gifterUseUp' === this.buttonStatus) return true
                 return false
             }
-        } // end computed
+        }
 
         methods = {
             handleRefuseTap() {
@@ -332,8 +335,31 @@
             handleToggleRulesModal() {
                 this.isRulesModalShow = !this.isRulesModalShow
             },
-            handleAuthorizationSuccess() {
-                this.initialize(this.giftID)
+            /**
+             * 授权登录信息
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getAuthorize(event) {
+                let self = this
+                let {detail: {errMsg}, currentTarget: {dataset:{phone: mPhone, courseID, senceID, buttonStatus, giftID, resume = 'NO'}}} = event
+
+                if ('defaultToken' !== self.token) {
+                    return
+                }
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+                }).then((respone) => { // 授权成功
+                    let isNewSence = this.isNewSenceMap[senceID]
+                    return redirectToLesson({courseID, senceID, resumeLastRead: 'NO', isNewSence})
+                }).catch(error => { // 拒接授权
+
+                })
             },
             handleDeliverOrReceive(event) {
                 let {currentTarget: {dataset: {phone: mPhone, courseID, senceID, buttonStatus, giftID, resume = 'NO'}}} = event
@@ -352,72 +378,67 @@
 
                 if (-1 === this.buttonStatus.indexOf('receiver')) return false // 不是receiver角色
 
-                if (['receiverOpenSence', 'receiverNotOneReceive'].some(item => item === this.buttonStatus)) return Promise.all([wepy.showToast({
-                    title: '正在加载',
-                    icon: 'loading',
-                    mask: true
-                }), shareApi.reportReceiver({token: this.token, giftID: this.giftID})])
-                    .then(([_, {courseID, senceID, lockStatus}]) => {
+                if (['receiverOpenSence', 'receiverNotOneReceive'].some(item => item === this.buttonStatus)) {
+                    return Promise.all([wepy.showToast({
+                        title: '正在加载',
+                        icon: 'loading',
+                        mask: true
+                    }), shareApi.reportReceiver({token: this.token, giftID: this.giftID})]).then(([_, {courseID, senceID, lockStatus}]) => {
                         return redirectToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
-                    })
-                    .then(({errMsg}) => {
+                    }).then(({errMsg}) => {
                         if ('redirectTo:ok' !== errMsg) throw new Error(errMsg)
-                    })
-                    .catch(error => showErrorPage() && console.log('redirect to receive gift', error.toString()))
-                // if ('receiverGet2SenceNoThisGiftSence'===this.buttonStatus) return this.$redirect('/pages/GiftDetail/index')
+                    }).catch(error => showErrorPage() && console.log('redirect to receive gift', error.toString()))
+                }
+
                 if ('receiverGet2SenceNoThisGiftSence' === this.buttonStatus) return this.initialize()
+
                 return wx.reLaunch({
                     url: '/pages/course-module/course'
                 }) // 其他状态的receiver直接跳回首页
-            }, // handleDeliver
+            },
             handleReceiveAndDescryptPhoneNumber({currentTarget: {dataset: {courseID, senceID, buttonStatus, giftID, resume = 'NO'}}, detail}) {
-                doDecrpytPhone(detail)
-                    .then(() => {
-                        let gifttext = ''
-                        if ('receiverNotOneReceive' === this.buttonStatus || 'receiverOpenSence' === this.buttonStatus) {
-                            gifttext = 'show'
-                            wx.reportAnalytics('giftreceive', {
-                                role: this.role,
-                                nickname: this.userName,
-                                coursename: this.courseName,
-                                channel: this.entrance.mappers[this.entrance.scenceID]
-                            })
-                        }
+                if ('defaultToken' === this.token) {
+                    return
+                }
+                doDecrpytPhone(detail).then(() => {
+                    let gifttext = ''
+                    if ('receiverNotOneReceive' === this.buttonStatus || 'receiverOpenSence' === this.buttonStatus) {
+                        gifttext = 'show'
+                        wx.reportAnalytics('giftreceive', {
+                            role: this.role,
+                            nickname: this.userName,
+                            coursename: this.courseName,
+                            channel: this.entrance.mappers[this.entrance.scenceID]
+                        })
+                    }
 
-                        if (-1 === this.buttonStatus.indexOf('receiver')) return false // 不是receiver角色
+                    if (-1 === this.buttonStatus.indexOf('receiver')) return false // 不是receiver角色
 
-                        if (['receiverOpenSence', 'receiverNotOneReceive'].some(item => item === this.buttonStatus)) return shareApi.reportReceiver({
+                    if (['receiverOpenSence', 'receiverNotOneReceive'].some(item => item === this.buttonStatus)) {
+                        return shareApi.reportReceiver({
                             token: this.token,
                             giftID: this.giftID
-                        })
-                            .then(({courseID, senceID, lockStatus}) => {
-                                return redirectToLesson({courseID, senceID, resumeLastRead: resume})
-                            })
-                            .then(({errMsg}) => {
-                                if ('redirectTo:ok' !== errMsg) throw new Error(errMsg)
-                            })
-                            .catch(error => showErrorPage() && console.log('redirect to receive gift', error.toString()))
-                        return wx.reLaunch({
-                            url: '/pages/course-module/course'
-                        }) // 其他状态的receiver直接跳回首页
-
-                    })
-                    .catch(error => console.log('descrypt error', error))
+                        }).then(({courseID, senceID, lockStatus}) => {
+                            return redirectToLesson({courseID, senceID, resumeLastRead: resume})
+                        }).then(({errMsg}) => {
+                            if ('redirectTo:ok' !== errMsg) throw new Error(errMsg)
+                        }).catch(error => showErrorPage() && console.log('redirect to receive gift', error.toString()))
+                    }
+                    return wx.reLaunch({
+                        url: '/pages/course-module/course'
+                    }) // 其他状态的receiver直接跳回首页
+                }).catch(error => console.log('descrypt error', error))
             },
             handleInputWords(event) {
                 this.isEditable = !this.isEditable
                 if (this.isEditable) return this.commentsAutoFocus = true
                 if (this.myLearnList.length === this.myLearnListScourceLength) return this.myLearnList = this.myLearnList.concat(this.localComments)
                 this.myLearnList.splice(-1, 1, this.localComments)
-            }, // end handleINputWords
-            handleTextAreaBlur({detail}) {
-                // let inputArr = this.localComments.split(' ')
-                // if (inputArr.length) this.myLearnList = inputArr.map(item => ({name: item}))
-            }, // end handleTextAreaBlur
+            },
             handleTextAreaInput({detail: {value}}) {
                 if ('' === value) return false
                 this.localComments = value
-            }, // end handleTextAreaInput
+            },
             handleShareMoments({currentTarget: {dataset: {courseID, senceID, giftID}}}) {
                 return false
                 shareApi.sendShareMessage({token: this.token, courseID, senceID, giftID})
@@ -438,35 +459,22 @@
                         canvasID: 'draw-sharing'
                     }))
                     .catch(error => console.log('头像下载失败', error))
-
-            } // end handleShareMoments
-        } // end methods
+            }
+        }
 
         onLoad({courseID = 'defaultCourseID', senceID = 'defaultSenceID', giftID = ''}) {
             this.courseID = courseID
             this.senceID = senceID
             this.giftID = giftID
-            console.log(88, this.senceID, this.courseID, this.giftID)
-            wepy.$instance.globalData.getLoadHuilder() // ga统计
-        } // end onLoad
+            this.initialize()
+        }
 
         onShow() {
-            console.log('isTokenSet', this.isTokenSet)
-            initializationDeligate({initializeFunc: this.initialize.bind(this, this.giftID)})
-                .catch(error => {
-                    'login:no' === error && new UnAuthenticationError()
-                })
-            // getStorageAsync({
-            //   key: 'token'
-            // })
-            //   .then(token => store.dispatch(setToken({ status: 'success', response: { token } })))
-            //   .then(() => {
-            //     if (!this.isTokenSet) throw new Error('没有正常的token') // 没有token不加载数据
-            //     this.initialize(this.giftID).catch(error => showErrorPage() && console.log('initialize error', error))
-            //   })
-            //   .catch(error => console.log('fail to initialize largess', error))
-
-        } // end onShow
+           /* console.log('isTokenSet', this.isTokenSet)
+            initializationDeligate({initializeFunc: this.initialize.bind(this, this.giftID)}).catch(error => {
+                'login:no' === error && new UnAuthenticationError()
+            })*/
+        }
 
         onUnload() {
             if (this.timer) {
@@ -474,7 +482,7 @@
                 this.timer = null
             }
             this.isLoaded = false
-        } // end onUnload
+        }
 
         onShareAppMessage({target: {dataset: {token, courseID, senceID, giftID, shareImage, role, skillText, userName, courseName, channel, userrole}}}) {
             console.log('shareImage', shareImage)
@@ -509,29 +517,25 @@
                         channel: channel,
                         type: shareDictionary.SHARE_COUPON.type,
                     });
-
-
                 },
                 fail: function (res) {
                     // 转发失败
                     console.log('转发失败')
                 }
-            } // end return
-        } // end onShareAppMessage
+            }
+        }
 
-        initialize(giftID = '') {
+        initialize() {
             let request = {token: this.token}
-            if (giftID.length) request.giftID = giftID
+            if (this.giftID) request.giftID = this.giftID
             if (this.courseID) request.courseID = this.courseID
             if (this.senceID) request.senceID = this.senceID
-            giftID && console.log(`receive gift: ${giftID}`)
+
             console.log('请求:', request)
             return shareApi.fetchLargessData(request)
                 .then(({courseType, avatarUrl, buttonMessage, buttonStatus, courseName, giftID, image, learnUserCount, learnUserList, minuteTime, myFriendList, myFriendListTopText, myLearnList, nickName, role, shareImage, shareStatus, skillText, splitText, star, couponCount, gradeText, price, timeLess, isShowTimeLess, giftRuleList, maxMoney, maxBonus, courseID, senceID, isNewSenceMap}) => {
                     let mNavigaterTitle = 'gifter' === role ? '邀请好友一起学习' : `${nickName}赠送你一个好课,立即领取！`
-                    // wepy.setNavigationBarTitle({
-                    //   title: mNavigaterTitle
-                    // })
+
                     this.$invoke('jn-header', 'setTitle', mNavigaterTitle)
                     this.isNewSenceMap = isNewSenceMap
                     this.courseID = courseID
@@ -565,6 +569,8 @@
                     this.maxBonus = maxBonus
                     this.isLoaded = true
                     this.isShowTimeLess && null === this.timer && this.calculateDeltaTime(this.timeLess)
+
+                    wepy.$instance.globalData.getLoadHuilder({pageTheme: this.courseName}) // ga统计
                     console.log(`isShowTimeLess: ${this.isShowTimeLess}, timeLess: ${this.timeLess}, buttonStatus: ${this.buttonStatus}`)
                     this.$apply()
                 })
@@ -590,9 +596,8 @@
                       }
 
                     })
-                    // this.$invoke('CustomNavigator', 'setOpenType', 1 === getCurrentPages().length ? 'reLaunch' : 'navigateBack')
-                }) // end then
-        } // end initialize
+                })
+        }
 
         doAuthorization() {
             return wepy.showModal({
@@ -610,7 +615,7 @@
                     console.log('setting flag', flag)
                     if (!flag) throw new RejectAuthenticationError()
                 })
-        } // edn doAuthorization
+        }
 
         convertToRichText(pString) {
             const mTextList = [].concat(pString.split('==='))
@@ -620,7 +625,7 @@
                 attrs: {class: -1 === item.indexOf('#') ? 'largess-article__rules-wrapper__block__caption__common-text' : 'largess-article__rules-wrapper__block__caption__red-text'},
                 children: [{type: 'text', text: item.replace('#', '')}]
             }))
-        } // end convertToRichText
+        }
 
         drawShareCard({
                           contentImage = 'http://wx-small.runwise.cn/image/imageID7e1f421337e4409cf81f0c527287.png',  // 海报底图
@@ -722,16 +727,15 @@
                         })({content: `¥ ${this.price}`})
 
                         ctx.draw(false, () => wepy.hideLoading().then(() => resolve(true)))
-                    }) // end then
-            }) // end promise
-        } // end drawShareCard
+                    })
+            })
+        }
 
         calculateDeltaTime(pTimeLess) {
             let mFunc = () => (this.timer = setTimeout(() => {
                 let mDeltaTimestamp = Date.now() - pTimeLess
                 if (0 === mDeltaTimestamp) return false
-                // console.log(`timeLess: ${this.timeLess}, now: ${Date.now()}`)
-                // console.log(pTimeLess - Date.now())
+
                 let {_, hour, minute, second} = formatTimestampForHours(Math.abs(pTimeLess - Date.now()))
                 this.deltaDay = _
                 this.deltaHour = this.preFixNumber(hour, 2)
@@ -741,12 +745,11 @@
                 mFunc()
             }, 1000))
             mFunc()
-        } // end calculateDeltaTime
+        }
 
         preFixNumber(num, n) {
             return (Array(n).join('0') + num).slice(-n)
-        } // preFixNumber
-
+        }
     }
 </script>
 

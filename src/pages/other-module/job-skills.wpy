@@ -1,7 +1,7 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
     .ui-job-skills-box{
-        box-sizing:border-box;width:100%;height:100%;padding:4rpx 36rpx;
+        box-sizing:border-box;width:100%;padding:4rpx 36rpx 64rpx;
         .ui-item{
             padding-top:80rpx;
             .ui-title{

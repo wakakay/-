@@ -18,13 +18,13 @@ export const ROUTERS = {
     'pages/course-module/course-details': {screenName: '课程详情页'}, // 需要记录哪门子课程详情
     'pages/course-module/assortment': {screenName: '系列详情页'}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习'}, // 需要记录哪门子的微课
-    'pages/Lesson/index': {screenName: '微课学习'},
-    'pages/LessonForAndroid/index': {screenName: '微课学习'},
+    'pages/course-module/lesson': {screenName: '微课学习'},
+    'pages/course-module/lesson-for-android': {screenName: '微课学习'},
     'pages/Review/index': {screenName: '微课回顾'},
     'pages/course-module/course-discuss': {screenName: '微课即练评论'}, // 需要记录哪门子的微课
     'pages/course-module/course-complete': {screenName: '微课学习成果'}, // 需要记录哪门子的微课
     'pages/course-module/course-level-instructions': {screenName: '技能等级说明'},
-    'pages/Evaluation/index': {screenName: '微课评价'}, // 需要记录哪门子的微课
+    'pages/course-module/course-evaluation': {screenName: '微课评价'}, // 需要记录哪门子的微课
     'pages/PayForLesson/index': {screenName: '微课支付'}, // 需要记录哪门子的微课
     'pages/SingleSelection/index': {screenName: '微课即练'}, // 需要记录哪门子的微课
     'pages/Sorting/index': {screenName: '微课即练'}, // 需要记录哪门子的微课?

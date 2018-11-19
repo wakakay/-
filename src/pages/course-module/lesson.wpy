@@ -177,7 +177,7 @@
 <script>
     import wepy from 'wepy'
     import Toast from "wepy-com-toast"
-    import {card as cardApi, course as courseApi, push as pushApi, share as shareApi, report as reportApi} from '../../api'
+    import {card as cardApi, course as courseApi, push as pushApi, share as shareApi, report as reportApi} from '../../api/index'
     import {getStore, connect} from 'wepy-redux'
     import {
         setName, setEquipmentPhone, fetchToken
@@ -261,7 +261,7 @@
     import MultiplePoll from '../../components/MultiplePoll/index'
     import cardShareImage from '../../components/shareImages/card'
 
-    import {NetworkError, CustomError, LessonPermissionDenyError, UnAuthenticationError} from '../../errors'
+    import {NetworkError, CustomError, LessonPermissionDenyError, UnAuthenticationError} from '../../errors/index'
     import {
         showErrorPage,
         sleep,
@@ -272,7 +272,7 @@
         redirectToPractice,
         initializationDeligate,
         parsePercentageForPoll
-    } from '../../utils'
+    } from '../../utils/index'
 
     const UNLOCK_WITH_NO_PERMISSION_IMAGE = '../../assets/img/icon-choice-toast.svg'
     const UNLOCK_WITH_NO_PERMISSION_TIPS = 'no way'
@@ -869,10 +869,10 @@
                     })
             }, // end shareCard
             anchorShow(index) {
-                store.dispatch(setAnchorFooterShown({componentOffset: index}))
+                store.dispatch(setAnchorFooterShown({componentOffset: lesson}))
             },// end anchorShow
             anchorHide(index) {
-                store.dispatch(setAnchorFooterHidden({componentOffset: index}))
+                store.dispatch(setAnchorFooterHidden({componentOffset: lesson}))
             }, // end anchorHide
             reportCardScore(blob) {
                 let mBlob = Object.keys(blob).reduce((total, current) => 'string' === typeof total ? {
@@ -887,7 +887,7 @@
                 store.dispatch(windUpScoreForSence({
                     token: this.token,
                     senceID: this.senceID,
-                    cardID: this.cards[index]['id']
+                    cardID: this.cards[lesson]['id']
                 }))
                     .catch(error => console.log('error', error))
             }, // end windUp
@@ -899,7 +899,7 @@
                     let nextState = this.previewCards
                     let totalBallots = this.previewCards[componentOffset]['select'].reduce((total, current) => total + current.ballot, 0)
                     nextState[componentOffset]['select'] = this.previewCards[componentOffset]['select'].map(item => ({...item, ballot: item.id === optionID ? item.ballot + 1 : item.ballot, percentage: item.id === optionID ? parsePercentageForPoll(item.ballot + 1, totalBallots)(1) : parsePercentageForPoll(item.ballot, totalBallots)(1), selected: false }))
-                    const mFirstAmount = nextState[componentOffset]['select'].reduce((total, current, index) => total - (0 === index ? 0 : current.percentage), 100)
+                    const mFirstAmount = nextState[componentOffset]['select'].reduce((total, current, index) => total - (0 === lesson ? 0 : current.percentage), 100)
                     nextState[componentOffset]['select'][0]['percentage'] = mFirstAmount
                     nextState[componentOffset]['select'].find(option => option.id === optionID)['selected'] = true
                     nextState[componentOffset]['isDone'] = true

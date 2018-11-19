@@ -90,7 +90,7 @@
         }
 
         .ui-comments-box{
-            background-color:#fff;
+            background-color:#fff;padding-bottom:20rpx;
             .ui-comments-list{height:400rpx}
             .ui-swiper{
                 background-color:#fff;padding-right:12rpx;box-sizing:border-box;
@@ -138,7 +138,7 @@
                 .ui-container{height:308rpx;}
             }
             .ui-container{
-                width:100%;height:240rpx;padding:0 32rpx;background-color:rgba(255,255,255,.9);position:fixed;left:0;bottom:0;transform:translateY(400rpx);transition:all .5s ease-in-out;
+                width:100%;height:240rpx;padding:0 32rpx;background-color:rgba(255,255,255,.9);position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
                 &.is-fixed{transform:translateY(0);}
             }
             .ui-text{
@@ -153,7 +153,7 @@
 </style>
 
 <template>
-
+    <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <scroll-view
         scroll-y
         enable-back-to-top
@@ -250,7 +250,7 @@
         </view>
 
         <view class="ui-title" wx:if="{{courseDetail.feedbackList.length}}">精选评价</view>
-        <view class="ui-comments-box">
+        <view class="ui-comments-box" wx:if="{{courseDetail.feedbackList.length}}">
             <swiper class="ui-comments-list"
                 next-margin="28rpx" previous-margin="38rpx">
                 <block wx:for="{{courseDetail.feedbackList}}" 
@@ -321,6 +321,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
+    import AuthorizationModal from '../../components/AuthorizationModal/index'
     import {registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
@@ -357,6 +358,7 @@
             targetScroll: 0,
             isLoaded: false,
             isMore: false, // 是否展示更多概述
+            shareSenceID: null,
             paramsInfo: {}, // 接受地址栏传进来的值
             courseDetail: {}
         }
@@ -365,13 +367,18 @@
             let self = this
             self.paramsInfo = parmas
             self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
-        }
-
-        onShow() {
-            let self = this
+            // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
+            let code = getStore().getState().entrance.scenceID
+            console.log('新课程详情', self.isTokenSet, code, parmas)
+            if (self.isTokenSet && code && 1048 === code && parmas.senceID) {
+                self.shareSenceID = parmas.senceID
+            }
             self.initialize()
         }
-
+        onShow() {
+            let self = this
+            self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
+        }
         onReady() {
             let self = this
             wx.createSelectorQuery().select('.ui-course-list').boundingClientRect((rect) => {
@@ -382,7 +389,6 @@
                 self.backgroundHeight = rect.height - 50
             }).exec()
         }
-
         /**
          * 初始化
          */
@@ -398,20 +404,37 @@
                 if (!respone.courseLink) {
                     respone.courseLink = []
                 }
-                _.each(respone.senceList, (item) => {
-                    if ('needPay' === item.buttonStatus) {
+                self.courseDetail = respone
+                _.each(self.courseDetail.senceList, (item) => {
+                    if (!self.isTokenSet) {
+                        item.buttonStatusMsg = '即学'
+                    } else if ('needPay' === item.buttonStatus) {
                         item.buttonStatusMsg = item.sencePrice
                     }
                 })
-                respone.price = parseFloat(respone.price)
-                self.courseDetail = respone
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
+                self.courseDetail.price = parseFloat(self.courseDetail.price)
+
+                // 微课分享进来重定向
+                if (self.shareSenceID) {
+                    let senceItem = _.find(self.courseDetail.senceList, {id: self.shareSenceID})
+                    if ('finish' === senceItem.buttonStatus) {
+                        senceItem.buttonStatus = ''
+                        self.__goToCourseLearning(senceItem)
+                        return
+                    }
+                    if ('needPay' !== senceItem.buttonStatus) {
+                        self.__goToCourseLearning(senceItem)
+                        return
+                    }
+                }
+                self.isLoaded = true
                 self.$apply()
+
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
             }).catch(error => {
                 self.isLoaded = true
             })
         }
-
         /**
          * 去微课学习页面
          * @param item 当前微课的信息
@@ -428,23 +451,27 @@
 
             let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
             let isNewSence = self.courseDetail.isNewSenceMap[senceID]
+            let isRedirectTo = false
+            if (self.shareSenceID) {
+                self.shareSenceID = null
+                isRedirectTo = true
+            }
             if ('needPay' === buttonStatus) {
                 return this.$navigate(`/pages/PayForLesson/index`, {senceID})
             } else {
                 switch (buttonStatus) {
                     case 'finish': // 回顾
                         !item.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
+                            : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence, isRedirectTo})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/PayForLesson/index`, {senceID})
                         break
                     default:
-                        navigateToLesson({courseID, senceID, isNewSence})
+                        navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
                 }
             }
         }
-
         /**
          * 微信点击统计
          * @param senceID
@@ -521,9 +548,13 @@
                 wepy.$instance.globalData.getHuilder('新版课程详情页/为你推荐','click',`${self.courseDetail.name}/${item.courseName}`) // ga点击统计
                 wx.redirectTo({url: url})
             },
+            /**
+             * 前往微课学习
+             * @param event
+             */
             getCourseLearning(event) {
                 let self = this
-                if ('defaultToken' === self.systemInfo.token) {
+                if (!self.isTokenSet) {
                     return
                 }
 
@@ -538,7 +569,7 @@
              */
             getAllPay() {
                 let self = this
-                if ('defaultToken' === self.systemInfo.token) {
+                if (!self.isTokenSet) {
                     return
                 }
 
@@ -554,7 +585,7 @@
                 let self = this
                 let {detail: {errMsg}, currentTarget: {dataset:{item}}} = event
 
-                if ('defaultToken' !== self.systemInfo.token) {
+                if (self.isTokenSet) {
                     return
                 }
                 return new Promise((resolve, reject) => {
