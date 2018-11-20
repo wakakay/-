@@ -246,10 +246,11 @@
             let postData = {
                 courseID: self.courseID,
                 senceID: self.senceID,
-                teamID: 'defaultTeamID',
+                teamID: parmas.teamID || 'defaultTeamID',
                 resumeLastRead: 'NO',
                 source: 'continueList'
             }
+            console.log('微课学习', parmas)
             initializationDeligate({
                 initializeFunc: self.initialize.bind(self,postData)
             }).catch(error => {

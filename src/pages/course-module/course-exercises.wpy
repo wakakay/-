@@ -42,7 +42,7 @@
         <jn-header className="background-transparent">
             <view slot="content" class="ui-progress-box main-center cross-center">
                 <view class="ui-progress">
-                    <view class="cell-current" style="width:20%"></view>
+                    <view class="cell-current" style="width:{{cardCurrent / cardsList.length * 100}}%"></view>
                 </view>
                 <view class="cell-number">{{cardCurrent+1}}/{{cardsList.length}}</view>
             </view>

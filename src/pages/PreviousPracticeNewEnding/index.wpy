@@ -162,12 +162,13 @@
             let self = this
             self.senceID = senceID
             self.examID = examID
+            self.$apply()
+
             wx.reportAnalytics('pre_test_end', {
                 username: this.userName,
                 examid: this.examID,
                 channel: this.entrance.mappers[this.entrance.scenceID]
             })
-            self.$apply()
         }
 
         onShow() {

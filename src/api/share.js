@@ -102,10 +102,10 @@ export const getReviewShare = ({ token, courseID, senceID }) => {
         })
 }
 
-export const getCourseQrCode = ({ token, courseID, width = 120 }) => {
+export const getCourseQrCode = ({ token, courseID, width = 120, senceID }) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
-            url: `${config.baseUrl}common/getImageCodeByCourseID?token=${token}&CourseID=${courseID}&width=${width}`,
+            url: `${config.baseUrl}common/getImageCodeByCourseID?token=${token}&CourseID=${courseID}&width=${width}&senceID=${senceID}`,
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {

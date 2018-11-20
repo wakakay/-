@@ -370,7 +370,8 @@
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let code = getStore().getState().entrance.scenceID
             console.log('新课程详情', self.isTokenSet, code, parmas)
-            if (self.isTokenSet && code && 1048 === code && parmas.senceID) {
+            let isCode = _.indexOf([1047, 1048, 1049, 1089], code)
+            if (self.isTokenSet && code &&  -1 !== isCode && parmas.senceID) {
                 self.shareSenceID = parmas.senceID
             }
             self.initialize()

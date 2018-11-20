@@ -12,7 +12,7 @@
         }
     }
     .ui-empty{width:100%;margin:22rpx auto 120rpx;color:#14292c;font-family:PingFangSC-Regular;font-size:24rpx;opacity:.7;}
-    /* 新人礼包 */
+    /* 新人礼包  */
     .ui-gift{
         width:160rpx;height:160rpx;position:fixed;right:28rpx;bottom:140rpx;z-index:35;
         .cell-icon{

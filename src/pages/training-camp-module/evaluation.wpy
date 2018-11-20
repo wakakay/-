@@ -270,17 +270,9 @@
       },
       handleScore({ currentTarget: { dataset: { score } } }) {
         if (!this.isAbleToEdit) return false
-        this.score = score - 0
-        // this.applcationEvaluation = this.applcationEvaluation.map(item => ({...item, actived: false}))
-        // this.contentEvaluation = this.contentEvaluation.map(item => ({...item, actived: false}))
-        // this.participationEvaluation = this.participationEvaluation.map(item => ({...item, actived: false}))
-        // this.applcationScore = 0
-        // this.contentScore = 0
-        // this.participationScore = 0
-        // for (let mKey in this.optionsMapper) {
-        //   this.optionsMapper[mKey]['actived'] = false
-        // }
-      }, // end handleScore
+        let number = parseInt(score)
+        this.score = number >= 0 ? number : 0
+      },
       handleToggleAnonymity() {
         if(this.isAbleToEdit)
           this.isAnonymous = !this.isAnonymous
@@ -382,34 +374,11 @@
       this.senceID = senceID
       this.teamID = teamID
         wepy.$instance.globalData.getLoadHuilder() // ga统计
-      // senceApi.prepareEvaluation({ courseID, senceID, token: this.token })
-      //   .then(({ extraNeed, applcationEvaluation, contentEvaluation, participationEvaluation, score, comment, isAbleToEdit }) => {
-      //     this.isAbleToEdit = isAbleToEdit
-      //     this.score = score
-      //     this.comment = comment
-      //     this.applcationEvaluation = applcationEvaluation
-      //     this.applcationScore = this.applcationEvaluation.findIndex(item => item.actived) + 1
-
-      //     this.contentEvaluation = contentEvaluation
-      //     this.contentScore = this.contentEvaluation.findIndex(item => item.actived) + 1
-
-      //     this.participationEvaluation = participationEvaluation
-      //     this.participationScore = this.participationEvaluation.findIndex(item => item.actived) + 1
-      //     this.extraNeed = extraNeed
-
-      //     this.$apply()
-      //     console.log('isAbleToEdit', this.isAbleToEdit)
-      //   })
-      //   .catch(error => {
-      //     console.log('get evalutaion error', error)
-      //     showErrorPage()
-      //   })
-
 
       teamApi.getTeamScoreLabel({token:this.token, teamID})
         .then(({ isAnonymous, extraNeed, applcationEvaluation, contentEvaluation, participationEvaluation, score, comment, isAbleToEdit }) => {
           this.isAbleToEdit = isAbleToEdit
-          this.score = score
+          this.score = score || 0
           this.comment = comment
           this.applcationEvaluation = applcationEvaluation
           this.applcationScore = this.applcationEvaluation.findIndex(item => item.actived) + 1

@@ -90,6 +90,7 @@
         data = {
             courseID: 'courseID',
             senceID: 'senceID',
+            teamID: 'defaultTeamID',
             isLoaded: false,
             bigimage: "",
             courseCount: 0,
@@ -149,8 +150,7 @@
             handleStudyAgain(event) {
                 console.log('this.platform', this.platform)
                 let isNewSence = this.isNewSenceMap && this.isNewSenceMap[this.senceID]
-                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, resumeLastRead: 'NO', isNewSence })
-
+                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, teamID: this.teamID, resumeLastRead: 'NO', isNewSence })
             },
             handleShare(event) {
                 shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID}).then(({shareImage, shareImageCode}) => {
@@ -234,8 +234,8 @@
 
         onLoad({courseID, senceID, teamID = 'defaultTeamID'}) {
             console.log(`in review courseID:${courseID}, senceID: ${senceID}`)
+            this.teamID = teamID
             this.initialize({courseID, senceID, teamID})
-
         }
     }
 </script>
