@@ -250,8 +250,7 @@
                 resumeLastRead: 'NO',
                 source: 'continueList'
             }
-            console.log(3444, parmas)
-            console.log(555, postData)
+            console.log('微课学习', parmas)
             initializationDeligate({
                 initializeFunc: self.initialize.bind(self,postData)
             }).catch(error => {
