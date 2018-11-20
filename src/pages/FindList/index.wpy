@@ -136,8 +136,11 @@
                             <view class="ui-subject">
                                 <view wx:for="{{item.senceList}}" wx:for-item="courseItem" wx:key="{{index}}" wx:index="{{index}}"
                                       hover-stay-time="100"
-                                      class="ui-subject-item" @tap.stop="handleStartLesson"
-                                      data-course-item="{{courseItem}}" data-is-new-sence-map = "{{item.isNewSenceMap}}">
+                                      class="ui-subject-item"
+                                      data-page="{{item.page}}"
+                                      data-course-item="{{courseItem}}"
+                                      data-is-new-sence-map = "{{item.isNewSenceMap}}"
+                                      @tap.stop="handleStartLesson">
                                     <view class="ui-img">
                                         <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
                                     </view>
@@ -237,31 +240,15 @@
             isNotMore: false, // 全部加载完了
             hasStudyingBar: false, // 是否有学习bar
             page: 1,
-            courseType:['recommend','newcourse','hotcourse'],
-            courseName:['为你推荐','最新上线','热门课程'],
             isScroll: true, // 是否能滚动
-            activityBundle: {
-                freeCourseID: 'defaultFreeCourseID',
-                imageBox: 'defaultImageBox',
-                imageTop: 'defaultImageTop',
-                isShowFreeCourse: 'defaultIsSHowFreeCourse'
-            },
             scrollTop: 0,
-            swiperList: [],
-            swiperCurrent: 0,
-            isNewCourseMap: {},
-            courseSeriesList: [],
-            newCourseList: [],
-            hotCourseList: [],
-            personalInfo: {}, // 头部用户信息
-            recommendCourse:[],
             isShowGift: false,
-            isShowEvaluate:false,
-            informationList:[],
-            discoverPageTitle:'',
-            courseID:null,
-            senceID:null
-
+            isShowEvaluate: false,
+            informationList: [],
+            discoverPageTitle: '',
+            courseID: null,
+            senceID: null,
+            sencePage: null
         }
 
         onLoad() {
@@ -269,8 +256,9 @@
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
             let storageToken = wx.getStorageSync("token") || 'defaultToken'
-            if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
+            if (self.isTokenSet || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
             } else {
                 wx.redirectTo({url: '/pages/registered-module/weclome'})
             }
@@ -279,8 +267,11 @@
         onShow() {
             let self = this
             self.informationList.length && self.$broadcast('studying-bar')
-        }
 
+            if (self.senceID) {
+                self.initialize()
+            }
+        }
         /**
          * 监听滚动条的位置
          * @param
@@ -290,20 +281,22 @@
             self.scrollTop = res.scrollTop
             self.$apply()
         }
-
         initialize(token) {
             let self = this
             // 通知组件
             self.$broadcast('studying-bar')
-            self.__isGetGift(token)
+            !self.senceID && self.__isGetGift(token)
             self.__fetchCourses({token: token})
         }
-
+        /**
+         * 列表数据
+         * @private
+         */
         __fetchCourses(parmas) {
             let self = this
             let postData = {
                 token: parmas && parmas.token || self.token,
-                page: self.page,
+                page: self.sencePage || self.page,
                 pageSize: 10
             }
 
@@ -314,21 +307,30 @@
             fetch.discoverPage(postData).then((respone) => {
                 self.isLoaded = true
                 self.discoverPageTitle = respone.discoverPageTitle
-
+                // 返回跟新微课状态
+                if (self.senceID) {
+                    self.__courseStatus(respone.informationList)
+                    return
+                }
+                // 记录这部分数据是属于哪块分页的
+                _.each(respone.informationList, (item) => {
+                    item.page = self.page
+                })
+                // 下拉刷新
                 if (parmas && parmas.callBack && _.isFunction(parmas.callBack)) {
                     self.informationList = []
                     self.informationList = respone.informationList
                     parmas.callBack()
                     return
                 }
-
+                // 第一次请求或上拉加载
                 self.isMoreLoaded = true
                 if (respone.informationList && respone.informationList.length) {
                     self.informationList = self.informationList.concat(respone.informationList)
                 } else {
                     self.isNotMore = true
                 }
-                wepy.$instance.globalData.getLoadHuilder() // ga统计
+
                 self.$apply()
             }).catch(error => {
                 self.isLoaded = true
@@ -336,7 +338,30 @@
                 throw error
             })
         }
+        /**
+         * 今日任务，今日主题的局部刷新，跟踪微课的状态变化
+         * @private
+         */
+        __courseStatus(list) {
+            let self = this
+            let newItem = null
 
+            _.each(list, (data) => {
+                if ('todayTask' === data.type || 'subject' === data.type) {
+                    newItem = _.find(data.senceList, {id: self.senceID})
+                    console.log(111, newItem)
+                    return false
+                }
+            })
+
+            _.each(self.informationList, (data, index) => {
+                if (self.sencePage === data.page
+                    && ('todayTask' === data.type || 'subject' === data.type)) {
+                    let item = _.find(data.senceList, {id: self.senceID})
+                    console.log(222, item)
+                }
+            })
+        }
         /**
          * 是否领取过新手礼包
          * @private
@@ -375,20 +400,21 @@
             })
         }
         methods = {
-            handleStartLesson(events) {
+            handleStartLesson(event) {
                 let self = this
-                let item = events.currentTarget.dataset.courseItem
-                let isNewSenceMap = events.currentTarget.dataset.isNewSenceMap
-                self.courseID = item.courseID
-                self.senceID = item.id
-                let buttonStatus = item.buttonStatus
-                let lessonType = item.lessonType
+                let {currentTarget: {dataset: {page, courseItem, isNewSenceMap}}} = event
+                let buttonStatus = courseItem.buttonStatus
+                let lessonType = courseItem.lessonType
                 let source = 'discoverPage'
-                let senceName = item.senceName
-                let resume = item.resume
+                let senceName = courseItem.senceName
+                let resume = courseItem.resume
+
+                self.sencePage = page
+                self.courseID = courseItem.courseID
+                self.senceID = courseItem.id
                 self.isNewSenceMap = isNewSenceMap
 
-                if (!this.isTokenSet) {
+                if (!self.isTokenSet) {
                     return
                 }
 

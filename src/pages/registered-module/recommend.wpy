@@ -139,7 +139,6 @@
         data = {
             isLoaded: false,
             swiperCurrent: 0,
-            isNewCourseMap: {},
             recommendList: [],
             receiveInfo: {},
         }
@@ -161,7 +160,6 @@
             }
             self.isLoaded = false
             fetchRegistered.recommendCourse(postData).then((respone) => {
-                self.isNewCourseMap = respone.isNewCourseMap
                 self.recommendList = respone.recommendCourseList
                 self.$apply()
                 setTimeout(()=>{
@@ -198,9 +196,7 @@
                 switch (respone.success) {
                     case 1: // 领取成功
                         self.receiveInfo = item
-
-                        let url = self.isNewCourseMap[self.receiveInfo.id] ? `/pages/course-module/course-new-details?id=${self.receiveInfo.id}` : `/pages/course-module/course-details?id=${self.receiveInfo.id}`
-                        wx.reLaunch({url: url})
+                        wx.reLaunch({url: `/pages/course-module/course-details?id=${self.receiveInfo.id}`})
                         self.$apply()
                         break
                     case 2: // 已经领取过了
@@ -208,8 +204,7 @@
                         if (receiveInfo) {
                             self.receiveInfo = receiveInfo
                         } else {
-                            let url = 'fullCourse' === respone.data.courseFlag ? `/pages/course-module/course-new-details?id=${respone.data.courseID}` : `/pages/course-module/course-details?id=${respone.data.courseID}`
-                            wx.reLaunch({url: url})
+                            wx.reLaunch({url: `/pages/course-module/course-details?id=${respone.data.courseID}`})
                         }
                         self.$apply()
                         break
@@ -295,8 +290,7 @@
                 })
 
                 setTimeout(()=>{
-                    let url = self.isNewCourseMap[self.receiveInfo.id] ? `/pages/course-module/course-new-details?id=${self.receiveInfo.id}` : `/pages/course-module/course-details?id=${self.receiveInfo.id}`
-                    wx.reLaunch({url: url})
+                    wx.reLaunch({url: `/pages/course-module/course-details?id=${self.receiveInfo.id}`})
                     self.$apply()
                 }, 300)
             }

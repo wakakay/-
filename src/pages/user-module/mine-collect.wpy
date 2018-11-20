@@ -151,12 +151,7 @@
 
                 wepy.$instance.globalData.getHuilder(`课程页/${courseName}`,'click',`${name}`)
                 try {
-                    let isNewCourseMap = self.isNewCourseMap[courseID]
-                    let url = isNewCourseMap
-                        ? `/pages/course-module/course-new-details?id=${courseID}&source=${courseType}`
-                        : `/pages/course-module/course-details?id=${courseID}&resume=${resume}&courseType=${courseType}&name=${name}&courseName=${courseName}`
-
-                    wepy.navigateTo({url: url})
+                    wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
                 } catch (err) {
                     console.log('handle attend classes err', err)
                 }
