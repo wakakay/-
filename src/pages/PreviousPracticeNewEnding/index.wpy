@@ -184,39 +184,29 @@
                 title: self.resultObj.subjectHeading,
                 path: `/pages/PreviousPracticeBeginning/index?examID=${self.examID}`,
                 imageUrl: self.resultObj.shareImage,
-                success: function(res) {
-                    wx.showShareMenu({
-                        withShareTicket: true
-                    });
+                complete:function(res){
                     self.isShowShade = true
                     self.$apply()
-                },
-                fail: function(res) {
-                    return wepy.showToast({
-                        title:  `分享失败`,
-                        icon: 'none'
-                    })
                 }
             }
         }
 
         initialize() {
             let self = this
-            return practiceApi.getUserExamScore({
-                token: this.token, examID: this.examID
-            }).then(data => {
-                    self.isLoaded = true
-                    self.resultObj.buttonAttr = data.buttonAttr
-                    self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
-                    self.resultObj.buttonMsg = data.buttonMsg
-                    self.resultObj.resultImageURL = data.resultImageURL
-                    self.resultObj.subjectHeading = data.subjectHeading
-                    self.resultObj.shareImage = data.shareImage
-                    self.resultObj.course = data.course
-                    self.resultObj.isNewCourseMap = data.isNewCourseMap
-                    self.$apply()
-                    wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
-                })
+            return practiceApi.getUserExamScore({token: this.token, examID: this.examID})
+            .then(data => {
+                self.isLoaded = true
+                self.resultObj.buttonAttr = data.buttonAttr
+                self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
+                self.resultObj.buttonMsg = data.buttonMsg
+                self.resultObj.resultImageURL = data.resultImageURL
+                self.resultObj.subjectHeading = data.subjectHeading
+                self.resultObj.shareImage = data.shareImage
+                self.resultObj.course = data.course
+                self.resultObj.isNewCourseMap = data.isNewCourseMap
+                self.$apply()
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
+            })
 
         } 
 
@@ -258,14 +248,21 @@
             },
             getToShare({currentTarget: {dataset: {status}}}) {
                 let self = this;
-                if(status === '分享') return;
-                if(status === '学课') {
-                    return self.getCourseDetail()
+                if(status === '分享'){
+                    if(!self.isShowShade) {
+                        return setTimeout(()=>{
+                            self.isShowShade = true
+                            self.$apply()
+                        }, 3000)
+                    }
+                }else if(status === '学课') {
+                     return self.getCourseDetail()
+                }else {
+                    setTimeout(()=>{
+                        self.isShowShade = true
+                        self.$apply()
+                    }, 300)
                 }
-                setTimeout(()=>{
-                    self.isShowShade = true
-                    self.$apply()
-                }, 300)
             },
             getImg(){
                 let self = this;
