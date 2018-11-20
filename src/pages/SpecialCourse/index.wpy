@@ -44,11 +44,11 @@
                             </view>
                         </view>
                     </view>
-
                 </view>
             </block>
+            <view class="cell-margin"></view>
             <view class="ui-bottom">
-                <view class="ui-share-box">
+                <view class="ui-share-box" wx:if="{{false}}">
                     <view class="ui-share">
                         <text class="icon-share"></text>
                         <text>分享给好友</text>
@@ -60,20 +60,22 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <view></view>
-                <view class="ui-share-box">
-                    <view class="ui-share">
-                        <view>
-                            <view>
+                <view class="ui-share-box" wx:else>
+                    <view class="ui-share-course">
+                        <view class="ui-left">
+                            <view class="ui-img">
                                 <image src="{{btnObj.img}}"></image>
                             </view>
-                            <view>
-                                <view>{{btnObj.title}}</view>
-                                <view>{{}}</view>
+                            <view class="ui-content">
+                                <view class="cell-title">{{btnObj.title}}</view>
+                                <view class="cell-dec">{{btnObj.dec}}</view>
                             </view>
                         </view>
-                        <view></view>
+                        <view class="cell-btn">{{btnObj.btnMsg}}</view>
                     </view>
+                </view>
+                <view class="ui-share-font">
+                    <text class="icon-share"></text>分享
                 </view>
             </view>
         </view>
@@ -88,16 +90,6 @@
         </view>
         <view class="picked-course__article-fullimg-title" wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}">
             {{dataSet.name}}
-        </view>
-        <view class="SpecialCourse__article__introduction-wrapper" wx:if="{{ dataSet.imageList.length }}">
-            <button class="fixed-gift-btn" wx:if="{{!isHomeBackShow&&isLoaded&&dataSet.showGiftTip==='show'}}"
-                    @tap.stop="handleToGiftDetail">
-                <image class="fixed-gift-btn__icon" mode="scaleToFill"
-                        src="../../assets/img/icon-gift-white.svg"></image>
-                赠一得一
-            </button>
-            <image class="SpecialCourse__article__introduction-wrapper__image" wx:for="{{ dataSet.imageList }}"
-                    wx:key="{{ index }}" mode="widthFix" src="{{ item.url }}"></image>
         </view>
         <form catchsubmit="handleSavePushCode" report-submit>
             <view class="SpecialCourse__article__body">
@@ -783,6 +775,7 @@
                 }
             }
         }
+        .cell-margin{width: 100%;height: 20rpx;}
         .ui-bottom{
             .ui-share-box{
                 position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));
@@ -792,7 +785,27 @@
                     .cell-btn {
                         position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
                     }
+                    
                 }
+                .ui-share-course{
+                    width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
+                    .ui-left{
+                        display: flex;
+                        .ui-img {
+                            display: flex;align-items: center;
+                            image{width: 112rpx;height: 112rpx;border-radius: @border-radius-16;}
+                        }
+                        .ui-content{
+                            margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;
+                            .cell-title{font-size: 32rpx;color: @color-black;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;}
+                        }
+                    }
+                    .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;}
+                }
+            }
+            .ui-share-font{
+                width: 222rpx;height: 100rpx;background: @background-gray-F4;border-radius: @border-radius-20;color:@color-blue;margin: 20rpx  auto 200rpx;font-size: 34rpx;text-align: center;line-height: 100rpx;
             }
         }
     }
