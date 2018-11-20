@@ -199,7 +199,7 @@
             return state.user.avatar;
         },
         token(state) {
-            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1539922269004-2be8c74df18b18be9bd0e98626dff6d3'
+            return 'userID870d38076a5c4fbebc2367faf8d8b72c-1542684388805-4892e1556618abc88e6e66b3460c7b8c'
             return state.user.token;
         },
         code(state) {

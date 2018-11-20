@@ -1,0 +1,96 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-course-pay{
+        view{box-sizing:border-box;}
+        .ui-course-info{
+            width:100%;height:268rpx;padding:32rpx;
+            .ui-thumb{
+                width:204rpx;height:204rpx;margin-right:24rpx;border-radius:@border-radius-32;overflow:hidden;
+                image{width:100%;height:100%;}
+            }
+            .ui-content{
+                padding:20rpx 0;
+                .cell-title{
+                    text:nth-of-type(1){font-size:22rpx;color:@color-blue;line-height:26rpx;}
+                    text:nth-of-type(2){font-size:34rpx;font-weight:700;color:@color-black;line-height:44rpx;}
+                }
+                .cell-subtitle{font-size:30rpx;color:@color-gray;line-height:40rpx;}
+            }
+        }
+    }
+
+</style>
+
+<template>
+    <view class="ui-course-pay">
+        <jn-header title="支付" className="background-theme"></jn-header>
+
+        <view class="ui-course-info flex">
+            <view class="ui-thumb flex-box-0">
+                <image mode="aspectFill" src="http://image.runwise.cn/image/imageID77f62f09dd3487bbdc1e66fae6e8.png"></image>
+            </view>
+            <view class="ui-content  flex-box-1 dir-top main-justify">
+                <view class="cell-title dir-top">
+                    <text>微课</text>
+                    <text>建立高效内容制作流程</text>
+                </view>
+                <view class="cell-subtitle">
+                    <text>如何使内容生产效率倍增</text>
+                </view>
+            </view>
+        </view>
+
+        <view class="ui-pay-way">
+            <view class="ui-title">获取方式</view>
+
+            <view class="ui-item">
+                <view class="cell-select"></view>
+                <view class="ui-info">
+                    <view class="cell-title">
+                        即能币支付<text>剩余 19.90</text>
+                        http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png
+                    </view>
+                </view>
+            </view>
+        </view>
+
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class courseLearning extends wepy.page {
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading
+        }
+
+        data = {}
+
+        onLoad() {
+
+        }
+
+        onShow() {
+
+        }
+
+        onReady() {
+
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>

@@ -48,6 +48,7 @@
                 'pages/course-module/course-complete', // 微课完成
                 'pages/course-module/course-level-instructions', // 微课完成-等级说明
                 'pages/course-module/course-evaluation', // 微课评价
+                'pages/course-module/course-pay', // 微课支付
                 /* 活动 */
                 'pages/Largess/index',
                 'pages/NoLogin/index',
