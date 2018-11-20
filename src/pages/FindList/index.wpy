@@ -344,21 +344,24 @@
          */
         __courseStatus(list) {
             let self = this
-            let newItem = null
-
-            _.each(list, (data) => {
+            // 查询需要改的整块数据，而非一个sence
+            let newData = _.find(list, (data) => {
                 if ('todayTask' === data.type || 'subject' === data.type) {
-                    newItem = _.find(data.senceList, {id: self.senceID})
-                    console.log(111, newItem)
-                    return false
+                    let item = _.find(data.senceList, {id: self.senceID})
+                    if (item) {
+                        return data
+                    }
                 }
             })
-
-            _.each(self.informationList, (data, index) => {
+            // 替换掉
+            _.find(self.informationList, (data, index) => {
                 if (self.sencePage === data.page
                     && ('todayTask' === data.type || 'subject' === data.type)) {
                     let item = _.find(data.senceList, {id: self.senceID})
-                    console.log(222, item)
+                    if (item) {
+                        self.informationList.splice(index, 1, newData)
+                        self.$apply()
+                    }
                 }
             })
         }
