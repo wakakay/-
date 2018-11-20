@@ -65,11 +65,11 @@
                     <view class="ui-share">
                         <view>
                             <view>
-                                <image></image>
+                                <image src="{{btnObj.img}}"></image>
                             </view>
                             <view>
-                                <view></view>
-                                <view></view>
+                                <view>{{btnObj.title}}</view>
+                                <view>{{}}</view>
                             </view>
                         </view>
                         <view></view>
@@ -295,6 +295,12 @@
             isNewSenceMap: {}, // 进入微课的新老界面判断
             wxPushType:'',
             shareImg:'',
+            btnObj:{
+                img:'http://wx-small.runwise.cn/image/imageIDd6313e15f114f09cba8410f4ef59.png',
+                title:'如何与陌生人愉快聊天',
+                dec:'找开话匣子，拒绝尬聊',
+                btnMsg:'即学'
+            },
             dataList:[
                 {
                     type:'img',
