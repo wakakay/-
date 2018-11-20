@@ -188,6 +188,12 @@
                 complete:function(res){
                     self.isShowShade = true
                     self.$apply()
+
+                    wx.reportAnalytics('pre_result_share', {
+                        username: self.userName,
+                        channel: self.entrance.mappers[self.entrance.scenceID],
+                        examid: self.examID,
+                    })
                 }
             }
         }
@@ -282,6 +288,13 @@
                                 self.isShowShade = false
                                 self.getCourseDetail()
                                 self.$apply()
+
+                                wx.reportAnalytics('pre_result_down_img', {
+                                    username: self.userName,
+                                    channel: self.entrance.mappers[self.entrance.scenceID],
+                                    examid: self.examID,
+                                })
+
                             },
                             fail(res) {
                                 return wepy.showToast({
