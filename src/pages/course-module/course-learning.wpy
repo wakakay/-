@@ -232,6 +232,7 @@
             let self = this
             self.senceID = parmas.senceID
             self.courseID = parmas.courseID
+            self.teamID = parmas.teamID
             self.isLoaded = false
             // 重置状态变量
             self.cardCurrentInfo = []
@@ -246,7 +247,7 @@
             let postData = {
                 courseID: self.courseID,
                 senceID: self.senceID,
-                teamID: parmas.teamID || 'defaultTeamID',
+                teamID: self.teamID,
                 resumeLastRead: 'NO',
                 source: 'continueList'
             }
