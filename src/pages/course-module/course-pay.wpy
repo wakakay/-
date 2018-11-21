@@ -17,8 +17,39 @@
                 .cell-subtitle{font-size:30rpx;color:@color-gray;line-height:40rpx;}
             }
         }
+        .ui-title-box{padding:0 32rpx;font-size:34rpx;font-weight:700;color:@color-black;line-height:72rpx;}
+        .ui-pay-way{
+            padding-left:32rpx;
+            .ui-item{
+                padding:30rpx 32rpx 30rpx 0;border-top:1rpx solid @border-gray;
+                &:first-child{border-top:0;}
+                .cell-select{width:48rpx;height:48rpx;border:1rpx solid @border-blue;border-radius:50%;}
+                .ui-info{
+                    padding-left:36rpx;
+                    .cell-title{
+                        font-size:34rpx;color:@color-black;line-height:44rpx;
+                        text{padding-left:10rpx;font-size:30rpx;color:@color-gray;}
+                    }
+                    .cell-money{
+                        font-size:34rpx;color:@color-black;line-height:44rpx;
+                        image{width:32rpx;height:32rpx;}
+                    }
+                    .cell-content{padding:14rpx 32rpx 14rpx 0;font-size:26rpx;color:@color-gray;line-height:40rpx;}
+                }
+            }
+        }
     }
-
+    .ui-button-box{
+        width:100%;height:246rpx;padding:0 32rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;
+        .ui-title{
+            height:56rpx;margin-bottom:30rpx;font-size:26rpx;color:@color-gray;
+            .cell-money{
+                font-size:44rpx;font-weight:700;color:@color-black;line-height:44rpx;
+                image{width:32rpx;height:32rpx;}
+            }
+        }
+        button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;}
+    }
 </style>
 
 <template>
@@ -40,20 +71,54 @@
             </view>
         </view>
 
+        <view class="ui-title-box">获取方式</view>
         <view class="ui-pay-way">
-            <view class="ui-title">获取方式</view>
-
-            <view class="ui-item">
-                <view class="cell-select"></view>
-                <view class="ui-info">
-                    <view class="cell-title">
-                        即能币支付<text>剩余 19.90</text>
-                        http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png
+            <view class="ui-item flex">
+                <view class="cell-select flex-box-0"></view>
+                <view class="ui-info flex-box-1 dir-top main-justify">
+                    <view class="ui-title main-justify">
+                        <view class="cell-title">即能币支付<text>剩余 19.90</text></view>
+                        <view class="cell-money">
+                            <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
+                            8.80
+                        </view>
                     </view>
+                    <view class="cell-content">即能币是即能平台官方研发的货币兑换单位，用于购买即能平台上的课程内容。</view>
+                </view>
+            </view>
+
+            <view class="ui-item flex">
+                <view class="cell-select flex-box-0"></view>
+                <view class="ui-info flex-box-1 dir-top main-justify">
+                    <view class="ui-title main-justify">
+                        <view class="cell-title">赠一得一</view>
+                    </view>
+                    <view class="cell-content">免费将此课赠送给好友，好友学习之后你也可以免费学习本节课。</view>
+                </view>
+            </view>
+
+            <view class="ui-item flex">
+                <view class="cell-select flex-box-0"></view>
+                <view class="ui-info flex-box-1 dir-top main-justify">
+                    <view class="ui-title main-justify">
+                        <view class="cell-title">微信支付</view>
+                        <view class="cell-money">￥8.80</view>
+                    </view>
+                    <view class="cell-content">直接支付，马上学习。</view>
                 </view>
             </view>
         </view>
 
+        <view class="ui-button-box">
+            <view class="ui-title main-justify cross-center">
+                <text>总共</text>
+                <view class="cell-money">
+                    <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
+                    <text>￥</text>
+                    8.80</view>
+            </view>
+            <button>支付</button>
+        </view>
     </view>
 </template>
 

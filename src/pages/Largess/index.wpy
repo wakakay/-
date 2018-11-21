@@ -200,6 +200,7 @@
             return state.user.token.startsWith('userID')
         },
         token(state) {
+            return 'userID870d38076a5c4fbebc2367faf8d8b72c-1542686368537-ce041650f923d86ae5f177d335475c1a'
             return state.user.token
         },
         phone(state) {
@@ -470,10 +471,7 @@
         }
 
         onShow() {
-           /* console.log('isTokenSet', this.isTokenSet)
-            initializationDeligate({initializeFunc: this.initialize.bind(this, this.giftID)}).catch(error => {
-                'login:no' === error && new UnAuthenticationError()
-            })*/
+
         }
 
         onUnload() {
@@ -482,47 +480,6 @@
                 this.timer = null
             }
             this.isLoaded = false
-        }
-
-        onShareAppMessage({target: {dataset: {token, courseID, senceID, giftID, shareImage, role, skillText, userName, courseName, channel, userrole}}}) {
-            console.log('shareImage', shareImage)
-            console.log('userName', userName)
-            console.log('skillText', skillText)
-            console.log('courseName', courseName)
-            console.log('share path', `pages/Largess/index?giftID=${giftID}&role=receiver`)
-            if ('receiver' === this.urole) return // 如果是接受者，不触发分享
-            return {
-                title: `${userName}赠送你一个好课,立即领取！`,
-                path: `pages/Largess/index?giftID=${giftID}&role=receiver`,
-                // imageUrl: shareImage,
-                success: function (res) {
-                    // 转发成功
-                    console.log('转发成功')
-
-                    shareApi.sendShareMessage({token, courseID, senceID, giftID})
-                        .catch(error => console.log('fail to sending share message to backend'))
-                    shareApi.reportSharing({
-                        token,
-                        type: shareDictionary.SHARE_COUPON.type,
-                        courseID,
-                        senceID
-                    }) // 向后台上报分享行为
-
-                    //课程分享事件上报
-                    wx.reportAnalytics('share_event', {
-                        role: userrole + "，赠送者",
-                        nickname: userName,
-                        coursename: courseName,
-                        sencename: '/',
-                        channel: channel,
-                        type: shareDictionary.SHARE_COUPON.type,
-                    });
-                },
-                fail: function (res) {
-                    // 转发失败
-                    console.log('转发失败')
-                }
-            }
         }
 
         initialize() {
@@ -749,6 +706,63 @@
 
         preFixNumber(num, n) {
             return (Array(n).join('0') + num).slice(-n)
+        }
+
+        onShareAppMessage(event) {
+            let self = this
+            let {target: {dataset: {token, courseID, senceID, giftID, shareImage, role, skillText, userName, courseName, channel, userrole}}} = event
+            let isSuccess = false
+
+            if ('receiver' === this.urole) return // 如果是接受者，不触发分享
+            setTimeout(()=>{
+                if (!isSuccess) {
+                    console.log('分享回调失败')
+                    self.__givingSuccess(event)
+                }
+            }, 3500)
+
+            return {
+                title: `${userName}赠送你一个好课,立即领取！`,
+                path: `pages/Largess/index?giftID=${giftID}&role=receiver`,
+                success(res) {
+                    console.log('转发成功')
+                    isSuccess = true
+                    self.__givingSuccess(event)
+                },
+                fail(res) {
+                    console.log('转发失败')
+                }
+            }
+        }
+
+        /**
+         * 赠送完成之后
+         * @private
+         */
+        __givingSuccess(event) {
+            let self = this
+            let {target: {dataset: {token, courseID, senceID, giftID, shareImage, role, skillText, userName, courseName, channel, userrole}}} = event
+
+            shareApi.sendShareMessage({token, courseID, senceID, giftID})
+                .catch(error => console.log('fail to sending share message to backend'))
+
+            // 向后台上报分享行为
+            shareApi.reportSharing({
+                token,
+                type: shareDictionary.SHARE_COUPON.type,
+                courseID,
+                senceID
+            })
+
+            //课程分享事件上报
+            wx.reportAnalytics('share_event', {
+                role: userrole + "，赠送者",
+                nickname: userName,
+                coursename: courseName,
+                sencename: '/',
+                channel: channel,
+                type: shareDictionary.SHARE_COUPON.type,
+            });
         }
     }
 </script>

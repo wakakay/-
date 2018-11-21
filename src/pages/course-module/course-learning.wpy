@@ -63,17 +63,15 @@
             </view>
         </jn-header>
 
-        <view class="module-swiper-box"
-              bindtouchstart="getSwipperStart"
-              bindtouchend="getSwipperEnd">
+        <view class="module-swiper-box">
+              <!--@touchstart="getSwipperStart"
+              @touchend="getSwipperEnd"-->
             <swiper class="ui-swiper"
-                    skip-hidden-item-layout
                     duration="300"
                     current="{{cardCurrent}}"
                     bindanimationfinish="getAnimationfinish">
                 <repeat for="{{cardsOriginList}}" key="index" index="index" item="item">
-                    <swiper-item style="background-color: {{item.fullImageBgColor}}"
-                        catchtouchmove="getCatchTouchMove">
+                    <swiper-item style="background-color: {{item.fullImageBgColor}}">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
                         <view style="height: calc(100% - {{headerHeigth}}px)">
                             <jn-full-image :cardItem.sync="item" :cardIndex.sync="index"
@@ -580,6 +578,9 @@
             getCatchTouchMove() {
                 return false
             },
+            getChange(event) {
+                console.log(22, event)
+            },
             /**
              * 开始触摸
              * @param event
@@ -693,7 +694,7 @@
                 let postData = {
                     token: self.systemInfo.token,
                     courseID: self.courseID,
-                    senceID: self.cardCurrentInfo[0].id,
+                    senceID: self.senceID,
                 }
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     let shareImages = {
