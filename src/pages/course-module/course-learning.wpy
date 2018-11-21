@@ -63,15 +63,17 @@
             </view>
         </jn-header>
 
-        <view class="module-swiper-box">
-              <!--@touchstart="getSwipperStart"
-              @touchend="getSwipperEnd"-->
+        <view class="module-swiper-box"
+              bindtouchstart="getSwipperStart"
+              bindtouchend="getSwipperEnd">
             <swiper class="ui-swiper"
+                    skip-hidden-item-layout
                     duration="300"
                     current="{{cardCurrent}}"
                     bindanimationfinish="getAnimationfinish">
                 <repeat for="{{cardsOriginList}}" key="index" index="index" item="item">
-                    <swiper-item style="background-color: {{item.fullImageBgColor}}">
+                    <swiper-item style="background-color: {{item.fullImageBgColor}}"
+                        catchtouchmove="getCatchTouchMove">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
                         <view style="height: calc(100% - {{headerHeigth}}px)">
                             <jn-full-image :cardItem.sync="item" :cardIndex.sync="index"
@@ -244,10 +246,12 @@
             let postData = {
                 courseID: self.courseID,
                 senceID: self.senceID,
-                teamID: 'defaultTeamID',
+                teamID: parmas.teamID || 'defaultTeamID',
                 resumeLastRead: 'NO',
                 source: 'continueList'
             }
+            console.log(3444, parmas)
+            console.log(555, postData)
             initializationDeligate({
                 initializeFunc: self.initialize.bind(self,postData)
             }).catch(error => {
@@ -578,9 +582,6 @@
             getCatchTouchMove() {
                 return false
             },
-            getChange(event) {
-                console.log(22, event)
-            },
             /**
              * 开始触摸
              * @param event
@@ -694,7 +695,7 @@
                 let postData = {
                     token: self.systemInfo.token,
                     courseID: self.courseID,
-                    senceID: self.senceID,
+                    senceID: self.cardCurrentInfo[0].id,
                 }
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     let shareImages = {
@@ -756,7 +757,7 @@
             let self = this
             return {
                 title: '自定义转发标题',
-                path: `/pages/course-module/course-details?id=${self.courseID}`,
+                path: `/pages/course-module/course-new-details?id=${self.courseID}`,
                 success(res) {
                     console.log('分享成功')
                 },
