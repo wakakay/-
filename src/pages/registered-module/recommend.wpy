@@ -184,14 +184,6 @@
                 courseID: item.id
             }
 
-            let a = {
-                "data": {
-                    "success": 2,
-                    "message": "已有历史领取记录",
-                    "data": {"courseID": "courseID00c0efe042a435bc9ded5704e37b", "courseFlag": "fullCourse"}
-                }, "message": "success", "status": 200
-            }
-
             fetchRegistered.savePhone(postData).then((respone) => {
                 switch (respone.success) {
                     case 1: // 领取成功

@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_1y1kx3lvjhl.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_6xkoy5ahtff.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -136,3 +136,9 @@
 .icon-clock:before { content: "\e784"; }
 
 .icon-fallback:before { content: "\e785"; }
+
+.icon-disabled:before { content: "\e786"; }
+
+.icon-selected:before { content: "\e787"; }
+
+.icon-selectable:before { content: "\e788"; }

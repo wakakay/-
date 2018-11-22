@@ -457,7 +457,7 @@
                 isRedirectTo = true
             }
             if ('needPay' === buttonStatus) {
-                return this.$navigate(`/pages/PayForLesson/index`, {senceID})
+                return this.$navigate(`/pages/course-module/course-pay`, {senceID})
             } else {
                 switch (buttonStatus) {
                     case 'finish': // 回顾
@@ -465,7 +465,7 @@
                             : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence, isRedirectTo})
                         break
                     case 'needPay': // 付费
-                        self.$navigate(`/pages/PayForLesson/index`, {senceID})
+                        self.$navigate(`/pages/course-module/course-pay`, {senceID})
                         break
                     default:
                         navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
@@ -570,7 +570,7 @@
                 }
 
                 wepy.$instance.globalData.getHuilder('新课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
-                return self.$navigate('/pages/PayForLesson/index', {courseID: self.paramsInfo.id})
+                return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
             },
             /**
              * 授权登录信息
@@ -592,7 +592,7 @@
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
                 }).then((respone) => { // 授权成功
-                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/PayForLesson/index', {courseID: self.paramsInfo.id})
+                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
                 }).catch(error => { // 拒接授权
 
                 })

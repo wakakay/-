@@ -55,7 +55,7 @@
                 text{margin:0 auto;}
             }
             .ui-content{
-                padding:10rpx 0;
+                padding:10rpx 0 10rpx 16rpx;
                 text:nth-of-type(1){font-size:32rpx;;color:@color-black;line-height:22px;}
                 text:nth-of-type(2){font-size:26rpx;;color:@color-gray;line-height:20px;}
             }
@@ -115,10 +115,10 @@
                   wx:if="{{finishResultInfo.isShowNext}}">
                 <view class="cell-targe">{{finishResultInfo.nextTipx}}</view>
                 <view class="ui-sence flex cross-center" @tap.stop="getSumbit">
-                    <image class="flex-box-0" mode="aspectFit" src="{{finishResultInfo.imageUrl}}"></image>
+                    <image class="flex-box-0" mode="aspectFit" src="{{finishResultInfo.imageurl}}"></image>
                     <view class="ui-content flex-box-1 dir-top main-justify">
                         <text>{{finishResultInfo.nextSenceName}}</text>
-                        <text>{{finishResultInfo.nextSenceName}}</text>
+                        <text>{{finishResultInfo.senceTarget}}</text>
                     </view>
                     <button class="flex-box-0" hover-class="cell-hover"><text>即学</text></button>
                 </view>

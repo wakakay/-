@@ -21,11 +21,15 @@
         .ui-pay-way{
             padding-left:32rpx;
             .ui-item{
-                padding:30rpx 32rpx 30rpx 0;border-top:1rpx solid @border-gray;
+                padding:30rpx 32rpx 30rpx 0;background:none;border-top:1rpx solid @border-gray;position:relative;
+                &[disabled]{
+                    background:none !important;
+                    .cell-select text{color:@color-gray-c7}
+                }
                 &:first-child{border-top:0;}
-                .cell-select{width:48rpx;height:48rpx;border:1rpx solid @border-blue;border-radius:50%;}
+                .cell-select text{width:50rpx;height:50rpx;font-size:50rpx;color:@color-blue;position:absolute;left:0;top:-4rpx;}
                 .ui-info{
-                    padding-left:36rpx;
+                    padding-left:86rpx;
                     .cell-title{
                         font-size:34rpx;color:@color-black;line-height:44rpx;
                         text{padding-left:10rpx;font-size:30rpx;color:@color-gray;}
@@ -34,7 +38,7 @@
                         font-size:34rpx;color:@color-black;line-height:44rpx;
                         image{width:32rpx;height:32rpx;}
                     }
-                    .cell-content{padding:14rpx 32rpx 14rpx 0;font-size:26rpx;color:@color-gray;line-height:40rpx;}
+                    .cell-content{padding:14rpx 32rpx 14rpx 0;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;}
                 }
             }
         }
@@ -45,79 +49,94 @@
             height:56rpx;margin-bottom:30rpx;font-size:26rpx;color:@color-gray;
             .cell-money{
                 font-size:44rpx;font-weight:700;color:@color-black;line-height:44rpx;
-                image{width:32rpx;height:32rpx;}
+                image{width:32rpx;height:32rpx;margin-right:14rpx;}
             }
         }
-        button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;}
+        button{
+            width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;letter-spacing:4rpx;line-height:100rpx;border-radius:@border-radius-20;transition:all .5s ease;
+        }
     }
 </style>
 
 <template>
     <view class="ui-course-pay">
-        <jn-header title="支付" className="background-theme"></jn-header>
+        <jn-header title="支付" buttonColor="#007AFF"></jn-header>
 
         <view class="ui-course-info flex">
             <view class="ui-thumb flex-box-0">
-                <image mode="aspectFill" src="http://image.runwise.cn/image/imageID77f62f09dd3487bbdc1e66fae6e8.png"></image>
+                <image mode="aspectFill" src="{{payInfo.imageUrl || payInfo.image}}"></image>
             </view>
             <view class="ui-content  flex-box-1 dir-top main-justify">
                 <view class="cell-title dir-top">
-                    <text>微课</text>
-                    <text>建立高效内容制作流程</text>
+                    <text>{{paramsInfo.senceID ? '微课' : '课程'}}</text>
+                    <text>{{payInfo.name}}</text>
                 </view>
                 <view class="cell-subtitle">
-                    <text>如何使内容生产效率倍增</text>
+                    <text>{{payInfo.senceTarget}}</text>
                 </view>
             </view>
         </view>
 
         <view class="ui-title-box">获取方式</view>
         <view class="ui-pay-way">
-            <view class="ui-item flex">
-                <view class="cell-select flex-box-0"></view>
-                <view class="ui-info flex-box-1 dir-top main-justify">
-                    <view class="ui-title main-justify">
-                        <view class="cell-title">即能币支付<text>剩余 19.90</text></view>
-                        <view class="cell-money">
-                            <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
-                            8.80
-                        </view>
-                    </view>
-                    <view class="cell-content">即能币是即能平台官方研发的货币兑换单位，用于购买即能平台上的课程内容。</view>
+            <button class="ui-item flex"
+                    :class="{'is-selected': selectType==1}"
+                    data-type="1" @tap.stop="getSelected"
+                    wx:if="{{paramsInfo.senceID}}">
+                <view class="cell-select flex-box-0">
+                    <text class="{{selectType==1 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
-            </view>
-
-            <view class="ui-item flex">
-                <view class="cell-select flex-box-0"></view>
                 <view class="ui-info flex-box-1 dir-top main-justify">
                     <view class="ui-title main-justify">
                         <view class="cell-title">赠一得一</view>
                     </view>
                     <view class="cell-content">免费将此课赠送给好友，好友学习之后你也可以免费学习本节课。</view>
                 </view>
-            </view>
+            </button>
 
-            <view class="ui-item flex">
-                <view class="cell-select flex-box-0"></view>
+            <button class="ui-item flex"
+                    :class="{'is-selected': selectType==2}"
+                    disabled="{{!payInfo.userJinengBinIsEnough}}"
+                    data-type="2" @tap.stop="getSelected">
+                <view class="cell-select flex-box-0">
+                    <text class="{{!payInfo.userJinengBinIsEnough ? 'icon-disabled' : selectType==2 ? 'icon-selected' : 'icon-selectable'}}"></text>
+                </view>
+                <view class="ui-info flex-box-1 dir-top main-justify">
+                    <view class="ui-title main-justify">
+                        <view class="cell-title">即能币支付<text>{{payInfo.userJinengBinTip}}</text></view>
+                        <view class="cell-money">
+                            <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
+                            {{payInfo.price}}
+                        </view>
+                    </view>
+                    <view class="cell-content">即能币是即能平台官方研发的货币兑换单位，用于购买即能平台上的课程内容。</view>
+                </view>
+            </button>
+
+            <button class="ui-item flex"
+                    :class="{'is-selected': selectType==3}"
+                    data-type="3" @tap.stop="getSelected"
+                    wx:if="{{platform}}">
+                <view class="cell-select flex-box-0"><text class="{{selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text></view>
                 <view class="ui-info flex-box-1 dir-top main-justify">
                     <view class="ui-title main-justify">
                         <view class="cell-title">微信支付</view>
-                        <view class="cell-money">￥8.80</view>
+                        <view class="cell-money">￥{{payInfo.price}}</view>
                     </view>
                     <view class="cell-content">直接支付，马上学习。</view>
                 </view>
-            </view>
+            </button>
         </view>
 
         <view class="ui-button-box">
             <view class="ui-title main-justify cross-center">
-                <text>总共</text>
-                <view class="cell-money">
-                    <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
-                    <text>￥</text>
-                    8.80</view>
+                <text wx:if="{{selectType!=1}}">总共</text>
+                <view class="cell-money" wx:if="{{selectType!=1}}">
+                    <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png" wx:if="{{selectType==2}}"></image>
+                    <text wx:if="{{selectType==3}}">￥</text>{{payInfo.price}}
+                </view>
             </view>
-            <button>支付</button>
+            <button disabled="{{!selectType}}" @tap.stop="getPay">{{selectType!=1 ? '支付' : '赠一得一'}}</button>
         </view>
     </view>
 </template>
@@ -127,11 +146,16 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
+    import {payment as paymentApi} from "../../api"
 
     const store = getStore()
     @connect({
         systemInfo(state) {
             return state.user
+        },
+        platform(state) {
+            return true
+            return state.user.platform === 'android'
         }
     })
     export default class courseLearning extends wepy.page {
@@ -140,21 +164,185 @@
             'jn-loading': Loading
         }
 
-        data = {}
+        data = {
+            paramsInfo: {},
+            payInfo: {},
+            selectType: 1 // 选中的哪个支付的类型 {1: 赠一得一, 2: 即能币, 3: 微信支付}
+        }
 
-        onLoad() {
+        onLoad(params) {
+            let self = this
+            self.paramsInfo = params || {}
 
+            self.initialize()
         }
 
         onShow() {
 
         }
 
-        onReady() {
+        initialize() {
+            let self = this
+            let fetch = null
+            let postData = {
+                token: self.systemInfo.token
+            }
 
+            if (self.paramsInfo.senceID) {
+                postData.senceID = self.paramsInfo.senceID
+                fetch = paymentApi.sencePayInitPageByJiNengBin(postData)
+            } else if (self.paramsInfo.courseID) {
+                postData.courseID = self.paramsInfo.courseID
+                fetch = paymentApi.coursePayInitPage(postData)
+            }
+
+            fetch.then(respone => {
+                self.payInfo = respone
+                if (postData.courseID) {
+                    self.selectType = self.payInfo.userJinengBinIsEnough ? 2 : 3
+                }
+
+                self.$apply()
+
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.payInfo.name}) // ga统计
+            }).catch(error => {
+
+            })
         }
 
-        methods = {}
+        methods = {
+            /**
+             * 支付选择
+             * @param event
+             */
+            getSelected(event) {
+                let self = this
+                let {currentTarget: {dataset: {type}}} = event
+                if (2 == type && !self.payInfo.userJinengBinIsEnough) {
+                    return
+                }
+                self.selectType = type
+            },
+            /**
+             * 确定支付
+             */
+            getPay() {
+                let self = this
+                let type = parseInt(self.selectType)
+                switch(type) {
+                    case 1: // 赠一得一
+                        wx.redirectTo({url:`/pages/Largess/index?senceID=${self.paramsInfo.senceID}`})
+                        break
+                    case 2: // 即能币支付
+                        self.__payVirtualCurrency()
+                        break
+                    case 3: // 微信支付
+                        self.__payWeixin()
+                        break
+                }
+            }
+        }
+
+        /**
+         * 即能币购买
+         * @private
+         */
+        __payVirtualCurrency() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                paySign: self.payInfo.paySign,
+                payMoney: self.payInfo.price,
+                code: 'defaultCode'
+            }
+            if (self.paramsInfo.senceID) {
+                postData.senceID = self.paramsInfo.senceID
+            } else if (self.paramsInfo.courseID) {
+                postData.courseID = self.paramsInfo.courseID
+            }
+
+            paymentApi.payByJinengBin(postData).then(respone => {
+                wx.showToast({title: '购买成功'})
+                setTimeout(() => {
+                    wepy.navigateBack({
+                        delta: 1
+                    })
+                }, 1500);
+
+                wx.reportAnalytics('paycourse', {
+                    role: self.systemInfo.role,
+                    nickname: self.systemInfo.userName,
+                    coursename: self.systemInfo.name,
+                    channel: self.entrance.mappers[this.entrance.scenceID],
+                    paytype: '技能币支付',
+                    sencename: self.payInfo.name,
+                    goods: '',
+                });
+            }).catch(error => {
+                wepy.showModal({
+                    title: "温馨提示",
+                    content: "很遗憾，未购买成功",
+                    showCancel: false,
+                    confirmText: "知道了"
+                })
+            })
+        }
+        /**
+         * 微信支付
+         * @private
+         */
+        __payWeixin() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                paySign: self.payInfo.paySign,
+                payMoney: self.payInfo.price,
+                code: self.systemInfo.code
+            }
+            if (self.paramsInfo.senceID) {
+                postData.senceID = self.paramsInfo.senceID
+            } else if (self.paramsInfo.courseID) {
+                postData.courseID = self.paramsInfo.courseID
+            }
+
+            paymentApi.payByPaySignByJinengBin(postData).then(response => {
+                wx.requestPayment({
+                    timeStamp: response.timeStamp,
+                    nonceStr: response.nonceStr,
+                    package: response.package,
+                    paySign: response.paySign,
+                    signType: 'MD5',
+                    success(res) {
+                        wx.showToast({
+                            title: '支付成功！',
+                            complete() {
+                                wx.navigateBack()
+                            }
+                        })
+                        wx.reportAnalytics('paycourse', {
+                            role: self.systemInfo.role,
+                            nickname: self.systemInfo.userName,
+                            coursename: '/',
+                            channel: self.entrance.mappers[this.entrance.scenceID],
+                            paytype: '微信支付',
+                            sencename: self.payInfo.name,
+                            goods: self.paramsInfo.senceID ? '微课购买' : '课程购买',
+                        })
+                    },
+                    fail(error) {
+                        wx.showModal({
+                            title: "提示",
+                            content: "很遗憾，未购买成功",
+                            showCancel: false,
+                            confirmText: "知道了"
+                        })
+                    }
+                })
+
+            }).catch(error => {
+                return Promise.reject("fail in payment", error)
+            })
+        }
 
         events = {}
     }
