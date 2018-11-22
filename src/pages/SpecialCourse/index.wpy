@@ -472,7 +472,7 @@
             if ('previewTest'===lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, { courseID, senceID })
             if ('deadNumber'===phone || null==phone) return false
             if ('needPay'===buttonStatus && 'show'===this.coursePayStatus) {
-                return this.$navigate(`/pages/PayForLesson/index`, { senceID })
+                return this.$navigate(`/pages/course-module/course-pay`, { senceID })
             }
             let isNewSence = this.isNewSenceMap[senceID]
             navigateToLesson({ courseID, senceID, resumeLastRead: resume, isNewSence })
@@ -554,7 +554,7 @@
                 }
                 if ('deadNumber' === phone || !phone) return false
                 if ('needPay' === buttonStatus) {
-                    return this.$navigate(`/pages/PayForLesson/index`, {courseID, senceID})
+                    return this.$navigate(`/pages/course-module/course-pay`, {courseID, senceID})
                 }
                 let isNewSence = this.isNewSenceMap[senceID]
                 navigateToLesson({courseID, senceID, isNewSence})
@@ -569,7 +569,7 @@
                 this.$navigate(`/pages/previouspracticebeginning/index`, {courseid, senceid})
             },
             handleDoPay({target, currentTarget: {dataset: {course: courseID, phone}}}) {
-                return this.$navigate('/pages/PayForLesson/index', {courseID: courseID})
+                return this.$navigate('/pages/course-module/course-pay', {courseID: courseID})
 
                 this.reportButtonTap(courseID, null)
                 if ('deadNumber' === phone || null == phone) return
@@ -673,7 +673,7 @@
                 let senceID = item.senceID
 
                 wepy.$instance.globalData.getHuilder('课程专题页/微课', 'click', `${this.specialCourseName}/${this.senceName}`)
-                this.$navigate(`/pages/PayForLesson/index`, {senceID})
+                this.$navigate(`/pages/course-module/course-pay`, {senceID})
             }
         }
         reportButtonTap(courseID, senceID, buttonStatus) {

@@ -30,7 +30,7 @@ export default class FetchPhoneMixin extends wepy.mixin {
             if (!isTokenSet) return '不合法token'
             doDecrpytPhone(detail)
                 .then(() => {
-                    if ('needPay' === buttonStatus) return this.$navigate(`/pages/PayForLesson/index`, {
+                    if ('needPay' === buttonStatus) return this.$navigate(`/pages/course-module/course-pay`, {
                         courseID,
                         senceID
                     })

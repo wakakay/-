@@ -121,7 +121,7 @@ export default class PickedCourse extends wepy.component {
   }
   methods = {
     handlePayForLesson({target:{dataset:{senceID}}}){
-        wepy.navigateTo({url:`/pages/PayForLesson/index?senceID=${senceID}`})
+        wepy.navigateTo({url:`/pages/course-module/course-pay?senceID=${senceID}`})
     },
     handleTapCell({
       currentTarget: {

@@ -56,7 +56,6 @@
                 'pages/Review/index',
                 'pages/Sorting/index',
                 'pages/SingleSelection/index',
-                'pages/PayForLesson/index',
                 'pages/GiftDetail/index',
                 /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页

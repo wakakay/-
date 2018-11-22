@@ -378,7 +378,7 @@
                             : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
                         break
                     case 'needPay': // 付费
-                        self.$navigate(`/pages/PayForLesson/index`, {senceID})
+                        self.$navigate(`/pages/course-module/course-pay`, {senceID})
                         break
                     default:
                         navigateToLesson({courseID, senceID, isNewSence})
@@ -387,7 +387,7 @@
             }
 
             if ('needPay' === buttonStatus) {
-                return this.$navigate(`/pages/PayForLesson/index`, {senceID})
+                return this.$navigate(`/pages/course-module/course-pay`, {senceID})
             }
             navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
         }
