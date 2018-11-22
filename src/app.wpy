@@ -39,8 +39,7 @@
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
-                'pages/course-module/course-details', // 课程旧详情
-                'pages/course-module/course-new-details', // 课程详情
+                'pages/course-module/course-details', // 课程详情
                 'pages/course-module/course-learning', // 新微课学习
                 'pages/course-module/lesson', // 旧ios微课学习
                 'pages/course-module/lesson-for-android', // 旧android微课学习
@@ -49,6 +48,7 @@
                 'pages/course-module/course-complete', // 微课完成
                 'pages/course-module/course-level-instructions', // 微课完成-等级说明
                 'pages/course-module/course-evaluation', // 微课评价
+                'pages/course-module/course-pay', // 微课支付
                 /* 活动 */
                 'pages/Largess/index',
                 'pages/NoLogin/index',
@@ -56,7 +56,6 @@
                 'pages/Review/index',
                 'pages/Sorting/index',
                 'pages/SingleSelection/index',
-                'pages/PayForLesson/index',
                 'pages/GiftDetail/index',
                 /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页
@@ -172,18 +171,18 @@
                 trackerInfo.send(builder)
             },
             getLoadHuilder(options) {
-                let parmas = options || {}
+                let parameter = options || {}
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                if (parmas.screenName || title) {
+                if (parameter.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = this.getTracker()
                     let builder = {}
-                    // console.log('ga----', parmas.screenName || title.screenName, parmas.pageTheme)
-                    trackerInfo.setScreenName(parmas.screenName || title.screenName)
-                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parmas.pageTheme || '-').build()
+                    // console.log('ga----', parameter.screenName || title.screenName, parameter.pageTheme)
+                    trackerInfo.setScreenName(parameter.screenName || title.screenName)
+                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parameter.pageTheme || '-').build()
                     trackerInfo.send(builder)
                 }
             },

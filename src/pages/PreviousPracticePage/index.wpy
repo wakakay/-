@@ -231,10 +231,10 @@
                 self.$apply()
             },
         };
-        __getExamPracticeList(parmas){
+        __getExamPracticeList(parameter){
             let self = this
             let postData = {
-                token: parmas && parmas.token || self.token,
+                token: parameter && parameter.token || self.token,
                 examID: self.examID
             }
             fetch.getExamPracticeList(postData).then((res)=>{

@@ -32,7 +32,7 @@ export const getPreviousPracticeList = ({ token = 'defaultToken', senceID = 'def
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError(courseID)
+            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
             if (200 !== status) throw new Error(message)
             return {...data, requestFlag }
         })

@@ -28,7 +28,7 @@
 			</view>
 		</form>
 		<view class="ui-apply-button">
-			<viw class="cell-apply-sure" @tap.stop="getSureBtn">确定</viw>
+			<button class="cell-apply-sure" @tap.stop="getSureBtn">确定</button>
 		</view>
   	</view>
 	<view></view>

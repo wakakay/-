@@ -659,7 +659,7 @@
 
                 if(this.currentCardSet === 'preview'){
                     // this.currentCardSet = 'normal'
-                    this.$navigate('/pages/PayForLesson/index',{senceID:this.senceID})
+                    this.$navigate('/pages/course-module/course-pay',{senceID:this.senceID})
                     reportApi.doUserBehaviourLog({token:this.token,body:{
                         senceID: this.senceID,
                         pageType: "开始页" ,
@@ -1075,7 +1075,7 @@
                                 title: '微课成功解锁',
                                 img: 'http://wx-small.runwise.cn/image/imageID76a7248ed574ab9292aa7adbdf74.png'
                             })
-                            reportApi.doUserBehaviourLog({token:this.token,body:{
+                                reportApi.doUserBehaviourLog({token:this.token,body:{
                                 senceID: this.senceID,
                                 pageType: "开始页" ,
                                 EventType:'ButtonClick',

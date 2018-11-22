@@ -1,8 +1,8 @@
 /** layout.wxss **/
-
 page{width:100%;height:100%;box-sizing:border-box;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 view, text{font-family:PingFangSC-Regular;}
 button{margin:0;padding:0;}
+button[disabled]{background-color:#F3F3F3 !important;color:#c7c7cc !important;}
 button::after{border:0;}
 
 @font-face {

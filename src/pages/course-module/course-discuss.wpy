@@ -126,9 +126,9 @@
             textareaContent: ''
         }
 
-        onLoad(parmas) {
+        onLoad(parameter) {
             let self = this
-            self.parmas = parmas
+            self.parameter = parameter
         }
 
         onShow() {
@@ -143,8 +143,8 @@
             let self = this
             let postData = {
                 token: self.systemInfo.token,
-                senceID: self.parmas.senceID,
-                practiceCardID: self.parmas.practiceCardID
+                senceID: self.parameter.senceID,
+                practiceCardID: self.parameter.practiceCardID
             }
 
             fetchRegistered.discussList(postData).then((respone) => {
@@ -206,8 +206,8 @@
                 let self = this
                 let postData = {
                     token: self.systemInfo.token,
-                    senceID: self.parmas.senceID,
-                    practiceCardID: self.parmas.practiceCardID,
+                    senceID: self.parameter.senceID,
+                    practiceCardID: self.parameter.practiceCardID,
                     content: self.textareaContent
                 }
 
