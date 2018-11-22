@@ -205,9 +205,13 @@
             ]
         }
 
-        onLoad() {
+        onLoad(parameter) {
             let self = this
-            self.initialize()
+            if (parameter && parameter.src === 'weclome') {
+                self.initialize()
+            } else {
+                self.__isGetGift()
+            }
         }
 
         onShow() {
@@ -229,6 +233,22 @@
                 self.$apply()
             }).catch(error => {
 
+            })
+        }
+
+        /**
+         * 是否领取过新手礼包
+         * @private
+         */
+        __isGetGift() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token
+            }
+            fetchRegistered.userInfo(postData).then((respone) => {
+                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : self.initialize()
+                self.$apply()
+            }).catch(error => {
             })
         }
 

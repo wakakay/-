@@ -187,10 +187,10 @@
 			
 		}
 
-		onLoad(parmas) {
-            if (parmas) {
-                this.teamID = parmas.teamID
-                this.wxPushType = parmas.wxPushType
+		onLoad(parameter) {
+            if (parameter) {
+                this.teamID = parameter.teamID
+                this.wxPushType = parameter.wxPushType
             } else {
                 this.teamID = 'defaultTeamID'
             }

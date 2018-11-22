@@ -172,18 +172,18 @@
                 trackerInfo.send(builder)
             },
             getLoadHuilder(options) {
-                let parmas = options || {}
+                let parameter = options || {}
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                if (parmas.screenName || title) {
+                if (parameter.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = this.getTracker()
                     let builder = {}
-                    // console.log('ga----', parmas.screenName || title.screenName, parmas.pageTheme)
-                    trackerInfo.setScreenName(parmas.screenName || title.screenName)
-                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parmas.pageTheme || '-').build()
+                    // console.log('ga----', parameter.screenName || title.screenName, parameter.pageTheme)
+                    trackerInfo.setScreenName(parameter.screenName || title.screenName)
+                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parameter.pageTheme || '-').build()
                     trackerInfo.send(builder)
                 }
             },

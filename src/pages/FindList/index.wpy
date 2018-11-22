@@ -292,15 +292,15 @@
          * 列表数据
          * @private
          */
-        __fetchCourses(parmas) {
+        __fetchCourses(parameter) {
             let self = this
             let postData = {
-                token: parmas && parmas.token || self.token,
+                token: parameter && parameter.token || self.token,
                 page: self.sencePage || self.page,
                 pageSize: 10
             }
 
-            if (parmas && !parmas.callBack) {
+            if (parameter && !parameter.callBack) {
                 self.isMoreLoaded = false
             }
 
@@ -317,10 +317,10 @@
                     item.page = self.page
                 })
                 // 下拉刷新
-                if (parmas && parmas.callBack && _.isFunction(parmas.callBack)) {
+                if (parameter && parameter.callBack && _.isFunction(parameter.callBack)) {
                     self.informationList = []
                     self.informationList = respone.informationList
-                    parmas.callBack()
+                    parameter.callBack()
                     return
                 }
                 // 第一次请求或上拉加载

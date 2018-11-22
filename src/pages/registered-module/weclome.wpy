@@ -138,7 +138,7 @@
                 token: self.systemInfo.token
             }
             fetchRegistered.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select'})
+                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
                 self.$apply()
             }).catch(error => {
                 wx.showToast({

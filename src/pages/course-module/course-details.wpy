@@ -363,15 +363,15 @@
             courseDetail: {}
         }
 
-        onLoad(parmas) {
+        onLoad(parameter) {
             let self = this
-            self.paramsInfo = parmas
+            self.paramsInfo = parameter
             self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let code = getStore().getState().entrance.scenceID
-            console.log('新课程详情', self.isTokenSet, code, parmas)
-            if (self.isTokenSet && code && 1048 === code && parmas.senceID) {
-                self.shareSenceID = parmas.senceID
+            console.log('新课程详情', self.isTokenSet, code, parameter)
+            if (self.isTokenSet && code && 1048 === code && parameter.senceID) {
+                self.shareSenceID = parameter.senceID
             }
             self.initialize()
         }

@@ -228,11 +228,11 @@
                 'pages/SingleSelection/index']
         }
 
-        onLoad(parmas) {
+        onLoad(parameter) {
             let self = this
-            self.senceID = parmas.senceID
-            self.courseID = parmas.courseID
-            self.teamID = parmas.teamID
+            self.senceID = parameter.senceID
+            self.courseID = parameter.courseID
+            self.teamID = parameter.teamID
             self.isLoaded = false
             // 重置状态变量
             self.cardCurrentInfo = []
@@ -249,9 +249,9 @@
                 senceID: self.senceID,
                 teamID: self.teamID,
                 resumeLastRead: 'NO',
-                source: 'continueList'
+                source: parameter.source || 'continueList'
             }
-            console.log(3444, parmas)
+            console.log(3444, parameter)
             console.log(555, postData)
             initializationDeligate({
                 initializeFunc: self.initialize.bind(self,postData)

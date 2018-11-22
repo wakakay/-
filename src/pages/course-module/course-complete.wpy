@@ -181,7 +181,7 @@
                 'pages/SingleSelection/index']
         }
 
-        onLoad(parmas) {
+        onLoad(parameter) {
             let self = this
             self.isLoaded = false
             // 分享进来的
@@ -190,7 +190,7 @@
                 return
             }
 
-            let {courseID, senceID, teamID} = parmas
+            let {courseID, senceID, teamID} = parameter
             let {user: {token, platform}, cards: {requestFlag}} = getStore().getState()
             self.paramsInfo = {courseID, senceID, teamID, platform, requestFlag}
 
@@ -346,13 +346,13 @@
                 let finishResultInfo = self.finishResultInfo
                 if (finishResultInfo.isShowNext) {
                     let isNewSence = finishResultInfo.isNewSenceMap && finishResultInfo.isNewSenceMap[finishResultInfo.nextSenceID]
-                    let parmas = {
+                    let parameter = {
                         courseID: finishResultInfo.nextCourseID,
                         senceID: finishResultInfo.nextSenceID,
                         teamID: self.paramsInfo.teamID,
                         isNewSence
                     }
-                    redirectToLesson(parmas)
+                    redirectToLesson(parameter)
                     return
                 }
             }
