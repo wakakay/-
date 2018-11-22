@@ -8,16 +8,16 @@
                  scroll-top="{{scrollTop}}"
                  scroll-with-animation="{{isScrollAnimation}}">
         <view class="ui-content">
-            <view class="ui-thumb" wx:if="{{cardItem.bigimage}}">
-                <image mode="aspectFit" src="{{cardItem.bigimage}}"></image>
+            <view class="ui-thumb" wx:if="{{cardsList[cardIndex].bigimage}}">
+                <image mode="aspectFit" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>
-            <view class="ui-title">{{cardItem.title}}</view>
+            <view class="ui-title">{{cardsList[cardIndex].title}}</view>
 
             <view class="ui-answer-list">
-                <repeat for="{{cardItem.select}}" key="index" index="index" item="item">
+                <repeat for="{{cardsList[cardIndex].select}}" key="index" index="index" item="item">
                     <view class="ui-item"
-                          hover-class="{{!isAnswerOver && !cardItem.allowToNext ? 'ui-item-hover' : ''}}"
-                          :class="{'is-selected': selectedId==item.id, 'is-selected-over': item.selected || cardsList[cardIndex].isDone && cardsList[cardIndex].selectedId==item.id}"
+                          hover-class="{{!isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
+                          :class="{'is-selected': item.selected, 'is-selected-over': (isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
                           data-item="{{ item }}"
                           data-index="{{ index }}"
                           @tap.stop="getSelected">
@@ -52,11 +52,7 @@
             cardIndex: {
                 type: Number
             },
-            cardItem: {
-                type: Object,
-                toway: true,
-                default: {}
-            },
+
             cardsList: {
                 type: Array,
                 default: []
@@ -89,23 +85,39 @@
              */
             getSelected(event) {
                 let self = this
+                let cardItem = self.cardsList[self.cardIndex]
                 // poll只能投一次
-                if (self.cardItem.isDone
+                if (cardItem.isDone
                     || (self.isAnswerOver && self.oldIndex === self.cardIndex)) {
                     return false
                 }
 
                 let {currentTarget: {dataset: {item, index}}} = event
-                self.selectedId = item.id
-                self.$apply()
+                let selectList = cardItem.select
+                let selectedIds = []
+                if ('single' === cardItem.cardStatus) {
+                    _.each(selectList, (data) => {
+                        data.selected = item.id === data.id ? true : false
+                    })
+                } else {
+                    selectList[index].selected = !selectList[index].selected
+                }
+
+                 _.each(selectList, (data) => {
+                    if (data.selected) {
+                        return selectedIds.push(data.id)
+                    }
+                })
 
                 let data = {
-                    isFinish: true,
-                    id: self.cardItem.id,
+                    isFinish: selectedIds.length ? true : false,
+                    id: cardItem.id,
                     selectedId: item.id,
-                    selectedItem: item,
-                    fullImageBottomtText: '我选好了'
+                    selectedItem: {id: selectedIds.join(',')},
+                    select: selectList,
+                    fullImageBottomtText: selectedIds.length ? '我选好了' : '请投票'
                 }
+
                 self.$emit('on-interaction', data)
             }
         }
@@ -117,18 +129,20 @@
              */
             'broadcast-poll': (data) => {
                 let self = this
-                let item = _.find(self.cardItem.select, {id: data.selectedId})
+                let cardItem = self.cardsList[self.cardIndex].select
+                let item = _.find(cardItem, {id: data.selectedId})
                 self.resultId = item.id
                 // 统计全部投票人数
-                let selectList = self.cardsList[self.cardIndex].select
-                let ballotTotal =_.reduce(self.cardItem.select, (memo, data) => {
-                    let add = data.id === item.id ? 1 : 0
-                    return memo + data.ballot + add
+                let selectList = cardItem.select
+                let ballotTotal = _.reduce(cardItem, (memo, data) => {
+                    data.add = data.selected ? 1 : 0
+                    return memo + data.ballot + data.add
                 }, 0)
+
                 // 计算每个投票的比例
-                _.each(self.cardItem.select, (data) => {
+                _.each(cardItem, (data) => {
                     let add = data.id === item.id ? 1 : 0
-                    self.ballotInfo[data.id] = Math.floor((data.ballot+add) / ballotTotal * 1000) / 10
+                    self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
                 })
 
                 self.isAnswerOver = true

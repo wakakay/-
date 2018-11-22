@@ -82,8 +82,8 @@
                                            wx:if="{{item.type==='textSelectionVer2'}}"></jn-single-choice>
                             <jn-sort :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
                                            wx:if="{{item.type==='order'}}"></jn-sort>
-                            <jn-poll :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
-                                     wx:if="{{item.type==='poll'}}"></jn-poll>
+                            <jn-poll :cardIndex.sync="index" :cardsList.sync="cardsList"
+                                     wx:if="{{item.type==='multiplePoll' || item.type==='poll'}}"></jn-poll>
                             <jn-session :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
                                      wx:if="{{item.type==='session'}}"></jn-session>
                             <jn-hot-spot :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
@@ -363,6 +363,7 @@
                                 data.hotSpotPosition.push(obj)
                             })
                             break
+                        case 'multiplePoll':
                         case 'poll':
                             data.fullImageBottomtText = data.isDone ? '继续学习' : '请投票'
                             data.allowToNext = data.isDone // 没做的不能继续学习出
@@ -498,7 +499,6 @@
             self.__sumbitScore()
             self.__sumbitFeedBack()
         }
-
         /**
          * 通知对应的子组件
          * @returns {event}
@@ -516,6 +516,7 @@
                 case 'order':
                     component = 'broadcast-sort'
                     break
+                case 'multiplePoll':
                 case 'poll':
                     data.isDone = true
                     component = 'broadcast-poll'
@@ -549,6 +550,7 @@
                 })
                 return
             }
+
             // 投票
             pushApi.sendPollSelection({
                 token: self.systemInfo.token,
