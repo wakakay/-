@@ -1,4 +1,4 @@
-function LessonPermissionDenyError(courseID) {
+function LessonPermissionDenyError({senceID, courseID}) {
     this.name = 'LessonPermissionDenyError';
     this.message = '没有权限查阅，请先购买该课程';
     this.stack = (new Error()).stack;
@@ -14,13 +14,9 @@ function LessonPermissionDenyError(courseID) {
             }
         })
     }).then(() => {
-        return wx.redirectTo({
-            url: `/pages/course-module/course-details?id=${courseID}`
-        })
+        return wx.redirectTo({url: `/pages/course-module/course-pay?senceID=${senceID}&courseID=${courseID}`})
     }).catch(() => {
-        wx.navigateBack({
-            delta: 1
-        })
+        wx.navigateBack()
     })
 }
 

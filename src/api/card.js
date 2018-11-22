@@ -10,7 +10,7 @@ export const getPracticeList = ({ token = 'defaultToken', cardID = 'defaultCardI
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError(courseID)
+            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
             if (200 !== status) throw new Error(message)
             return {...data, requestFlag }
         })
@@ -23,7 +23,7 @@ export const getCardList = ({ token = 'defaultToken', senceID = 'defaultSenceID'
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError(courseID)
+            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
             if (200 !== status) throw new Error(message)
             return {...data, requestFlag }
         })
@@ -37,7 +37,7 @@ export const getCardListWithPreview = ({ token = 'defaultToken', senceID = 'defa
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError(courseID)
+            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
             if (200 !== status) throw new Error(message)
             return {...data, requestFlag }
         })
