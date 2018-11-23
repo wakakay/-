@@ -137,9 +137,8 @@
                                 <view wx:for="{{item.senceList}}" wx:for-item="courseItem" wx:key="{{index}}" wx:index="{{index}}"
                                       hover-stay-time="100"
                                       class="ui-subject-item"
-                                      data-page="{{item.page}}"
+                                      data-item="{{item}}"
                                       data-course-item="{{courseItem}}"
-                                      data-is-new-sence-map = "{{item.isNewSenceMap}}"
                                       @tap.stop="handleStartLesson">
                                     <view class="ui-img">
                                         <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
@@ -405,23 +404,23 @@
         methods = {
             handleStartLesson(event) {
                 let self = this
-                let {currentTarget: {dataset: {page, courseItem, isNewSenceMap}}} = event
+                if (!self.isTokenSet) {
+                    return
+                }
+
+                let {currentTarget: {dataset: {item, courseItem}}} = event
                 let buttonStatus = courseItem.buttonStatus
                 let lessonType = courseItem.lessonType
                 let source = 'discoverPage'
                 let senceName = courseItem.senceName
                 let resume = courseItem.resume
 
-                self.sencePage = page
+                self.sencePage = item.page
                 self.courseID = courseItem.courseID
                 self.senceID = courseItem.id
-                self.isNewSenceMap = isNewSenceMap
+                self.isNewSenceMap = item.isNewSenceMap
 
-                if (!self.isTokenSet) {
-                    return
-                }
-
-                wepy.$instance.globalData.getHuilder('课程详情页/你将学到','click',`${this.senceTitle}/${senceName}`)
+                wepy.$instance.globalData.getHuilder('发现页','click',`${item.sceneType}/${senceName}`)
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/PreviousPracticeBeginning/index`, {
                         courseID:self.courseID, 
