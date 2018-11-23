@@ -39,8 +39,7 @@
             <image class="review-article__body__icon" src="{{bigimage}}" hidden="{{!imageLoaded}}"
                    @load="handleImageLoaded" mode="widthFix"></image>
         </view>
-
-    </view><!-- end article -->
+    </view>
 </template>
 
 <script>
@@ -104,36 +103,7 @@
                 imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
                 index: 1,
                 linkUrl: "https://www.kancloud.cn/yunye/axios/234845"
-            }],
-            initialState: {
-                summarySections: [
-                    {
-                        question: "耳机的用户属性可能有?",
-                        yourAnswer: "社会阶层，音质要求",
-                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
-                    },
-                    {
-                        question: "耳机的用户属性可能有?",
-                        yourAnswer: "社会阶层，音质要求",
-                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
-                    },
-                    {
-                        question: "耳机的用户属性可能有?",
-                        yourAnswer: "社会阶层，音质要求",
-                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
-                    },
-                    {
-                        question: "耳机的用户属性可能有?",
-                        yourAnswer: "社会阶层，音质要求",
-                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
-                    },
-                    {
-                        question: "耳机的用户属性可能有?",
-                        yourAnswer: "社会阶层，音质要求",
-                        referenceAnswer: "社会阶层，年龄，性别，音质要求"
-                    }
-                ]
-            }
+            }]
         }
 
         methods = {

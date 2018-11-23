@@ -136,7 +136,7 @@
                     mask: true
                 }) // 任务未开始
                 // if ('deadNumber'===phone || !phone) return wepy.showToast({ title: '未授权手机号', icon: 'none', duration: 1000, mask: true }) // 未授权手机号
-                if ('previewTest' === lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                if ('previewTest' === lessonType) return this.$navigate(`/pages/activity-module/appraisal-start`, {
                     courseID,
                     senceID,
                     isNewSence

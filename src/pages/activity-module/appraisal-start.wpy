@@ -36,7 +36,7 @@
             </view>
         </view>
     </scroll-view>
-    
+
 </template>
 
 <script>
@@ -149,12 +149,12 @@
                         examID: this.examID
                     })).then(data => {
                         if (data === 'done') {
-                            this.$navigate('/pages/PreviousPracticeNewEnding/index', {examID: this.examID})
+                            this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
                         } else {
                             let params = {
                                 examID: this.examID,
                             }
-                            return this.$redirect('/pages/PreviousPracticePage/index', params)
+                            return this.$redirect('/pages/activity-module/appraisal-questions', params)
                             redirectToPreviousPractice(0)
                         }
                     })
@@ -170,7 +170,7 @@
                     examID: this.examID
                 })).then(data => {
                     if (data === 'done') {
-                        this.$navigate('/pages/PreviousPracticeNewEnding/index', {examID: this.examID})
+                        this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
                     } else {
                         let params = {
                             examID: this.examID,
@@ -181,7 +181,7 @@
                         if (this.imageResultURL) {
                             params.imageResultURL = this.imageResultURL
                         }
-                        return this.$redirect('/pages/PreviousPracticePage/index', params)
+                        return this.$redirect('/pages/activity-module/appraisal-questions', params)
                         redirectToPreviousPractice(0)
                     }
                 })

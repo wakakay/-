@@ -371,7 +371,7 @@ export const finishPreviousPractice = () => {
     return practiceApi.sendUserDoExam({ token, json: { examID: senceID, practiceList: submitSections } })
         .then(() => {
             wx.hideLoading()
-            wepy.redirectTo({ url: `/pages/PreviousPracticeNewEnding/index?examID=${senceID}` })
+            wepy.redirectTo({ url: `/pages/activity-module/appraisal-results?examID=${senceID}` })
         })
         .then(() => getStore().dispatch(setCurrentPracticeOffset(0)))
         .then(() => getStore().dispatch(setLastPracticeOffset(-1)))

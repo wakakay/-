@@ -421,7 +421,7 @@
 
                 wepy.$instance.globalData.getHuilder('发现页','click',`${item.sceneType}/${senceName}`)
                 if ('previewTest' === lessonType) {
-                    return self.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                    return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID, 
                         senceID:self.senceID, 
                         source})
@@ -499,7 +499,7 @@
                 })
 
                 if (type && type === 'noSkill') {
-                    return self.$navigate('/pages/PreviousPracticeBeginning/index', {examID})
+                    return self.$navigate('/pages/activity-module/appraisal-start', {examID})
                 }
 
                 return self.$navigate('/pages/SpecialCourse/index', {courseID})

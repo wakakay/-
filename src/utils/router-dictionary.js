@@ -61,9 +61,9 @@ export const ROUTERS = {
     'pages/SpecialCourse/index': {screenName: '课程专题页'},  // 需要记录哪个专题
     'pages/GiftDetail/index': {screenName: '赠一得一详情'},
     'pages/Largess/index': {screenName: '赠一得一'},
-    'pages/PreviousPracticeBeginning/index': {screenName: '测评页面'},
-    'pages/PreviousPracticePage/index': {screenName: '测评答题'},
-    'pages/PreviousPracticeNewEnding/index': {screenName: '测评结果'},
+    'pages/activity-module/appraisal-start': {screenName: '测评页面'},
+    'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
+    'pages/activity-module/appraisal-results': {screenName: '测评结果'},
     /*-------------------注册-----------------------*/
     'pages/registered-module/weclome': {enName: 'welcome_page', screenName: 'user onboarding-欢迎页'},
     'pages/registered-module/interest-select': {enName: 'interest_select', screenName: 'user onboarding-职能选择页'},

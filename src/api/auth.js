@@ -149,7 +149,7 @@ export const getUserInfo = () => {
                     urlEnd = outSide
                 }else if (path === 'pages/training-camp-module/coursr-list') {
                     urlEnd = '&source=teamLearShare' // 团队学习分享
-                } else if (path === 'pages/PreviousPracticeNewEnding/index') {
+                } else if (path === 'pages/activity-module/appraisal-results') {
                     urlEnd = '&source=preTestShare' // 学前测评
                 } else if (path === 'pages/user-module/skill-board') {
                     urlEnd = '&source=skillBoard' // 即能看板
@@ -161,7 +161,7 @@ export const getUserInfo = () => {
                 break;
             default:
                 switch (path) {
-                    case 'pages/PreviousPracticeBeginning/index':
+                    case 'pages/activity-module/appraisal-start':
                         urlEnd = '&source=preTestShare' // 学前测评
                         break;
                     case 'pages/course-module/course-details':

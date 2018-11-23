@@ -17,9 +17,9 @@
                 <view class="order-article-body-orderitem-num null" wx:else></view>
                 <view class="order-article-body-orderitem-text">{{ $morder$item.option }}</view>
             </view>
-        </view><!-- wrapper -->
+        </view>
 
-    </view><!-- article -->
+    </view>
     <view hidden="{{ !isModalShow }}" class="flex-end-column sorting-response-box-wrapper" @tap.stop="handleCloseModal">
         <view
             class="flex-space-between-column sorting-response-box {{ isFeedbackBoxShow? 'open': 'close' }} {{ 0===yTouchStart? 'touchend': 'touching' }} {{feedbackType=='right'?'sorting-response-right':'sorting-response-wrong'}}"
@@ -31,8 +31,8 @@
             <view class="sorting-response-box__footer {{equipmentModel?'iphoneX':''}}" @tap.stop="handleTurnPage">
                 {{currentPracticeOffset+1===practicesLength?'完成':'下一题'}}
             </view>
-        </view><!-- box -->
-    </view><!-- wrapper -->
+        </view>
+    </view>
 </template>
 
 <script>
@@ -48,7 +48,7 @@
     export default class Sorting extends wepy.page {
         components = {
             'jn-header': header
-        } // end components
+        }
 
         data = {
             headerTitle: '',
@@ -91,25 +91,22 @@
 
         methods = {
             handleTurnPage() {
-                // console.log('turn page')
                 this.triggerFeedback(false)
                     .then(() => {
                         redirectToPractice(this.currentPracticeOffset + 1)
                         this.$apply()
                     })
-            }, // end handleTurnPage
+            },
             handleSelect({currentTarget: {dataset: {comIndex, status, id: optionID, feedback, feedbackneutral, abilitySkill, abilityGroup, weight, message, mark, cardID}}}) {
                 let mMapper = JSON.parse(JSON.stringify(this.mapper))
                 let mOrderList = JSON.parse(JSON.stringify(this.orderList))
                 let mOffset = mOrderList.findIndex(item => optionID === item.optionID)
                 if (!mOrderList[mOffset]['isAnswer']) {
-                    // console.log('false to true')
                     let mTmp = JSON.parse(JSON.stringify(mOrderList[mOffset]))
                     mOrderList.splice(mOffset, 1)
                     let mTarget = mOrderList.filter(item => item.isAnswer).length
                     mOrderList.splice(mTarget, 0, {...mTmp, isAnswer: true})
                 } else {
-                    // console.log('true to false')
                     for (let [index, item] of mOrderList.entries()) {
                         if (index >= mOffset) mOrderList[index]['isAnswer'] = false
                     }
@@ -117,7 +114,6 @@
                 for (let [index, item] of mOrderList.entries()) {
                     mMapper[item.optionID] = {order: index, isAnswer: item.isAnswer}
                 }
-                // this.$emit('reorder', { componentOffset: comIndex, orderList: mOrderList, mapper: mMapper })
                 this.orderList = mOrderList
                 this.mapper = mMapper
                 const mTendToFeedback = mOrderList.filter(item => item.isAnswer).length === mOrderList.length
@@ -126,7 +122,7 @@
                     sourceList: this.sourceList.map(item => ({id: item.id, weight: item.weight})),
                     orderList: this.orderList.map(item => ({id: item.optionID, weight: item.weight}))
                 })
-                null != mark && cardApi.sendCardScore({
+                !mark && cardApi.sendCardScore({
                     token: this.token,
                     senceID: this.senceID,
                     cardID,
@@ -142,12 +138,12 @@
                 if (!mTendToFeedback) return false // 如果没有选完，不往下
                 const mFlag = this.checkOrder(mOrderList) // 判断顺序是否正确
                 const mFeedback = this.bundle.feedbackType3[mFlag ? 'right' : 'wrong']
-                // console.log('feedback', mFlag, mFeedback)
+
                 this.feedbackType = mFeedback.type
                 this.triggerFeedback(true) // 显示弹窗
                 this.feedbackTitle = mFeedback['title']
                 this.feedbackDescription = mFeedback['description']
-            }, // end handleSelect
+            },
 
             handleCatchInvalidModalTouch() {
                 return false
@@ -228,7 +224,7 @@
             if ('' === this.trueSequence) return false
             if (0 === pArr.length) return false
             return this.trueSequence === pArr.map(item => item.optionID).join(',')
-        } // end checkOrder
+        }
 
         triggerFeedback(flag) {
             let mFlag = flag === true
@@ -251,99 +247,16 @@
 </script>
 
 <style lang="less">
-  .sorting-article {
-    width: 100%;
-    height: 100%;
-    padding-top: 80rpx;
-    overflow: scroll;
-    box-sizing: border-box;
-    background-color: #FFF;
-    animation: fadeIn 1.2s;
-    -webkit-animation: fadeIn 1.2s;
-  }
-
-  ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    background-color: transparent;
-    color: transparent;
-  }
-
-  .sorting-article__description {
-    width: 654rpx;
-    max-height: 156rpx;
-    background-color: #FFF;
-    margin: 0 auto 88rpx;
-    font-family: PingFang-SC-Medium;
-    font-size: 32rpx;
-    color: #14292C;
-    text-align: justify;
-    line-height: 52rpx;
-  }
-
-  .order-article-body-orderitem__wrapper {
-    width: 702rpx;
-    position: relative;
-  }
-  .order-article-body-orderitem {
-      height: 144rpx;
-      width: 654rpx;
-      margin: 0 48rpx 32rpx 48rpx;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      background-color: #FFF;
-      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.13);
-      border-radius: 16rpx;
-      transition: all .15s ease-in;
-      text-align: left;
-      position: absolute;
-      top: 0;
-      left: 0;
-  }
-  .order-article-body-orderitem.actived {
-      -webkit-animation: fadeInLeft .5s ease-out 0s;
-      -o-animation: fadeInLeft .5s ease-out 0s;
-      animation: fadeInLeft .5s ease-out 0s;
-  }
-  /*.order-article-body-orderitem:active {
-      animation: shrinkOut .2s;
-  }
-  */
-  .order-article-body-orderitem.shrink-out {
-      animation: fadeOutLeft .5s;
-  }
-  .order-article-body-orderitem.falling {
-      animation: slideOutDown .7s;
-  }
-  .order-article-body-orderitem-num{
-      width: 48rpx;
-      height: 48rpx;
-      border-radius: 50%;
-      background-color: #2DB7B5;
-      text-align: center;
-      line-height: 54rpx;
-      font-size: 40rpx;
-      color: #FFF;
-      margin: 0 24rpx 0 20rpx;
-  }
-  .order-article-body-orderitem-num.null{
-      opacity: .2;
-  }
-  .order-article-body-orderitem-num::active {
-      background-color: rgba(45,183,181,0.15);
-      backface-visibility: hidden;
-  }
-  .order-article-body-orderitem-text{
-      width: 532rpx;
-      /* width: 448rpx; */
-      box-sizing: border-box;
-      padding-right: 44rpx;
-      font-family: PingFangSC-Medium;
-      font-size: 16px;
-      color: #14292C;
-      text-align: justify;
-      line-height: 22px;
-  }
-
+    .sorting-article {width: 100%;height: 100%;padding-top: 80rpx;overflow: scroll;box-sizing: border-box;background-color: #FFF;animation: fadeIn 1.2s;}
+    ::-webkit-scrollbar {width: 0;height: 0;background-color: transparent;color: transparent;}
+    .sorting-article__description {width: 654rpx;max-height: 156rpx;background-color: #FFF;margin: 0 auto 88rpx;font-family: PingFang-SC-Medium;font-size: 32rpx;color: #14292C;text-align: justify;line-height: 52rpx;}
+    .order-article-body-orderitem__wrapper {width: 702rpx;position: relative;}
+    .order-article-body-orderitem {height: 144rpx;width: 654rpx;margin: 0 48rpx 32rpx 48rpx;display: flex;justify-content: flex-start;align-items: center;background-color: #FFF;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.13);border-radius: 16rpx;transition: all .15s ease-in;text-align: left;position: absolute;top: 0;left: 0;}
+    .order-article-body-orderitem.actived {animation: fadeInLeft .5s ease-out 0s;}
+    .order-article-body-orderitem.shrink-out {animation: fadeOutLeft .5s;}
+    .order-article-body-orderitem.falling {animation: slideOutDown .7s;}
+    .order-article-body-orderitem-num{width: 48rpx;height: 48rpborder-radius: 50%;background-color: #2DB7B5;text-align: center;line-height: 54rpx;font-size: 40rpx;color: #FFF;margin: 0 24rpx 0 20rpx;}
+    .order-article-body-orderitem-num.null{opacity: .2;}
+    .order-article-body-orderitem-num::active {background-color: rgba(45,183,181,0.15);backface-visibility: hidden;}
+    .order-article-body-orderitem-text{width: 532rpx;box-sizing: border-box;padding-right: 44rpx;font-size: 16px;color: #14292C;text-align: justify;line-height: 22px;}
 </style>

@@ -47,8 +47,8 @@
 
 <template>
     <mloading wx:if="{{ !isLoaded }}" />
-    <view class="ui-pre-practice" wx:if="{{ isLoaded }}" 
-        style="background-image: url('{{prePracticeObj.imagePracticeURL}}');">
+    <view class="ui-pre-practice" wx:if="{{ isLoaded }}"
+          style="background-image: url('{{prePracticeObj.imagePracticeURL}}');">
         <jn-header className="background-transparent">
             <view slot="content" class="ui-progress-box main-center cross-center">
                 <view class="ui-progress">
@@ -57,20 +57,20 @@
                 <view class="cell-number">{{currentIndex}}/{{prePracticeObj.practiceList.length}}</view>
             </view>
         </jn-header>
-        <swiper class="ui-practice-block" style="height: calc(100% - {{headerHeigth}}px)" 
-            current="{{activedIndex}}" bindchange="getSwiperItem" duration="{{300}}">
+        <swiper class="ui-practice-block" style="height: calc(100% - {{headerHeigth}}px)"
+                current="{{activedIndex}}" bindchange="getSwiperItem" duration="{{300}}">
             <block wx:for="{{tempList}}" wx:index="{{index}}" wx:key="{{index}}">
-                <swiper-item 
-                    bindtouchstart="getTouchStart" 
-                    bindtouchmove="getTouchMove" 
-                    data-practice-id="{{item.practiceID}}">
+                <swiper-item
+                        bindtouchstart="getTouchStart"
+                        bindtouchmove="getTouchMove"
+                        data-practice-id="{{item.practiceID}}">
                     <view class="cell-title">{{item.content}}</view>
-                    <block wx:for="{{item.optionList}}" wx:key="{{optionIndex}}" 
-                        wx:for-item="selectItem" wx:index="{{optionIndex}}" >
+                    <block wx:for="{{item.optionList}}" wx:key="{{optionIndex}}"
+                           wx:for-item="selectItem" wx:index="{{optionIndex}}" >
                         <view  class="ui-item" @tap.stop="getSelectItem"
-                            data-item="{{selectItem}}" data-practice-id="{{item.practiceID}}">
-                            <view class="cell-icon" 
-                            :class="{'icon-selected' : selectObj[item.practiceID] === selectItem.optionID}">
+                               data-item="{{selectItem}}" data-practice-id="{{item.practiceID}}">
+                            <view class="cell-icon"
+                                  :class="{'icon-selected' : selectObj[item.practiceID] === selectItem.optionID}">
                             </view>
                             <view class="cell-content">{{selectItem.optionContent}}</view>
                         </view>
@@ -188,12 +188,12 @@
                 self.$apply()
             },
             // 移动
-			getTouchStart(e) {
+            getTouchStart(e) {
                 let self = this
-                self.startPoint = [e.touches[0].clientX,e.touches[0].clientY] 
+                self.startPoint = [e.touches[0].clientX,e.touches[0].clientY]
                 self.$apply()
-			},
-			getTouchMove(e) {
+            },
+            getTouchMove(e) {
                 let self = this
                 self.curPoint =  [e.touches[0].clientX,e.touches[0].clientY]
                 let id = e.currentTarget.dataset.practiceId
@@ -226,7 +226,7 @@
                 fetch.sendUserDoExam(postData).then((res)=>{
                     self.isShowShade = false;
                     wx.hideLoading()
-                    wepy.redirectTo({ url: `/pages/PreviousPracticeNewEnding/index?examID=${self.examID}`})
+                    wepy.redirectTo({ url: `/pages/activity-module/appraisal-results?examID=${self.examID}`})
                 })
                 self.$apply()
             },

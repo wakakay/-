@@ -469,7 +469,7 @@
 
             wepy.$instance.globalData.getHuilder('课程专题页/微课', 'click', `${item.specialCourseName}/${item.senceName}`)
             this.reportButtonTap(courseID, senceID, buttonStatus)
-            if ('previewTest'===lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, { courseID, senceID })
+            if ('previewTest'===lessonType) return this.$navigate(`/pages/activity-module/appraisal-start`, { courseID, senceID })
             if ('deadNumber'===phone || null==phone) return false
             if ('needPay'===buttonStatus && 'show'===this.coursePayStatus) {
                 return this.$navigate(`/pages/course-module/course-pay`, { senceID })
@@ -550,7 +550,7 @@
                 wepy.$instance.globalData.getHuilder('课程专题页/微课', 'click', `${item.specialCourseName}/${item.senceName}`)
                 this.reportButtonTap(courseID, senceID, buttonStatus)
                 if ('previewTest' === lessonType) {
-                    return this.$navigate(`/pages/PreviousPracticeBeginning/index`, {courseID, senceID})
+                    return this.$navigate(`/pages/activity-module/appraisal-start`, {courseID, senceID})
                 }
                 if ('deadNumber' === phone || !phone) return false
                 if ('needPay' === buttonStatus) {
@@ -566,7 +566,7 @@
 
                 wepy.$instance.globalData.getHuilder('课程专题页/微课', 'click', `${item.specialCourseName}/${item.senceName}`)
                 this.reportButtonTap(courseID, senceID, buttonStatus)
-                this.$navigate(`/pages/previouspracticebeginning/index`, {courseid, senceid})
+                this.$navigate(`/pages/activity-module/appraisal-start`, {courseid, senceid})
             },
             handleDoPay({target, currentTarget: {dataset: {course: courseID, phone}}}) {
                 return this.$navigate('/pages/course-module/course-pay', {courseID: courseID})

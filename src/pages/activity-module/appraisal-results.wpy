@@ -117,7 +117,7 @@
         entrance(state) {//全局场景值
             return state.entrance
         },
-    }) 
+    })
     export default class PreviousPracticeEndingNew extends wepy.page {
         components = {
             'jn-header': header,
@@ -182,7 +182,7 @@
             let self = this
             return {
                 title: self.resultObj.subjectHeading,
-                path: `/pages/PreviousPracticeBeginning/index?examID=${self.examID}`,
+                path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,
                 imageUrl: self.resultObj.shareImage,
                 complete:function(res){
                     self.isShowShade = true
@@ -228,10 +228,10 @@
             handleToCourse() {
                 if (!this.course.courseID) return console.log('courseID is unusable')
                 wx.reportAnalytics('pre_test_next_course', {
-                        username: this.userName,
-                        examid: this.examID,
-                        channel: this.entrance.mappers[this.entrance.scenceID],
-                        courseid: this.course.courseID,
+                    username: this.userName,
+                    examid: this.examID,
+                    channel: this.entrance.mappers[this.entrance.scenceID],
+                    courseid: this.course.courseID,
                 })
                 wx.navigateTo({url: `/pages/course-module/course-details?id=${this.course.courseID}`})
             },

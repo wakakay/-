@@ -1397,7 +1397,7 @@
                 }
 
                 // 课前练习
-                if ('previewTest' === lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, {
+                if ('previewTest' === lessonType) return this.$navigate(`/pages/activity-module/appraisal-start`, {
                     courseID,
                     senceID
                 })

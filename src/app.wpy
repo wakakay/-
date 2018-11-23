@@ -32,9 +32,6 @@
             pages: [
                 /* 发现模板 */
                 'pages/FindList/index',
-                'pages/PreviousPracticePage/index',
-                'pages/PreviousPracticeBeginning/index',
-                'pages/PreviousPracticeNewEnding/index',
                 'pages/SpecialCourse/index',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
@@ -50,6 +47,9 @@
                 'pages/course-module/course-evaluation', // 微课评价
                 'pages/course-module/course-pay', // 微课支付
                 /* 活动 */
+                'pages/activity-module/appraisal-start', // 测评开始页面
+                'pages/activity-module/appraisal-questions', // 测评试题页面
+                'pages/activity-module/appraisal-results', // 测评结果页面
                 'pages/Largess/index',
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
@@ -161,7 +161,7 @@
             getHuilder(category, action, label) {
                 var trackerInfo = this.getTracker()
                 let builder = {}
-                console.log('ga----', category, action, label)
+                // console.log('ga----', category, action, label)
                 if (action === 'click') {
                     builder = new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build()
                 } else {
