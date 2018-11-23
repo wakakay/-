@@ -186,7 +186,7 @@
             let self = this
             let fetch = null
             let postData = {
-                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token
+                token: self.systemInfo.token
             }
             // 是微课呢还是课程呢
             if (self.paramsInfo.senceID) {
@@ -253,7 +253,7 @@
         __payVirtualCurrency() {
             let self = this
             let postData = {
-                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token,
+                token: self.systemInfo.token,
                 paySign: self.payInfo.paySign,
                 payMoney: self.payInfo.price,
                 code: 'defaultCode'
@@ -300,7 +300,7 @@
         __payWeixin() {
             let self = this
             let postData = {
-                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token,
+                token: self.systemInfo.token,
                 paySign: self.payInfo.paySign,
                 payMoney: self.payInfo.price,
                 code: self.systemInfo.code
