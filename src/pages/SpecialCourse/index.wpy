@@ -5,7 +5,7 @@
         <view class="ui-course-content">
             <block wx:for="{{moduleList}}" wx:key="{{index}}" wx:index="{{index}}">
                 <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">
-                    <view class="ui-bg-img" id="ui-bg-img" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
+                    <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
@@ -13,8 +13,8 @@
                     <image mode="widthFix" src="{{item.url}}" />
                 </view>
                 <view class="ui-doc" wx:if="{{item.type === 'text'}}">
-                    <view class="cell-title">{{item.title}}</view>
-                    <view class="cell-content">{{item.content}}</view>
+                    <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
+                    <view class="cell-content" wx:if="{{item.content}}">{{item.content}}</view>
                 </view>
                 <view class="ui-lesson" wx:if="{{item.type === 'sence'}}">
                     <view class="ui-item" wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
@@ -45,10 +45,11 @@
                         </view>
                     </view>
                 </view>
+                <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
             </block>
             <view class="cell-margin"></view>
             <view class="ui-bottom">
-                <view class="ui-share-box" wx:if="{{false}}">
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
                     <view class="ui-share">
                         <text class="icon-share"></text>
                         <text>分享给好友</text>
@@ -60,22 +61,42 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:else>
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}">
                     <view class="ui-share-course">
                         <view class="ui-left">
                             <view class="ui-img">
-                                <image src="{{btnObj.img}}"></image>
+                                <image src="{{floatBox.sence.imageUrl}}"></image>
                             </view>
                             <view class="ui-content">
-                                <view class="cell-title">{{btnObj.title}}</view>
-                                <view class="cell-dec">{{btnObj.dec}}</view>
+                                <view class="cell-title">{{floatBox.sence.name}}</view>
+                                <view class="cell-dec">{{floatBox.sence.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">{{btnObj.btnMsg}}</view>
+                        <view class="cell-btn">即学</view>
                     </view>
                 </view>
-                <view class="ui-share-font">
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}">
+                    <view class="ui-share-course">
+                        <view class="ui-left">
+                            <view class="ui-img">
+                                <image src="{{floatBox.course.imageUrl}}"></image>
+                            </view>
+                            <view class="ui-content">
+                                <view class="cell-title">{{floatBox.course.name}}</view>
+                                <view class="cell-dec">{{floatBox.course.description}}</view>
+                            </view>
+                        </view>
+                        <view class="cell-btn">即学</view>
+                    </view>
+                </view>
+                <view class="ui-share-font" wx:if="{{floatBox.type !== 'share'}}">
                     <text class="icon-share"></text>分享
+                    <button class="cell-btn"
+                            open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
+                            data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
+                            data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
+                            data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
+                            bindgetuserinfo="getAuthorize"></button>
                 </view>
             </view>
         </view>
@@ -287,6 +308,7 @@
             isNewSenceMap: {}, // 进入微课的新老界面判断
             wxPushType:'',
             shareImg:'',
+            
             btnObj:{
                 img:'http://wx-small.runwise.cn/image/imageIDd6313e15f114f09cba8410f4ef59.png',
                 title:'如何与陌生人愉快聊天',
@@ -294,39 +316,29 @@
                 btnMsg:'即学'
             },
             moduleList:[],
+            floatBox:{},
         };
         components = {
             'jn-header': header,
             'mloading': Loading,
         };
-        onReady() {
-            let self = this
-            wx.createSelectorQuery().select('#ui-bg-img').boundingClientRect((rect) => {
-                self.backgroundHeight = rect.height - 50
-            }).exec()
-        }
         onUnload() {
             let timestampxxx = new Date().getTime() - this.timestamp
             this.reportStayTimestamp(timestampxxx)
         }
-
         onHide() {
             let timestampxxx = new Date().getTime() - this.timestamp
             this.reportStayTimestamp(timestampxxx)
         }
-
         reportStayTimestamp(time) {
             courseApi.sendCoursePageTime({token: this.token, pageTime: time, courseID: this.courseID})
                 .then(response => {
                     console.log('sendCoursePageTime report success! ' + time)
                 })
         }
-
-
         onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
             this.timestamp = new Date().getTime()
             this.courseID = courseID
-            console.log(this.courseID,'this.courseID')
             this.wxPushType = wxPushType
             if ('show' === gift) {
                 wx.showToast({
@@ -346,8 +358,17 @@
                 // wxPushType: this.wxPushType
             }
             return fetch.getNewSpecialCourse(postData).then((res)=>{
+                wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
+                    if(rect) {
+                        self.backgroundHeight = rect.height - 50
+                    }else{
+                        self.backgroundHeight = 430
+                    }
+                }).exec()
+
                 self.moduleList = res.moduleList
-                console.log(self.moduleList,'self.moduleList')
+                self.floatBox = res.floatBox
+                console.log(self.floatBox,'self.moduleList')
                 self.isLoaded = true
                 self.$apply()
             })
@@ -698,8 +719,8 @@
                         height: 100%;display: flex;flex:1;justify-content: space-between;border-top:2rpx solid @border-gray;align-items:center;
                         .ui-font{
                             margin-left: 24rpx;
-                            .cell-title{font-size: 32rpx;color: @color-black;}
-                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;}
+                            .cell-title{font-size: 32rpx;color: @color-black;width: 384rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 384rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                         }
                         .cell-btn{width: 148rpx;height: 60rpx;text-align: center;line-height: 60rpx;background: @background-gray-F4;color:@color-blue;border-radius: 200rpx;font-size: 30rpx;}
                     }
@@ -723,6 +744,7 @@
                     }
                 }
             }
+            .cell-border{height: 2rpx;border-bottom:2rpx solid @border-gray;margin:20rpx 16rpx 24rpx;}
         }
         .cell-margin{width: 100%;height: 20rpx;}
         .ui-bottom{
