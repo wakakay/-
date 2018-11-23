@@ -180,6 +180,12 @@
 
         onShareAppMessage(res) {
             let self = this
+            wx.reportAnalytics('pre_result_share', {
+                username: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                examid: self.examID,
+            })
+
             return {
                 title: self.resultObj.subjectHeading,
                 path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,
@@ -187,12 +193,6 @@
                 complete:function(res){
                     self.isShowShade = true
                     self.$apply()
-
-                    wx.reportAnalytics('pre_result_share', {
-                        username: self.userName,
-                        channel: self.entrance.mappers[self.entrance.scenceID],
-                        examid: self.examID,
-                    })
                 }
             }
         }
