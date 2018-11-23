@@ -202,32 +202,26 @@
             return practiceApi.getUserExamScore({
                 token: this.token, examID: this.examID
             }).then(data => {
-                    self.isLoaded = true
-                    self.resultObj.buttonAttr = data.buttonAttr
-                    self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
-                    self.resultObj.buttonMsg = data.buttonMsg
-                    self.resultObj.resultImageURL = data.resultImageURL
-                    self.resultObj.subjectHeading = data.subjectHeading
-                    self.resultObj.shareImage = data.shareImage
-                    self.resultObj.course = data.course
-                    self.$apply()
-                    wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
-                })
-
-        } 
+                self.isLoaded = true
+                self.resultObj.buttonAttr = data.buttonAttr
+                self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
+                self.resultObj.buttonMsg = data.buttonMsg
+                self.resultObj.resultImageURL = data.resultImageURL
+                self.resultObj.subjectHeading = data.subjectHeading
+                self.resultObj.shareImage = data.shareImage
+                self.resultObj.course = data.course
+                self.$apply()
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
+            })
+        }
 
         getCourseDetail() {
             let self = this
-            if(!self.resultObj.course) return;
+            if(!self.resultObj || !self.resultObj.course) return;
             let courseID = self.resultObj.course.courseID;
             let courseName = self.resultObj.course.courseName;
 
-            try {
-                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
-            } catch (err) {
-                console.log('handle attend classes err', err)
-            }
-
+            wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
         }
 
         methods = {
@@ -248,17 +242,17 @@
             },
             getToShare({currentTarget: {dataset: {status}}}) {
                 let self = this;
-                if(status === '分享'){
-                    if(!self.isShowShade) {
-                        return setTimeout(()=>{
+                if (status === '分享') {
+                    if (!self.isShowShade) {
+                        return setTimeout(() => {
                             self.isShowShade = true
                             self.$apply()
                         }, 1000)
                     }
-                }else if(status === '学课') {
-                     return self.getCourseDetail()
-                }else {
-                    setTimeout(()=>{
+                } else if (status === '学课') {
+                    return self.getCourseDetail()
+                } else {
+                    setTimeout(() => {
                         self.isShowShade = true
                         self.$apply()
                     }, 300)
@@ -279,15 +273,14 @@
                             filePath: path,
                             success(res) {
                                 self.isShowShade = false
-                                self.getCourseDetail()
                                 self.$apply()
 
+                                self.getCourseDetail()
                                 wx.reportAnalytics('pre_result_down_img', {
                                     username: self.userName,
                                     channel: self.entrance.mappers[self.entrance.scenceID],
-                                    examid: self.examID,
+                                    examid: self.examID
                                 })
-
                             },
                             fail(res) {
                                 return wepy.showToast({

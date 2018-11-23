@@ -418,7 +418,6 @@
                 self.sencePage = item.page
                 self.courseID = courseItem.courseID
                 self.senceID = courseItem.id
-                self.isNewSenceMap = item.isNewSenceMap
 
                 wepy.$instance.globalData.getHuilder('发现页','click',`${item.sceneType}/${senceName}`)
                 if ('previewTest' === lessonType) {
@@ -431,7 +430,7 @@
                 if ('needPay' === buttonStatus) {
                     return self.$navigate(`/pages/course-module/course-pay`, {senceID:self.senceID})
                 }
-                let isNewSence = self.isNewSenceMap[self.senceID]
+                let isNewSence = item.isNewSenceMap[self.senceID]
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 
