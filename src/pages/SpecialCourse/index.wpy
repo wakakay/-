@@ -3,44 +3,44 @@
     <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
         <jn-header :className.sync="headerBackground"></jn-header>
         <view class="ui-course-content">
-            <block wx:for="{{dataList}}" wx:key="{{index}}" wx:index="{{index}}">
-                <view class="ui-first"  wx:if="{{item.type === 'img' && index === 0}}">
-                    <view class="ui-bg-img" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
-                        <image mode="widthFix" src="{{item.url}}" />
+            <block wx:for="{{moduleList}}" wx:key="{{index}}" wx:index="{{index}}">
+                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">
+                    <view class="ui-bg-img" id="ui-bg-img" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
+                        <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
                     <view class="ui-img-type" wx:if="{{item.type === 'img' && index !== 0}}" >
                     <image mode="widthFix" src="{{item.url}}" />
                 </view>
-                <view class="ui-doc" wx:if="{{item.type === 'doc'}}">
+                <view class="ui-doc" wx:if="{{item.type === 'text'}}">
                     <view class="cell-title">{{item.title}}</view>
                     <view class="cell-content">{{item.content}}</view>
                 </view>
-                <view class="ui-lesson" wx:if="{{item.type === 'lesson'}}">
-                    <view class="ui-item" wx:for="{{item.list}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
+                <view class="ui-lesson" wx:if="{{item.type === 'sence'}}">
+                    <view class="ui-item" wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <view class="ui-img">
-                            <image src="{{lessonItem.img}}"></image>
+                            <image src="{{lessonItem.imageUrl}}"></image>
                         </view>
                         <view class="ui-content">
                             <view class="ui-font">
-                                <view class="cell-title">{{lessonItem.title}}</view>
-                                <view class="cell-dec">{{lessonItem.dec}}</view>
+                                <view class="cell-title">{{lessonItem.name}}</view>
+                                <view class="cell-dec">{{lessonItem.description}}</view>
                             </view>
-                            <view class="cell-btn">{{lessonItem.btnMsg}}</view>
+                            <view class="cell-btn">即学</view>
                         </view>
                     </view>
                 </view>
                 <view class="ui-course" wx:if="{{item.type === 'course'}}">
-                    <view class="ui-item" wx:for="{{item.list}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
+                    <view class="ui-item" wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <view class="ui-img">
-                            <image src="{{courseItem.img}}"/>
+                            <image src="{{courseItem.image}}"/>
                         </view>
                         <view class="ui-content">
-                            <view class="cell-title">{{courseItem.title}}</view>
-                            <view class="cell-dec">{{courseItem.dec}}</view>
+                            <view class="cell-title">{{courseItem.name}}</view>
+                            <view class="cell-dec">{{courseItem.description}}</view>
                             <view class="ui-btn-bottom">
-                                <view class="cell-btn">{{courseItem.btnMsg}}</view>
-                                <view class="cell-tip">{{courseItem.tip}}</view>
+                                <view class="cell-btn">即学</view>
+                                <view class="cell-tip">342人在学</view>
                             </view>
                         </view>
                     </view>
@@ -238,7 +238,7 @@
     import header from '../../components/common/header'
     import NavigatorMixin from '../../mixins/navigator'
     import {showErrorPage,shareDictionary,navigateToLesson,initializationDeligate} from "../../utils";
-    import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi} from "../../api";
+    import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi,registered as fetch} from "../../api";
     import {CustomError} from "../../errors";
     import {getStore,connect} from "wepy-redux";
     import {renewWechatCode,login,} from "../../redux/models/user";
@@ -293,66 +293,7 @@
                 dec:'找开话匣子，拒绝尬聊',
                 btnMsg:'即学'
             },
-            dataList:[
-                {
-                    type:'img',
-                    url:'http://wx-small.runwise.cn/image/imageIDcccf38c714146fa83bbb4c8f9719.png'
-                },
-                {
-                    type:'doc',
-                    title:'情绪管理',
-                    content:'其实，在异议产生的时候，情绪很可能已经占据了大脑，80%的协商失败根源都是情绪。所以，在与人谈判过程中保持好个人情绪非常重要。学习以下两节课可以让你很好地控制好个人情绪：'
-                },
-                {
-                    type:'lesson',
-                    list:[
-                        {
-                            img:'http://wx-small.runwise.cn/image/imageID1cee335091a480b8bd6276698410.png',
-                            title:'如何成为情绪的主人',
-                            dec:'跟负面情绪和谐相处',
-                            btnMsg:'即学'
-                        },
-                        {
-                            img:'http://wx-small.runwise.cn/image/imageIDd6313e15f114f09cba8410f4ef59.png',
-                            title:'如何与陌生人愉快聊天',
-                            dec:'找开话匣子，拒绝尬聊',
-                            btnMsg:'即学'
-                        },
-                    ]
-                },
-                {
-                    type:'doc',
-                    title:'谈判技巧',
-                    content:'谈判用最简单的方式拆分，分为过程和结果，过程让双方达成共识，结果是达成某种交易方式。下面的两个关乎成败的细节，就跟过程结果有关。先看如下技巧简介：'
-                },{
-                    type:'img',
-                    url:'http://wx-small.runwise.cn/image/imageID409a4c80d5a45181890856045b9d.png'
-                },
-                {
-                    type:'doc',
-                    title:'情绪管理',
-                    content:'其实，在异议产生的时候，情绪很可能已经占据了大脑，80%的协商失败根源都是情绪。所以，在与人谈判过程中保持好个人情绪非常重要。学习以下两节课可以让你很好地控制好个人情绪：'
-                },
-                {
-                    type:'course',
-                    list:[
-                        {
-                            img:'http://wx-small.runwise.cn/image/imageID1cee335091a480b8bd6276698410.png',
-                            title:'如何成为情绪的主人',
-                            dec:'跟负面情绪和谐相处',
-                            btnMsg:'即学',
-                            tip:'342人在学'
-                        },
-                        {
-                            img:'http://wx-small.runwise.cn/image/imageIDd6313e15f114f09cba8410f4ef59.png',
-                            title:'如何与陌生人愉快聊天',
-                            dec:'找开话匣子，拒绝尬聊',
-                            btnMsg:'即学',
-                             tip:'555人在学'
-                        },
-                    ]
-                },
-            ]
+            moduleList:[],
         };
         components = {
             'jn-header': header,
@@ -360,7 +301,7 @@
         };
         onReady() {
             let self = this
-            wx.createSelectorQuery().select('.ui-bg-img').boundingClientRect((rect) => {
+            wx.createSelectorQuery().select('#ui-bg-img').boundingClientRect((rect) => {
                 self.backgroundHeight = rect.height - 50
             }).exec()
         }
@@ -385,6 +326,7 @@
         onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
             this.timestamp = new Date().getTime()
             this.courseID = courseID
+            console.log(this.courseID,'this.courseID')
             this.wxPushType = wxPushType
             if ('show' === gift) {
                 wx.showToast({
@@ -397,38 +339,45 @@
             initializationDeligate({initializeFunc: this.initialize.bind(this, this.courseID), callWhatever: true})
         }
         initialize(courseID, item, resume, phone) {
+            let self = this
             let postData = {
                 token: this.token,
-                courseID,
-                wxPushType: this.wxPushType
+                id:courseID,
+                // wxPushType: this.wxPushType
             }
-            return courseApi.getSelectCourseByID(postData).then(data => {
-                    this.shareTitle = data.shareCoverTitle ? data.shareCoverTitle : '我在即能学习'
-                    this.shareImg = data.shareCoverImageUrl ? data.shareCoverImageUrl : ''
-                    this.isNewSenceMap = data.isNewSenceMap
-                    this.specialCourseName = data.name
-                    this.dataSet = data
-                    this.operateLabel = data.operateLabel
-                    this.isLoaded = true
-                    this.$apply()
+            return fetch.getNewSpecialCourse(postData).then((res)=>{
+                self.moduleList = res.moduleList
+                console.log(self.moduleList,'self.moduleList')
+                self.isLoaded = true
+                self.$apply()
+            })
+            // courseApi.getSelectCourseByID(postData).then(data => {
+            //         this.shareTitle = data.shareCoverTitle ? data.shareCoverTitle : '我在即能学习'
+            //         this.shareImg = data.shareCoverImageUrl ? data.shareCoverImageUrl : ''
+            //         this.isNewSenceMap = data.isNewSenceMap
+            //         this.specialCourseName = data.name
+            //         this.dataSet = data
+            //         this.operateLabel = data.operateLabel
+            //         this.isLoaded = true
+            //         this.$apply()
 
-                    if (!item) {
-                        wepy.$instance.globalData.getLoadHuilder({pageTheme: this.specialCourseName}) // ga统计
-                        wx.reportAnalytics('coursedetail', {
-                            role: this.role,
-                            nickname: this.userName,
-                            coursename: this.dataSet.name,
-                            coursetype: '专题',
-                            channel: this.entrance.mappers[this.entrance.scenceID]
-                        })
-                    } else {
-                        this.__startLesson(item, resume, phone)
-                    }
-                }).catch(error => {
-                    showErrorPage()
-                    console.log(error)
-                    throw new Error('SpecialCourse load error')
-                })
+            //         if (!item) {
+            //             wepy.$instance.globalData.getLoadHuilder({pageTheme: this.specialCourseName}) // ga统计
+            //             wx.reportAnalytics('coursedetail', {
+            //                 role: this.role,
+            //                 nickname: this.userName,
+            //                 coursename: this.dataSet.name,
+            //                 coursetype: '专题',
+            //                 channel: this.entrance.mappers[this.entrance.scenceID]
+            //             })
+            //         } else {
+            //             this.__startLesson(item, resume, phone)
+            //         }
+            //     }).catch(error => {
+            //         showErrorPage()
+            //         console.log(error)
+            //         throw new Error('SpecialCourse load error')
+            //     })
         }
         doPay({courseID, paySign, payPrice}) {
             return paymentApi

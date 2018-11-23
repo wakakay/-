@@ -139,5 +139,9 @@ export default {
     // 获得测评题目
     sendUserDoExam(params) {
         return fetch({method: 'post', url: 'userExam/sendUserDoExam', params: params, isVisitor: true})
+    },
+    // 获得专题详情
+    getNewSpecialCourse(params) {
+        return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params})
     }
 }
