@@ -1,148 +1,96 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
-    <view class="SpecialCourse__article" wx:if="{{operateLabel!=='free'}}">
-        <scroll-view style="width:100%;height:100%;" scroll-y="{{true}}">
-            <jn-header title="即能"></jn-header>
-            <view class="SpecialCourse__article-top-view" wx:if="{{dataSet.cardType!=='图片'}}">
-                <view class="SpecialCourse__article-subtitle">{{dataSet.courseSubtitle}}</view>
-                <text class="SpecialCourse__article-title">{{dataSet.name}}</text>
-            </view>
-            <image class="SpecialCourse__article-cover" src="{{dataSet.image}}"
-                   wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}" mode="scaleToFill"/>
-            <view class="picked-course__article-fullimg-subtitle" wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}">
-                {{dataSet.courseSubtitle}}
-            </view>
-            <view class="picked-course__article-fullimg-title" wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}">
-                {{dataSet.name}}
-            </view>
-
-            <view class="SpecialCourse__article__introduction-wrapper" wx:if="{{ dataSet.imageList.length }}">
-                <button class="fixed-gift-btn" wx:if="{{!isHomeBackShow&&isLoaded&&dataSet.showGiftTip==='show'}}"
-                        @tap.stop="handleToGiftDetail">
-                    <image class="fixed-gift-btn__icon" mode="scaleToFill"
-                           src="../../assets/img/icon-gift-white.svg"></image>
-                    赠一得一
-                </button>
-                <image class="SpecialCourse__article__introduction-wrapper__image" wx:for="{{ dataSet.imageList }}"
-                       wx:key="{{ index }}" mode="widthFix" src="{{ item.url }}"></image>
-            </view>
-            <form catchsubmit="handleSavePushCode" report-submit>
-                <view class="SpecialCourse__article__body">
-                <view wx:for="{{ dataSet.senceSkillGroupList }}" wx:for-index="index" wx:for-item="item" wx:key="index"
-                      style="margin-bottom: {{ dataSet.senceSkillGroupList[index + 1]['skillGroup']? 120: 48 }}rpx;">
-                    <view wx:if="{{ item.skillGroup }}" class="SpecialCourse__article__body-title">{{item.skillGroup}}
+    <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
+        <jn-header :className.sync="headerBackground"></jn-header>
+        <view class="ui-course-content">
+            <block wx:for="{{moduleList}}" wx:key="{{index}}" wx:index="{{index}}">
+                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">
+                    <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
+                        <image mode="widthFix" src="{{item.img}}" />
                     </view>
-                    <view wx:if="{{ item.senceGroupSubtitle }}" class="SpecialCourse__article__body-subtitle">
-                        {{item.senceGroupSubtitle}}
-                    </view>
-                    <image wx:if="{{ item.senceGroupImage }}" class="SpecialCourse__article__body-icon" mode="widthFix"
-                           src="{{ item.senceGroupImage }}"></image>
-                    <view class="SpecialCourse__article__body__bar-cell flex-space-between-row"
-                          wx:for="{{ item.senceList }}" wx:for-index="index" wx:for-item="item" wx:key="index"
-                          data-course-i-d="{{ item.courseID }}" data-sence-i-d="{{ item.senceID }}" data-resume="NO">
-                        <button class="SpecialCourse__article__body__will-get__bar-cell__shade-btn" plain="{{ true }}"
-                                data-item="{{ item }}"
-                                data-phone="{{ phone }}"
-                                data-resume="NO"
-                                data-is-token-set="{{ isTokenSet }}"
-                                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                                @tap.stop="handleTapBeginC"
-                                @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber" formType="submit"></button>
-                        <button wx:if="{{ !isTokenSet }}" class="course__section-cell__whole-shade-btn"
-                                plain="{{ true }}" data-course-i-d="{{ courseID }}" data-sence-i-d="{{ item.senceID }}"
-                                data-resume="NO" open-type="getUserInfo" bindgetuserinfo="getAuthorize"></button>
-
-                        <view class="SpecialCourse__article__body__bar-cell__icon-wrapper">
-                            <image class="SpecialCourse__article__body__bar-cell-wrapper__image" mode="aspectFill"
-                                   src="{{ item.imageUrl }}"></image>
+                </view>
+                    <view class="ui-img-type" wx:if="{{item.type === 'img' && index !== 0}}" >
+                    <image mode="widthFix" src="{{item.url}}" />
+                </view>
+                <view class="ui-doc" wx:if="{{item.type === 'text'}}">
+                    <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
+                    <view class="cell-content" wx:if="{{item.content}}">{{item.content}}</view>
+                </view>
+                <view class="ui-lesson" wx:if="{{item.type === 'sence'}}">
+                    <view class="ui-item" wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
+                        <view class="ui-img">
+                            <image src="{{lessonItem.imageUrl}}"></image>
                         </view>
-                        <view
-                            class="SpecialCourse__article__body__bar-cell__description {{index===0?'SpecialCourse__article__body__will-get__bar-cell-noborder':''}}">
-                            <text class="SpecialCourse__article__body__bar-cell__description__title"> {{ item.senceName
-                                }}
-                            </text>
-                            <text class="SpecialCourse__article__body__bar-cell__description__skill-point"> {{
-                                item.subtitle }}
-                            </text>
-                        </view>
-                        <view
-                            class="SpecialCourse__article__body__bar-cell__operation {{index===0?'SpecialCourse__article__body__will-get__bar-cell-noborder':''}}">
-
-                            <view class="course__section-cell__progress-wapper" wx:if="{{item.progress}}">
-                                <progress percent="{{item.progress}}" class="course__section-cell__progress"
-                                          stroke-width="4" color="#007AFF" background-color="#b7d9fe"
-                                          wx:if="{{'continue'===item.buttonStatus}}"></progress>
+                        <view class="ui-content">
+                            <view class="ui-font">
+                                <view class="cell-title">{{lessonItem.name}}</view>
+                                <view class="cell-dec">{{lessonItem.description}}</view>
                             </view>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'finish'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO"
-                                    @tap.stop="handleReviewLesson" formType="submit">回顾
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'continue'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="YES"
-                                    @tap.stop="handleTapContinue" formType="submit">继续
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBegin'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 即学
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBeginOrTry'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 免费学
-                            </button>
-                            <button wx:if="{{ 'previewTest'===item.lessonType }}" class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                                    @tap.stop="handleDoPreviousPractice"
-                                    @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber" formType="submit"> 课前练习
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPayToTry'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 试学
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="NO" @tap.stop="handlePayForLesson" formType="submit">获取
-                            </button>
-                            <view class="price-text-red"
-                                  wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}">{{
-                                item.sencePrice }} 即能币
-                            </view>
-
+                            <view class="cell-btn">即学</view>
                         </view>
                     </view>
                 </view>
-            </view>
-            </form>
-            <view class="{{'show'===dataSet.paymentStatus ? 'ui-max-margin':'ui-min-margin'}}"></view>
+                <view class="ui-course" wx:if="{{item.type === 'course'}}">
+                    <view class="ui-item" wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
+                        <view class="ui-img">
+                            <image src="{{courseItem.image}}"/>
+                        </view>
+                        <view class="ui-content">
+                            <view class="cell-title">{{courseItem.name}}</view>
+                            <view class="cell-dec">{{courseItem.description}}</view>
+                            <view class="ui-btn-bottom">
+                                <view class="cell-btn">即学</view>
+                                <view class="cell-tip">342人在学</view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
+            </block>
+            <view class="cell-margin"></view>
             <view class="ui-bottom">
-                <view class="ui-share">
-                    <text class="icon-share"></text>
-                    <text>分享给好友</text>
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
+                    <view class="ui-share">
+                        <text class="icon-share"></text>
+                        <text>分享给好友</text>
+                        <button class="cell-btn"
+                            open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
+                            data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
+                            data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
+                            data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
+                            bindgetuserinfo="getAuthorize"></button>
+                    </view>
+                </view>
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}">
+                    <view class="ui-share-course">
+                        <view class="ui-left">
+                            <view class="ui-img">
+                                <image src="{{floatBox.sence.imageUrl}}"></image>
+                            </view>
+                            <view class="ui-content">
+                                <view class="cell-title">{{floatBox.sence.name}}</view>
+                                <view class="cell-dec">{{floatBox.sence.description}}</view>
+                            </view>
+                        </view>
+                        <view class="cell-btn">即学</view>
+                    </view>
+                </view>
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}">
+                    <view class="ui-share-course">
+                        <view class="ui-left">
+                            <view class="ui-img">
+                                <image src="{{floatBox.course.imageUrl}}"></image>
+                            </view>
+                            <view class="ui-content">
+                                <view class="cell-title">{{floatBox.course.name}}</view>
+                                <view class="cell-dec">{{floatBox.course.description}}</view>
+                            </view>
+                        </view>
+                        <view class="cell-btn">即学</view>
+                    </view>
+                </view>
+                <view class="ui-share-font" wx:if="{{floatBox.type !== 'share'}}">
+                    <text class="icon-share"></text>分享
                     <button class="cell-btn"
                             open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
                             data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
@@ -150,217 +98,176 @@
                             data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
                             bindgetuserinfo="getAuthorize"></button>
                 </view>
-                <view class="ui-sale flex-space-between-row"
-                      wx:if="{{ 'show'===dataSet.paymentStatus }}">
-                    <view class="ui-price"> {{dataSet.discountPrice}}
-                        <text>即能币</text>
-                    </view>
-                    <button class="ui-btn"
-                            open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                            @getphonenumber.stop="handleSendPhoneAndDoPay" @tap.stop="handleDoPay" type="warn"
-                            size="default" plain="{{true}}" data-course="{{courseID}}" data-phone="{{ phone }}"> 一键获取
-                    </button>
+            </view>
+        </view>
+        <!-- <view class="SpecialCourse__article-top-view" wx:if="{{dataSet.cardType!=='图片'}}">
+            <view class="SpecialCourse__article-subtitle">{{dataSet.courseSubtitle}}</view>
+            <text class="SpecialCourse__article-title">{{dataSet.name}}</text>
+        </view>
+        <image class="SpecialCourse__article-cover" src="{{dataSet.image}}"
+                wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}" mode="scaleToFill"/>
+        <view class="picked-course__article-fullimg-subtitle" wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}">
+            {{dataSet.courseSubtitle}}
+        </view>
+        <view class="picked-course__article-fullimg-title" wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}">
+            {{dataSet.name}}
+        </view>
+        <form catchsubmit="handleSavePushCode" report-submit>
+            <view class="SpecialCourse__article__body">
+            <view wx:for="{{ dataSet.senceSkillGroupList }}" wx:for-index="index" wx:for-item="item" wx:key="index"
+                    style="margin-bottom: {{ dataSet.senceSkillGroupList[index + 1]['skillGroup']? 120: 48 }}rpx;">
+                <view wx:if="{{ item.skillGroup }}" class="SpecialCourse__article__body-title">{{item.skillGroup}}
                 </view>
-            </view>
+                <view wx:if="{{ item.senceGroupSubtitle }}" class="SpecialCourse__article__body-subtitle">
+                    {{item.senceGroupSubtitle}}
+                </view>
+                <image wx:if="{{ item.senceGroupImage }}" class="SpecialCourse__article__body-icon" mode="widthFix"
+                        src="{{ item.senceGroupImage }}"></image>
+                <view class="SpecialCourse__article__body__bar-cell flex-space-between-row"
+                        wx:for="{{ item.senceList }}" wx:for-index="index" wx:for-item="item" wx:key="index"
+                        data-course-i-d="{{ item.courseID }}" data-sence-i-d="{{ item.senceID }}" data-resume="NO">
+                    <button class="SpecialCourse__article__body__will-get__bar-cell__shade-btn" plain="{{ true }}"
+                            data-item="{{ item }}"
+                            data-phone="{{ phone }}"
+                            data-resume="NO"
+                            data-is-token-set="{{ isTokenSet }}"
+                            open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
+                            @tap.stop="handleTapBeginC"
+                            @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber" formType="submit"></button>
+                    <button wx:if="{{ !isTokenSet }}" class="course__section-cell__whole-shade-btn"
+                            plain="{{ true }}" data-course-i-d="{{ courseID }}" data-sence-i-d="{{ item.senceID }}"
+                            data-resume="NO" open-type="getUserInfo" bindgetuserinfo="getAuthorize"></button>
 
-        </scroll-view>
-    </view>
-
-    <view class="SpecialCourse__article-activity" wx:if="{{operateLabel==='free'}}">
-        <scroll-view style="width:100%;height:100%;" scroll-y="{{true}}">
-            <jn-header title="即能"></jn-header>
-            <CustomModal/>
-
-            <image class="SpecialCourse__article-cover" src="{{dataSet.image}}"
-                   wx:if="{{ dataSet.image&&dataSet.cardType==='图片' }}" mode="scaleToFill"/>
-
-            <view class="SpecialCourse__article__introduction-wrapper" wx:if="{{ dataSet.imageList.length }}">
-                <image class="SpecialCourse__article__introduction-wrapper__image" wx:for="{{ dataSet.imageList }}"
-                       wx:key="{{ index }}" mode="widthFix" src="{{ item.url }}"></image>
-            </view>
-            <form bindsubmit="handleSavePushCode" report-submit>
-                <view class="SpecialCourse__article__body-activity">
-                <view wx:for="{{ dataSet.senceSkillGroupList }}" wx:for-index="index" wx:for-item="item" wx:key="index"
-                      style="margin-bottom: {{ dataSet.senceSkillGroupList[index + 1]['skillGroup']? 120: 48 }}rpx;">
-                    <view wx:if="{{ item.skillGroup }}" class="SpecialCourse__article__body-title">{{item.skillGroup}}
+                    <view class="SpecialCourse__article__body__bar-cell__icon-wrapper">
+                        <image class="SpecialCourse__article__body__bar-cell-wrapper__image" mode="aspectFill"
+                                src="{{ item.imageUrl }}"></image>
                     </view>
-                    <view wx:if="{{ item.senceGroupSubtitle }}" class="SpecialCourse__article__body-subtitle">
-                        {{item.senceGroupSubtitle}}
-                    </view>
-                    <image wx:if="{{ item.senceGroupImage }}" class="SpecialCourse__article__body-icon-activity"
-                           mode="widthFix" src="{{ item.senceGroupImage }}"></image>
                     <view
-                        class="SpecialCourse__article__body__bar-cell-activity flex-space-between-row {{index===0?'margin-top-32':''}}"
-                        wx:for="{{ item.senceList }}" wx:for-index="index" wx:for-item="item" wx:key="index">
-                        <button class="SpecialCourse__article__body__will-get__bar-cell__shade-btn" plain="{{ true }}"
-                                data-item="{{ item }}"
-                                data-phone="{{ phone }}"
-                                data-resume="NO"
-                                data-is-token-set="{{ isTokenSet }}"
-                                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                                @tap.stop="handleTapBeginC"
-                                @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber"></button>
-                        <button wx:if="{{ !isTokenSet }}" class="course__section-cell__whole-shade-btn"
-                                plain="{{ true }}" data-course-i-d="{{ courseID }}" data-sence-i-d="{{ item.senceID }}"
-                                data-resume="NO" open-type="getUserInfo" bindgetuserinfo="getAuthorize"></button>
+                        class="SpecialCourse__article__body__bar-cell__description {{index===0?'SpecialCourse__article__body__will-get__bar-cell-noborder':''}}">
+                        <text class="SpecialCourse__article__body__bar-cell__description__title"> {{ item.senceName
+                            }}
+                        </text>
+                        <text class="SpecialCourse__article__body__bar-cell__description__skill-point"> {{
+                            item.subtitle }}
+                        </text>
+                    </view>
+                    <view
+                        class="SpecialCourse__article__body__bar-cell__operation {{index===0?'SpecialCourse__article__body__will-get__bar-cell-noborder':''}}">
 
-                        <view class="SpecialCourse__article__body__bar-cell__icon-wrapper">
-                            <image class="SpecialCourse__article__body__bar-cell-wrapper__image" mode="aspectFill"
-                                   src="{{ item.imageUrl }}"></image>
+                        <view class="course__section-cell__progress-wapper" wx:if="{{item.progress}}">
+                            <progress percent="{{item.progress}}" class="course__section-cell__progress"
+                                        stroke-width="4" color="#007AFF" background-color="#b7d9fe"
+                                        wx:if="{{'continue'===item.buttonStatus}}"></progress>
                         </view>
-                        <view
-                            class="SpecialCourse__article__body__bar-cell__description-activity {{index===0?'SpecialCourse__article__body__will-get__bar-cell-noborder':''}}">
-                            <view class="SpecialCourse__article__body__bar-cell__description__title-activity"> {{
-                                item.senceName }}
-                            </view>
-                            <view class="SpecialCourse__article__body__bar-cell__description__skill-point-activity"> {{
-                                item.subtitle }}
-                            </view>
-                            <view class="SpecialCourse__article__body__bar-cell__description__learn-count-activity"> {{
-                                item.senceUserCount }}人在学
-                            </view>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'finish'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO"
+                                @tap.stop="handleReviewLesson" formType="submit">回顾
+                        </button>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'continue'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="YES"
+                                @tap.stop="handleTapContinue" formType="submit">继续
+                        </button>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'notBegin'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO"
+                                data-phone="{{ phone }}"
+                                form-type="{{isTokenSet ? 'submit': ''}}"
+                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                @tap.stop="handleStartLesson"> 即学
+                        </button>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'notBeginOrTry'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO"
+                                data-phone="{{ phone }}"
+                                form-type="{{isTokenSet ? 'submit': ''}}"
+                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                @tap.stop="handleStartLesson"> 免费学
+                        </button>
+                        <button wx:if="{{ 'previewTest'===item.lessonType }}" class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO"
+                                data-phone="{{ phone }}"
+                                open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
+                                @tap.stop="handleDoPreviousPractice"
+                                @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber" formType="submit"> 课前练习
+                        </button>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'needPayToTry'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO"
+                                data-phone="{{ phone }}"
+                                form-type="{{isTokenSet ? 'submit': ''}}"
+                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                @tap.stop="handleStartLesson"> 试学
+                        </button>
+                        <button wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}"
+                                class="payment-button"
+                                data-item="{{ item }}"
+                                data-resume="NO" @tap.stop="handlePayForLesson" formType="submit">获取
+                        </button>
+                        <view class="price-text-red"
+                                wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}">{{
+                            item.sencePrice }} 即能币
                         </view>
-                        <view class="SpecialCourse__article__body__bar-cell__operation" style="margin-right:24rpx;">
-                            <view class="course__section-cell__progress-wapper" wx:if="{{item.progress}}">
-                                <progress percent="{{item.progress}}" class="course__section-cell__progress"
-                                          stroke-width="4" color="#007AFF" background-color="#b7d9fe"
-                                          wx:if="{{'continue'===item.buttonStatus}}"></progress>
-                            </view>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'finish'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO"
-                                    @tap.stop="handleReviewLesson"
-                                    formType="submit"> 回顾
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'continue'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{ item }}"
-                                    data-resume="YES" @tap.stop="handleTapContinue" formType="submit">
-                                继续
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBegin'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 即学
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'notBeginOrTry'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 免费学
-                            </button>
-                            <button wx:if="{{ 'previewTest'===item.lessonType }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                                    @tap.stop="handleDoPreviousPractice"
-                                    @getphonenumber.stop="handleTendToBeginAndDescryptPhoneNumber" formType="submit"> 课前练习
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPayToTry'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO"
-                                    data-phone="{{ phone }}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
-                                    @tap.stop="handleStartLesson"> 试学
-                            </button>
-                            <button wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}"
-                                    class="payment-button"
-                                    data-item="{{item}}"
-                                    data-resume="NO" @tap.stop="handlePayForLesson" formType="submit">获取
-                            </button>
-                            <view class="price-text-red"
-                                  wx:if="{{ 'lesson'===item.lessonType&&'needPay'===item.buttonStatus }}">{{
-                                item.sencePrice }} 即能币
-                            </view>
-                        </view>
+
                     </view>
                 </view>
             </view>
-            </form>
-            <view class="{{'show'===dataSet.paymentStatus ? 'ui-max-margin':'ui-min-margin'}}"></view>
-            <view class="ui-bottom">
-                <view class="ui-share">
-                    <text class="icon-share"></text>
-                    <text>分享给好友</text>
-                    <button class="cell-btn" open-type="share"
-                            data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
-                            data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
-                            data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"></button>
-                </view>
-                <view class="ui-sale flex-space-between-row"
-                      wx:if="{{ 'show'===dataSet.paymentStatus }}">
-                    <view class="ui-price"> {{dataSet.discountPrice}}
-                        <text>即能币</text>
-                    </view>
-                    <button class="ui-btn"
-                            open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-                            @getphonenumber.stop="handleSendPhoneAndDoPay" @tap.stop="handleDoPay" type="warn"
-                            size="default" plain="{{true}}" data-course="{{courseID}}" data-phone="{{ phone }}"> 一键获取
-                    </button>
-                </view>
+        </view>
+        </form>
+        <view class="{{'show'===dataSet.paymentStatus ? 'ui-max-margin':'ui-min-margin'}}"></view>
+        <view class="ui-bottom">
+            <view class="ui-share">
+                <text class="icon-share"></text>
+                <text>分享给好友</text>
+                <button class="cell-btn"
+                        open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
+                        data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
+                        data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
+                        data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
+                        bindgetuserinfo="getAuthorize"></button>
             </view>
-        </scroll-view>
-    </view>
+            <view class="ui-sale flex-space-between-row"
+                    wx:if="{{ 'show'===dataSet.paymentStatus }}">
+                <view class="ui-price"> {{dataSet.discountPrice}}
+                    <text>即能币</text>
+                </view>
+                <button class="ui-btn"
+                        open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
+                        @getphonenumber.stop="handleSendPhoneAndDoPay" @tap.stop="handleDoPay" type="warn"
+                        size="default" plain="{{true}}" data-course="{{courseID}}" data-phone="{{ phone }}"> 一键获取
+                </button>
+            </view>
+        </view> -->
+
+    </scroll-view>
+    <view></view>
 </template>
 
 <script>
     import wepy from "wepy";
-    import PushMixin from '../../mixins/push'
-    import loadingMixin from "../../mixins/loading";
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import NavigatorMixin from '../../mixins/navigator'
-    import fetchPhoneMixin from "../../mixins/fetchPhone";
-    import CustomModal from '../../components/CustomModal/index'
-    import {
-        showErrorPage,
-        shareDictionary,
-        navigateToLesson,
-        initializationDeligate
-    } from "../../utils";
-    import Toast from "wepy-com-toast";
-    import {
-        course as courseApi,
-        auth as authApi,
-        payment as paymentApi,
-        share as shareApi
-    } from "../../api";
-    import {
-        NetworkError,
-        CustomError
-    } from "../../errors";
-    import {
-        getStore,
-        connect
-    } from "wepy-redux";
-    import {
-        renewWechatCode,
-        login,
-        checkLoginStatus,
-        renewUserRole
-    } from "../../redux/models/user";
+    import {showErrorPage,shareDictionary,navigateToLesson,initializationDeligate} from "../../utils";
+    import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi,registered as fetch} from "../../api";
+    import {CustomError} from "../../errors";
+    import {getStore,connect} from "wepy-redux";
+    import {renewWechatCode,login,} from "../../redux/models/user";
 
     const store = getStore();
     @connect({
         userName(state) {
             return state.user.name;
-        }, // mapState 即getters
-        avatar(state) {
-            return state.user.avatar;
         },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
@@ -373,7 +280,6 @@
             return state.user.code;
         },
         phone(state) {
-            return '13636641408'
             return state.user.phone
         },
         role(state) {
@@ -387,10 +293,11 @@
         },
     })
     export default class Alllessen extends wepy.page {
-        mixins = [PushMixin, loadingMixin, fetchPhoneMixin, NavigatorMixin]; // end mixins
         data = {
+            headerHeigth: 68,
+            headerBackground: 'background-transparent',
+            backgroundHeight: 0,
             timestamp: 0,
-            isFirstLoaded: true,
             isLoaded: false, // on show加载数据
             shareTitle: '分享标题',
             specialCourseName: '',
@@ -400,31 +307,35 @@
             operateLabel: '',
             isNewSenceMap: {}, // 进入微课的新老界面判断
             wxPushType:'',
-            shareImg:''
+            shareImg:'',
+            
+            btnObj:{
+                img:'http://wx-small.runwise.cn/image/imageIDd6313e15f114f09cba8410f4ef59.png',
+                title:'如何与陌生人愉快聊天',
+                dec:'找开话匣子，拒绝尬聊',
+                btnMsg:'即学'
+            },
+            moduleList:[],
+            floatBox:{},
         };
         components = {
             'jn-header': header,
-            toast: Toast,
             'mloading': Loading,
-            CustomModal
         };
         onUnload() {
             let timestampxxx = new Date().getTime() - this.timestamp
             this.reportStayTimestamp(timestampxxx)
         }
-
         onHide() {
             let timestampxxx = new Date().getTime() - this.timestamp
             this.reportStayTimestamp(timestampxxx)
         }
-
         reportStayTimestamp(time) {
             courseApi.sendCoursePageTime({token: this.token, pageTime: time, courseID: this.courseID})
                 .then(response => {
                     console.log('sendCoursePageTime report success! ' + time)
                 })
         }
-
         onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
             this.timestamp = new Date().getTime()
             this.courseID = courseID
@@ -440,38 +351,54 @@
             initializationDeligate({initializeFunc: this.initialize.bind(this, this.courseID), callWhatever: true})
         }
         initialize(courseID, item, resume, phone) {
+            let self = this
             let postData = {
                 token: this.token,
-                courseID,
-                wxPushType: this.wxPushType
+                id:courseID,
+                // wxPushType: this.wxPushType
             }
-            return courseApi.getSelectCourseByID(postData).then(data => {
-                    this.shareTitle = data.shareCoverTitle ? data.shareCoverTitle : '我在即能学习'
-                    this.shareImg = data.shareCoverImageUrl ? data.shareCoverImageUrl : ''
-                    this.isNewSenceMap = data.isNewSenceMap
-                    this.specialCourseName = data.name
-                    this.dataSet = data
-                    this.operateLabel = data.operateLabel
-                    this.isLoaded = true
-                    this.$apply()
-
-                    if (!item) {
-                        wepy.$instance.globalData.getLoadHuilder({pageTheme: this.specialCourseName}) // ga统计
-                        wx.reportAnalytics('coursedetail', {
-                            role: this.role,
-                            nickname: this.userName,
-                            coursename: this.dataSet.name,
-                            coursetype: '专题',
-                            channel: this.entrance.mappers[this.entrance.scenceID]
-                        })
-                    } else {
-                        this.__startLesson(item, resume, phone)
+            return fetch.getNewSpecialCourse(postData).then((res)=>{
+                wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
+                    if(rect) {
+                        self.backgroundHeight = rect.height - 50
+                    }else{
+                        self.backgroundHeight = 430
                     }
-                }).catch(error => {
-                    showErrorPage()
-                    console.log(error)
-                    throw new Error('SpecialCourse load error')
-                })
+                }).exec()
+
+                self.moduleList = res.moduleList
+                self.floatBox = res.floatBox
+                console.log(self.floatBox,'self.moduleList')
+                self.isLoaded = true
+                self.$apply()
+            })
+            // courseApi.getSelectCourseByID(postData).then(data => {
+            //         this.shareTitle = data.shareCoverTitle ? data.shareCoverTitle : '我在即能学习'
+            //         this.shareImg = data.shareCoverImageUrl ? data.shareCoverImageUrl : ''
+            //         this.isNewSenceMap = data.isNewSenceMap
+            //         this.specialCourseName = data.name
+            //         this.dataSet = data
+            //         this.operateLabel = data.operateLabel
+            //         this.isLoaded = true
+            //         this.$apply()
+
+            //         if (!item) {
+            //             wepy.$instance.globalData.getLoadHuilder({pageTheme: this.specialCourseName}) // ga统计
+            //             wx.reportAnalytics('coursedetail', {
+            //                 role: this.role,
+            //                 nickname: this.userName,
+            //                 coursename: this.dataSet.name,
+            //                 coursetype: '专题',
+            //                 channel: this.entrance.mappers[this.entrance.scenceID]
+            //             })
+            //         } else {
+            //             this.__startLesson(item, resume, phone)
+            //         }
+            //     }).catch(error => {
+            //         showErrorPage()
+            //         console.log(error)
+            //         throw new Error('SpecialCourse load error')
+            //     })
         }
         doPay({courseID, paySign, payPrice}) {
             return paymentApi
@@ -515,13 +442,22 @@
             if ('previewTest'===lessonType) return this.$navigate(`/pages/PreviousPracticeBeginning/index`, { courseID, senceID })
             if ('deadNumber'===phone || null==phone) return false
             if ('needPay'===buttonStatus && 'show'===this.coursePayStatus) {
-                return this.$navigate(`/pages/PayForLesson/index`, { senceID })
+                return this.$navigate(`/pages/course-module/course-pay`, { senceID })
             }
             let isNewSence = this.isNewSenceMap[senceID]
             navigateToLesson({ courseID, senceID, resumeLastRead: resume, isNewSence })
         }
 
         methods = {
+             /**
+             * 监听滚动条事件
+             * @param event
+             */
+            getScroll(event) {
+                let self = this
+                let {detail: {scrollTop}} = event
+                self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            },
             /**
              * 授权登录信息
              * @param event
@@ -588,7 +524,7 @@
                 }
                 if ('deadNumber' === phone || !phone) return false
                 if ('needPay' === buttonStatus) {
-                    return this.$navigate(`/pages/PayForLesson/index`, {courseID, senceID})
+                    return this.$navigate(`/pages/course-module/course-pay`, {courseID, senceID})
                 }
                 let isNewSence = this.isNewSenceMap[senceID]
                 navigateToLesson({courseID, senceID, isNewSence})
@@ -603,7 +539,7 @@
                 this.$navigate(`/pages/previouspracticebeginning/index`, {courseid, senceid})
             },
             handleDoPay({target, currentTarget: {dataset: {course: courseID, phone}}}) {
-                return this.$navigate('/pages/PayForLesson/index', {courseID: courseID})
+                return this.$navigate('/pages/course-module/course-pay', {courseID: courseID})
 
                 this.reportButtonTap(courseID, null)
                 if ('deadNumber' === phone || null == phone) return
@@ -656,7 +592,7 @@
                     code: this.code,
                     encryptedData,
                     iv
-                }) // end sendPhoneNumber
+                }) 
                     .then(({phone}) => {
                         console.log("succeed in sending phone", phone);
                         (phone &&
@@ -707,7 +643,7 @@
                 let senceID = item.senceID
 
                 wepy.$instance.globalData.getHuilder('课程专题页/微课', 'click', `${this.specialCourseName}/${this.senceName}`)
-                this.$navigate(`/pages/PayForLesson/index`, {senceID})
+                this.$navigate(`/pages/course-module/course-pay`, {senceID})
             }
         }
         reportButtonTap(courseID, senceID, buttonStatus) {
@@ -748,7 +684,6 @@
                     });
                 },
                 fail(res) {
-                    console.log("转发失败");
                 }
             };
         }
@@ -757,26 +692,97 @@
 
 <style lang="less" scoped>
     @import "../../assets/style/theme";
-    .ui-min-margin{height: 160rpx;width: 100%;background: @background-white;}
-    .ui-max-margin{height: 280rpx;width: 100%;background: @background-white;}
-    .ui-bottom{
-        position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));
-        .ui-share{
-            width: 702rpx;height: 100rpx;line-height: 100rpx;color: @color-white;font-family: 'PingFangSC-Medium';font-size: 30rpx;text-align: center;margin: 28rpx auto;background-color: @background-blue;border-radius: @border-radius-20;display: flex;align-items: stretch;justify-content: center;position: relative;
-            .icon-share{font-size:36rpx;margin-right:4rpx;}
-            .cell-btn {
-                position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
-                &::after{border: 0 !important;}
+    .ui-special-course{
+        width:100%;height:100%;background-color: @background-white;display: flex;flex-direction: column;align-items: center;
+        view{box-sizing: border-box}
+        .ui-course-content{
+            .ui-first{
+                height: 824rpx;
+                image{width: 100%;}
             }
+            .ui-img-type{
+                padding:0 32rpx 24rpx;
+                image{width: 100%;}
+            } 
+            .ui-doc{
+                padding:4rpx 32rpx 24rpx;
+                .cell-title{font-size: 40rpx;color: @color-black;padding-top:20rpx;}
+                .cell-content{margin-top:8rpx;font-size: 34rpx;color:@color-gray;padding-top:20rpx}
+            }
+            .ui-lesson{
+                padding: 0 32rpx;
+                .ui-item{
+                    display: flex;height: 176rpx;align-items: center;
+                    .ui-img image{width: 112rpx;height: 112rpx;border-radius: @border-radius-16;}
+                    &:first-child .ui-content{border-top: none}
+                    .ui-content{
+                        height: 100%;display: flex;flex:1;justify-content: space-between;border-top:2rpx solid @border-gray;align-items:center;
+                        .ui-font{
+                            margin-left: 24rpx;
+                            .cell-title{font-size: 32rpx;color: @color-black;width: 384rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 384rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                        }
+                        .cell-btn{width: 148rpx;height: 60rpx;text-align: center;line-height: 60rpx;background: @background-gray-F4;color:@color-blue;border-radius: 200rpx;font-size: 30rpx;}
+                    }
+                }
+            }
+            .ui-course{
+                padding: 0 32rpx;
+                .ui-item{
+                    display: flex;height: 240rpx;align-items: center;
+                    .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-16;}
+                    &:first-child .ui-content{border-top: none}
+                    .ui-content{
+                        margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;
+                        .cell-title{font-size: 32rpx;color: @color-black;}
+                        .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:4rpx;}
+                        .ui-btn-bottom{
+                            height:84rpx;display:flex;align-items:flex-end;
+                            .cell-btn{width: 128rpx;height: 60rpx;border-radius: 200rpx;color: @color-blue;background: @background-gray-F4;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-right: 20rpx;}
+                            .cell-tip{font-size: 26rpx;color:@color-gray;height:84rpx;line-height:108rpx;}
+                        }
+                    }
+                }
+            }
+            .cell-border{height: 2rpx;border-bottom:2rpx solid @border-gray;margin:20rpx 16rpx 24rpx;}
         }
-        .ui-sale {width: 100%;height: 118rpx;border-top:2rpx solid @border-gray;align-items: center;background-color: @background-white;
-            .ui-price {
-                width: 228rpx;height: 100%;padding-left: 20rpx;overflow: hidden;text-overflow: clip;white-space: nowrap;line-height: 118rpx;margin-right: auto;padding-right: 30rpx;display: flex;align-items: center;vertical-align: top;text-align: center;box-sizing: border-box;font-size: 48rpx;color: @color-black;font-family: PingFangSC-Semibold;font-weight: bold;
-                text{font-family: PingFangSC-Medium;font-size: 24rpx;color: @color-black;letter-spacing: 0.55px;margin-left: 4rpx;margin-top: 20rpx;}
+        .cell-margin{width: 100%;height: 20rpx;}
+        .ui-bottom{
+            .ui-share-box{
+                position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));
+                .ui-share{
+                    width: 702rpx;height: 100rpx;line-height: 100rpx;color: @color-white;font-size: 30rpx;text-align: center;margin: 28rpx auto;background-color: @background-blue;border-radius: @border-radius-20;display: flex;justify-content: center;position: relative;
+                    .icon-share{font-size:36rpx;margin-right:4rpx;}
+                    .cell-btn {
+                        position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
+                    }
+                    
+                }
+                .ui-share-course{
+                    width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
+                    .ui-left{
+                        display: flex;
+                        .ui-img {
+                            display: flex;align-items: center;
+                            image{width: 112rpx;height: 112rpx;border-radius: @border-radius-16;}
+                        }
+                        .ui-content{
+                            margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;
+                            .cell-title{font-size: 32rpx;color: @color-black;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;}
+                        }
+                    }
+                    .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;}
+                }
             }
-            .ui-btn {width: 220rpx;height: 88rpx;margin: 0;padding: 0 20rpx;line-height: 88rpx;border: 0;background-color: @background-gray-F4;color: @color-blue;border-radius: @border-radius-20;font-size: 32rpx;margin-right: 40rpx;font-weight: bold;}
+            .ui-share-font{
+                width: 222rpx;height: 100rpx;background: @background-gray-F4;border-radius: @border-radius-20;color:@color-blue;margin: 20rpx  auto 200rpx;font-size: 34rpx;text-align: center;line-height: 100rpx;
+            }
         }
     }
+    .ui-min-margin{height: 160rpx;width: 100%;background: @background-white;}
+    .ui-max-margin{height: 280rpx;width: 100%;background: @background-white;}
+   
 
     .SpecialCourse__article__introduction-wrapper{position:relative;}
     .SpecialCourse__article-activity{
@@ -797,12 +803,7 @@
     overflow: visible;
   }
   .SpecialCourse__article {
-    background-color: #FFF;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    
   }
   .SpecialCourse__article-top-view {
     width: calc(~"100% - 76rpx");
@@ -819,7 +820,6 @@
   }
   .SpecialCourse__article-title {
     margin-top: 24rpx;
-    /*height: 160rpx;*/
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -834,7 +834,6 @@
     height: 500rpx;
     display: inline-block;
     vertical-align: top;
-    /*background-color: #00EBF2;*/
   }
   .SpecialCourse__article__body {
     width: 100%;
@@ -874,15 +873,11 @@
     width: 576rpx;
     margin-left: -40rpx;
     height: 100rpx;
-    /* margin-bottom: 40rpx; */
   }
   .SpecialCourse__article__body__bar-cell {
     align-items: center;
     height: 180rpx;
     position: relative;
-    /* padding-top: 4rpx;
-      padding-bottom: 4rpx; */
-    /* border-bottom: 1rpx solid #cdced3; */
   }
   .SpecialCourse__article__body__bar-cell-activity {
     align-items: center;
@@ -933,7 +928,6 @@
   .SpecialCourse__article__body__bar-cell__description {
     height: 100%;
     display: flex;
-    /* max-width: 356rpx; */
     width: 100%;
     padding-right: 32rpx;
     flex-direction: column;
@@ -947,7 +941,6 @@
   .SpecialCourse__article__body__bar-cell__description-activity {
     height: 100%;
     display: flex;
-    /* max-width: 356rpx; */
     flex:1;
     padding-right: 16rpx;
     flex-direction: column;
@@ -1020,17 +1013,12 @@
     height: 100%;
     border-top: 1rpx solid @border-gray;
   }
-  
   .SpecialCourse__article-foot-button-icon {
     width: 48rpx;
     height: 48rpx;
     margin-right: 6rpx;
     padding-top: 18rpx;
   }
-
-    
-
-  
     .picked-course__article-fullimg-subtitle{
     position: absolute;
     top: 48rpx;
@@ -1053,16 +1041,7 @@
     text-align: left;
   }
   .activity-btn{
-    /* margin-right: 24rpx; */
     width: 160rpx !important;
   }
-  .activity-origin-price{
-    font-family: PingFangSC-Regular;
-    font-size: 24rpx;
-    color: #778D9A;
-    line-height: 25.6rpx;
-    text-decoration: line-through;
-    position: absolute;
-    bottom: 24rpx;
-  }
+  .activity-origin-price{font-family: PingFangSC-Regular;font-size: 24rpx;color: #778D9A;line-height: 25.6rpx;text-decoration: line-through;position: absolute;bottom: 24rpx;}
 </style>
