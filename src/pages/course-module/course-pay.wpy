@@ -115,6 +115,7 @@
 
             <button class="ui-item flex"
                     :class="{'is-selected': selectType==3}"
+                    disabled="{{!payInfo.isWeixinPay}}"
                     data-type="3" @tap.stop="getSelected"
                     wx:if="{{platform}}">
                 <view class="cell-select flex-box-0"><text class="{{selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text></view>
@@ -185,9 +186,9 @@
             let self = this
             let fetch = null
             let postData = {
-                token: self.systemInfo.token
+                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token
             }
-
+            // 是微课呢还是课程呢
             if (self.paramsInfo.senceID) {
                 postData.senceID = self.paramsInfo.senceID
                 fetch = paymentApi.sencePayInitPageByJiNengBin(postData)
@@ -201,6 +202,8 @@
                 if (postData.courseID) {
                     self.selectType = self.payInfo.userJinengBinIsEnough ? 2 : 3
                 }
+                // 如果定价为0的话，不能微信支付
+                self.payInfo.isWeixinPay = 0 !== parseFloat(self.payInfo.price) ? true : false
 
                 self.$apply()
 
@@ -250,7 +253,7 @@
         __payVirtualCurrency() {
             let self = this
             let postData = {
-                token: self.systemInfo.token,
+                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token,
                 paySign: self.payInfo.paySign,
                 payMoney: self.payInfo.price,
                 code: 'defaultCode'
@@ -262,22 +265,25 @@
             }
 
             paymentApi.payByJinengBin(postData).then(respone => {
-                wx.showToast({title: '购买成功'})
+                if (respone) {
+                    wx.showToast({title: '购买成功'})
+                } else {
+                    wx.showToast({title: '你已经购买了'})
+                }
+
                 setTimeout(() => {
-                    wepy.navigateBack({
-                        delta: 1
-                    })
-                }, 1500);
+                    wepy.navigateBack()
+                }, 1500)
 
                 wx.reportAnalytics('paycourse', {
                     role: self.systemInfo.role,
                     nickname: self.systemInfo.userName,
                     coursename: self.systemInfo.name,
                     channel: self.entrance.mappers[this.entrance.scenceID],
-                    paytype: '技能币支付',
+                    paytype: '即能币支付',
                     sencename: self.payInfo.name,
                     goods: '',
-                });
+                })
             }).catch(error => {
                 wepy.showModal({
                     title: "温馨提示",
@@ -294,7 +300,7 @@
         __payWeixin() {
             let self = this
             let postData = {
-                token: self.systemInfo.token,
+                token: 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d' || self.systemInfo.token,
                 paySign: self.payInfo.paySign,
                 payMoney: self.payInfo.price,
                 code: self.systemInfo.code

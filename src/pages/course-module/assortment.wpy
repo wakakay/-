@@ -13,7 +13,7 @@
         .ui-avatar-list{
             width:auto;height:auto;flex-grow:1;flex-shrink:1;
             image{width:62rpx;height:62rpx;margin-left:-16rpx;float:left;border:1px solid #fff;border-radius:50%;}
-            .ui-text{display:block;margin-left:20rpx;float:left;font-family:PingFangSC-Regular;font-size:26rpx;color:@color-black;line-height:64rpx;}
+            .ui-text{display:block;margin-left:20rpx;float:left;font-size:26rpx;color:@color-black;line-height:64rpx;}
         }
         .ui-button{
             width:64rpx;height:64rpx;
@@ -28,19 +28,19 @@
     .ui-swiper-title{width:100%;height:98rpx;margin-top:20rpx;position:sticky;position:-webkit-sticky;left:0;top:0;backface-visibility:hidden;z-index:10;}
     .ui-swiper-title .ui-content{width:100%;height:96rpx;background-color:rgba(255,255,255,1);clear:both;border-bottom:1px solid #e5e5e5;position:relative;}
     .ui-swiper-title .ui-item{display:flex;flex-grow:1;flex-shrink:1;}
-    .ui-swiper-title .cell-swiper-text{font-family:PingFangSC-Medium;font-size:32rpx;color:@color-gray;letter-spacing:1px;}
+    .ui-swiper-title .cell-swiper-text{font-size:32rpx;color:@color-gray;letter-spacing:1px;}
     .ui-swiper-title .cell-item-hover text{color:@color-gray;}
     .ui-swiper-title .cell-item-active text{color:@color-blue;}
     .ui-swiper-title .cell-progress{width:64rpx;height:8rpx;background-color:@color-blue;position:absolute;left:0rpx;bottom:0;transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;}
 
     .ui-title-box{padding:0 32rpx;background-color:#fff;height:128rpx;display:flex;align-items:center;}
-    .ui-title-box .ui-title{height:56rpx;font-family:PingFangSC-Medium;font-size:40rpx;color:#14292C;letter-spacing:1px;}
+    .ui-title-box .ui-title{height:56rpx;font-size:40rpx;color:#14292C;letter-spacing:1px;}
     .ui-title-box .ui-title text{padding-right:20rpx;font-size:72rpx;}
     .ui-title-box .ui-title .fc-red{color:#FF3C3C;}
     .ui-title-box .ui-title .fc-green{color:#2CC64C;}
     .ui-title-box .ui-title .fc-yellow{color:#FFC200;}
     .ui-title-box .ui-title+.ui-subtitle{padding-top:20rpx;}
-    .ui-title-box .ui-subtitle{font-family:PingFangSC-Regular;font-size:30rpx;color:@color-black;line-height:50rpx;}
+    .ui-title-box .ui-subtitle{font-size:30rpx;color:@color-black;line-height:50rpx;}
 
     .ui-introduction-series{background-color:#fff;}
     .ui-details-box{padding:0 32rpx;}
@@ -51,14 +51,14 @@
         .ui-item{display:inline-block;box-sizing:border-box;width:600rpx;height:408rpx;padding:24rpx 36rpx 0;margin-left:40rpx;background-color:#F1F2F5;border-radius:16rpx;}
         .ui-item:first-child{margin-left:0;}
         .ui-header{height:68rpx;}
-        .cell-title{font-family:PingFangSC-Regular;font-size:26rpx;color:@color-gray;}
+        .cell-title{font-size:26rpx;color:@color-gray;}
         .ui-star{
             text{margin-right:11rpx;font-size:24rpx;color:#D8E3ED;}
             .cell-active{color:@color-blue;}
         }
         .cell-portrait{width:56rpx;}
         image{width:56rpx;height:56rpx;border:1px solid #fff;border-radius:50%;}
-        .ui-message{box-sizing:border-box;height:260rpx;padding-top:40rpx;font-family:PingFangSC-Regular;font-size:30rpx;color:@color-black;line-height:48rpx;letter-spacing:1px;white-space:pre-wrap;word-break:break-all;}
+        .ui-message{box-sizing:border-box;height:260rpx;padding-top:40rpx;font-size:30rpx;color:@color-black;line-height:48rpx;letter-spacing:1px;white-space:pre-wrap;word-break:break-all;}
     }
     .ui-comments-box{box-sizing:border-box;padding:0 32rpx 60rpx;background-color:#fff;}
 

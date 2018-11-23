@@ -55,9 +55,10 @@
                 text{margin:0 auto;}
             }
             .ui-content{
-                padding:10rpx 0 10rpx 16rpx;
-                text:nth-of-type(1){font-size:32rpx;;color:@color-black;line-height:22px;}
-                text:nth-of-type(2){font-size:26rpx;;color:@color-gray;line-height:20px;}
+                width:60%;padding:10rpx 0 10rpx 16rpx;
+                text{display:block;width:90%;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+                text:nth-of-type(1){height:44rpx;font-size:32rpx;;color:@color-black;line-height:44rpx;}
+                text:nth-of-type(2){height:40rpx;font-size:26rpx;;color:@color-gray;line-height:40rpx;}
             }
         }
     }
@@ -68,6 +69,7 @@
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <view class="module-course-complete-box" wx:if="{{isLoaded}}">
         <jn-header :title.sync="finishResultInfo.name"
+                   buttonIcon="back-close" buttonColor="#fff"
                    :delta.sync="routerDelta"></jn-header>
 
         <view class="ui-container dir-top" style="height: calc(100% - {{headerHeigth}}px)">
@@ -185,10 +187,10 @@
             let self = this
             self.isLoaded = false
             // 分享进来的
-            if (1 === getCurrentPages().length) {
+            /*if (1 === getCurrentPages().length) {
                 wx.reLaunch({url: '/pages/course-module/course'})
                 return
-            }
+            }*/
 
             let {courseID, senceID, teamID} = parameter
             let {user: {token, platform}, cards: {requestFlag}} = getStore().getState()
