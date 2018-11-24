@@ -68,7 +68,7 @@
             ballotInfo: {}, // 投票比例
             ballotTotal: 0, // 全部票数
             resultId: -1, // 正确的结果id
-            description: '', // 选中的答案的解释详情
+            description: '' // 选中的答案的解释详情
         }
 
         onLoad() {
