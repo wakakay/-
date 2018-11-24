@@ -174,7 +174,7 @@ export const payByJinengBin = ({ courseID, token, senceID, code, payMoney, paySi
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
+            // if (200 !== status) throw new Error(message)
             return data
         })
 

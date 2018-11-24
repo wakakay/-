@@ -69,7 +69,7 @@
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <view class="module-course-complete-box" wx:if="{{isLoaded}}">
         <jn-header :title.sync="finishResultInfo.name"
-                   buttonIcon="back-close" buttonColor="#fff"
+                   buttonIcon="back-close" buttonColor="#007AFF"
                    :delta.sync="routerDelta"></jn-header>
 
         <view class="ui-container dir-top" style="height: calc(100% - {{headerHeigth}}px)">

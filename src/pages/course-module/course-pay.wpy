@@ -90,7 +90,7 @@
                     <view class="ui-title main-justify">
                         <view class="cell-title">赠一得一</view>
                     </view>
-                    <view class="cell-content">免费将此课赠送给好友，好友学习之后你也可以免费学习本节课。</view>
+                    <view class="cell-content">免费将此课赠送给好友，对方领取后，你将免费获得此课程</view>
                 </view>
             </button>
 
@@ -103,13 +103,13 @@
                 </view>
                 <view class="ui-info flex-box-1 dir-top main-justify">
                     <view class="ui-title main-justify">
-                        <view class="cell-title">即能币支付<text>{{payInfo.userJinengBinTip}}</text></view>
+                        <view class="cell-title">即能币支付</view>
                         <view class="cell-money">
                             <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png"></image>
                             {{payInfo.price}}
                         </view>
                     </view>
-                    <view class="cell-content">即能币是即能平台官方研发的货币兑换单位，用于购买即能平台上的课程内容。</view>
+                    <view class="cell-content">{{payInfo.userJinengBinTip}}</view>
                 </view>
             </button>
 
@@ -126,15 +126,14 @@
                         <view class="cell-title">微信支付</view>
                         <view class="cell-money">￥{{payInfo.price}}</view>
                     </view>
-                    <view class="cell-content">直接支付，马上学习。</view>
                 </view>
             </button>
         </view>
 
         <view class="ui-button-box">
-            <view class="ui-title main-justify cross-center" wx:if="{{!isPay}}">
-                <text wx:if="{{selectType!=1}}">总共</text>
-                <view class="cell-money" wx:if="{{selectType!=1}}">
+            <view class="ui-title main-justify cross-center">
+                <text wx:if="{{selectType!=1 || !isPay}}">总共</text>
+                <view class="cell-money" wx:if="{{selectType!=1 || !isPay}}">
                     <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png" wx:if="{{selectType==2}}"></image>
                     <text wx:if="{{selectType==3}}">￥</text>{{payInfo.price}}
                 </view>
@@ -267,15 +266,10 @@
                 postData.courseID = self.paramsInfo.courseID
             }
 
-            paymentApi.payByJinengBin(postData).then(respone => {
+            paymentApi.payByJinengBin(postData).then((respone) => {
                 self.isPay = true
                 self.$apply()
-                if (respone) {
-                    wx.showToast({title: '购买成功'})
-                } else {
-                    wx.showToast({title: '你已经购买了'})
-                }
-
+                wx.showToast({title: respone ? '购买成功' : '你已经购买了'})
                 setTimeout(() => {
                     wx.navigateBack()
                 }, 1500)
@@ -289,13 +283,13 @@
                     sencename: self.payInfo.name,
                     goods: '',
                 })
-            }).catch(error => {
-                wepy.showModal({
+            }).catch((error) => {
+                /*wx.showModal({
                     title: "温馨提示",
                     content: "很遗憾，未购买成功",
                     showCancel: false,
                     confirmText: "知道了"
-                })
+                })*/
             })
         }
         /**
