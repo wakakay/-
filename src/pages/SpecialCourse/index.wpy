@@ -210,8 +210,9 @@
                 self.courseName = res.name
                 self.isLoaded = true
                 self.moduleList = res.moduleList
-                _.each(self.moduleList, (data) => {
+                _.each(self.moduleList, (data, index) => {
                     if ('poll' === data.type) {
+                        data.index = index
                         data.cardStatus = data.pollType
                         if (data.isDone) {
                             let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
