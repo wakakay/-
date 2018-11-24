@@ -1230,7 +1230,7 @@
 				let postData = {
                     token: self.token,
                     pollID: item.pollID,
-                    optionList: item.selectedId
+                    optionList: item.selectedItem.id
 				}
 
                 teamApi.vote(postData).then(respone => {
