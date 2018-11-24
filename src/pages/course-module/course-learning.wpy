@@ -697,8 +697,9 @@
                 let postData = {
                     token: self.systemInfo.token,
                     courseID: self.courseID,
-                    senceID: self.cardCurrentInfo[0].id,
+                    senceID: self.senceID
                 }
+
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     let shareImages = {
                         footImage: 'http://wx-small.runwise.cn/image/imageIDae0a7f711614cb8e972aa6b10ced.jpg',

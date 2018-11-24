@@ -145,6 +145,7 @@
                     let add = data.id === item.id ? 1 : 0
                     self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
                 })
+
                 cardItem.isDone = true
                 cardItem.isAnswerOver = true
                 self.oldIndex = _.clone(index)
