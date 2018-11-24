@@ -9,17 +9,17 @@
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
-                    <view class="ui-img-type" wx:if="{{item.type === 'img' && index !== 0}}" >
-                    <image mode="widthFix" src="{{item.url}}" />
+                    <view class="ui-img-type" wx:if="{{item.type === 'image' && index !== 0}}" >
+                    <image mode="widthFix" src="{{item.img}}" />
                 </view>
                 <view class="ui-doc" wx:if="{{item.type === 'text'}}">
                     <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
-                    <view class="cell-content" wx:if="{{item.content}}">{{item.content}}</view>
+                    <text class="cell-content" wx:if="{{item.content}}">{{item.content}}</text>
                 </view>
                 <view class="ui-lesson" wx:if="{{item.type === 'sence'}}">
                     <view class="ui-item" wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem" @tap.stop="handleStartLesson" data-item="{{lessonItem}}" >
                         <view class="ui-img">
-                            <image src="{{lessonItem.imageUrl}}"></image> 
+                            <image src="{{lessonItem.imageUrl}}" />
                         </view>
                         <view class="ui-content">
                             <view class="ui-font">
@@ -66,7 +66,7 @@
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
-                                <image src="{{floatBox.sence.imageUrl}}"></image>
+                                <image src="{{floatBox.sence.imageUrl}}" />
                             </view>
                             <view class="ui-content">
                                 <view class="cell-title">{{floatBox.sence.name}}</view>
@@ -80,7 +80,7 @@
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
-                                <image src="{{floatBox.course.imageUrl}}"></image>
+                                <image src="{{floatBox.course.image}}" />
                             </view>
                             <view class="ui-content">
                                 <view class="cell-title">{{floatBox.course.name}}</view>
@@ -424,8 +424,8 @@
                         }
                         .ui-content{
                             margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;
-                            .cell-title{font-size: 32rpx;color: @color-black;}
-                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;}
+                            .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                         }
                     }
                     .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;}
@@ -435,8 +435,8 @@
             .ui-share-font{
                 z-index:@z-index-slightly;
                 .cell-btn{
-                    border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 222rpx;height: 100rpx;background: @background-gray-F4;text-align: center;line-height: 100rpx;margin:auto;
-                    .cell-icon{margin-right: 8rpx;}
+                    border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 322rpx;height: 100rpx;background: @background-gray-F4;text-align: center;line-height: 100rpx;margin:auto;
+                    .cell-icon{margin-right: 8rpx;font-size: 40rpx}
                 }
                 .cell-btn-margin{width: 100%;height: 230rpx;}
             }
