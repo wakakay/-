@@ -24,7 +24,7 @@
                         <view class="cell-title cross-center">
                             <text>{{item.option}}</text>
                             <view class="cell-pointer" wx:if="{{!(cardsList[cardIndex].isDone)}}"></view>
-                            <view class="cell-number" wx:if="{{cardsList[cardIndex].isDone}}">{{ballotInfo[item.id] || cardsList[cardIndex].prop || 0}}%</view>
+                            <view class="cell-number" wx:if="{{cardsList[cardIndex].isDone}}">{{ballotInfo[item.id] || item.prop || 0}}%</view>
                         </view>
                     </view>
                 </repeat>
