@@ -212,6 +212,7 @@
                 self.moduleList = res.moduleList
                 _.each(self.moduleList, (data) => {
                     if ('poll' === data.type) {
+                        data.cardStatus = data.pollType
                         if (data.isDone) {
                             let ballotTotal =_.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
                             _.each(data.optionList, (item) => {
