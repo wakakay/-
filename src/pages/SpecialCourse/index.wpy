@@ -111,11 +111,11 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-    import {showErrorPage,shareDictionary,navigateToLesson,initializationDeligate} from "../../utils";
+    import {showErrorPage,shareDictionary,navigateToLesson} from "../../utils";
     import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi,registered as fetch} from "../../api";
     import {CustomError} from "../../errors";
     import {getStore,connect} from "wepy-redux";
-    import {renewWechatCode,login,} from "../../redux/models/user";
+    import {renewWechatCode,login} from "../../redux/models/user";
     import _ from 'underscore'
 
     const store = getStore();
@@ -187,13 +187,15 @@
             }
         }
         onShow() {
-            initializationDeligate({initializeFunc: this.initialize.bind(this, this.courseID), callWhatever: true})
+            let self = this;
+            self.initialize()
+            
         }
-        initialize(courseID, item, resume, phone) {
+        initialize() {
             let self = this
             let postData = {
-                token: this.token,
-                id:courseID,
+                token: self.token,
+                id:self.courseID,
             }
             return fetch.getNewSpecialCourse(postData).then((res)=>{
                 wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
