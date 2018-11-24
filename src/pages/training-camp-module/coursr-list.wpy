@@ -856,7 +856,6 @@
             return state.user.token.startsWith('userID')
         },
         token(state) {
-			return 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d'
             return state.user.token
         },
         role(state) {
