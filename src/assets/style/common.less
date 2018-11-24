@@ -151,6 +151,11 @@
 /* 投票卡 */
 .module-poll-box{
     &.is-phonex{width:100%;height:calc(~"100% - 96px");}
+    &.is-learning{
+        .ui-content{padding:0;}
+        .ui-title{padding-top:0;font-weight:400;}
+        .ui-answer-list{padding:0;}
+    }
     view{box-sizing:border-box;}
     .ui-content{padding:0 72rpx;}
     .ui-title{padding-top:24rpx;font-size:36rpx;font-weight:700;color:@color-black;line-height:60rpx;}
@@ -163,7 +168,7 @@
             .cell-title view{position:absolute;right:0;}
             .cell-number{font-size:32rpx;color:@color-blue;text-align:right;}
             .cell-pointer{width:48rpx;height:48rpx;background:@background-white;border:1px solid @background-subject-blue;border-radius:50%;}
-            &.is-selected-over .ui-prop::before{content:' ';width:22rpx;height:100%;background-color:@color-blue;position:absolute;left:0;top:0;}
+            &.is-selected-over .ui-prop::before{content:' ';width:22rpx;height:100%;background-color:@color-blue;position:absolute;left:0;top:0;border-top-left-radius:@border-radius-16;border-bottom-left-radius:@border-radius-16;}
             &.is-selected .cell-pointer::before{content:' ';width:20rpx;height:20rpx;margin:-10rpx 0 0 -10rpx;background-color:@color-blue;border-radius:50%;position:absolute;left:50%;top:50%;}
         }
     }
