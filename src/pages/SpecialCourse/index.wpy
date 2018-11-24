@@ -180,10 +180,7 @@
             self.courseID = courseID
             self.wxPushType = wxPushType
             if ('show' === gift) {
-                wx.showToast({
-                    title: '领取成功',
-                    icon: 'success'
-                })
+                wx.showToast({title: '领取成功'})
             }
         }
         onShow() {
@@ -197,11 +194,11 @@
                 token: self.token,
                 id:self.courseID,
             }
-            return fetch.getNewSpecialCourse(postData).then((res)=>{
+            return fetch.getNewSpecialCourse(postData).then((res) => {
                 wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
-                    if(rect) {
+                    if (rect) {
                         self.backgroundHeight = rect.height - 50
-                    }else{
+                    } else {
                         self.backgroundHeight = 430
                     }
                 }).exec()
@@ -217,13 +214,14 @@
                     if ('poll' === data.type) {
                         data.cardStatus = data.pollType
                         if (data.isDone) {
-                            let ballotTotal =_.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
+                            let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
                             _.each(data.optionList, (item) => {
                                 item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
                             })
                         }
                     }
                 })
+
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName.name}) // ga统计
                 self.$apply()
             })
@@ -246,7 +244,7 @@
                 let isNewSence = self.isNewSenceMap[self.senceID]
                 self.reportButtonTap()
 
-                wepy.$instance.globalData.getHuilder(`专题页/${self.courseName}`,'click',`${senceName}`)
+                wepy.$instance.globalData.getHuilder(`课程专题页/${self.courseName}`,'click',`${senceName}`)
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 
@@ -270,7 +268,7 @@
                     case '3':typeSrc = '热门课程';  break
                     case '4':typeSrc = '专题';  break
                 }
-                wepy.$instance.globalData.getHuilder(`课程页/${typeSrc}`,'click',`${name}`)
+                wepy.$instance.globalData.getHuilder(`课程专题页/${typeSrc}`,'click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
             },
              /**
