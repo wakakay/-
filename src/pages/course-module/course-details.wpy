@@ -369,9 +369,9 @@
             self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
-            console.log('新课程详情', self.isTokenSet, code, parameter)
+            console.log('新课程详情', self.isTokenSet, codeType, parameter)
             let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
-            if (codeType &&  -1 !== isCode && parameter.senceID) {
+            if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
             }
             self.initialize()
