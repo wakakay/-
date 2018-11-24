@@ -3,7 +3,7 @@
     <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
         <jn-header :className.sync="headerBackground"></jn-header>
         <view class="ui-course-content">
-            <block wx:for="{{moduleList}}" wx:key="{{index}}" wx:index="{{index}}">
+            <repeat for="{{moduleList}}" key="index" index="index" item="item">
                 <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">
                     <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
                         <image mode="widthFix" src="{{item.img}}" />
@@ -46,11 +46,12 @@
                     </view>
                 </view>
                 <view class="ui-poll" wx:if="{{item.type === 'poll'}}">
-                    <view class="cell-name">{{item.pollTitle}}</view>
-                    <view class="cell-poll-btn">投票</view>
+                    <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
+
+                    <view class="cell-poll-btn" data-index="{{index}}" data-item="{{item}}" @tap.stop="getPoll">投票</view>
                 </view>
                 <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
-            </block>
+            </repeat>
             <view class="ui-bottom">
                 <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
                     <view class="ui-share">
@@ -107,12 +108,14 @@
     import wepy from "wepy";
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
+    import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
     import {showErrorPage,shareDictionary,navigateToLesson,initializationDeligate} from "../../utils";
     import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi,registered as fetch} from "../../api";
     import {CustomError} from "../../errors";
     import {getStore,connect} from "wepy-redux";
     import {renewWechatCode,login,} from "../../redux/models/user";
+    import _ from 'underscore'
 
     const store = getStore();
     @connect({
@@ -157,10 +160,8 @@
             wxPushType:'',
             shareImg:'',
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
-            isNewSenceMap:[],
             isNewCourseMap:[],
             senceID:'',
-            courseID:'',
             moduleList:[],
             floatBox:{},
             shareCoverTitle:'',
@@ -171,6 +172,7 @@
         components = {
             'jn-header': header,
             'mloading': Loading,
+            'jn-poll': poll
         };
         onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
             let self = this
@@ -202,12 +204,22 @@
                 }).exec()
                 self.isNewSenceMap = res.isNewSenceMap;
                 self.isNewCourseMap = res.isNewCourseMap;
-                self.moduleList = res.moduleList
                 self.floatBox = res.floatBox
                 self.shareCoverTitle = res.shareCoverTitle;
                 self.shareCoverImageUrl = res.shareCoverImageUrl
                 self.courseName = res.name
                 self.isLoaded = true
+                self.moduleList = res.moduleList
+                _.each(self.moduleList, (data) => {
+                    if ('poll' === data.type) {
+                        if (data.isDone) {
+                            let ballotTotal =_.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
+                            _.each(data.optionList, (item) => {
+                                item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                            })
+                        }
+                    }
+                })
                 self.$apply()
             })
         }
@@ -257,7 +269,6 @@
                 } catch (err) {
                     console.log('handle attend classes err', err)
                 }
-
             },
              /**
              * 监听滚动条事件
@@ -289,6 +300,22 @@
 
                 })
             },
+
+            getPoll(event) {
+                let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
+
+                if (item.isDone) {
+                    return
+                }
+                // 选中的item.selectedItem.id
+                let postData = {
+                    token: self.token,
+
+                }
+
+
+            }
         }
         reportButtonTap(courseID, senceID, buttonStatus) {
             wx.reportAnalytics('tap_to_lesson', {
@@ -306,6 +333,13 @@
             'header-info': (data) => {
                 let self = this
                 self.headerHeigth = data.headerHeigth
+                self.$apply()
+            },
+            'on-interaction': (data) => {
+                let self = this
+                let item = _.find(self.moduleList, {pollID: data.id})
+                _.extend(item, data)
+
                 self.$apply()
             }
         }

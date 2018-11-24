@@ -117,7 +117,7 @@
                     :class="{'is-selected': selectType==3}"
                     disabled="{{!payInfo.isWeixinPay || isPay}}"
                     data-type="3" @tap.stop="getSelected"
-                    wx:if="{{platform}}">
+                    wx:if="{{platform || systemInfo.userName=='星塵'}}">
                 <view class="cell-select flex-box-0">
                     <text class="{{(payInfo.price==0 || isPay) ? 'icon-disabled' : selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
