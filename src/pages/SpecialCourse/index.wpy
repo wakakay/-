@@ -76,7 +76,7 @@
                                 <view class="cell-dec">{{floatBox.sence.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">即学</view>
+                        <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
                 </view>
                 <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
@@ -94,13 +94,11 @@
                     </view>
                 </view>
                 <view class="ui-share-font" wx:if="{{floatBox.type !== 'share'}}">
-                    <text class="icon-share"></text>分享
                     <button class="cell-btn"
                         open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
-                        data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
-                        data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
-                        data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
-                        bindgetuserinfo="getAuthorize"></button>
+                        bindgetuserinfo="getAuthorize">
+                        <text class="icon-share cell-icon"></text>分享
+                    </button>
                 </view>
             </view>
         </view>
@@ -433,7 +431,10 @@
                 }
             }
             .ui-share-font{
-                width: 222rpx;height: 100rpx;background: @background-gray-F4;border-radius: @border-radius-20;color:@color-blue;margin: 20rpx  auto 200rpx;font-size: 34rpx;text-align: center;line-height: 100rpx;
+                .cell-btn{
+                    border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 222rpx;height: 100rpx;background: @background-gray-F4;margin: 20rpx  auto 200rpx;text-align: center;line-height: 100rpx;
+                    .cell-icon{margin-right: 8rpx;}
+                }
             }
         }
     }
