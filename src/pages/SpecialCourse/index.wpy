@@ -48,7 +48,13 @@
                 <view class="ui-poll" wx:if="{{item.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
 
-                    <view class="cell-poll-btn" :class="{'cell-seleted' : item.isDone}" data-index="{{index}}" data-item="{{item}}" @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</view>
+                    <button class="cell-poll-btn"
+                            :class="{'cell-seleted' : item.isDone}"
+                            data-index="{{index}}"
+                            data-item="{{item}}"
+                            open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                            bindgetuserinfo="getAuthorize"
+                            @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
                 </view>
                 <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
             </repeat>
@@ -63,7 +69,9 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}" @tap.stop="handleStartLesson"  data-item="{{floatBox.sence}}">
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}"
+                        data-item="{{floatBox.sence}}"
+                        @tap.stop="handleStartLesson">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -74,7 +82,7 @@
                                 <view class="cell-dec">{{floatBox.sence.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
+                        <view class="cell-btn">{{isTokenSet}}--{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
                 </view>
                 <view class="ui-share-box" :class="{'is-phonex': isIphonex}" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
@@ -193,7 +201,9 @@
             let postData = {
                 token: self.token,
                 id:self.courseID,
+                wxPushType: self.wxPushType
             }
+
             return fetch.getNewSpecialCourse(postData).then((res) => {
                 wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
                     if (rect) {
@@ -232,9 +242,6 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
-                if (!self.isTokenSet) {
-                    return
-                }
                 let {currentTarget: {dataset: {item}}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
@@ -287,16 +294,16 @@
             getAuthorize(event) {
                 let self = this
                 let {detail: {errMsg}, currentTarget: {dataset}} = event
-
-                if (self.token) {
-                    return
-                }
+debugger
                 return new Promise((resolve, reject) => {
                     if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
                     if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
 
                     resolve(errMsg)
                 }).then(userInfo => { // 确定授权
+                    setTimeout(()=>{
+                        self.initialize()
+                    }, 300)
                     return store.dispatch(login())
                 }).catch(error => { // 拒接授权
 
@@ -310,7 +317,7 @@
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
 
-                if (item.isDone) {
+                if (item.isDone || !self.isTokenSet) {
                     return
                 }
 

@@ -142,7 +142,7 @@ export default {
     },
     // 获得专题详情
     getNewSpecialCourse(params) {
-        return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params})
+        return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params, isVisitor: true})
     },
     // 专题投票 POST /api/course/sendUserPoll
     sendUserPoll(params) {

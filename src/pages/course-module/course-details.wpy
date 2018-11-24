@@ -366,7 +366,7 @@
         onLoad(parameter) {
             let self = this
             self.paramsInfo = parameter
-            self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
+            self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
             console.log('新课程详情', self.isTokenSet, codeType, parameter)
@@ -399,6 +399,9 @@
                 token: self.systemInfo.token,
                 courseID: self.paramsInfo.id,
                 source: self.paramsInfo.source
+            }
+            if (self.paramsInfo.wxPushType) {
+                postData.wxPushType = self.paramsInfo.wxPushType
             }
 
             fetch.courseDetail(postData).then((respone) => {
