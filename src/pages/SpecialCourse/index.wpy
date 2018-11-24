@@ -298,7 +298,10 @@
 
                 })
             },
-
+            /**
+             * 投票
+             * @param event
+             */
             getPoll(event) {
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
@@ -306,8 +309,7 @@
                 if (item.isDone) {
                     return
                 }
-                console.log(item,'itemitem')
-                // 选中的item.selectedItem.id
+
                 let postData = {
                     token: self.token,
                     pollID: item.pollID,
@@ -317,10 +319,10 @@
                 
                 fetch.sendUserPoll(postData).then((respone) => {
                     console.log(respone,'sendUserPoll')
+                    self.$broadcast('broadcast-poll', item)
                 }).catch(error => {
 
                 })
-
             }
         }
         reportButtonTap(courseID, senceID, buttonStatus) {
