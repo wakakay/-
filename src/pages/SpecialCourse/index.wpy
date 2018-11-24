@@ -239,6 +239,9 @@
                 self.senceID = item.id
 
                 let isNewSence = self.isNewSenceMap[self.senceID]
+
+                self.reportButtonTap();
+
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 
@@ -303,23 +306,31 @@
                 if (item.isDone) {
                     return
                 }
+                console.log(item,'itemitem')
                 // 选中的item.selectedItem.id
                 let postData = {
                     token: self.token,
-
+                    pollID: item.pollID,
+                    courseID: self.courseID,
+                    optionList:item.optionList
                 }
+                
+                fetch.sendUserPoll(postData).then((respone) => {
+                    console.log(respone,'sendUserPoll')
+                }).catch(error => {
 
+                })
 
             }
         }
         reportButtonTap(courseID, senceID, buttonStatus) {
+            let self = this
             wx.reportAnalytics('tap_to_lesson', {
-                role: this.role,
-                nickname: this.userName,
-                channel: this.entrance.mappers[this.entrance.scenceID],
-                courseid: courseID,
-                senceid: senceID,
-                buttonstatus: buttonStatus,
+                role: self.role,
+                nickname: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                courseid: self.courseID,
+                senceid: self.senceID,
                 source: '专题详情'
             })
         }
