@@ -398,10 +398,8 @@
             let postData = {
                 token: self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source
-            }
-            if (self.paramsInfo.wxPushType) {
-                postData.wxPushType = self.paramsInfo.wxPushType
+                source: self.paramsInfo.source,
+                wxPushType: self.paramsInfo.wxPushType
             }
 
             fetch.courseDetail(postData).then((respone) => {
