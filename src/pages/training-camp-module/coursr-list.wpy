@@ -1,5 +1,9 @@
 <style scoped lang="less">
 	@import "../../assets/style/theme";
+	::-webkit-scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
+	::scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
+	page{background-color:#f1f2f5}
+
 	.ui-team-learning{background-repeat: no-repeat;background-size:100% auto;background-position:top left;height: 100%;}
 	.teamlearning-article.ui-empty-box{background:@background-white;}
 	.ui-bar{
@@ -253,27 +257,7 @@
 						}
 					}
 				}
-				.cell-question-name{font-size: 32rpx;color: @color-black;}
-				.ui-draw{
-					margin-top: 16rpx;
-					.ui-item{
-						width: 622rpx;height: 112rpx;border: 2rpx solid @background-tint-blue;border-radius: @border-radius-20;margin-top: 32rpx;overflow: hidden;font-family: PingFangSC-Regular;font-size: 32rpx;color: @color-black;position: relative;
-						.cell-poll{
-							background: @background-poll-blue;height: 100%;width: 422rpx;line-height: 112rpx;box-sizing: border-box;
-							text{padding-left: 32rpx;width:600rpx;position:absolute;}
-						}
-						.cell-poll.cell-poll-false{background: @background-white;}
-						.cell-num{color: @color-black;position: absolute;right: 28rpx;top: 50%;transform: translate(0,-50%)}
-						.cell-cir{
-							width: 48rpx;height: 48rpx;border-radius: 50%;border:2rpx solid @background-blue;position: absolute;right: 28rpx;top: 50%;transform: translate(0,-50%);display:flex;justify-content:center;align-items:center;
-							.cell-content{
-								position: relative;color:@color-white;
-								&::before{position: absolute;content: '';top: 50%;left: 50%;transform: translate(-50%,-50%);}
-							}
-						}
-						.cell-cir.cell-cir-selected{background:@background-blue}
-					}
-				}
+
 				.cell-poll-button{
 					height: 64rpx;text-align: center;font-family: PingFangSC-Regular;width: 280rpx;border-radius: 200rpx;background: @background-gray-F4;margin: 32rpx auto 0;display: flex;align-items: center;justify-content:center;
 					text{font-size: 28rpx;color: @color-blue;}
@@ -551,8 +535,7 @@
 							  data-item="{{taskList.continueSence}}" data-phone="{{ phone }}"
 							  data-resume="{{ true? 'YES': 'NO' }}"  data-task-tips="{{taskList.taskTips}}"
 							  data-button="{{ 'review' === item.buttonStatus ? 'question' : false}}"
-							  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
-						>
+							  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}">
 							{{taskList.taskTips}}
 						</view>
 					</view>
@@ -591,200 +574,189 @@
 					</view>
 				</view>
 				<!-- 提问 / poll -->
-				<view class="ui-item"  wx:if="{{extraList}}"  wx:for="{{ extraList }}" wx:key="{{ index }}" wx:for-index="index">
-					<view class="ui-complate">
-						<view class="cell-item" :class="{ 'cell-item-complated': item.isParticipate }">
-							<text class="icon-complete" wx:if="{{item.isParticipate}}"></text>
-						</view>
-						<view class="cell-complate-time">{{item.realseTime ? item.realseTime  : item.releasTime}}</view>
-					</view>
-					<view wx:if="{{item.action === 'question'}}" class="ui-question">
-						<view class="ui-top">
-							<view>
-								<image  mode="aspectFill" src="{{item.avatarUrl}}" />
+				<view class="ui-item" wx:if="{{extraList.length}}">
+					<repeat for="{{extraList}}" key="index" index="index" item="item">
+						<view class="ui-complate">
+							<view class="cell-item" :class="{ 'cell-item-complated': item.isParticipate }">
+								<text class="icon-complete" wx:if="{{item.isParticipate}}"></text>
 							</view>
-							<view class="ui-font">
-								<view class="ui-name">
-									<view class="cell-name">{{item.nickName}}</view>
-									<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
+							<view class="cell-complate-time">{{item.realseTime ? item.realseTime  : item.releasTime}}</view>
+						</view>
+						<view wx:if="{{item.action === 'question'}}" class="ui-question">
+							<view class="ui-top">
+								<view>
+									<image  mode="aspectFill" src="{{item.avatarUrl}}" />
 								</view>
-								<view class="cell-tip">发起提问</view>
-							</view>
-						</view>
-						<view class="cell-question-name">{{item.postContent}}</view>
-						<view class="ui-bar" wx:if="{{item.senceName}}" @tap.stop="handleStartSence" data-sence-i-d="{{item.senceID}}" data-course-i-d="{{ item.courseID }}">
-							<view class="cell-name">{{item.senceName}}</view>
-							<view class="ui-arrow">
-								<text class="icon-details"></text>
-							</view>
-						</view>
-						<view class="ui-button">
-							<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
-								  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
-								  data-index="{{index}}" data-post-i-d="{{item.postID}}"
-							>
-								<text class="iconfont icon-praise"></text>
-								<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
-							</view>
-							<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
-								<text class="iconfont icon-comment"></text>
-								<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
-							</view>
-						</view>
-						<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
-							<view class="ui-item">
-								<view class="ui-avatar">
-									<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
-								</view>
-								<view class="ui-content">
-									<view class="ui-tip">
-										<view class="cell-name">
-											<text class="cell-member">{{$question$item.replyUserNickName}}</text>
-											<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
-												{{$question$item.role}}</view>
-										</view>
-										<view class="cell-time">{{$question$item.replyCreateTime}}</view>
+								<view class="ui-font">
+									<view class="ui-name">
+										<view class="cell-name">{{item.nickName}}</view>
+										<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
 									</view>
-									<view class="cell-comment">{{$question$item.replyContent}}</view>
+									<view class="cell-tip">发起提问</view>
 								</view>
 							</view>
-						</view>
-					</view>
-					<view wx:if="{{item.action ==='message'}}" class="ui-question">
-						<view class="ui-top">
-							<view>
-								<image  mode="aspectFill" src="{{item.avatarUrl}}" />
-							</view>
-							<view class="ui-font">
-								<view class="ui-name">
-									<view class="cell-name">{{item.nickName}}</view>
-									<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
+							<view class="cell-question-name">{{item.postContent}}</view>
+							<view class="ui-bar" wx:if="{{item.senceName}}" @tap.stop="handleStartSence" data-sence-i-d="{{item.senceID}}" data-course-i-d="{{ item.courseID }}">
+								<view class="cell-name">{{item.senceName}}</view>
+								<view class="ui-arrow">
+									<text class="icon-details"></text>
 								</view>
-								<view class="cell-tip">发布消息</view>
 							</view>
-						</view>
-						<view class="cell-question-name">{{item.postContent}}</view>
-						<view class="ui-button">
-							<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
-								  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
-								  data-index="{{index}}" data-post-i-d="{{item.postID}}"
-							>
-								<text class="iconfont icon-praise"></text>
-								<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
-							</view>
-							<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
-								<text class="iconfont icon-comment"></text>
-								<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
-							</view>
-						</view>
-						<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
-							<view class="ui-item">
-								<view class="ui-avatar">
-									<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
+							<view class="ui-button">
+								<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
+									  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
+									  data-index="{{index}}" data-post-i-d="{{item.postID}}"
+								>
+									<text class="iconfont icon-praise"></text>
+									<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
 								</view>
-								<view class="ui-content">
-									<view class="ui-tip">
-										<view class="cell-name">
-											<text class="cell-member">{{$question$item.replyUserNickName}}</text>
-											<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
-												{{$question$item.role}}</view>
-										</view>
-										<view class="cell-time">{{$question$item.replyCreateTime}}</view>
+								<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
+									<text class="iconfont icon-comment"></text>
+									<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
+								</view>
+							</view>
+							<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
+								<view class="ui-item">
+									<view class="ui-avatar">
+										<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
 									</view>
-									<view class="cell-comment">{{$question$item.replyContent}}</view>
-								</view>
-							</view>
-						</view>
-					</view>
-					<view wx:if="{{item.action === 'share'}}" class="ui-question">
-						<view class="ui-top">
-							<view>
-								<image  mode="aspectFill" src="{{item.avatarUrl}}" />
-							</view>
-							<view class="ui-font">
-								<view class="ui-name">
-									<view class="cell-name">{{item.nickName}}</view>
-									<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
-								</view>
-								<view class="cell-tip">分享链接</view>
-							</view>
-						</view>
-						<view class="cell-question-name">{{item.postContent}}</view>
-						<view class="ui-share" @tap.stop="copyTBL" data-value="{{item.shareLink}}">
-							<text class="icon-link"></text>
-							<view class="cell-name">{{item.shareLink}}</view>
-						</view>
-						<view class="ui-button">
-							<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
-								  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
-								  data-index="{{index}}" data-post-i-d="{{item.postID}}"
-							>
-								<text class="iconfont icon-praise"></text>
-								<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
-							</view>
-							<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
-								<text class="iconfont icon-comment"></text>
-								<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
-							</view>
-						</view>
-						<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
-							<view class="ui-item">
-								<view class="ui-avatar">
-									<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
-								</view>
-								<view class="ui-content">
-									<view class="ui-tip">
-										<view class="cell-name">
-											<text class="cell-member">{{$question$item.replyUserNickName}}</text>
-											<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
-												{{$question$item.role}}
+									<view class="ui-content">
+										<view class="ui-tip">
+											<view class="cell-name">
+												<text class="cell-member">{{$question$item.replyUserNickName}}</text>
+												<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
+													{{$question$item.role}}</view>
 											</view>
+											<view class="cell-time">{{$question$item.replyCreateTime}}</view>
 										</view>
-										<view class="cell-time">{{$question$item.replyCreateTime}}</view>
-									</view>
-									<view class="cell-comment">{{$question$item.replyContent}}</view>
-								</view>
-							</view>
-						</view>
-					</view>
-					<view  wx:if="{{item.type === 'poll'}}"  class="ui-poll">
-						<view class="ui-top">
-							<view>
-								<image  mode="aspectFill" src="{{item.avatarUrl}}" />
-							</view>
-							<view class="ui-font">
-								<view class="ui-name">
-									<view class="cell-name">{{item.nickName}}</view>
-									<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
-								</view>
-								<view class="cell-tip">发起投票 <text>   [ {{item.pollType === 'single' ? '单选' : '多选'}} ]</text></view>
-							</view>
-						</view>
-						<view class="cell-question-name">{{item.title}}</view>
-						<view class="ui-draw">
-							<view class="ui-item" wx:for="{{item.optionList}}" wx:for-index="selectIndex"
-								wx:for-item="selectItem" wx:key="selectIndex" data-id="{{ selectItem.id }}" data-vote-offset="{{ index }}"  @tap.stop="getVoteOption"  data-type="{{item.pollType}}">
-								<view class="cell-poll" :class="{'cell-poll-false' : !item.isParticipate && teamRole === 'member' }" style="width:{{selectItem.percentage}}%">
-									<text>{{ selectItem.option }}</text>
-								</view>
-								<view wx:if="{{item.isParticipate || teamRole !== 'member'}}" class="cell-num">{{selectItem.percentage}}%</view>
-								<view wx:else class="cell-cir {{selectItem.selected ? 'cell-cir-selected':''}}">
-									<view wx:if="{{selectItem.selected}}" class="cell-content">
-										<text class="icon-complete"></text>
+										<view class="cell-comment">{{$question$item.replyContent}}</view>
 									</view>
 								</view>
 							</view>
 						</view>
+						<view wx:if="{{item.action ==='message'}}" class="ui-question">
+							<view class="ui-top">
+								<view>
+									<image  mode="aspectFill" src="{{item.avatarUrl}}" />
+								</view>
+								<view class="ui-font">
+									<view class="ui-name">
+										<view class="cell-name">{{item.nickName}}</view>
+										<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
+									</view>
+									<view class="cell-tip">发布消息</view>
+								</view>
+							</view>
+							<view class="cell-question-name">{{item.postContent}}</view>
+							<view class="ui-button">
+								<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
+									  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
+									  data-index="{{index}}" data-post-i-d="{{item.postID}}"
+								>
+									<text class="iconfont icon-praise"></text>
+									<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
+								</view>
+								<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
+									<text class="iconfont icon-comment"></text>
+									<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
+								</view>
+							</view>
+							<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
+								<view class="ui-item">
+									<view class="ui-avatar">
+										<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
+									</view>
+									<view class="ui-content">
+										<view class="ui-tip">
+											<view class="cell-name">
+												<text class="cell-member">{{$question$item.replyUserNickName}}</text>
+												<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
+													{{$question$item.role}}</view>
+											</view>
+											<view class="cell-time">{{$question$item.replyCreateTime}}</view>
+										</view>
+										<view class="cell-comment">{{$question$item.replyContent}}</view>
+									</view>
+								</view>
+							</view>
+						</view>
+						<view wx:if="{{item.action === 'share'}}" class="ui-question">
+							<view class="ui-top">
+								<view>
+									<image  mode="aspectFill" src="{{item.avatarUrl}}" />
+								</view>
+								<view class="ui-font">
+									<view class="ui-name">
+										<view class="cell-name">{{item.nickName}}</view>
+										<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
+									</view>
+									<view class="cell-tip">分享链接</view>
+								</view>
+							</view>
+							<view class="cell-question-name">{{item.postContent}}</view>
+							<view class="ui-share" @tap.stop="copyTBL" data-value="{{item.shareLink}}">
+								<text class="icon-link"></text>
+								<view class="cell-name">{{item.shareLink}}</view>
+							</view>
+							<view class="ui-button">
+								<view class="ui-parise" :class="{ 'ui-parised' : item.likeIsMy }"
+									  @tap.stop="handleTickLike"  data-active="{{item.likeIsActive}}"
+									  data-index="{{index}}" data-post-i-d="{{item.postID}}"
+								>
+									<text class="iconfont icon-praise"></text>
+									<text class="cell-num">{{item.likeUserCount?item.likeUserCount:''}}</text>
+								</view>
+								<view class="ui-comment" data-active="{{item.replyIsActive}}" data-nick-name="{{item.nickName}}" data-post-i-d="{{item.postID}}" @tap.stop="handleCommentSence">
+									<text class="iconfont icon-comment"></text>
+									<text class="cell-num"> {{item.replyCount?item.replyCount:''}}</text>
+								</view>
+							</view>
+							<view class="ui-comment-list" wx:for="{{ item.replyList }}"  wx:key="$question$index" wx:for-index="$question$index" wx:for-item="$question$item">
+								<view class="ui-item">
+									<view class="ui-avatar">
+										<image  mode="aspectFill" src="{{$question$item.replyUserAvatarUrl}}" />
+									</view>
+									<view class="ui-content">
+										<view class="ui-tip">
+											<view class="cell-name">
+												<text class="cell-member">{{$question$item.replyUserNickName}}</text>
+												<view wx:if="{{$question$item.role !== '学员'}}" class="cell-teacher">
+													{{$question$item.role}}
+												</view>
+											</view>
+											<view class="cell-time">{{$question$item.replyCreateTime}}</view>
+										</view>
+										<view class="cell-comment">{{$question$item.replyContent}}</view>
+									</view>
+								</view>
+							</view>
+						</view>
+						<view  wx:if="{{item.type === 'poll'}}"  class="ui-poll">
+							<view class="ui-top">
+								<view>
+									<image  mode="aspectFill" src="{{item.avatarUrl}}" />
+								</view>
+								<view class="ui-font">
+									<view class="ui-name">
+										<view class="cell-name">{{item.nickName}}</view>
+										<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
+									</view>
+									<view class="cell-tip">发起投票 <text>   [ {{item.pollType === 'single' ? '单选' : '多选'}} ]</text></view>
+								</view>
+							</view>
 
-						<view class="cell-poll-button"
-							  :class="{'cell-polled' : item.isParticipate}"
-							  data-vote-offset="{{ index }}"
-							  data-id="{{ selectItem.id }}"
-							  @tap.stop="handleVoteOption"
-							  wx:if="{{teamRole === 'member'}}">
-							<text>{{item.isParticipate? '已投票':'投票'}}</text>
+							<jn-poll :cardIndex.sync="index" :cardsList.sync="extraList" isLearning></jn-poll>
+
+							<view class="cell-poll-button"
+								  :class="{'cell-polled' : item.isParticipate}"
+								  data-item="{{item}}"
+								  data-index="{{index}}"
+								  @tap.stop="handleVoteOption"
+								  wx:if="{{teamRole === 'member'}}">
+								<text>{{item.isParticipate? '已投票':'投票'}}</text>
+							</view>
 						</view>
-					</view>
+					</repeat>
 				</view>
 			</view>
 			<view wx:else class="ui-no-task">
@@ -807,9 +779,7 @@
 					</view>
 				</view>
 			</view>
-
 		</scroll-view>
-
 	</view>
 
 	<!-- 加号 -->
@@ -862,17 +832,13 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from "wepy-redux"
-    import {
-        navigateToLesson,
-        sleep,
-        parsePercentageForPoll,
-        shareDictionary
-    } from "../../utils"
+    import {navigateToLesson, sleep, parsePercentageForPoll, shareDictionary} from "../../utils"
     import {team as teamApi, share as shareApi} from '../../api'
     import Loading from '../../components/common/loading'
     import PushMixin from "../../mixins/push";
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
+	import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
 	import fetchPhoneMixin from "../../mixins/fetchPhone"
 	import _ from 'underscore'
@@ -890,9 +856,7 @@
             return state.user.token.startsWith('userID')
         },
         token(state) {
-			//return 'userID4456e4e22b584ce5907d5c96e0ef247a-1542007729861-90720579be4877f55668f433603b5301'
-			//return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
-            // return 'userIDe843f9cc21194f45b3eec68544a5961a-1531659221846-8f9281b71c0f2203970a24bb425c0bd3'
+			return 'userID94afcb4d195143e8bf398fa1f89815dc-1542940579203-3d8748497bd922895366cc9a468f010d'
             return state.user.token
         },
         role(state) {
@@ -923,7 +887,8 @@
 
         components = {
             'mloading': Loading,
-            'jn-header': header
+            'jn-header': header,
+			'jn-poll': poll
         }
 
         data = {
@@ -1245,54 +1210,36 @@
             // 点击投票 item
             handleVoteOption(event) {
 				let self = this
-				let detail = event.currentTarget.dataset;
-				let voteOffset = detail.voteOffset;
-				let id = detail.id;
-				if(self.extraList[voteOffset].isDone == true || self.teamRole !== 'member') return
+                let {currentTarget: {dataset: {item, index}}} = event
 
-				let tmp = this.extraList[voteOffset]
-				let isSelected = false
-				// 判断有没有投票
-				_.each(tmp.optionList,(item)=>{
-					if(item.selected) {
-						isSelected = true
-					}
-				})
-
-				if(!isSelected) {
-					return wx.showToast({
-						title: '请选择选项',
-						icon: 'none',
-						duration: 800
-					})
+				if(item.isDone || self.teamRole !== 'member') {
+                    return
 				}
 
-				// 选中的 item.count + 1
-				_.each(tmp.optionList,(item)=>{
-					item.percentage = 0;
-					if(item.selected) {
-						item.count = item.count+1
-					}
-				})
-				// 获得 总人数
-				let totalList = _.pluck(tmp.optionList,'count');
-				let totalNum = _.reduce(totalList,(total, num)=>{ return total + num; }, 0);
-				
-				_.each(tmp.optionList,(item)=>{
-					item.percentage = Math.round((item.count / totalNum) * 100)
+				if (!item.selectedId) {
+                    return wx.showToast({
+                        title: '请选择选项',
+                        icon: 'none',
+                        duration: 800
+                    })
+				}
 
+				item.index = index
+                item.isDone = true
+				self.$apply()
+
+				let postData = {
+                    token: self.token,
+                    pollID: item.pollID,
+                    optionList: item.selectedId
+				}
+
+                teamApi.vote(postData).then(respone => {
+					self.extraList[index].isInAction = true
+					self.extraList[index].isParticipate =true
+					self.$apply()
+                    self.$broadcast('broadcast-poll', item)
 				})
-				self.extraList[voteOffset].optionList = tmp.optionList
-				self.extraList[voteOffset].isDone = true
-				self.extraList[voteOffset].isInAction = true
-				self.extraList[voteOffset].isParticipate =true
-				let pollID= tmp.pollID
-				let optionAllList = _.filter(tmp.optionList,(item)=>{
-					return item.selected === true
-				})
-				let optionList = _.pluck(optionAllList, 'id');
-				teamApi.vote({token: self.token, pollID, optionList: optionList})
-				
             },
             // 点击全部任务 跳转页面
             handleToAllTask() {
@@ -1557,9 +1504,17 @@
                 })
         }
 
-        initializeExtraItem(item) {
-            if ('text' === item.type) return item
-            return {...item, layout: item.isDone ? 'back' : 'front', isInAction: !item.isDone}
+        initializeExtraItem(data) {
+            if ('text' === data.type) return data
+			if ('poll' === data.type) {
+                if (data.isDone) {
+                    let ballotTotal =_.reduce(data.optionList, (memo, item) => {return memo + item.count}, 0) // 统计全部投票人数
+                    _.each(data.optionList, (item) => {
+                        item.prop = Math.floor(item.count / ballotTotal * 1000) / 10
+                    })
+                }
+			}
+            return {...data, layout: data.isDone ? 'back' : 'front', isInAction: !data.isDone}
         }
 
         switchSeries({current, seriesPerPage}) {
@@ -1665,15 +1620,15 @@
                 let self = this
                 self.headerHeigth = data.headerHeigth
                 self.$apply()
+            },
+            'on-interaction': (data) => {
+                let self = this
+                let item = _.find(self.extraList, {pollID: data.id})
+                _.extend(item, data)
+
+                self.$apply()
             }
         }
 
     }
 </script>
-
-<style lang="less">
-	::-webkit-scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
-	::scrollbar {width: 0 !important;height: 0 !important;background-color: transparent !important;}
-	page{background-color:#f1f2f5}
-
-</style>

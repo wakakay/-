@@ -106,7 +106,7 @@
                     return !data.hidden && data.index + 1 === item.location
                 })
 
-                if (selectedItem.width) {
+                if (selectedItem.width || !selectedItem.icon) {
                     self.__emit(selectedItem)
                     return
                 }
@@ -116,7 +116,7 @@
                     src: selectedItem.icon,
                     success(res) {
                         let data = self.__calculateImage(res)
-                        let newData = _.extend(selectedItem, data)
+                        _.extend(selectedItem, data)
                         self.__emit(selectedItem)
                     }
                 })
