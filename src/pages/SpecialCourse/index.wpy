@@ -51,7 +51,6 @@
                 </view>
                 <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
             </block>
-            <view class="cell-margin"></view>
             <view class="ui-bottom">
                 <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
                     <view class="ui-share">
@@ -364,7 +363,7 @@
                 padding: 0 32rpx;
                 .ui-item{
                     display: flex;height: 176rpx;align-items: center;
-                    .ui-img image{width: 112rpx;height: 112rpx;border-radius: @border-radius-16;}
+                    .ui-img image{width: 112rpx;height: 112rpx;border-radius: @border-radius-20;}
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
                         height: 100%;display: flex;flex:1;justify-content: space-between;border-top:2rpx solid @border-gray;align-items:center;
@@ -386,7 +385,7 @@
                 padding: 0 32rpx;
                 .ui-item{
                     display: flex;height: 240rpx;align-items: center;
-                    .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-16;}
+                    .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-32;}
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
                         margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;
@@ -402,7 +401,6 @@
             }
             .cell-border{height: 2rpx;border-bottom:2rpx solid @border-gray;margin:20rpx 16rpx 24rpx;}
         }
-        .cell-margin{width: 100%;height: 20rpx;}
         .ui-bottom{
             .ui-share-box{
                 position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
@@ -435,7 +433,7 @@
             .ui-share-font{
                 z-index:@z-index-slightly;
                 .cell-btn{
-                    border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 322rpx;height: 100rpx;background: @background-gray-F4;text-align: center;line-height: 100rpx;margin:auto;
+                    border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 322rpx;height: 100rpx;background: @background-gray-F4;text-align: center;line-height: 100rpx;margin:44rpx auto 0;
                     .cell-icon{margin-right: 8rpx;font-size: 40rpx}
                 }
                 .cell-btn-margin{width: 100%;height: 230rpx;}
