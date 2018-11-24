@@ -59,9 +59,6 @@
                         <text>分享给好友</text>
                         <button class="cell-btn"
                             open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
-                            data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
-                            data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
-                            data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
@@ -272,14 +269,12 @@
             },
             /**
              * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
              */
             getAuthorize(event) {
                 let self = this
-                let {detail: {errMsg}, currentTarget: {dataset:{item, resume, phone}}} = event
+                let {detail: {errMsg}, currentTarget: {dataset}} = event
 
-                if (self.isTokenSet) {
+                if (self.token) {
                     return
                 }
                 return new Promise((resolve, reject) => {
@@ -289,8 +284,6 @@
                     resolve(errMsg)
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    self.initialize(self.courseID, item, resume, phone)
                 }).catch(error => { // 拒接授权
 
                 })
