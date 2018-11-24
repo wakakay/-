@@ -741,7 +741,7 @@
 										<view class="cell-name">{{item.nickName}}</view>
 										<text  wx:if="{{item.role !== '学员'}}" class="cell-name-tip">{{item.role}}</text>
 									</view>
-									<view class="cell-tip">发起投票 <text>   [ {{item.pollType === 'single' ? '单选' : '多选'}} ]</text></view>
+									<view class="cell-tip">发起投票</view>
 								</view>
 							</view>
 
@@ -1513,6 +1513,7 @@
                     })
                 }
 			}
+			data.cardStatus = data.pollType
             return {...data, layout: data.isDone ? 'back' : 'front', isInAction: !data.isDone}
         }
 

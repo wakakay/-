@@ -282,7 +282,7 @@
         events = {} // end events
         methods = {
             handleBeginLearn() {
-                return wepy.navigateBack()
+                return wx.navigateBack()
             }
         }
     }

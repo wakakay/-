@@ -9,12 +9,13 @@
                 <image mode="aspectFit" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
+            <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' ? '单选' : '多选'}}】</view>
 
             <view class="ui-answer-list">
                 <repeat for="{{cardsList[cardIndex].select || cardsList[cardIndex].optionList}}" key="index" index="index" item="item">
                     <view class="ui-item"
-                          hover-class="{{!isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
-                          :class="{'is-selected': item.selected, 'is-selected-over': (isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
+                          hover-class="{{!cardsList[cardIndex].isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
+                          :class="{'is-selected': item.selected, 'is-selected-over': (cardsList[cardIndex].isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
                           data-item="{{ item }}"
                           data-index="{{ index }}"
                           @tap.stop="getSelected">
@@ -67,7 +68,6 @@
             ballotInfo: {}, // 投票比例
             ballotTotal: 0, // 全部票数
             resultId: -1, // 正确的结果id
-            isAnswerOver: false, // 是否作答结束
             description: '', // 选中的答案的解释详情
         }
 
@@ -86,15 +86,14 @@
                 let cardItem = self.cardsList[self.cardIndex]
                 // poll只能投一次
                 if (cardItem.isDone
-                    || (self.isAnswerOver && self.oldIndex === self.cardIndex)) {
+                    || (cardItem.isAnswerOver && self.oldIndex === self.cardIndex)) {
                     return false
                 }
 
                 let {currentTarget: {dataset: {item, index}}} = event
                 let selectList = cardItem.select || cardItem.optionList
-                let cardStatus = cardItem.cardStatus || cardItem.pollType
                 let selectedIds = []
-                if ('single' === cardStatus) {
+                if ('single' === cardItem.cardStatus) {
                     _.each(selectList, (data) => {
                         data.selected = item.id === data.id ? true : false
                     })
@@ -129,24 +128,25 @@
             'broadcast-poll': (data) => {
                 let self = this
                 let index = data.index || self.cardIndex
-                let cardItem = self.cardsList[index].select || self.cardsList[index].optionList
+                let cardItem = self.cardsList[index]
+                let optionList = cardItem.select || cardItem.optionList
 
-                let item = _.find(cardItem, {id: data.selectedId})
+                let item = _.find(optionList, {id: data.selectedId})
                 self.resultId = item.id
                 // 统计全部投票人数
-                let ballotTotal = _.reduce(cardItem, (memo, data) => {
+                let ballotTotal = _.reduce(optionList, (memo, data) => {
                     data.add = data.selected ? 1 : 0
                     data.ballot = data.ballot >= 0 ? data.ballot : data.count
                     return memo + data.ballot + data.add
                 }, 0)
 
                 // 计算每个投票的比例
-                _.each(cardItem, (data) => {
+                _.each(optionList, (data) => {
                     let add = data.id === item.id ? 1 : 0
                     self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
                 })
 
-                self.isAnswerOver = true
+                cardItem.isAnswerOver = true
                 self.oldIndex = _.clone(index)
                 self.$apply()
             },
@@ -156,10 +156,13 @@
              */
             'broadcast-reset-status': (data) => {
                 let self = this
+                let index = data.index || self.cardIndex
+                let cardItem = self.cardsList[index]
+
                 self.oldIndex = -1 // 记录之前的卡片索引
                 self.selectedId = 0 // 当前选中的那个选项
                 self.resultId = -1 // 正确的结果id
-                self.isAnswerOver = false // 是否作答结束
+                cardItem.isAnswerOver = false // 是否作答结束
                 self.$apply()
             }
         }
