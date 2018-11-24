@@ -53,6 +53,7 @@
                 <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
             </repeat>
             <view class="ui-bottom">
+                <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
                 <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
                     <view class="ui-share">
                         <text class="icon-share"></text>
@@ -444,6 +445,7 @@
             .cell-border{height: 2rpx;border-bottom:2rpx solid @border-gray;margin:20rpx 16rpx 24rpx;}
         }
         .ui-bottom{
+            .cell-margin{width: 100%;height: 200rpx;}
             .ui-share-box{
                 position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
                 .ui-share{
