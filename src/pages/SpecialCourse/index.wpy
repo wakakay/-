@@ -63,7 +63,7 @@
                     </view>
                 </view>
                 <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}" @tap.stop="handleStartLesson"  data-item="{{floatBox.sence}}">
-                    <view class="ui-share-course">
+                    <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
                                 <image src="{{floatBox.sence.imageUrl}}"></image>
@@ -76,8 +76,8 @@
                         <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
-                    <view class="ui-share-course">
+                <view class="ui-share-box" :class="{'is-phonex': isIphonex}" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
+                    <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
                                 <image src="{{floatBox.course.imageUrl}}"></image>
@@ -90,12 +90,13 @@
                         <view class="cell-btn">{{floatBox.course.buttonMsg}}</view>
                     </view>
                 </view>
-                <view class="ui-share-font" wx:if="{{floatBox.type !== 'share'}}">
+                <view class="ui-share-font"  wx:if="{{floatBox.type !== 'share'}}">
                     <button class="cell-btn"
                         open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
                         bindgetuserinfo="getAuthorize">
                         <text class="icon-share cell-icon"></text>分享
                     </button>
+                    <view class="cell-btn-margin"></view>
                 </view>
             </view>
         </view>
@@ -156,6 +157,7 @@
             isNewSenceMap: {},
             wxPushType:'',
             shareImg:'',
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isNewSenceMap:[],
             isNewCourseMap:[],
             senceID:'',
@@ -301,7 +303,13 @@
             })
         }
 
-        events = {}
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
 
         onShareAppMessage(res) {
             let self = this
@@ -422,13 +430,15 @@
                     }
                     .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;}
                 }
+                .ui-share-course.is-phonex{margin: 68rpx auto;}
             }
             .ui-share-font{
-                z-index:@z-index-slightly;margin: 20rpx  0 200rpx;
+                z-index:@z-index-slightly;
                 .cell-btn{
                     border-radius: @border-radius-20;border:0;font-size: 34rpx;color:@color-blue;width: 222rpx;height: 100rpx;background: @background-gray-F4;text-align: center;line-height: 100rpx;margin:auto;
                     .cell-icon{margin-right: 8rpx;}
                 }
+                .cell-btn-margin{width: 100%;height: 230rpx;}
             }
         }
     }
