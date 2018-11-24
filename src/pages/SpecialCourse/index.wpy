@@ -262,13 +262,8 @@
                     case '3':typeSrc = '热门课程';  break
                     case '4':typeSrc = '专题';  break
                 }
-
                 wepy.$instance.globalData.getHuilder(`课程页/${typeSrc}`,'click',`${name}`)
-                try {
-                    wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
-                } catch (err) {
-                    console.log('handle attend classes err', err)
-                }
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
             },
              /**
              * 监听滚动条事件
@@ -419,7 +414,7 @@
                 padding: 0 32rpx;
                 .ui-item{
                     display: flex;height: 240rpx;align-items: center;
-                    .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-32;}
+                    .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-44;}
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
                         margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;
@@ -452,7 +447,7 @@
                         display: flex;
                         .ui-img {
                             display: flex;align-items: center;
-                            image{width: 112rpx;height: 112rpx;border-radius: @border-radius-16;}
+                            image{width: 112rpx;height: 112rpx;border-radius: @border-radius-20;}
                         }
                         .ui-content{
                             margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;
