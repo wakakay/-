@@ -368,9 +368,10 @@
             self.paramsInfo = parameter
             self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
-            let code = getStore().getState().entrance.scenceID
+            let codeType = getStore().getState().entrance.scenceID
             console.log('新课程详情', self.isTokenSet, code, parameter)
-            if (self.isTokenSet && code && 1048 === code && parameter.senceID) {
+            let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
+            if (codeType &&  -1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
             }
             self.initialize()
@@ -415,7 +416,8 @@
                 self.courseDetail.price = parseFloat(self.courseDetail.price)
 
                 // 微课分享进来重定向
-                if (self.shareSenceID) {
+                console.log('微课分享进来重定向', self.shareSenceID, self.systemInfo.token)
+                if (self.shareSenceID && 'defaultToken' !== self.systemInfo.token) {
                     let senceItem = _.find(self.courseDetail.senceList, {id: self.shareSenceID})
                     if ('finish' === senceItem.buttonStatus) {
                         senceItem.buttonStatus = ''
@@ -455,6 +457,8 @@
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
+                navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                return
             }
             if ('needPay' === buttonStatus) {
                 return this.$navigate(`/pages/course-module/course-pay`, {senceID})
