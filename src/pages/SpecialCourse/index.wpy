@@ -45,6 +45,10 @@
                         </view>
                     </view>
                 </view>
+                <view class="ui-poll" wx:if="{{item.type === 'poll'}}">
+                    <view class="cell-name">{{item.pollTitle}}</view>
+                    <view class="cell-poll-btn">投票</view>
+                </view>
                 <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
             </block>
             <view class="cell-margin"></view>
@@ -61,7 +65,7 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}">
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}" @tap.stop="handleStartLesson"  data-item="{{floatBox.sence}}">
                     <view class="ui-share-course">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -75,7 +79,7 @@
                         <view class="cell-btn">即学</view>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}"  @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
+                <view class="ui-share-box" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
                     <view class="ui-share-course">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -86,17 +90,17 @@
                                 <view class="cell-dec">{{floatBox.course.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">即学</view>
+                        <view class="cell-btn">{{floatBox.course.buttonMsg}}</view>
                     </view>
                 </view>
                 <view class="ui-share-font" wx:if="{{floatBox.type !== 'share'}}">
                     <text class="icon-share"></text>分享
                     <button class="cell-btn"
-                            open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
-                            data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
-                            data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
-                            data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
-                            bindgetuserinfo="getAuthorize"></button>
+                        open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
+                        data-channel="{{entrance.mappers[entrance.scenceID]}}" data-nickname="{{userName}}"
+                        data-role="{{role}}" data-token="{{ token }}" data-title="{{ dataSet.name }}"
+                        data-course-i-d="{{ courseID }}" data-sence-i-d="{{ senceID }}"
+                        bindgetuserinfo="getAuthorize"></button>
                 </view>
             </view>
         </view>
@@ -147,7 +151,6 @@
             headerHeigth: 68,
             headerBackground: 'background-transparent',
             backgroundHeight: 0,
-            timestamp: 0,
             isLoaded: false,
             shareTitle: '分享标题',
             specialCourseName: '',
@@ -164,15 +167,19 @@
             courseID:'',
             moduleList:[],
             floatBox:{},
+            shareCoverTitle:'',
+            shareCoverImageUrl:'',
+            courseName:''
+
         };
         components = {
             'jn-header': header,
             'mloading': Loading,
         };
         onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
-            this.timestamp = new Date().getTime()
-            this.courseID = courseID
-            this.wxPushType = wxPushType
+            let self = this
+            self.courseID = courseID
+            self.wxPushType = wxPushType
             if ('show' === gift) {
                 wx.showToast({
                     title: '领取成功',
@@ -188,7 +195,6 @@
             let postData = {
                 token: this.token,
                 id:courseID,
-                // wxPushType: this.wxPushType
             }
             return fetch.getNewSpecialCourse(postData).then((res)=>{
                 wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
@@ -202,7 +208,9 @@
                 self.isNewCourseMap = res.isNewCourseMap;
                 self.moduleList = res.moduleList
                 self.floatBox = res.floatBox
-                console.log(self.floatBox,'self.moduleList')
+                self.shareCoverTitle = res.shareCoverTitle;
+                self.shareCoverImageUrl = res.shareCoverImageUrl
+                self.courseName = res.name
                 self.isLoaded = true
                 self.$apply()
             })
@@ -307,11 +315,11 @@
         onShareAppMessage(res) {
             let self = this
             return {
-                title: self.shareTitle,
+                title: self.shareCoverTitle,
                 path: `/pages/SpecialCourse/index?courseID=${self.courseID}`,
-                imageUrl:self.shareImg,
+                imageUrl:self.shareCoverImageUrl,
                 success: function (res) {
-                    wepy.$instance.globalData.getHuilder('课程专题页/分享', 'click', `${this.specialCourseName}`)
+                    wepy.$instance.globalData.getHuilder('课程专题页/分享', 'click', `${self.courseName}`)
                     shareApi.reportSharing({
                         token:self.token,
                         type: shareDictionary.SHARE_SPECIAL_COURSE.type,
@@ -321,7 +329,7 @@
                     wx.reportAnalytics('share_event', {
                         role: self.role,
                         nickname: self.userName,
-                        coursename: self.shareTitle,
+                        coursename: self.courseName,
                         sencename: '/',
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         type: shareDictionary.SHARE_SPECIAL_COURSE.type,
@@ -369,6 +377,11 @@
                         .cell-btn{width: 148rpx;height: 60rpx;text-align: center;line-height: 60rpx;background: @background-gray-F4;color:@color-blue;border-radius: 200rpx;font-size: 30rpx;}
                     }
                 }
+            }
+            .ui-poll{
+                padding:24rpx 32rpx;display: flex;flex-direction: column;align-items: center;
+                .cell-name{font-size: 34rpx;color:@color-black;margin-top:24rpx}
+                .cell-poll-btn{width: 200rpx;height: 60rpx;line-height: 60rpx;text-align: center;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;border-radius: @border-radius-32;}
             }
             .ui-course{
                 padding: 0 32rpx;
