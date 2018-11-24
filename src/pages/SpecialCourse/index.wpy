@@ -314,11 +314,11 @@
                     token: self.token,
                     pollID: item.pollID,
                     courseID: self.courseID,
-                    optionList:item.optionList
+                    optionList:item.selectedItem.id
                 }
                 
                 fetch.sendUserPoll(postData).then((respone) => {
-                    console.log(respone,'sendUserPoll')
+                    console.log(postData,'sendUserPoll')
                     self.$broadcast('broadcast-poll', item)
                 }).catch(error => {
 
@@ -421,7 +421,7 @@
             .ui-poll{
                 padding:24rpx 32rpx;display: flex;flex-direction: column;align-items: center;
                 .cell-name{font-size: 34rpx;color:@color-black;margin-top:24rpx}
-                .cell-poll-btn{width: 200rpx;height: 60rpx;line-height: 60rpx;text-align: center;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;border-radius: @border-radius-32;}
+                .cell-poll-btn{width: 200rpx;height: 60rpx;line-height: 60rpx;text-align: center;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;border-radius: @border-radius-32;margin-top: 40rpx}
             }
             .ui-course{
                 padding: 0 32rpx;
