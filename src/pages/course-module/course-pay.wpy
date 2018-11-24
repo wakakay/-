@@ -96,10 +96,10 @@
 
             <button class="ui-item flex"
                     :class="{'is-selected': selectType==2}"
-                    disabled="{{!payInfo.userJinengBinIsEnough}}"
+                    disabled="{{!payInfo.userJinengBinIsEnough || isPay}}"
                     data-type="2" @tap.stop="getSelected">
                 <view class="cell-select flex-box-0">
-                    <text class="{{!payInfo.userJinengBinIsEnough ? 'icon-disabled' : selectType==2 ? 'icon-selected' : 'icon-selectable'}}"></text>
+                    <text class="{{(!payInfo.userJinengBinIsEnough || isPay) ? 'icon-disabled' : selectType==2 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
                 <view class="ui-info flex-box-1 dir-top main-justify">
                     <view class="ui-title main-justify">
@@ -115,10 +115,12 @@
 
             <button class="ui-item flex"
                     :class="{'is-selected': selectType==3}"
-                    disabled="{{!payInfo.isWeixinPay}}"
+                    disabled="{{!payInfo.isWeixinPay || isPay}}"
                     data-type="3" @tap.stop="getSelected"
                     wx:if="{{platform}}">
-                <view class="cell-select flex-box-0"><text class="{{selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text></view>
+                <view class="cell-select flex-box-0">
+                    <text class="{{(payInfo.price==0 || isPay) ? 'icon-disabled' : selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text>
+                </view>
                 <view class="ui-info flex-box-1 dir-top main-justify">
                     <view class="ui-title main-justify">
                         <view class="cell-title">微信支付</view>
@@ -130,14 +132,14 @@
         </view>
 
         <view class="ui-button-box">
-            <view class="ui-title main-justify cross-center">
+            <view class="ui-title main-justify cross-center" wx:if="{{!isPay}}">
                 <text wx:if="{{selectType!=1}}">总共</text>
                 <view class="cell-money" wx:if="{{selectType!=1}}">
                     <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png" wx:if="{{selectType==2}}"></image>
                     <text wx:if="{{selectType==3}}">￥</text>{{payInfo.price}}
                 </view>
             </view>
-            <button disabled="{{!selectType}}" @tap.stop="getPay">{{selectType!=1 ? '支付' : '赠一得一'}}</button>
+            <button disabled="{{!selectType || isPay}}" @tap.stop="getPay">{{selectType!=1 ? '支付' : '赠一得一'}}</button>
         </view>
     </view>
 </template>
@@ -168,7 +170,8 @@
         data = {
             paramsInfo: {},
             payInfo: {},
-            selectType: 1 // 选中的哪个支付的类型 {1: 赠一得一, 2: 即能币, 3: 微信支付}
+            isPay: false, // 是否已经购买
+            selectType: 1 // 选中的哪个支付的类型 {0: 不能购买或已经购买，不可点击, 1: 赠一得一, 2: 即能币, 3: 微信支付}
         }
 
         onLoad(params) {
@@ -265,6 +268,8 @@
             }
 
             paymentApi.payByJinengBin(postData).then(respone => {
+                self.isPay = true
+                self.$apply()
                 if (respone) {
                     wx.showToast({title: '购买成功'})
                 } else {
@@ -272,7 +277,7 @@
                 }
 
                 setTimeout(() => {
-                    wepy.navigateBack()
+                    wx.navigateBack()
                 }, 1500)
 
                 wx.reportAnalytics('paycourse', {

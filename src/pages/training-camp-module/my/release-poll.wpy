@@ -258,7 +258,7 @@
         .then(data => {
 			this.needSave = false
 			if (status === 'release') {
-				wx.navigateBack()
+                wx.navigateBack()
 			}
 			wx.hideLoading()
         })
