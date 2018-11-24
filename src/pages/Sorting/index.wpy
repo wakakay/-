@@ -255,7 +255,7 @@
     .order-article-body-orderitem.actived {animation: fadeInLeft .5s ease-out 0s;}
     .order-article-body-orderitem.shrink-out {animation: fadeOutLeft .5s;}
     .order-article-body-orderitem.falling {animation: slideOutDown .7s;}
-    .order-article-body-orderitem-num{width: 48rpx;height: 48rpborder-radius: 50%;background-color: #2DB7B5;text-align: center;line-height: 54rpx;font-size: 40rpx;color: #FFF;margin: 0 24rpx 0 20rpx;}
+    .order-article-body-orderitem-num{width: 48rpx;height: 48rpx;border-radius: 50%;background-color: #2DB7B5;text-align: center;line-height: 54rpx;font-size: 40rpx;color: #FFF;margin: 0 24rpx 0 20rpx;}
     .order-article-body-orderitem-num.null{opacity: .2;}
     .order-article-body-orderitem-num::active {background-color: rgba(45,183,181,0.15);backface-visibility: hidden;}
     .order-article-body-orderitem-text{width: 532rpx;box-sizing: border-box;padding-right: 44rpx;font-size: 16px;color: #14292C;text-align: justify;line-height: 22px;}
