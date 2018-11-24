@@ -187,10 +187,10 @@
             let self = this
             self.isLoaded = false
             // 分享进来的
-            /*if (1 === getCurrentPages().length) {
+            if (1 === getCurrentPages().length) {
                 wx.reLaunch({url: '/pages/course-module/course'})
                 return
-            }*/
+            }
 
             let {courseID, senceID, teamID} = parameter
             let {user: {token, platform}, cards: {requestFlag}} = getStore().getState()

@@ -220,6 +220,7 @@
                         }
                     }
                 })
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName.name}) // ga统计
                 self.$apply()
             })
         }
@@ -239,9 +240,9 @@
                 self.senceID = item.id
 
                 let isNewSence = self.isNewSenceMap[self.senceID]
+                self.reportButtonTap()
 
-                self.reportButtonTap();
-
+                wepy.$instance.globalData.getHuilder(`专题页/${self.courseName}`,'click',`${senceName}`)
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 
