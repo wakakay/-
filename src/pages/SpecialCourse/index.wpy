@@ -17,33 +17,48 @@
                     <text class="cell-content" wx:if="{{item.content}}">{{item.content}}</text>
                 </view>
                 <view class="ui-lesson" wx:if="{{item.type === 'sence'}}">
-                    <view class="ui-item" wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem" @tap.stop="handleStartLesson" data-item="{{lessonItem}}" >
-                        <view class="ui-img">
-                            <image src="{{lessonItem.imageUrl}}" />
-                        </view>
-                        <view class="ui-content">
-                            <view class="ui-font">
-                                <view class="cell-title">{{lessonItem.name}}</view>
-                                <view class="cell-dec">{{lessonItem.description}}</view>
+                    <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
+                        <button class="ui-item"  
+                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                @tap.stop="handleStartLesson" 
+                                data-item="{{lessonItem}}" >
+                            <view class="ui-img">
+                                <image src="{{lessonItem.imageUrl}}" />
                             </view>
-                            <view class="cell-btn">{{lessonItem.buttonStatusMsg}}</view>
-                        </view>
-                    </view>
+                            <view class="ui-content">
+                                <view class="ui-font">
+                                    <view class="cell-title">{{lessonItem.name}}</view>
+                                    <view class="cell-dec">{{lessonItem.description}}</view>
+                                </view>
+                                <view class="cell-btn">{{lessonItem.buttonStatusMsg}}</view>
+                            </view>
+                        </button>
+                    </repeat>
+                    
                 </view>
                 <view class="ui-course" wx:if="{{item.type === 'course'}}">
-                    <view class="ui-item" wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem" @tap.stop="getCourseDetail"  data-item="{{courseItem}}" data-type="4">
-                        <view class="ui-img">
-                            <image src="{{courseItem.image}}"/>
-                        </view>
-                        <view class="ui-content">
-                            <view class="cell-title">{{courseItem.name}}</view>
-                            <view class="cell-dec">{{courseItem.description}}</view>
-                            <view class="ui-btn-bottom">
-                                <view class="cell-btn">{{courseItem.buttonMsg}}</view>
-                                <view class="cell-tip">{{courseItem.userCount}}人在学</view>
+                    <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
+                        <button class="ui-item"  
+                                @tap.stop="getCourseDetail"  
+                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                data-item="{{courseItem}}" 
+                                data-type="4">
+                            <view class="ui-img">
+                                <image src="{{courseItem.image}}"/>
                             </view>
-                        </view>
-                    </view>
+                            <view class="ui-content">
+                                <view class="cell-title">{{courseItem.name}}</view>
+                                <view class="cell-dec">{{courseItem.description}}</view>
+                                <view class="ui-btn-bottom">
+                                    <view class="cell-btn">{{courseItem.buttonMsg}}</view>
+                                    <view class="cell-tip">{{courseItem.userCount}}人在学</view>
+                                </view>
+                            </view>
+                        </button>
+                    </repeat>
+                    
                 </view>
                 <view class="ui-poll" wx:if="{{item.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
@@ -69,9 +84,12 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'sence'}}"
-                        data-item="{{floatBox.sence}}"
-                        @tap.stop="handleStartLesson">
+                <button class="ui-share-box" 
+                        wx:if="{{floatBox.type === 'sence'}}"
+                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                        bindgetuserinfo="getAuthorize"
+                        @tap.stop="handleStartLesson"
+                        data-item="{{floatBox.sence}}">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -82,10 +100,17 @@
                                 <view class="cell-dec">{{floatBox.sence.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">{{isTokenSet}}--{{floatBox.sence.buttonStatusMsg}}</view>
+                        <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
-                </view>
-                <view class="ui-share-box" :class="{'is-phonex': isIphonex}" wx:if="{{floatBox.type === 'course'}}" @tap.stop="getCourseDetail"  data-item="{{floatBox.course}}" data-type="4">
+                </button>
+                <button class="ui-share-box" 
+                        :class="{'is-phonex': isIphonex}" 
+                        wx:if="{{floatBox.type === 'course'}}" 
+                        @tap.stop="getCourseDetail"  
+                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                        bindgetuserinfo="getAuthorize"
+                        data-item="{{floatBox.course}}" 
+                        data-type="4">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -98,7 +123,7 @@
                         </view>
                         <view class="cell-btn">{{floatBox.course.buttonMsg}}</view>
                     </view>
-                </view>
+                </button>
                 <view class="ui-share-font"  wx:if="{{floatBox.type !== 'share'}}">
                     <button class="cell-btn"
                         open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
@@ -294,7 +319,6 @@
             getAuthorize(event) {
                 let self = this
                 let {detail: {errMsg}, currentTarget: {dataset}} = event
-debugger
                 return new Promise((resolve, reject) => {
                     if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
                     if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
@@ -415,13 +439,16 @@ debugger
             .ui-lesson{
                 padding: 0 32rpx;
                 .ui-item{
-                    display: flex;height: 176rpx;align-items: center;
-                    .ui-img image{width: 112rpx;height: 112rpx;border-radius: @border-radius-20;}
+                    display: flex;height: 176rpx;align-items: center;background:none;
+                    .ui-img{
+                        display:flex;align-items: center;
+                        image{width: 112rpx;height: 112rpx;border-radius: @border-radius-20;}
+                    } 
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
                         height: 100%;display: flex;flex:1;justify-content: space-between;border-top:2rpx solid @border-gray;align-items:center;
                         .ui-font{
-                            margin-left: 24rpx;
+                            margin-left: 24rpx;text-align:left;line-height:1.5;
                             .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                             .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                         }
@@ -438,11 +465,11 @@ debugger
             .ui-course{
                 padding: 0 32rpx;
                 .ui-item{
-                    display: flex;height: 240rpx;align-items: center;
+                    display: flex;height: 240rpx;align-items: center;background:none;
                     .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-44;}
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
-                        margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;
+                        margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;text-align:left;
                         .cell-title{font-size: 32rpx;color: @color-black;}
                         .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:4rpx;}
                         .ui-btn-bottom{
@@ -458,7 +485,7 @@ debugger
         .ui-bottom{
             .cell-margin{width: 100%;height: 200rpx;}
             .ui-share-box{
-                position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
+                position:fixed;width:100%;bottom:0;left:0;right:0;background:none;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
                 .ui-share{
                     width: 702rpx;height: 100rpx;line-height: 100rpx;color: @color-white;font-size: 30rpx;text-align: center;margin: 28rpx auto;background-color: @background-blue;border-radius: @border-radius-20;display: flex;justify-content: center;position: relative;
                     .icon-share{font-size:36rpx;margin-right:4rpx;}
@@ -476,7 +503,7 @@ debugger
                             image{width: 112rpx;height: 112rpx;border-radius: @border-radius-20;}
                         }
                         .ui-content{
-                            margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;
+                            margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;text-align:left;line-height:1.5;
                             .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                             .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                         }
