@@ -229,7 +229,7 @@
                 wxPushType: self.wxPushType
             }
 
-            return fetch.getNewSpecialCourse(postData).then((res) => {
+            fetch.getNewSpecialCourse(postData).then((res) => {
                 wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
                     if (rect) {
                         self.backgroundHeight = rect.height - 50
@@ -247,10 +247,12 @@
                 self.moduleList = res.moduleList
                 _.each(self.moduleList, (data, index) => {
                     if ('poll' === data.type) {
+
                         data.index = index
                         data.cardStatus = data.pollType
                         if (data.isDone) {
-                            let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
+
+                            let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0); // 统计全部投票人数
                             _.each(data.optionList, (item) => {
                                 item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
                             })
@@ -267,6 +269,11 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
+
+                // 没有登录
+                if (!self.isTokenSet){
+                    return ;
+                }
                 let {currentTarget: {dataset: {item}}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
@@ -289,6 +296,12 @@
             // 跳去 课程详情页
             getCourseDetail({currentTarget: {dataset: {item, type}}}) {
                 let self = this
+               
+                // 没有登录
+                if (!self.isTokenSet){
+                    return ;
+                }
+
                 let courseID = item.id;
                 let courseType = item.buttonMsg ? item.buttonMsg : '专题';
                 let name = item.name;
@@ -315,20 +328,25 @@
             },
             /**
              * 授权登录信息
+             * @param event
+             * @returns {Promise<any>}
              */
             getAuthorize(event) {
                 let self = this
                 let {detail: {errMsg}, currentTarget: {dataset}} = event
+
+                if ('defaultToken' !== self.token) {
+                    return
+                }
                 return new Promise((resolve, reject) => {
                     if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
                     if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
 
                     resolve(errMsg)
                 }).then(userInfo => { // 确定授权
-                    setTimeout(()=>{
-                        self.initialize()
-                    }, 300)
-                    return store.dispatch(login())
+                    return store.dispatch(login());
+                }).then((respone) => { // 授权成功
+                    self.initialize();
                 }).catch(error => { // 拒接授权
 
                 })
