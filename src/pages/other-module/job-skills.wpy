@@ -1,14 +1,15 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
     .ui-job-skills-box{
-        box-sizing:border-box;width:100%;padding:4rpx 36rpx 64rpx;
+        box-sizing:border-box;width:100%;padding:0 32rpx 144rpx;
         .ui-item{
-            padding-top:80rpx;
+            padding-top:36rpx;
             .ui-title{
-                height:90rpx;font-size:40rpx;font-weight:700;color:@color-black;
-                text{margin-right:42rpx;font-size:88rpx;font-weight:400;color:@color-blue;position:relative;top:6rpx;}
+                font-size:44rpx;font-weight:700;color:@color-black;
+                text{margin-right:8rpx;font-size:40rpx;font-weight:400}
             }
-            .ui-introduction{padding-top:22rpx;font-size:30rpx;color:@color-black;line-height:48rpx;text-align:justify;}
+            .ui-introduction{padding-top:18rpx;font-size:32rpx;color:@color-gray;}
+            .cell-image{display:flex;justify-content:center;}
         }
     }
 </style>
@@ -16,12 +17,15 @@
 <template>
     <view class="ui-job-skills-box">
         <jn-header title="工作技能"></jn-header>
-
         <repeat for="{{skillList}}" key="index" index="index" item="item">
             <view class="ui-item">
-                <view class="ui-title cross-end">
-                    <text class="{{index%3==0 ? 'icon-dimensional-top' : index%3==1 ? 'icon-dimensional-right': index%3==2 ?  'icon-dimensional-left' : ''}}"></text>{{item.skill}}</view>
-                <view class="ui-introduction">{{item.description}}</view>
+                <view class="ui-title">
+                    <text class="icon-study-bar"></text>{{item.skill}}
+                </view>
+                <text class="ui-introduction">{{item.description}}</text>
+                <view class="cell-image">
+                    <image mode="widthFix" src="{{item.image}}" />
+                </view>
             </view>
         </repeat>
     </view>
@@ -44,12 +48,29 @@
         }
 
         data = {
-            skillList: []
+            // skillList: []
+            skillList: [
+                {
+                    skill:'制定产品策略',
+                    description:'一个优秀的产品经理，有工程师般的头脑，设计师般的心灵，和外交家般的沟通水平。如何让产品从愿景到成功上线1、如何制定产品愿景和目标2、如何执行产品开发和落地',
+                    image:'http://wx-small.runwise.cn/image/imageIDf99bed48e5c4e78cf27e0bf5fd28.png'
+                },
+                {
+                    skill:'设置产品指标',
+                    description:'FaceBook超越MySpace的秘密-北极星指标。通过掌握设置产品指标技能，帮你摒除虚荣指标，找一个正真有价值的指标，看待产品表现，为产品的决策提供正确的方向。1、如何辨别虚荣指标？2、如何制定北极星指标？',
+                    image:'http://wx-small.runwise.cn/image/imageID7769230f55b47082e967e7781289.png'
+                },
+                {
+                    skill:'产品数据分析',
+                    description:'数据分析之所以对产品经理重要，原因就在于：没有衡量，就没有提高通过数据驱动产品迭代，防止成为“自嗨”型的产品经理。1、用五种数据分析方法（漏斗分析，用户群分析，细分分析，基于时间追踪，点击分析）确定产品表现，辅助决策制定产品策略？2、如何从数据出发做决策？',
+                    image:'http://wx-small.runwise.cn/image/imageIDad8537b85044558663ff594a0709.png'
+                }
+            ]
         }
 
         onLoad() {
             let self = this
-            self.skillList = wepy.$instance.globalData.newCourseDetailTempele && wepy.$instance.globalData.newCourseDetailTempele.skillList
+            // self.skillList = wepy.$instance.globalData.newCourseDetailTempele && wepy.$instance.globalData.newCourseDetailTempele.skillList
             wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
 
