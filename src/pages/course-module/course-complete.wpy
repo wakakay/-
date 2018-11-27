@@ -108,7 +108,7 @@
                     <view class="cell-title">将本课赠送给好友，你可以免费学习另一节课~</view>
                     <navigator class="cell-navigator"
                                hover-class="cell-hover"
-                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}">赠一得一</navigator>
+                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}" @tap.stop="getGiving">赠一得一</navigator>
                 </view>
             </view>
 
@@ -320,11 +320,15 @@
                 let self = this
                 let {currentTarget: {dataset: {star}}} = event
 
-                wx.reportAnalytics('lessonfinish_evaluate_click', {
-                    username: self.systemInfo.userName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    role: self.systemInfo.role
-                })
+                if (self.finishResultInfo.senceStar > 0) {
+                    wepy.$instance.globalData.getHuilder('微课完成页/点评', 'click', self.finishResultInfo.name)
+                    wx.reportAnalytics('lessonfinish_evaluate_click', {
+                        username: self.systemInfo.userName,
+                        channel: self.entrance.mappers[self.entrance.scenceID],
+                        role: self.systemInfo.role
+                    })
+                }
+
 
                 if (self.finishResultInfo.senceStarIsCanTick) {
                     self.isEvaluation = true
@@ -340,23 +344,29 @@
                     skillName: self.finishResultInfo.skillName
                 })
             },
+            getGiving() {
+                let self = this
+                wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
+            },
             /**
-             * 继续下一课或完成
+             * 继续下一课
              */
             getSumbit() {
                 let self = this
                 let finishResultInfo = self.finishResultInfo
-                if (finishResultInfo.isShowNext) {
-                    let isNewSence = finishResultInfo.isNewSenceMap && finishResultInfo.isNewSenceMap[finishResultInfo.nextSenceID]
-                    let parameter = {
-                        courseID: finishResultInfo.nextCourseID,
-                        senceID: finishResultInfo.nextSenceID,
-                        teamID: self.paramsInfo.teamID,
-                        isNewSence
-                    }
-                    redirectToLesson(parameter)
+                if (!finishResultInfo.isShowNext) {
                     return
                 }
+
+                let isNewSence = finishResultInfo.isNewSenceMap && finishResultInfo.isNewSenceMap[finishResultInfo.nextSenceID]
+                let parameter = {
+                    courseID: finishResultInfo.nextCourseID,
+                    senceID: finishResultInfo.nextSenceID,
+                    teamID: self.paramsInfo.teamID,
+                    isNewSence
+                }
+                wepy.$instance.globalData.getHuilder('微课完成页/继续学习', 'click', self.finishResultInfo.nextSenceName)
+                redirectToLesson(parameter)
             }
         }
 

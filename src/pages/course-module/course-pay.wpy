@@ -236,12 +236,15 @@
                 let type = parseInt(self.selectType)
                 switch(type) {
                     case 1: // 赠一得一
+                        wepy.$instance.globalData.getHuilder('支付页/赠一得一', 'click', self.payInfo.name)
                         wx.redirectTo({url:`/pages/Largess/index?senceID=${self.paramsInfo.senceID}`})
                         break
                     case 2: // 即能币支付
+                        wepy.$instance.globalData.getHuilder('支付页/即能币支付', 'click', self.payInfo.name)
                         self.__payVirtualCurrency()
                         break
                     case 3: // 微信支付
+                        wepy.$instance.globalData.getHuilder('支付页/微信支付', 'click', self.payInfo.name)
                         self.__payWeixin()
                         break
                 }

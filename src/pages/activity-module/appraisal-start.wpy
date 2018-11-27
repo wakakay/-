@@ -150,13 +150,12 @@
                     })).then(data => {
                         if (data === 'done') {
                             this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
-                        } else {
-                            let params = {
-                                examID: this.examID,
-                            }
-                            return this.$redirect('/pages/activity-module/appraisal-questions', params)
-                            redirectToPreviousPractice(0)
+                            return
                         }
+                        let params = {
+                            examID: this.examID,
+                        }
+                        return this.$redirect('/pages/activity-module/appraisal-questions', params)
                     })
                 }).catch(error => {
 
@@ -171,19 +170,19 @@
                 })).then(data => {
                     if (data === 'done') {
                         this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
-                    } else {
-                        let params = {
-                            examID: this.examID,
-                            bgUrl: this.imageBottomURL,
-                            imagePracticeURL: this.imagePracticeURL,
-                            subjectHeading: this.subjectHeading
-                        }
-                        if (this.imageResultURL) {
-                            params.imageResultURL = this.imageResultURL
-                        }
-                        return this.$redirect('/pages/activity-module/appraisal-questions', params)
-                        redirectToPreviousPractice(0)
+                        return
                     }
+                    let params = {
+                        examID: this.examID,
+                        bgUrl: this.imageBottomURL,
+                        imagePracticeURL: this.imagePracticeURL,
+                        subjectHeading: this.subjectHeading
+                    }
+                    if (this.imageResultURL) {
+                        params.imageResultURL = this.imageResultURL
+                    }
+                    wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
+                    this.$redirect('/pages/activity-module/appraisal-questions', params)
                 })
             }
         }

@@ -162,7 +162,7 @@
             getHuilder(category, action, label) {
                 var trackerInfo = this.getTracker()
                 let builder = {}
-                // console.log('ga----', category, action, label)
+                console.log('ga----', category, action, label)
                 if (action === 'click') {
                     builder = new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build()
                 } else {

@@ -180,6 +180,8 @@
 
         onShareAppMessage(res) {
             let self = this
+
+            wepy.$instance.globalData.getHuilder('测一测/分享','click', '分享')
             wx.reportAnalytics('pre_result_share', {
                 username: self.userName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
