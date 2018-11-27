@@ -1,4 +1,3 @@
-// const NODE_ENV = 'release'
 const NODE_ENV = 'develop'
 export default {
     environment: NODE_ENV,

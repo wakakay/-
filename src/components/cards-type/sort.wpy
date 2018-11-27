@@ -34,7 +34,8 @@
             <view class="module-exercises-result" :class="{'is-show': isExercises && isAnswerOver}">
                 <view class="main-justify">
                     <view class="cell-exercises-title">题目解释</view>
-                    <button hover-class="cell-exercises-hover" class="cell-exercises-button" @tap.stop="getToDiscuss">参与讨论</button>
+                    <button hover-class="cell-exercises-hover" class="cell-exercises-button" @tap.stop="getToDiscuss">
+                        {{commentsCount>0 ? commentsCount+'条讨论' : '参与评论'}}</button>
                 </view>
                 <view class="ui-description">{{description}}</view>
             </view>
@@ -68,6 +69,10 @@
                 default: []
             },
             isExercises: {
+                type: Number,
+                default: 0
+            },
+            commentsCount: {
                 type: Number,
                 default: 0
             }

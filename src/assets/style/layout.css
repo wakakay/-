@@ -9,13 +9,7 @@ button::after{border:0;}
     font-family: 'Digital-7';
     src: url('https://wx-small.runwise.cn/image/imageID38f5811451748c84f6e2decc7d15.ttf') format('truetype');
 }
-[class^='icon-'], .iconfont {
-    font-family:"iconfont" !important;
-    font-size:32rpx;
-    font-style:normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+
 .is-show{display:block !important;}
 .is-flex-show{display:flex !important;}
 .is-hide{display:none !important;}

@@ -31,7 +31,6 @@
             button{width:336rpx;height:100rpx;margin:0 auto 48rpx;background-color:@background-blue;font-size:34rpx;color:@color-white;border-radius:@border-radius-20;}
         }
     }
-
 </style>
 
 <template>

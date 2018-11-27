@@ -107,7 +107,7 @@
                     <view class="cell-title">发现</view>
                     <navigator class="ui-avatar"
                                hover-class="none"
-                               url="/pages/user-module/mine?type=2"><image src="{{avatar}}"></image></navigator>
+                               url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
                 </view>
                 <view class="cell-find-dec">{{discoverPageTitle}}</view>
                 <view class="ui-content">
@@ -404,6 +404,10 @@
             })
         }
         methods = {
+            getAvatar() {
+                let self = this
+                wepy.$instance.globalData.getHuilder('发现页/头像', 'click', '我的页面')
+            },
             handleStartLesson(event) {
                 let self = this
                 if (!self.isTokenSet) {
@@ -421,7 +425,13 @@
                 self.courseID = courseItem.courseID
                 self.senceID = courseItem.id
 
-                wepy.$instance.globalData.getHuilder('发现页','click',`${item.sceneType}/${senceName}`)
+                if ('subject' === item.type) {
+                    wepy.$instance.globalData.getHuilder('发现页/本周火爆课程','click',`${senceName}`)
+                } else if ('todayTask' === item.type) {
+                    wepy.$instance.globalData.getHuilder('发现页/今日任务','click',`${senceName}`)
+                }
+
+                //
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID, 
@@ -490,7 +500,8 @@
                 let courseID = item.id
                 let examID = item.id
                 let type = item.type
-                
+
+
                 // 微信事件上报
                 wx.reportAnalytics('tap_discover_slogan', {
                     role: self.role,
@@ -501,9 +512,11 @@
                 })
 
                 if (type && type === 'noSkill') {
+                    wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
                     return self.$navigate('/pages/activity-module/appraisal-start', {examID})
                 }
 
+                wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
                 return self.$navigate('/pages/SpecialCourse/index', {courseID})
             }
         }
@@ -520,7 +533,7 @@
             'on-is-studying-bar': (data) => {
                 let self = this
                 self.hasStudyingBar = data.isShowBar
-            },
+            }
         }
 
         /**
