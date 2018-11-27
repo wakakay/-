@@ -164,7 +164,8 @@
                 </view>
             </form>
             <view class="ui-clear"></view>
-            <view class="ui-more main-center cross-center" :class="{'is-bar': hasStudyingBar}">{{!isNotMore ? '正在努力加载...' : '没有更多了'}}</view>
+            <view class="ui-more main-center cross-center"
+                  :class="{'is-bar': hasStudyingBar}">{{!isNotMore &&  informationList.length >= pageSize ?'正在努力加载...' : '没有更多了'}}</view>
 
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
@@ -239,6 +240,7 @@
             isNotMore: false, // 全部加载完了
             hasStudyingBar: false, // 是否有学习bar
             page: 1,
+            pageSize: 10,
             isScroll: true, // 是否能滚动
             scrollTop: 0,
             isShowGift: false,
@@ -296,7 +298,7 @@
             let postData = {
                 token: parameter && parameter.token || self.token,
                 page: self.sencePage || self.page,
-                pageSize: 10
+                pageSize: self.pageSize
             }
 
             if (parameter && !parameter.callBack) {
