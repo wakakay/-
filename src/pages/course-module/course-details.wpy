@@ -71,7 +71,7 @@
             padding:0 32rpx 40rpx;
             .ui-item{
                 width:100%;height:346rpx;padding:40rpx 32rpx;margin-top:24rpx;background-size:cover;background-repeat:no-repeat;background-position:center center;text-align:left;line-height:1;border-radius:@border-radius-20;position:relative;
-                .cell-title{padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;}
+                .cell-title{padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;width:540rpx;line-height:50rpx;}
                 .ui-skills{
                     font-size: 26rpx;color: rgba(255,255,255,.70);
                     text{margin:8rpx;}
@@ -236,7 +236,7 @@
                             @tap.stop="getCourseLearning">
                         <view class="cell-title">{{item.senceName}}</view>
                         <view class="ui-skills">
-                            <text class="icon-study-bar"></text>制定产品策略
+                            <text class="icon-study-bar"></text>{{item.labelName}}
                         </view>
                         <view class="cell-subtitle">{{item.senceTarget}}</view>
                         <view class="ui-circular-progress">
@@ -456,15 +456,15 @@
             let senceID = item.id
             let name = item.senceName
             let buttonStatus = item.buttonStatus
-            let resumeLastRead = 'NO'
+            let resumeLastRead = item.resume ? item.resume : 'NO'
 
-            let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
+            // let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
             let isNewSence = self.courseDetail.isNewSenceMap[senceID]
             let isRedirectTo = false
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
-                navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                 return
             }
             if ('needPay' === buttonStatus) {
@@ -473,13 +473,13 @@
                 switch (buttonStatus) {
                     case 'finish': // 回顾
                         !item.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence, isRedirectTo})
+                            : navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/course-module/course-pay`, {senceID})
                         break
                     default:
-                        navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                        navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
                 }
             }
         }
