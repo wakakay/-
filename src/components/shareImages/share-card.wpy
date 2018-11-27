@@ -2,14 +2,14 @@
     @import "../../assets/style/theme";
     .cell-canvas{width:375px;height:650px;position:fixed;left:150%;top:0;z-index:@z-index-normal;}
     .ui-share-box{
-        box-sizing:border-box;width:100%;height:100%;padding:128rpx 105rpx 0;position:fixed;left:0;top:0;z-index:@z-index-mask;display:none;
+        box-sizing:border-box;width:100%;height:100%;padding:128rpx 32rpx 0;position:fixed;left:0;top:0;z-index:@z-index-mask;display:none;
         &.is-iphonex{
-            padding:196rpx 72rpx 0;
-            .ui-thumb{width:600rpx;height:1034rpx;}
+            padding:196rpx 32rpx 0;
+            .ui-thumb{width:686rpx;height:1070rpx;}
         }
         .ui-mask{width:100%;height:100%;background-color:@background-mask-normal;position:absolute;left:0;top:0;}
         .ui-thumb{
-            width:540rpx;height:930rpx;position:relative;z-index:@z-index-normal;
+            width:686rpx;height:970rpx;position:relative;z-index:@z-index-normal;
             image{width:100%;height:100%;}
         }
         .ui-button-box{
@@ -170,6 +170,7 @@
                 })
 
                 let self = this
+                console.log(23, self)
                 self.cardCanvas = wx.createCanvasContext('cardShare')
                 self.cardShareInfo = {
                     width: 375,
@@ -207,25 +208,25 @@
         __initShareCard(images) {
             let self = this
             // 背景图片
-            let backgroundImage = new Promise(function (resolve, reject) {
+            let backgroundImage = new Promise((resolve, reject) => {
                 wx.getImageInfo({
-                    src: images.footImage, success: function (res) {
+                    src: images.footImage, success(res) {
                         resolve(res);
                     }
                 })
             })
             // 卡片
-            let contentImage = new Promise(function (resolve, reject) {
+            let contentImage = new Promise((resolve, reject) => {
                 wx.getImageInfo({
-                    src: images.contentImage, success: function (res) {
+                    src: images.contentImage, success(res) {
                         resolve(res)
                     }
                 })
             })
             // 二维码
-            let shareImage = new Promise(function (resolve, reject) {
+            let shareImage = new Promise((resolve, reject) => {
                 wx.getImageInfo({
-                    src: images.shareImage, success: function (res) {
+                    src: images.shareImage, success (res) {
                         resolve(res)
                     }
                 })
@@ -309,7 +310,7 @@
                 h = Math.ceil(shareImage[1].height * prop)
             }
             // 使得卡片在这个矩形绝对居中
-            let x =  (self.cardShareInfo.width - w) >> 1
+            let x = (self.cardShareInfo.width - w) >> 1
             let y = Math.ceil(30 * self.cardShareInfo.prop) + ((rectangularH - h)>>1)
 
             self.cardCanvas.drawImage(shareImage[1].path, x, y, w, h)

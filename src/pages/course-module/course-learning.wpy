@@ -21,7 +21,10 @@
         }
         .ui-button-box{
             width:100%;height:128rpx;padding:0 24rpx;position:fixed;left:0;bottom:0;
-            &.is-iphonex{height:196rpx;}
+            &.is-iphonex{
+                height:196rpx;
+                .ui-button-list button .ui-tips{bottom:226rpx;}
+            }
             .ui-button-list{
                 width:224rpx;
                 button{
@@ -210,6 +213,7 @@
             senceID: null,
             courseID: null,
             teamID: 'defaultTeamID',
+            senceName: '',
             cardCurrentInfo: [],
             cardCurrent: 0,
             cardsList: [],
@@ -290,6 +294,7 @@
             self.isLoaded = false
             return store.dispatch(fetchCardsWithPreview(postData)).then((respone) => {
                 self.isLoaded = true
+                self.senceName = respone.senceName
                 let cards = self.__dataRegroup(respone)
                 self.cardsOriginList = deepCopy(cards) // 给swiper使用的数据
                 self.cardsList = cards
@@ -300,13 +305,13 @@
                 self.cardCurrent = index
                 self.__hasInitAnimation()
                 self.$apply()
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: respone.senceName}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
                 // 进入微课事件上报埋点
                 wx.reportAnalytics('opensence', {
                     role: self.systemInfo.role,
                     nickname: self.systemInfo.userName,
                     coursename: self.currentCourseName,
-                    sencename: respone.senceName,
+                    sencename: self.senceName,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
             }).catch(error => {
