@@ -37,6 +37,7 @@
     }
     /* 最新上线入口 */
     .ui-new-course{
+        padding-top: 36rpx;
         .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 22rpx;}
         .ui-swiper-list{
             height: 496rpx;
@@ -63,15 +64,12 @@
                             
                         }
                     }
-                    
                 }
-                .cell-border{position:absolute;bottom:0;left: 0;height: 48rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
             }
             
         }
     }
     .ui-hot-course{
-        padding-top: 36rpx;
         .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 20rpx;}
         .ui-swiper-list{
             height: 496rpx;
@@ -100,6 +98,7 @@
                         }
                     }
                 }
+                .cell-border{position:absolute;bottom:0;left: 0;height: 48rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
             }
         }
     }
@@ -180,52 +179,6 @@
                     </block>
                 </swiper>
             </view>
-            <view class="ui-new-course">
-                <view class="cell-tip">最新上线</view>
-                <swiper class="ui-swiper-list"
-                        previous-margin="40rpx"
-                        next-margin="20rpx">
-                    <block wx:for="{{newCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="itemArr">
-                        <swiper-item class="ui-swiper-box">
-                            <view class="ui-item"
-                                  wx:for="{{itemArr}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item"
-                                  hover-stay-time="100"
-                                  @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2">
-                                <view class="ui-img">
-                                    <image src="{{item.image}}"></image>
-                                </view>
-                                <view class="ui-right">
-                                    <view class="ui-content">
-                                        <view class="cell-name">{{item.name}}</view>
-                                        <view class="cell-dec">{{item.showPoint}}</view>
-                                    </view>
-                                    <view class="ui-btn">
-                                        <view class="cell-item">获取</view>
-                                    </view>
-                                </view>
-                            </view>
-                            <view class="cell-border"></view>
-                        </swiper-item>
-                    </block>
-                </swiper>
-            </view>
-            <view class="ui-course-series">
-                <view class="ui-tip">
-                    <view class="cell-title">热门系列</view>
-                    <view class="cell-all" @tap.stop="getAllSeries" data-item="{{courseSeriesList}}">查看全部</view>
-                </view>
-                <view class="ui-content">
-                    <view class="ui-item" hover-class="ui-item-hover"  hover-stay-time="100" 
-                    wx:for="{{courseSeriesList}}"  wx:for-item="item" wx:index="{{index}}" 
-                    wx:key="{{index}}" data-index="{{index}}"  data-item="{{item}}" 
-                    @tap.stop="getCategory" wx:if="{{index <= 4}}">
-                        <view class="ui-img">
-                            <image src="{{item.icon}}" mode="scaleToFill"></image>  
-                        </view>
-                        <view class="cell-name">{{item.seriesName}}</view>
-                    </view>
-                </view>
-            </view>
             <view class="ui-hot-course">
                 <view class="cell-tip">热门课程</view>
                 <swiper class="ui-swiper-list"
@@ -251,10 +204,59 @@
                                     
                                 </view>
                             </view>
+                            <view class="cell-border"></view>
                         </swiper-item>
                     </block>
                 </swiper>
             </view>
+           
+            <view class="ui-course-series">
+                <view class="ui-tip">
+                    <view class="cell-title">热门系列</view>
+                    <view class="cell-all" @tap.stop="getAllSeries" data-item="{{courseSeriesList}}">查看全部</view>
+                </view>
+                <view class="ui-content">
+                    <view class="ui-item" hover-class="ui-item-hover"  hover-stay-time="100" 
+                    wx:for="{{courseSeriesList}}"  wx:for-item="item" wx:index="{{index}}" 
+                    wx:key="{{index}}" data-index="{{index}}"  data-item="{{item}}" 
+                    @tap.stop="getCategory" wx:if="{{index <= 4}}">
+                        <view class="ui-img">
+                            <image src="{{item.icon}}" mode="scaleToFill"></image>  
+                        </view>
+                        <view class="cell-name">{{item.seriesName}}</view>
+                    </view>
+                </view>
+            </view>
+
+            <view class="ui-new-course">
+                <view class="cell-tip">最新上线</view>
+                <swiper class="ui-swiper-list"
+                        previous-margin="40rpx"
+                        next-margin="20rpx">
+                    <block wx:for="{{newCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="itemArr">
+                        <swiper-item class="ui-swiper-box">
+                            <view class="ui-item"
+                                  wx:for="{{itemArr}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item"
+                                  hover-stay-time="100"
+                                  @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2">
+                                <view class="ui-img">
+                                    <image src="{{item.image}}"></image>
+                                </view>
+                                <view class="ui-right">
+                                    <view class="ui-content">
+                                        <view class="cell-name">{{item.name}}</view>
+                                        <view class="cell-dec">{{item.showPoint}}</view>
+                                    </view>
+                                    <view class="ui-btn">
+                                        <view class="cell-item">获取</view>
+                                    </view>
+                                </view>
+                            </view>
+                        </swiper-item>
+                    </block>
+                </swiper>
+            </view>
+           
         </form>
         <view class="ui-clear"></view>
 
