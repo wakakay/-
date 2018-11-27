@@ -46,40 +46,13 @@
         components = {
             'jn-header': header
         }
-
         data = {
-            // skillList: []
-            skillList: [
-                {
-                    skill:'制定产品策略',
-                    description:'一个优秀的产品经理，有工程师般的头脑，设计师般的心灵，和外交家般的沟通水平。如何让产品从愿景到成功上线1、如何制定产品愿景和目标2、如何执行产品开发和落地',
-                    image:'http://wx-small.runwise.cn/image/imageIDf99bed48e5c4e78cf27e0bf5fd28.png'
-                },
-                {
-                    skill:'设置产品指标',
-                    description:'FaceBook超越MySpace的秘密-北极星指标。通过掌握设置产品指标技能，帮你摒除虚荣指标，找一个正真有价值的指标，看待产品表现，为产品的决策提供正确的方向。1、如何辨别虚荣指标？2、如何制定北极星指标？',
-                    image:'http://wx-small.runwise.cn/image/imageID7769230f55b47082e967e7781289.png'
-                },
-                {
-                    skill:'产品数据分析',
-                    description:'数据分析之所以对产品经理重要，原因就在于：没有衡量，就没有提高通过数据驱动产品迭代，防止成为“自嗨”型的产品经理。1、用五种数据分析方法（漏斗分析，用户群分析，细分分析，基于时间追踪，点击分析）确定产品表现，辅助决策制定产品策略？2、如何从数据出发做决策？',
-                    image:'http://wx-small.runwise.cn/image/imageIDad8537b85044558663ff594a0709.png'
-                }
-            ]
+            skillList: []
         }
-
         onLoad() {
             let self = this
-            // self.skillList = wepy.$instance.globalData.newCourseDetailTempele && wepy.$instance.globalData.newCourseDetailTempele.skillList
+            self.skillList = wepy.$instance.globalData.newCourseDetailTempele && wepy.$instance.globalData.newCourseDetailTempele.skillList
             wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
-
-        onShow() {
-
-        }
-
-        methods = {}
-
-        events = {}
     }
 </script>
