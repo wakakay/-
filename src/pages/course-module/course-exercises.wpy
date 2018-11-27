@@ -56,9 +56,17 @@
                     <swiper-item catchtouchmove="getCatchTouchMove">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
                         <view style="height: calc(100% - {{headerHeigth}}px)">
-                            <jn-single-choice :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList" isExercises
+                            <jn-single-choice :cardItem.sync="item"
+                                              :cardIndex.sync="index"
+                                              :cardsList.sync="cardsList"
+                                              :commentsCount.sync="commentsCount"
+                                              isExercises
                                               wx:if="{{item.type==='textSelectionVer2'}}"></jn-single-choice>
-                            <jn-sort :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList" isExercises
+                            <jn-sort :cardItem.sync="item"
+                                     :cardIndex.sync="index"
+                                     :cardsList.sync="cardsList"
+                                     :commentsCount.sync="commentsCount"
+                                     isExercises
                                      wx:if="{{item.type==='order'}}"></jn-sort>
                         </view>
                     </swiper-item>
@@ -122,6 +130,7 @@
             paramsInfo: '', // 地址栏的参数信息
             isAnswerOver: false,
             scoreInfo: {}, // 当前分数信息
+            commentsCount: 0,
             cardCurrent: 0,
             cardCurrentInfo: [],
             cardsList: []
@@ -231,6 +240,7 @@
                 // 当技能分数大于上一次的才更新
                 let res = respone.data.data
                 res.showScore = res.upScore >= 0 ? res.currentScore : res.beforeScore
+                self.commentsCount = res.commentsCount
                 self.scoreInfo = res
                 self.$apply()
             }).catch(error => {})

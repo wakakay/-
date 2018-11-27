@@ -105,10 +105,10 @@
                 </view>
 
                 <view class="ui-giving">
-                    <view class="cell-title">将本课赠送给好友，你可以免费学习另一节课~</view>
+                    <view class="cell-title">你可以将这节课免费赠送给好友，并获得即能币</view>
                     <navigator class="cell-navigator"
                                hover-class="cell-hover"
-                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}" @tap.stop="getGiving">赠一得一</navigator>
+                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}" @tap.stop="getGiving">赠送好友</navigator>
                 </view>
             </view>
 

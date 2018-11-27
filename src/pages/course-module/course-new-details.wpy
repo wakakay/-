@@ -155,10 +155,10 @@
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <scroll-view
-        scroll-y
-        enable-back-to-top
-        bindscroll="getScroll"
-        class="ui-course-details-box">
+            scroll-y
+            enable-back-to-top
+            bindscroll="getScroll"
+            class="ui-course-details-box">
         <jn-header :className.sync="headerBackground"></jn-header>
 
         <view class="ui-board-box">
@@ -252,9 +252,9 @@
         <view class="ui-title" wx:if="{{courseDetail.feedbackList.length}}">精选评价</view>
         <view class="ui-comments-box" wx:if="{{courseDetail.feedbackList.length}}">
             <swiper class="ui-comments-list"
-                next-margin="28rpx" previous-margin="38rpx">
-                <block wx:for="{{courseDetail.feedbackList}}" 
-                    wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item">
+                    next-margin="28rpx" previous-margin="38rpx">
+                <block wx:for="{{courseDetail.feedbackList}}"
+                       wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item">
                     <swiper-item class="ui-swiper">
                         <view class="ui-item">
                             <view class="ui-top">
@@ -366,11 +366,12 @@
         onLoad(parameter) {
             let self = this
             self.paramsInfo = parameter
-            self.paramsInfo.source = self.paramsInfo.source || 'newcourse'
+            self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
-            let code = getStore().getState().entrance.scenceID
-            console.log('新课程详情', self.isTokenSet, code, parameter)
-            if (self.isTokenSet && code && 1048 === code && parameter.senceID) {
+            let codeType = getStore().getState().entrance.scenceID
+            console.log('新课程详情', self.isTokenSet, codeType, parameter)
+            let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
+            if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
             }
             self.initialize()
@@ -397,7 +398,8 @@
             let postData = {
                 token: self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source
+                source: self.paramsInfo.source,
+                wxPushType: self.paramsInfo.wxPushType
             }
 
             fetch.courseDetail(postData).then((respone) => {
@@ -415,7 +417,8 @@
                 self.courseDetail.price = parseFloat(self.courseDetail.price)
 
                 // 微课分享进来重定向
-                if (self.shareSenceID) {
+                console.log('微课分享进来重定向', self.shareSenceID, self.systemInfo.token)
+                if (self.shareSenceID && 'defaultToken' !== self.systemInfo.token) {
                     let senceItem = _.find(self.courseDetail.senceList, {id: self.shareSenceID})
                     if ('finish' === senceItem.buttonStatus) {
                         senceItem.buttonStatus = ''
@@ -455,6 +458,8 @@
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
+                navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                return
             }
             if ('needPay' === buttonStatus) {
                 return this.$navigate(`/pages/course-module/course-pay`, {senceID})

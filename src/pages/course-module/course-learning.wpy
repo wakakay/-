@@ -23,16 +23,20 @@
             width:100%;height:128rpx;padding:0 24rpx;position:fixed;left:0;bottom:0;
             &.is-iphonex{height:196rpx;}
             .ui-button-list{
-                width:112rpx;
+                width:224rpx;
                 button{
                     width:100rpx;height:100rpx;margin-right:12rpx;background:@background-gray-F4;border-radius:@border-radius-20;position:relative;transition:all .25s;
                     text{display:block;width:100%;text-align:center;position:absolute;transition:all .25s;}
-                    text:nth-of-type(1){font-size:48rpx;color:@color-blue;top:-26rpx;}
-                    text:nth-of-type(2){font-size:26rpx;color:@color-gray;bottom:-10rpx;}
+                    .cell-icon{font-size:48rpx;color:@color-blue;top:-26rpx;}
+                    .cell-text{font-size:26rpx;color:@color-gray;bottom:-10rpx;}
+                    .ui-tips{
+                        width:248rpx;height:56rpx;background-color:@background-blue;font-size:28rpx;color:@color-white;line-height:56rpx;border-radius:@border-radius-20;position:fixed;left:62rpx;bottom:156rpx;transition:all .25s;
+                        text{display:block;font-size:34rpx;color:@color-blue;position:absolute;top:34rpx;transform:rotatex(180deg);}
+                    }
                 }
             }
             .cell-button{
-                width:100%;height:100rpx;background:@background-gray-F4;font-size:32rpx;color:@color-blue;border-radius:@border-radius-20;transition:all .25s;
+                width:100%;height:100rpx;background:@background-gray-F4;font-size:28rpx;color:@color-blue;border-radius:@border-radius-20;transition:all .25s;
                 text{padding-left:10rpx;font-size:46rpx;}
                 &.cell-unselect{color:@color-gray;}
             }
@@ -42,6 +46,9 @@
                     button{
                         background:@background-mask-normal-2;
                         text{color:@color-white;}
+                        .ui-tips{
+                            background-color:@background-white;color:@color-black;
+                        }
                     }
                 }
                 .cell-button{background:@background-mask-normal-2;color:@color-white;}
@@ -99,8 +106,16 @@
         <view class="ui-button-box main-justify" :class="{'is-iphonex': isIphonex, 'is-dark': cardCurrentInfo[0].fullImageColorIsDark, 'is-hide': !cardCurrentInfo[0].buttonShow}">
 
             <view class="ui-button-list dir-left" wx:if="{{cardCurrentInfo[0].type=='fullimage' || cardCurrentInfo[0].type=='hotSpot'}}">
-                <button @tap.stop="getShare"><text class="icon-share"></text>    <text>{{cardCurrentInfo[0].userShareCount || 0}}</text></button>
-                <!--<button><text class="icon-subscribe"></text> <text>222</text></button>-->
+                <button @tap.stop="getShare">
+                    <text class="icon-share cell-icon"></text>
+                    <text class="cell-text">{{cardCurrentInfo[0].userShareCount || 0}}</text>
+                </button>
+                <button>
+                    <text class="icon-un-emphasi cell-icon"></text>
+                    <text class="icon-emphasi cell-icon emphasiAnimation"></text>
+                    <text class="cell-text">222</text>
+                    <view class="ui-tips">点击标注为重点<text class="icon-arrow"></text></view>
+                </button>
             </view>
 
             <view class="cell-button main-center cross-center"
