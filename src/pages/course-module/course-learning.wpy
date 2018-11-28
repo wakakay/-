@@ -270,7 +270,7 @@
                 resumeLastRead: 'NO',
                 source: parameter.source || 'continueList'
             }
-            console.log('微课学习', parameter)
+            // console.log('微课学习', parameter)
             initializationDeligate({
                 initializeFunc: self.initialize.bind(self, postData)
             }).catch(error => {
@@ -723,6 +723,7 @@ console.log('分享提交参数', postData)
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     let shareImages = {
                         footImage: 'http://wx-small.runwise.cn/image/imageIDae0a7f711614cb8e972aa6b10ced.jpg',
+                        senceThumb: 'http://image.runwise.cn/image/imageIDdba95bbfa3c43c9319fd639a55e3.png',
                         contentImage: self.cardCurrentInfo[0].bigimage,
                         shareImage
                     }

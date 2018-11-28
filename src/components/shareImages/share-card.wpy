@@ -173,11 +173,11 @@
                 console.log(23, self)
                 self.cardCanvas = wx.createCanvasContext('cardShare')
                 self.cardShareInfo = {
-                    width: 375,
-                    height: 650,
+                    width: 343,
+                    height: 535,
                     prop: 1
                 }
-                let width = _.clone(self.cardShareInfo.width)
+                /*let width = _.clone(self.cardShareInfo.width)
                 let height = _.clone(self.cardShareInfo.height)
 
                 if (self.systemInfo.pixelRatio > 2 && self.systemInfo.pixelRatio < 3) {
@@ -191,7 +191,7 @@
                     self.cardShareInfo.width = Math.ceil(self.cardShareInfo.width * self.cardShareInfo.prop)
                 }
 
-                self.cardShareInfo.height = Math.ceil(height * self.cardShareInfo.prop)
+                self.cardShareInfo.height = Math.ceil(height * self.cardShareInfo.prop)*/
                 // 如果还没绘画结束，则不继续绘画下一个
                 if (self.isDrawStart) {
                     self.isDrawStart = false
@@ -208,9 +208,9 @@
         __initShareCard(images) {
             let self = this
             // 背景图片
-            let backgroundImage = new Promise((resolve, reject) => {
+            let senceThumb = new Promise((resolve, reject) => {
                 wx.getImageInfo({
-                    src: images.footImage, success(res) {
+                    src: images.senceThumb, success(res) {
                         resolve(res);
                     }
                 })
@@ -233,11 +233,10 @@
             })
 
             wx.showLoading({
-                title: '努力生成中...',
-                mask: true
+                title: '努力生成中...'
             })
             Promise.all(
-                [backgroundImage, contentImage, shareImage]
+                [senceThumb, contentImage, shareImage]
             ).then(res => {
                 self.shareImage = res
 
@@ -248,8 +247,9 @@
                 })
             })
         }
+
         /**
-         * 绘画开始，先绘制背景图片
+         * 绘画开始，微课的图标
          * @private
          */
         __drawStart() {
@@ -259,114 +259,27 @@
             let w = Math.ceil(shareImage[0].width * cardShareInfo.prop)
             let h = Math.ceil(shareImage[0].height * cardShareInfo.prop)
 
-            self.cardCanvas.drawImage(shareImage[0].path, 0, 0, cardShareInfo.width, cardShareInfo.height) // 背景图片
-            self.__drawRectangular()
-        }
-        /**
-         * 白色圆角矩形
-         * @private
-         */
-        __drawRectangular() {
-            let self = this
-            let cardShareInfo = self.cardShareInfo
+            self.cardCanvas.drawImage(shareImage[0].path, 24, 8, 56, 56) // 背景图片
 
-            self.cardCanvas.beginPath()
-            self.cardCanvas.setStrokeStyle('#fff')
-            self.cardCanvas.setFillStyle('#fff')
-            let w = Math.ceil(self.cardShareInfo.width * 0.9333)
-            let h = Math.ceil(500 * self.cardShareInfo.prop)
-            let x = (self.cardShareInfo.width - w) >> 1
-            let y = Math.ceil(30 * self.cardShareInfo.prop)
-            let r = 8
 
-            self.cardCanvas.moveTo(x + r, y)
-            self.cardCanvas.arcTo(x + w, y, x + w, y + h, r)
-            self.cardCanvas.arcTo(x + w, y + h, x, y + h, r)
-            self.cardCanvas.arcTo(x, y + h, x, y, r)
-            self.cardCanvas.arcTo(x, y, x + w, y, r)
-            self.cardCanvas.fill()
-            self.cardCanvas.closePath()
-            self.cardCanvas.stroke()
-
-            self.__drawCardImage(h)
-        }
-        /**
-         * 画卡片图片
-         * @private
-         */
-        __drawCardImage(rectangularH) {
-            let self = this
-            let cardShareInfo = self.cardShareInfo
-            let shareImage = self.shareImage
-            // 等比例压缩图片的width跟height，自适应矩形
-            let h = Math.ceil(400 * self.cardShareInfo.prop)
-            let prop = h / shareImage[1].height
-            let w = Math.ceil(shareImage[1].width * prop)
-            // width是否大于巨型的宽度
-            let wMax = Math.ceil(self.cardShareInfo.width * 0.9333)
-            if ( w > wMax) {
-                w = wMax
-                prop =  w / shareImage[1].width
-                h = Math.ceil(shareImage[1].height * prop)
-            }
-            // 使得卡片在这个矩形绝对居中
-            let x = (self.cardShareInfo.width - w) >> 1
-            let y = Math.ceil(30 * self.cardShareInfo.prop) + ((rectangularH - h)>>1)
-
-            self.cardCanvas.drawImage(shareImage[1].path, x, y, w, h)
-            self.__drawText()
-        }
-        /**
-         * 文案
-         * @private
-         */
-        __drawText() {
-            let self = this
-            let cardShareInfo = self.cardShareInfo
-            let fontsize = Math.ceil(12 * cardShareInfo.prop)
-            let text1 = '长按小程序码'
-            let text2 = '进入即能学习全课'
-            let x = Math.ceil(106 * cardShareInfo.prop)
-            let y1 = Math.ceil((30 + 500 + 58) * cardShareInfo.prop)
-            let y2 = Math.ceil((30 + 500 + 76) * cardShareInfo.prop)
-
-            self.cardCanvas.beginPath()
-            self.cardCanvas.setFillStyle('#fff')
-            self.cardCanvas.setFontSize(fontsize)
-            self.cardCanvas.setTextAlign('left')
-
-            self.cardCanvas.fillText(text1, x, y1)
-            self.cardCanvas.fillText(text2, x, y2)
-            self.cardCanvas.closePath()
-
-            self.__drawQrcode()
-        }
-        /**
-         * 小程序二维码
-         * @private
-         */
-        __drawQrcode() {
-            let self = this
-            let cardShareInfo = self.cardShareInfo
-            let shareImage = self.shareImage
-
-            let w = Math.ceil(74 * cardShareInfo.prop)
-            let h = Math.ceil(74 * cardShareInfo.prop)
-            let x =  Math.ceil(22 * cardShareInfo.prop)
-            let y =  Math.ceil((30 + 500 + 26) * cardShareInfo.prop)
-
-            self.cardCanvas.save()
-            self.cardCanvas.beginPath()
-            self.cardCanvas.setStrokeStyle('#fff')
-            self.cardCanvas.setLineWidth(2)
-
-            self.cardCanvas.arc(x+(w>>1), y+(h>>1), (w>>1), 0, 2 * Math.PI)
-            self.cardCanvas.clip()
-
-            self.cardCanvas.drawImage(shareImage[2].path, x, y, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /**
          * 生成图片
          * @private
@@ -385,34 +298,6 @@
                     self.isDrawOver = true
                     self.shareThumb = respone.tempFilePath
                     self.$apply()
-                }
-            })
-        }
-        /**
-         * 保存图片
-         * @private
-         */
-        __saveImage() {
-            let self = this
-            wx.saveImageToPhotosAlbum({
-                filePath: self.shareThumb,
-                success(res) {
-                    wx.showToast({
-                        title: '已保存至系统相册',
-                        showCancel: false,
-                        duration: 2500
-                    })
-                    self.isDrawOver = false
-                    self.$apply()
-                    self.$emit('on-share-card')
-                },
-                fail(res) {
-                    wx.showToast({
-                        icon: 'none',
-                        title: '保存失败',
-                        showCancel: false,
-                        duration: 2500
-                    })
                 }
             })
         }
