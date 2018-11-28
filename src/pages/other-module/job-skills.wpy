@@ -22,9 +22,9 @@
                 <view class="ui-title">
                     <text class="icon-study-bar"></text>{{item.skill}}
                 </view>
-                <text class="ui-introduction">{{item.description}}</text>
+                <text class="ui-introduction" wx:if="{{item.description}}">{{item.description}}</text>
                 <view class="cell-image">
-                    <image mode="widthFix" src="{{item.image}}" />
+                    <image mode="widthFix" src="{{item.image}}" wx:if="{{item.image}}"/>
                 </view>
             </view>
         </repeat>

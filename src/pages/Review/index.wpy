@@ -1,8 +1,66 @@
+<style lang="less" scoped>
+@import "../../assets/style/theme";
+.ui-review{
+    .ui-lesson{
+        padding:32rpx 0;display: flex;flex-direction: column;align-items: center;margin:0 40rpx;border-bottom:2rpx solid @border-gray;
+        .ui-item{
+            display: flex;
+            .ui-img image{width: 204rpx;height: 204rpx;border-radius:44rpx;}
+            .ui-content{
+                margin-left: 24rpx;
+                .cell-tip{font-size: 22rpx;color:@color-blue;}
+                .cell-name{font-size: 34rpx;color:@color-black;}
+                .cell-dec{margin-top:52rpx;font-size: 30rpx;color:@color-gray;}
+            }
+        }
+        .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-top: 56rpx;}
+    }
+    .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
+    .ui-swiper-box{
+        .ui-swiper-list{
+            height: 892rpx;
+        }
+    }
+}
+
+</style>
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
-    <view class="review-article" wx:if="{{ isLoaded }}">
-        <jn-header title="回顾" className="background-theme"></jn-header>
-        <view class="review-article-header">
+    <view wx:if="{{ isLoaded }}">
+        <jn-header title="课程回顾"></jn-header>
+        <view class="ui-review">
+            <view class="ui-lesson">
+                <view class="ui-item">
+                    <view class="ui-img">
+                        <image src="{{dataObj.img}}" />
+                    </view>
+                    <view class="ui-content">
+                        <view class="cell-tip">微课</view>
+                        <view class="cell-name">{{dataObj.name}}</view>
+                        <view class="cell-dec">{{dataObj.dec}}</view>
+                    </view>
+                </view>
+                <view class="cell-btn">再学一次</view>
+            </view>
+            <view class="ui-title">重点卡</view>
+            <view class="ui-swiper-box">
+                <swiper class="ui-swiper-list" 
+                        previous-margin="40rpx"
+                        next-margin="20rpx" 
+                        indicator-dots="{{true}}">
+                    <block wx:for="{{dataObj.imgUrls}}">
+                        <swiper-item class="ui-item">
+                            <view class="ui-content">
+                                <image mode="widthFix" src="{{item}}"/>
+                            </view>
+                            
+                        </swiper-item>
+                    </block>
+                </swiper>
+            </view>
+            
+        </view>
+        <!-- <view class="review-article-header">
             <view class="review-article-header-subtitle">{{ courseName }} {{ senceIndex }}/{{ courseCount }}</view>
             <view class="review-article-header-title">{{ title }}</view>
             <view class="review-article-header-button-row">
@@ -12,9 +70,9 @@
                     <text class="icon-right-arrow cell-icon"></text>
                 </view>
             </view>
-        </view>
+        </view> -->
 
-        <view wx:if="{{ linkList.length }}" class="flex-space-between-row review-article-banner">
+        <!-- <view wx:if="{{ linkList.length }}" class="flex-space-between-row review-article-banner">
             <image class="review-article-banner__icon" mode="scaleToFill"
                    src="http://wx-small.runwise.cn/image/imageID5b06c8e3031488821cae44d1189b.svg"></image>
             <text class="review-article-banner__title"> 扩展阅读</text>
@@ -27,9 +85,9 @@
                         data-index="{{ item.index }}" data-link="{{ item.linkUrl }}"
                         @tap.stop="handleContactLink"></button>
             </image>
-        </view>
+        </view> -->
 
-        <view class="review-article-body">
+        <!-- <view class="review-article-body">
             <view class="review-article-header-button-row" style="padding:48rpx 32rpx 20rpx;">
                 <view class="review-article-flex">
                     <view class="cell-main">课程核心要点</view>
@@ -38,8 +96,9 @@
             </view>
             <image class="review-article__body__icon" src="{{bigimage}}" hidden="{{!imageLoaded}}"
                    @load="handleImageLoaded" mode="widthFix"></image>
-        </view>
+        </view> -->
     </view>
+    <view></view>
 </template>
 
 <script>
@@ -54,6 +113,7 @@
 
     @connect({
         token(state) {
+            return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
         },
         currentCourseID(state) {
@@ -89,7 +149,6 @@
         data = {
             courseID: 'courseID',
             senceID: 'senceID',
-            teamID: 'defaultTeamID',
             isLoaded: false,
             bigimage: "",
             courseCount: 0,
@@ -103,7 +162,17 @@
                 imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
                 index: 1,
                 linkUrl: "https://www.kancloud.cn/yunye/axios/234845"
-            }]
+            }],
+            dataObj:{
+                img:'http://wx-small.runwise.cn/image/imageIDff08659c175452b2e01b44c2079f.png',
+                name:'建立高效内容制作流程',
+                dec:'如何使内容生产效率倍增',
+                imgUrls: [
+                    'http://wx-small.runwise.cn/image/imageID0313121866848f8d830277374e5c.png',
+                    'http://wx-small.runwise.cn/image/imageID3f8e1b2cc38419a42107f0e913fc.png',
+                    'http://wx-small.runwise.cn/image/imageIDa669993a61445ba0321d97cc82fc.png'
+                ],
+            }
         }
 
         methods = {
@@ -120,7 +189,7 @@
             handleStudyAgain(event) {
                 console.log('this.platform', this.platform)
                 let isNewSence = this.isNewSenceMap && this.isNewSenceMap[this.senceID]
-                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, teamID: this.teamID, resumeLastRead: 'NO', isNewSence })
+                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, resumeLastRead: 'NO', isNewSence })
             },
             handleShare(event) {
                 shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID}).then(({shareImage, shareImageCode}) => {
@@ -149,10 +218,9 @@
             }
         }
 
-        initialize({courseID, senceID, teamID}) {
+        initialize({courseID, senceID}) {
             this.courseID = 'defaultCourseID'
             this.senceID = 'defaltSenceID'
-            this.teamID = teamID
             this.showType = 'hidden'
             this.bigimage = ''
             this.title = 'title'
@@ -162,7 +230,7 @@
             this.skill = 'skill'
             this.isLoaded = false
             courseApi
-                .getReview({token: this.token, courseID, senceID, teamID})
+                .getReview({token: this.token, courseID, senceID})
                 .then(({bigimage, title, senceIndex, courseCount, courseName, skill, showType, linkList, isNewSenceMap}) => {
                     console.log(`bigimage: ${bigimage}, title: ${title}, senceIndex: ${senceIndex}, courseCount: ${courseCount}, courseName: ${courseName}, skill: ${skill}, showType: ${showType}, linkList: ${linkList}`)
                     wepy.setNavigationBarColor({
@@ -202,44 +270,11 @@
                 })
         }
 
-        onLoad({courseID, senceID, teamID = 'defaultTeamID'}) {
+        onLoad({courseID, senceID}) {
             console.log(`in review courseID:${courseID}, senceID: ${senceID}`)
-            this.teamID = teamID
-            this.initialize({courseID, senceID, teamID})
+            this.initialize({courseID, senceID})
         }
     }
 </script>
 
-<style lang="less" scoped>
-@import "../../assets/style/theme";
-::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0 !important;
-  color: transparent !important;
-}
-.cell-main{color:@color-black;font-size:32rpx; font-weight: bold;}
-.review-article-header {
-    width: 750rpx;background: @background-blue;
-    .cell-icon{color:@color-white;font-size:24rpx;}
-}
-.review-article {height: 100vh;display: block;box-sizing: border-box;}
-.review-article-header-subtitle {padding: 64rpx 0 0 24rpx;color: @color-white;font-size: 28rpx;line-height: 40rpx;font-family: PingFangSC-Regular;}
-.review-article-header-title {margin: 32rpx 0 0 24rpx;max-width: 500rpx;font-family: PingFangSC-Medium;color: @color-white;font-size: 48rpx;line-height: 66rpx;}
-.review-article-header-button-row {display: flex;justify-content: space-between;padding: 32rpx 24rpx 60rpx 24rpx;align-items: center;}
-.review-article-header-tag {height: 40rpx;line-height: 40rpx;border: 2rpx solid @border-white;border-radius: @border-radius-8;color: @color-white;font-family: PingFangSC-Regular;font-size: 24rpx;padding-left: 10rpx;padding-right: 10rpx;}
-.review-article-header-learn-again {color: @color-white;font-size: 28rpx;line-height: 40rpx;font-family: PingFangSC-Medium;}
-.review-article-body {
-    width: 750rpx;
-    .cell-icon{color:@color-blue;font-size:48rpx;margin-right:10rpx;}
-}
-.review-article-flex {display: flex;align-items: center;}
-.review-article__header {position: relative;height: 240rpx;}
-.review-article__body__icon {width: 702rpx;height: 896rpx;display: block;margin: 0 auto 80rpx;}
-.review-article-banner {padding: 44rpx 32rpx 20rpx;}
-.review-article-banner__icon {width: 40rpx;height: 40rpx;display: inline-block;vertical-align: top;margin: 0;}
-.review-article-banner__title {color: @color-black;font-size: 16px;font-weight: bold;margin-left: 12rpx;margin-right: auto;}
-.review-article-banner__photo {width: 100%;display: block;}
-.review-article-banner__photo {position: relative;}
-.review-article-banner__photo__shade-btn {position: absolute;left: 0;top: 0;width: 100%;height: 100%;background-color: inherit;border: 0 !important;}
-.review-article-banner__photo__shade-btn::after {border: 0 !important;}
-</style>
+
