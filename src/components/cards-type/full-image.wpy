@@ -4,9 +4,8 @@
 
 <template>
     <scroll-view class="module-full-image-box"
-                 scroll-y="{{false}}"
                  scroll-with-animation>
-        <image mode="widthFix" src="{{cardItem && cardItem.bigimage}}" lazy-load></image>
+        <image mode="{{!isIpad ? 'widthFix' : 'aspectFit'}}" src="{{cardItem && cardItem.bigimage}}" lazy-load></image>
     </scroll-view>
 </template>
 
@@ -29,7 +28,7 @@
         }
 
         data = {
-
+            isIpad: /iPad|ipad/i.test(wx.getSystemInfoSync().model),
         }
 
         onLoad() {

@@ -32,10 +32,10 @@
                     text{display:block;width:100%;text-align:center;position:absolute;transition:all .25s;}
                     .cell-icon{font-size:48rpx;color:@color-blue;top:-26rpx;}
                     .cell-text{font-size:26rpx;color:@color-gray;bottom:-10rpx;}
-                    .ui-tips{
-                        width:248rpx;height:56rpx;background-color:@background-blue;font-size:28rpx;color:@color-white;line-height:56rpx;border-radius:@border-radius-20;position:fixed;left:62rpx;bottom:156rpx;transition:all .25s;
-                        text{display:block;font-size:34rpx;color:@color-blue;position:absolute;top:34rpx;transform:rotatex(180deg);}
-                    }
+                }
+                .ui-tips{
+                    width:248rpx;height:56rpx;background-color:@background-blue;font-size:28rpx;color:@color-white;text-align:center;line-height:56rpx;border-radius:@border-radius-20;position:fixed;left:62rpx;bottom:156rpx;transition:all .25s;
+                    text{display:block;margin-left:-17rpx;font-size:34rpx;color:@color-blue;position:absolute;left:50%;top:34rpx;transform:rotatex(180deg);transition:all .25s;}
                 }
             }
             .cell-button{
@@ -49,13 +49,14 @@
                     button{
                         background:@background-mask-normal-2;
                         text{color:@color-white;}
-                        .ui-tips{
-                            background-color:@background-white;color:@color-black;
-                        }
                     }
                 }
                 .cell-button{background:@background-mask-normal-2;color:@color-white;}
                 .cell-hover{background:@background-mask-normal;}
+                .ui-tips{
+                    background-color:@background-white;color:@color-black;
+                    text{color:@color-white;}
+                }
             }
         }
     }
@@ -85,7 +86,7 @@
                     <swiper-item style="background-color: {{item.fullImageBgColor}}"
                         catchtouchmove="getCatchTouchMove">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
-                        <view style="height: calc(100% - {{headerHeigth}}px)">
+                        <view style="height: calc(100% - {{!isIpad ? headerHeigth+64 : 210}}px)">
                             <jn-full-image :cardItem.sync="item" :cardIndex.sync="index"
                                            wx:if="{{item.type==='fullimage'}}"></jn-full-image>
                             <jn-single-choice :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
@@ -113,12 +114,12 @@
                     <text class="icon-share cell-icon"></text>
                     <text class="cell-text">{{cardCurrentInfo[0].userShareCount || 0}}</text>
                 </button>
-                <button>
-                    <text class="icon-un-emphasi cell-icon"></text>
-                    <text class="icon-emphasi cell-icon emphasiAnimation"></text>
-                    <text class="cell-text">222</text>
-                    <view class="ui-tips">点击标注为重点<text class="icon-arrow"></text></view>
+                <button @tap.stop="getCollectionRecord">
+                    <text class="icon-un-collection cell-icon"></text>
+                    <text class="icon-collection cell-icon collectionAnimation" wx:if="{{cardCurrentInfo[0].userIsSelected}}"></text>
+                    <text class="cell-text">{{cardCurrentInfo[0].cardCollectionCount || 0}}</text>
                 </button>
+                <view class="ui-tips">点击标注为重点<text class="icon-arrow"></text></view>
             </view>
 
             <view class="cell-button main-center cross-center"
@@ -209,7 +210,9 @@
         data = {
             headerHeigth: 68,
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            isIpad: /iPad|ipad/i.test(wx.getSystemInfoSync().model),
             isLoaded: false,
+            isSubmit: false, // 是否提交了收藏或生成分享图
             senceID: null,
             courseID: null,
             teamID: 'defaultTeamID',
@@ -714,21 +717,71 @@
              */
             getShare() {
                 let self = this
+                if (self.isSubmit) {
+                    return
+                }
+
+                self.isSubmit = true
                 let postData = {
                     token: self.systemInfo.token,
                     courseID: self.courseID,
                     senceID: self.senceID
                 }
-console.log('分享提交参数', postData)
+
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
+                    self.isSubmit = false
                     let shareImages = {
-                        footImage: 'http://wx-small.runwise.cn/image/imageIDae0a7f711614cb8e972aa6b10ced.jpg',
                         senceThumb: 'http://image.runwise.cn/image/imageIDdba95bbfa3c43c9319fd639a55e3.png',
-                        contentImage: self.cardCurrentInfo[0].bigimage,
+                        cardImage: self.cardCurrentInfo[0].bigimage,
                         shareImage
                     }
                     // 通知组件，生成图片预览
                     self.$broadcast('card-share-images-list', shareImages)
+                }).catch(error => {
+                    self.isSubmit = false
+                })
+            },
+            /**
+             * 收藏重点卡
+             * @param
+             */
+            getCollectionRecord() {
+                let self = this
+                if (self.isSubmit) {
+                    return
+                }
+
+                self.isSubmit = true
+                let item = self.cardCurrentInfo[0]
+                let postData = {
+                    token: self.systemInfo.token,
+                    courseID: self.courseID,
+                    senceID: self.senceID,
+                    cardID: item.id,
+                    teamID: self.teamID,
+                    flag: item.userIsSelected ? 0 : 1
+                }
+
+                fetch.collectionRecord(postData).then((respone) => {
+                    if (respone.cardCollectionCount) {
+                        item.userIsSelected = 1
+                        item.cardCollectionCount += 1
+                        wx.showToast({
+                            title: '收藏重点卡成功',
+                            icon: 'success'
+                        })
+                    } else {
+                        item.userIsSelected = 0
+                        item.cardCollectionCount -= 1
+                        wx.showToast({
+                            title: '取消重点卡成功',
+                            icon: 'success'
+                        })
+                    }
+                    self.isSubmit = false
+                    self.$apply()
+                }).catch(error => {
+                    self.isSubmit = false
                 })
             }
         }

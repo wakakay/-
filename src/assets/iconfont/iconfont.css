@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_udpymebfpy.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_atv54r2hajf.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -139,6 +139,6 @@
 
 .icon-selectable:before { content: "\e788"; }
 
-.icon-emphasi:before { content: "\e781"; }
+.icon-collection:before { content: "\e781"; }
 
-.icon-un-emphasi:before { content: "\e782"; }
+.icon-un-collection:before { content: "\e782"; }

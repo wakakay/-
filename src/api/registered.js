@@ -124,6 +124,10 @@ export default {
     courseShareCount(params) {
         return fetch({method: 'post', url: 'sence/senceShareRecord', params: params, isVisitor: true})
     },
+    // 重点卡
+    collectionRecord(params) {
+        return fetch({method: 'post', url: 'sence/cardCollectionRecord', params: params})
+    },
 
     /*--------------------发现页-----------------------*/
     // 发现页列表
