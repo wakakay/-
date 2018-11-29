@@ -4,13 +4,13 @@
     .ui-lesson{
         padding:32rpx 0;display: flex;flex-direction: column;align-items: center;margin:0 40rpx;border-bottom:2rpx solid @border-gray;
         .ui-item{
-            display: flex;
+            display: flex;width:100%;
             .ui-img image{width: 204rpx;height: 204rpx;border-radius:44rpx;}
             .ui-content{
                 margin-left: 24rpx;
                 .cell-tip{font-size: 22rpx;color:@color-blue;}
                 .cell-name{font-size: 34rpx;color:@color-black;}
-                .cell-dec{margin-top:52rpx;font-size: 30rpx;color:@color-gray;}
+                .cell-dec{margin-top:48rpx;font-size: 30rpx;color:@color-gray;}
             }
         }
         .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-top: 56rpx;}
@@ -48,18 +48,18 @@
             <view class="ui-lesson">
                 <view class="ui-item">
                     <view class="ui-img">
-                        <image src="{{dataObj.img}}" />
+                        <image src="{{imageUrl}}" />
                     </view>
                     <view class="ui-content">
                         <view class="cell-tip">微课</view>
                         <view class="cell-name">{{courseName}}</view>
-                        <view class="cell-dec">{{skill}}</view>
+                        <view class="cell-dec">{{description}}</view>
                     </view>
                 </view>
                 <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
             <view class="ui-title">重点卡</view>
-            <view class="ui-empty-list" wx:if="{{hasPointCard && hashBigImage}}">
+            <view class="ui-empty-list" wx:if="{{!hasPointCard && !hashBigImage}}">
                 <text class="icon-empty-list"></text>
                 <view>你还没有标为重点的卡片哦</view>
             </view>
@@ -67,16 +67,16 @@
                 <swiper class="ui-swiper-list" 
                         previous-margin="40rpx"
                         next-margin="20rpx"  indicator-dots="{{true}}">
-                    <block wx:for="{{dataObj.imgUrls}}">
+                    <repeat wx:for="{{pointCardList}}">
                         <swiper-item class="ui-item">
                             <view class="ui-content">
-                                <image mode="widthFix" src="{{item}}"/>
+                                <image mode="widthFix" src="{{item.url}}"/>
                                 <view class="ui-share">
                                     <text class="icon-share"></text>
                                 </view>
                             </view>
                         </swiper-item>
-                    </block>
+                    </repeat>
                 </swiper>
             </view>
             
@@ -96,7 +96,7 @@
 
     @connect({
         token(state) {
-            return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
+            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
         },
         userName(state) {
@@ -117,29 +117,16 @@
         };
 
         data = {
-            courseID: '',
-            senceID: '',
+            courseID: "",
+            senceID: "",
             isLoaded: false,
             courseName: "",
-            skill:"",
+            description:"",
+            imageUrl:"",
             hasPointCard:false,
             hashBigImage:false,
+            pointCardList:[],
             isNewSenceMap: {}, // 进入微课的新老界面判断
-            linkList: [{
-                imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
-                index: 1,
-                linkUrl: "https://www.kancloud.cn/yunye/axios/234845"
-            }],
-            dataObj:{
-                img:'http://wx-small.runwise.cn/image/imageIDff08659c175452b2e01b44c2079f.png',
-                name:'建立高效内容制作流程',
-                dec:'如何使内容生产效率倍增',
-                imgUrls: [
-                    'http://wx-small.runwise.cn/image/imageIDc4d43b7ba344feb9789498a879a1.png',
-                    'http://wx-small.runwise.cn/image/imageID3f67e3b61db4768f160a6b8341ad.png',
-                    'http://wx-small.runwise.cn/image/imageID100e6ec95204878ff13ba42b5b6f.png'
-                ],
-            }
         }
 
 
@@ -169,17 +156,19 @@
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
                 self.courseName = res.courseName
-                self.skill = res.skill
+                self.pointCardList = res.pointCardList
+                self.imageUrl = res.imageUrl
+                self.description = res.description
                 self.$apply()
 
-                // wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
-                // wx.reportAnalytics('review', {
-                //     role: self.role,
-                //     nickname: self.userName,
-                //     coursename: self.courseName,
-                //     sencename: self.title,
-                //     channel: self.entrance.mappers[self.entrance.scenceID]
-                // })
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
+                wx.reportAnalytics('review', {
+                    role: self.role,
+                    nickname: self.userName,
+                    coursename: self.courseName,
+                    sencename: self.title,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
+                })
             })
             .catch(error => {
                 console.log('get review error', error)
