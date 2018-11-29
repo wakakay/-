@@ -179,7 +179,7 @@
             if (title) {
                 // 微信统计
                 title.enName && wx.reportAnalytics(title.enName, {
-                    username: self.systemInfo.userName,
+                    username: self.systemInfo.name,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
                 })

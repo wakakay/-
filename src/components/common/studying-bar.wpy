@@ -341,6 +341,29 @@
                 self.learningSenceList = _.clone(self.newLearningSenceList)
             }
         }
+        /**
+         * ga，埋点
+         * @private
+         */
+        __gaReportAnalytics(senceName) {
+            let self = this
+            let rounter = getCurrentPages()
+            let currentRount = rounter[rounter.length - 1].route
+            let name = ''
+            switch (currentRount) {
+                case 'pages/FindList/index':
+                    name = '发现页/学习bar'
+                    break
+                case 'pages/course-module/course':
+                    name = '课程页/学习bar'
+                    break
+                case 'pages/training-camp-module/index':
+                    name = '训练营/学习bar'
+                    break
+            }
+
+            name && wepy.$instance.globalData.getHuilder(name, 'click', `${senceName}`)
+        }
 
         methods = {
             /**
@@ -350,7 +373,6 @@
                 let self = this
                 self.isShowList = true
                 self.__emit()
-                wepy.$instance.globalData.getHuilder('课程页/待学习bar','click','待学习')
                 wx.reportAnalytics('study_bar_list_icon', {
                     username: self.systemInfo.name,
                     role: self.systemInfo.role,
@@ -381,8 +403,10 @@
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
+
                 let senceName = event.currentTarget.dataset.name
-                wepy.$instance.globalData.getHuilder('待学习页/学习bar箭头','click',`${senceName}`)
+                self.__gaReportAnalytics(senceName)
+
                 let {currentTarget: {dataset: {item = continueSenceInfo}}} = event
                 item.source = event.currentTarget.dataset.source
                 let {courseID, senceID,source} = item

@@ -323,7 +323,7 @@
                 if (self.finishResultInfo.senceStar > 0) {
                     wepy.$instance.globalData.getHuilder('微课完成页/点评', 'click', self.finishResultInfo.name)
                     wx.reportAnalytics('lessonfinish_evaluate_click', {
-                        username: self.systemInfo.userName,
+                        username: self.systemInfo.name,
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         role: self.systemInfo.role
                     })

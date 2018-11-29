@@ -36,7 +36,7 @@
                 text:nth-of-type(2){font-size:28rpx;color:@color-white;}
             }
         }
-        .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-color;}
+        .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
             height:240rpx;margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:justify;line-height:48rpx;overflow:hidden;position:relative;transition:all .5s ease-in-out;
             .cell-more{width:140rpx;height:48rpx;background-image:linear-gradient(90deg, rgba(255,255,255,.85) 0%, #FFFFFF 100%);color:@color-blue;line-height:48rpx;text-align:right;position:absolute;right:0;bottom:0;}
@@ -56,7 +56,7 @@
                     text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:-6rpx;}
                 }
                 .ui-content{
-                    width:100%;border-bottom:1rpx solid @border-color;position:relative;
+                    width:100%;border-bottom:1rpx solid @border-gray;position:relative;
                     text{padding:0 28rpx;margin-top:-26rpx;font-size:26rpx;color:@color-gray;position:absolute;right:0;top:50%;}
                     .cell-title{width:500rpx;padding-bottom:8rpx;font-size:34rpx;font-weight:700;color:@color-black;line-height:44rpx;}
                     .cell-subtitle{width:500rpx;height:80rpx;font-size:26rpx;color:@color-gray;line-height:40rpx;overflow:hidden;}
@@ -68,12 +68,15 @@
         }
 
         .ui-course-list{
-            padding:0 32rpx 50rpx;
+            padding:0 32rpx 40rpx;
             .ui-item{
                 width:100%;height:346rpx;padding:40rpx 32rpx;margin-top:24rpx;background-size:cover;background-repeat:no-repeat;background-position:center center;text-align:left;line-height:1;border-radius:@border-radius-20;position:relative;
-                .cell-tag{font-size:30rpx;color:@color-white-opacity;}
-                .cell-title{padding:114rpx 0 20rpx;font-size:40rpx;font-weight:700;color:@color-white;line-height:50rpx;}
-                .cell-subtitle{font-size:26rpx;color:@color-white-opacity;line-height:36rpx;}
+                .cell-title{padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;width:540rpx;line-height:50rpx;}
+                .ui-skills{
+                    font-size: 26rpx;color: rgba(255,255,255,.70);
+                    text{margin:8rpx;}
+                }
+                .cell-subtitle{font-size:26rpx;color:@color-white-opacity;line-height:36rpx;position:absolute;bottom: 40rpx;;}
                 .ui-circular-progress{
                     position:absolute;right:32rpx;top:32rpx;
                     &::before{border:6rpx solid @background-mask-white;}
@@ -116,7 +119,7 @@
         .ui-recommend-list{
             padding-left:32rpx;padding-bottom:40rpx;
             .ui-item{
-                height:220rpx;padding:20rpx 0;border-bottom:1rpx solid @border-color;transform:translate(-12rpx, 0px) translateZ(0px);
+                height:220rpx;padding:20rpx 0;border-bottom:1rpx solid @border-gray;transform:translate(-12rpx, 0px) translateZ(0px);
                 .ui-thumb{
                     width:180rpx;height:180rpx;border-radius:@border-radius-44;overflow:hidden;
                     image{width:180rpx;height:180rpx;}
@@ -231,8 +234,10 @@
                             bindgetuserinfo="getAuthorize"
                             data-item="{{item}}"
                             @tap.stop="getCourseLearning">
-                        <view class="cell-tag">第{{index+1}}节</view>
                         <view class="cell-title">{{item.senceName}}</view>
+                        <view class="ui-skills">
+                            <text class="icon-study-bar"></text>{{item.labelName}}
+                        </view>
                         <view class="cell-subtitle">{{item.senceTarget}}</view>
                         <view class="ui-circular-progress">
                             <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
@@ -314,6 +319,7 @@
             </view>
         </view>
     </scroll-view>
+    <view></view>
 </template>
 
 <script>
@@ -369,7 +375,6 @@
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
-            console.log('新课程详情', self.isTokenSet, codeType, parameter)
             let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
             if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
@@ -417,7 +422,6 @@
                 self.courseDetail.price = parseFloat(self.courseDetail.price)
 
                 // 微课分享进来重定向
-                console.log('微课分享进来重定向', self.shareSenceID, self.systemInfo.token)
                 if (self.shareSenceID && 'defaultToken' !== self.systemInfo.token) {
                     let senceItem = _.find(self.courseDetail.senceList, {id: self.shareSenceID})
                     if ('finish' === senceItem.buttonStatus) {
@@ -434,6 +438,13 @@
                 self.$apply()
 
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
+                wx.reportAnalytics('coursedetail_pageload', {
+                    role: self.systemInfo.role,
+                    nickname: self.systemInfo.name,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    courseid: self.paramsInfo.id,
+                    source: self.paramsInfo.source
+                })
             }).catch(error => {
                 self.isLoaded = true
             })
@@ -450,15 +461,15 @@
             let senceID = item.id
             let name = item.senceName
             let buttonStatus = item.buttonStatus
-            let resumeLastRead = 'NO'
+            let resumeLastRead = item.resume ? item.resume : 'NO'
 
-            let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
+            // let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
             let isNewSence = self.courseDetail.isNewSenceMap[senceID]
             let isRedirectTo = false
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
-                navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                 return
             }
             if ('needPay' === buttonStatus) {
@@ -467,13 +478,13 @@
                 switch (buttonStatus) {
                     case 'finish': // 回顾
                         !item.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence, isRedirectTo})
+                            : navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/course-module/course-pay`, {senceID})
                         break
                     default:
-                        navigateToLesson({courseID, senceID, isNewSence, isRedirectTo})
+                        navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
                 }
             }
         }
@@ -486,7 +497,7 @@
             let self = this
             wx.reportAnalytics('tap_to_lesson', {
                 role: self.systemInfo.role,
-                nickname: self.systemInfo.userName,
+                nickname: self.systemInfo.name,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 courseid: self.paramsInfo.id,
                 senceid: senceID,

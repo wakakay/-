@@ -481,6 +481,7 @@ export const serialize = (obj, name) => {
             }
         }
     }
+
     serializeInternal(obj, name);
     return result;
 }
@@ -489,7 +490,7 @@ export const preFixNumber = (num, n) => (Array(n).join('0') + num).slice(-n) // 
 
 export const parsePercentageForPoll = (current, total) => delta => Math.round(parseInt(current / (total + delta) * 100))
 
-Date.prototype.format = function(fmt) {
+Date.prototype.format = function (fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
         "d+": this.getDate(), //日
@@ -527,19 +528,14 @@ const synchronizeLearning = store => learning => getStorageAsync({ key: 'learnin
     .catch(error => console.log('storage: learning获取失败', error))
     .then(() => store.dispatch(refreshLearnings(learning)))
 
-const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' })
-    .then(firstAccess => {
+const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' }).then(firstAccess => {
         user.firstAccess = ++firstAccess
-    })
-    .catch(error => {
+    }).catch(error => {
         user.firstAccess = 0
     }) // 至此initialState的firstAccess值确定
-    // .then(() => getStorageAsync({ key: 'entrancePath' }))
-    // .then(entrancePath => 'pages/Study/index'===entrancePath && 0===user.firstAccess && wx.reLaunch({ url: '/pages/Home/index' }) )
     // 首先校验firstAccess和entrancePath 两个先决条件
     .then(() => Promise.all(['token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
     .then(([token, name, equipmentModel, code, phone, avatar, role, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
-        //console.log(token, name, equipmentModel, code, phone, avatar, role, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight)
         user.token = token
         user.name = name
         user.code = code
@@ -554,34 +550,36 @@ const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' })
         user.screenHeight = screenHeight
         user.statusHeight = statusHeight
         return new Promise((resolve, reject) => {
-                wx.getSystemInfo({
-                        success: ({ errMsg, pixelRatio: syncPixelRatio, windowWidth: syncWindowWidth, windowHeight: syncWindowHeight, model: syncEquipmentModel, screenHeight: syncScreenHeight, platform, statusBarHeight: syncStatusHeight }) => {
-                            user.pixelRatio = 'getSystemInfo:ok' === errMsg ? syncPixelRatio : pixelRatio
-                            user.windowWidth = 'getSystemInfo:ok' === errMsg ? syncWindowWidth : windowWidth
-                            user.windowHeight = 'getSystemInfo:ok' === errMsg ? syncWindowHeight : windowHeight
-                            user.equipmentModel = 'getSystemInfo:ok' === errMsg ? syncEquipmentModel : equipmentModel
-                            user.screenHeight = 'getSystemInfo:ok' === errMsg ? syncScreenHeight : screenHeight
-                            user.statusHeight = 'getSystemInfo:ok' === errMsg ? syncStatusHeight : statusHeight;
-                            'getSystemInfo:ok' === errMsg && (user.platform = platform)
-                            //console.log('getSystemInfo', errMsg, platform, syncStatusHeight)
-                            resolve()
-                        }, // success
-                        fail: error => {
-                                resolve()
-                            } // fail
-                    }) // end getSystemInfo
-            }) // end promise
-    }) // end then
-    .catch(error => console.log('storage: user获取失败', error))
-    .then(() => store.dispatch(refreshUserInformations(user))) // end then
+            wx.getSystemInfo({
+                success: ({ errMsg, pixelRatio: syncPixelRatio, windowWidth: syncWindowWidth, windowHeight: syncWindowHeight, model: syncEquipmentModel, screenHeight: syncScreenHeight, platform, statusBarHeight: syncStatusHeight }) => {
+                    user.pixelRatio = 'getSystemInfo:ok' === errMsg ? syncPixelRatio : pixelRatio
+                    user.windowWidth = 'getSystemInfo:ok' === errMsg ? syncWindowWidth : windowWidth
+                    user.windowHeight = 'getSystemInfo:ok' === errMsg ? syncWindowHeight : windowHeight
+                    user.equipmentModel = 'getSystemInfo:ok' === errMsg ? syncEquipmentModel : equipmentModel
+                    user.screenHeight = 'getSystemInfo:ok' === errMsg ? syncScreenHeight : screenHeight
+                    user.statusHeight = 'getSystemInfo:ok' === errMsg ? syncStatusHeight : statusHeight;
+                    'getSystemInfo:ok' === errMsg && (user.platform = platform)
+                    resolve()
+                },
+                fail: error => {
+                    resolve()
+                }
+            })
+        })
+    }).catch(error => {
+        console.log('storage: user获取失败', error)
+    }).then(() => {
+        store.dispatch(refreshUserInformations(user))
+    })
 
-const synchronize = initialState => Promise.all([synchronizeActivity(getStore())(initialState.activity), synchronizeLearning(getStore())(initialState.learning), synchronizeUser(getStore())(initialState.user)])
-    .then(() => console.log('---------------------------== synchronize all sotrage:ok ==------------------------------'))
-    .catch(error => {
-        //console.log('synchronize:fail, try again', error)
+const synchronize = initialState => Promise.all([
+        synchronizeActivity(getStore())(initialState.activity),
+        synchronizeLearning(getStore())(initialState.learning),
+        synchronizeUser(getStore())(initialState.user)]).then(() => {
+        // console.log('---------------------------== synchronize all sotrage:ok ==------------------------------')
+    }).catch(error => {
         throw error
-            // return synchronize(initialState)
-    }) // end synchronize
+    })
 
 const initialState = {
         user: {
@@ -599,12 +597,12 @@ const initialState = {
             windowWidth: 0,
             screenHeight: 0,
             statusHeight: 0,
-        }, // end user
+        },
         sences: {
             currentID: '',
             currentName: '',
             sections: [],
-        }, // end sences
+        },
         entrance: {
             scenceID: '',
             path: '',
@@ -664,11 +662,11 @@ const initialState = {
                 1090: '长按小程序右上角菜单唤出最近使用历史',
                 1092: '城市服务入口'
             }
-        }, // end entrance
+        },
         courses: {
             currentID: '',
             currentName: ''
-        }, // end courses
+        },
         cards: {
             requestFlag: '', // 进入课程请求时间戳
             currentSectionOffset: 0,
@@ -687,8 +685,8 @@ const initialState = {
                     { input1: '', input2: '' },
                     { answer: [] }
                 ]
-            } // end collections
-        }, // end cards
+            }
+        },
         practices: {
             requestFlag: '',
             currentSectionOffset: 0,
@@ -706,20 +704,17 @@ const initialState = {
             terminalDate: -1, // 活动结束时间 时间戳
             isActivityOn: false, // 是否开启活动
             poster: 'http://wx-small.runwise.cn/image/imageIDd48efe7053f43db7f5fe023ae523.png' // 海报
-        } // end activity
-    } // end initialState
-
+        }
+    }
 
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
     if (!initializeFunc instanceof Promise) throw 'initializeFunc must be Promise'
     const store = getStore()
 
-    return synchronize(initialState)
-        .then(() => {
+    return synchronize(initialState).then(() => {
             if (callWhatever) return initializeFunc() // 如果callWhatever，那么不校验登录状态，直接initialize初始化页面
             return store.dispatch(checkLoginStatus())
-        })
-        .then(status => {
+        }).then(status => {
             let {user: {token}} = store.getState()
             if ('login:online' === status) { // 后台刷新登录态
                 authApi.setOnlineStatu({token}).then(response => {
@@ -734,8 +729,8 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
 }
 
 export const preloadState = () => {
-        return synchronize(initialState)
-    } // end preloadState
+    return synchronize(initialState)
+}
 
 /**
  * 深度拷贝
