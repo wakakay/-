@@ -85,7 +85,7 @@
                 let {detail: {errMsg}} = event
 
                 wx.reportAnalytics('welcome_register', {
-                    username: self.systemInfo.userName,
+                    username: self.systemInfo.name,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
                 })

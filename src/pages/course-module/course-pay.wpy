@@ -117,7 +117,7 @@
                     :class="{'is-selected': selectType==3}"
                     disabled="{{!payInfo.isWeixinPay || isPay}}"
                     data-type="3" @tap.stop="getSelected"
-                    wx:if="{{platform || systemInfo.userName=='星塵'}}">
+                    wx:if="{{platform || systemInfo.name=='星塵'}}">
                 <view class="cell-select flex-box-0">
                     <text class="{{(payInfo.price==0 || isPay) ? 'icon-disabled' : selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
@@ -279,12 +279,12 @@
 
                 wx.reportAnalytics('paycourse', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.userName,
-                    coursename: self.systemInfo.name,
-                    channel: self.entrance.mappers[this.entrance.scenceID],
+                    nickname: self.systemInfo.name,
+                    coursename: self.payInfo.name,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
                     paytype: '即能币支付',
                     sencename: self.payInfo.name,
-                    goods: '',
+                    goods: ''
                 })
             }).catch((error) => {
                 /*wx.showModal({
@@ -329,7 +329,7 @@
                         })
                         wx.reportAnalytics('paycourse', {
                             role: self.systemInfo.role,
-                            nickname: self.systemInfo.userName,
+                            nickname: self.systemInfo.name,
                             coursename: '/',
                             channel: self.entrance.mappers[this.entrance.scenceID],
                             paytype: '微信支付',

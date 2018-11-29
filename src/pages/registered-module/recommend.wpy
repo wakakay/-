@@ -230,7 +230,7 @@
                 let self = this
                 let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
                 let analyticsInfo = {
-                    username: self.systemInfo.userName,
+                    username: self.systemInfo.name,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role,
                     coursename: item.name
@@ -276,7 +276,7 @@
                 let self = this
 
                 wx.reportAnalytics('start_learning', {
-                    username: self.systemInfo.userName,
+                    username: self.systemInfo.name,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
                 })

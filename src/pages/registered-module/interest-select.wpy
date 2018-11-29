@@ -312,7 +312,7 @@
 
                         wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-能力选择页', pageTheme: ''})
                         wx.reportAnalytics('interest_select_next', {
-                            username: self.systemInfo.userName,
+                            username: self.systemInfo.name,
                             channel: self.entrance.mappers[self.entrance.scenceID],
                             role: self.systemInfo.role
                         })
@@ -408,7 +408,7 @@
 
             wepy.$instance.globalData.getLoadHuilder() // ga统计
             wx.reportAnalytics('capability_select_complete', {
-                username: self.systemInfo.userName,
+                username: self.systemInfo.name,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 role: self.systemInfo.role
             })
