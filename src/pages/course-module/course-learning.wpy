@@ -220,6 +220,7 @@
             courseID: null,
             teamID: 'defaultTeamID',
             senceName: '',
+            senceThumb: '',
             cardCurrentInfo: [],
             cardCurrent: 0,
             cardsList: [],
@@ -296,12 +297,15 @@
             let self = this
             let postData = {token: self.systemInfo.token, senceID, courseID, teamID, source: source}
             self.isLoaded = false
-            return store.dispatch(fetchCardsWithPreview(postData)).then((respone) => {
-                self.isLoaded = true
-                self.senceName = respone.senceName
+            fetch.courseLearning(postData).then((respone) => {
                 let cards = self.__dataRegroup(respone)
+
+                self.isLoaded = true
+                self.senceName = respone.name
+                self.senceThumb = respone.imageUrl
                 self.cardsOriginList = deepCopy(cards) // 给swiper使用的数据
                 self.cardsList = cards
+
                 // 恢复上次学习的进度
                 let index = _.findIndex(self.cardsList, {id: respone.lastCardID}) || 0
                 index = -1 !== index ? index : 0
@@ -323,8 +327,6 @@
                 })
             }).catch(error => {
                 self.isLoaded = true
-                !(error instanceof LessonPermissionDenyError) && showErrorPage()
-                console.log('fail to initialize lesson', error)
             })
         }
         /**
@@ -333,8 +335,8 @@
          */
         __dataRegroup(respone) {
             let self = this
-            let length = respone.cards.length - 1
-            _.each(respone.cards, (data, index) => {
+            let length = respone.list.length - 1
+            _.each(respone.list, (data, index) => {
                 data.buttonShow = true
                 if (!data.fullImageBottomtText) {
                     switch (data.type) {
@@ -418,8 +420,8 @@
 
                 if (index === length) {
                     data.lastCard = true
-                    if ('front' === respone.cards[length].type && '继续学习' == respone.cards[length - 1].fullImageBottomtText) {
-                        respone.cards[length - 1].fullImageBottomtText = '即学即练'
+                    if ('front' === respone.list[length].type && '继续学习' == respone.list[length - 1].fullImageBottomtText) {
+                        respone.list[length - 1].fullImageBottomtText = '即学即练'
                     } else {
                         data.fullImageBottomtText = data.fullImageBottomtText || '点击完成微课'
                     }
@@ -432,7 +434,7 @@
                 }
             })
 
-            return respone.cards
+            return respone.list
         }
         /**
          * 计算返回到微课入口页面
@@ -615,7 +617,7 @@
             self.timer = setTimeout(() => {
                 self.isShowCollection = true
                 self.$apply()
-            }, 1000)
+            }, 6000)
         }
 
         methods = {
@@ -704,13 +706,14 @@
 
                 // 是否交互卡片
                 if (!current.allowToNext) {
-                    self.isShowCollection = false
-                    self.$apply()
-                    self.__interval()
                     self.__sumbitResult()
                 } else {
                     self.cardCurrent += 1
+                    self.isShowCollection = false
+                    self.$apply()
+
                     self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                    self.__interval()
                     self.__hasInitAnimation()
                     self.__recordProgress()
                 }
@@ -735,9 +738,12 @@
                 self.cardsList[self.cardCurrent].allowToNext = true
                 self.isAnswerOver = false
                 self.cardCurrent += 1
-                self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
-                self.__hasInitAnimation()
+                self.isShowCollection = false
                 self.$apply()
+
+                self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                self.__interval()
+                self.__hasInitAnimation()
             },
             /**
              * 全图卡热点卡生成分享图片
@@ -759,7 +765,7 @@
                 shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     self.isSubmit = false
                     let shareImages = {
-                        senceThumb: 'http://image.runwise.cn/image/imageIDdba95bbfa3c43c9319fd639a55e3.png',
+                        senceThumb: self.senceThumb,
                         cardImage: self.cardCurrentInfo[0].bigimage,
                         shareImage
                     }
@@ -790,6 +796,7 @@
                     flag: item.userIsSelected ? 0 : 1
                 }
 
+                self.isShowCollection = false
                 fetch.collectionRecord(postData).then((respone) => {
                     if (respone.cardCollectionCount) {
                         item.userIsSelected = 1

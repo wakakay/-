@@ -140,6 +140,10 @@ export default {
     courseShareCount(params) {
         return fetch({method: 'post', url: 'sence/senceShareRecord', params: params, isVisitor: true})
     },
+    // 微课信息
+    courseLearning(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceCardListByGoPracticeLinkByNeedPayToTry', params: params})
+    },
     // 重点卡
     collectionRecord(params) {
         return fetch({method: 'post', url: 'sence/cardCollectionRecord', params: params})

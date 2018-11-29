@@ -24,6 +24,7 @@ export const ROUTERS = {
     'pages/course-module/course-discuss': {screenName: '微课即练评论'}, // 需要记录哪门子的微课
     'pages/course-module/course-complete': {screenName: '微课学习成果'}, // 需要记录哪门子的微课
     'pages/course-module/course-level-instructions': {screenName: '技能等级说明'},
+    'pages/course-module/course-exercises': {screenName: '微课练习'}, // 需要记录哪门子的微课
     'pages/course-module/course-evaluation': {screenName: '微课评价'}, // 需要记录哪门子的微课
     'pages/course-module/course-pay': {screenName: '微课支付'}, // 需要记录哪门子的微课
     'pages/SingleSelection/index': {screenName: '微课即练'}, // 需要记录哪门子的微课
