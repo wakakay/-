@@ -188,9 +188,7 @@
         }
         methods = {
             getBackFindList(){
-               wx.switchTab({
-                    url: "/pages/FindList/index"
-                }); 
+                wx.navigateBack()
             },
             // 点击去修改资料的页面
             getToEditPage(){

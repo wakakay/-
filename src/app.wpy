@@ -99,9 +99,10 @@
                 'pages/user-module/score-rules',
                 'pages/user-module/mine-collect',
                 /* 注册模块 */
-                'pages/registered-module/weclome',
+
                 'pages/registered-module/interest-select',
                 'pages/registered-module/recommend',
+                'pages/registered-module/weclome',
                 /* 其他模板 */
                 'pages/other-module/work-template',
                 'pages/other-module/job-skills',

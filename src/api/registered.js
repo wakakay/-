@@ -50,11 +50,23 @@ const fetch = (actionObj) => {
         method: actionObj.method,
         data: !_.isEmpty(params.object) ? params.object : params.array
     }
-   
+
     return wepy.request(requestData).then((respone) => {
-        let {data: {data, status, message}} = respone
-        if (200 !== status) throw new Error(message)
-        return data
+        let data = respone.data
+
+        if (data.success) {
+            if (1 === data.success) {
+                return data.data
+            } else {
+                wx.showToast({title: respone.data.message})
+            }
+        } else {
+            if (200 !== data.status) {
+                throw new Error(message)
+            } else {
+                return data.data
+            }
+        }
     })
 }
 

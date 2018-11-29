@@ -136,7 +136,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import ScoreModal from '../../components/ScoreModal/index'
-    import {registered as fetchRegistered} from '../../api'
+    import {registered as fetch} from '../../api'
     import {navigateToLesson, redirectToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -222,7 +222,7 @@
                 teamID: self.paramsInfo.teamID
             }
 
-            fetchRegistered.sendFinish(postData).then((respone) => {
+            fetch.sendFinish(postData).then((respone) => {
                 if(respone.isPlayBonusToast){
                     self.$invoke('ScoreModal', { flag: true, title: respone.title, score: respone.addBonus })
                 }
@@ -244,7 +244,7 @@
                 teamID: self.paramsInfo.teamID
             }
             self.isLoaded = false
-            fetchRegistered.sendFinishResults(postData).then((respone) => {
+            fetch.sendFinishResults(postData).then((respone) => {
                 self.isLoaded = true
                 // 本次分值比上一次高
                 if (respone.skillUpScore > respone.skillBaseScore) {
@@ -284,7 +284,7 @@
                 teamID: self.paramsInfo.teamID
             }
 
-            fetchRegistered.sendFinishResults(postData).then((respone) => {
+            fetch.sendFinishResults(postData).then((respone) => {
                 self.finishResultInfo.senceStarIsCanTick = respone.senceStarIsCanTick
                 self.$apply()
             }).catch(error => {
