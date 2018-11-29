@@ -272,7 +272,7 @@
                 token: self.systemInfo.token
             }
             fetchRegistered.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : self.initialize()
+                respone.hasGift ? wx.reLaunch({url: '/pages/course-module/course'}) : self.initialize()
                 self.$apply()
             }).catch(error => {
             })

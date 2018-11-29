@@ -266,8 +266,6 @@
     import wepy from 'wepy'
     import { getStore, connect } from 'wepy-redux'
     import { share as shareApi, auth as authApi, sence as senceApi } from '../../api'
-    import Loading from '../../components/common/loading'
-    import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
     import { showErrorPage } from '../../utils'
     import ScoreModal from '../../components/ScoreModal/index'

@@ -33,7 +33,7 @@
     import Loading from '../../components/common/loading'
     import {CustomError} from '../../errors'
     import {login} from '../../redux/models/user'
-    import {registered as fetchRegistered} from '../../api'
+    import {registered as fetch} from '../../api'
 
     const store = getStore()
     @connect({
@@ -58,13 +58,14 @@
 
         onLoad() {
             let self = this
-            wepy.$instance.globalData.getLoadHuilder() // ga统计
             let postData = {
                 token: 'defaultToken',
                 imageType: 'useronboarding'
             }
-            fetchRegistered.weclomeSwiper(postData).then((respone) => {
+
+            fetch.weclomeSwiper(postData).then((respone) => {
                 self.banner = respone.imageList[0].url
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
                 self.$apply()
             }).catch(error => {
 
@@ -119,8 +120,8 @@
             let postData = {
                 token: self.systemInfo.token
             }
-            fetchRegistered.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/FindList/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
+            fetch.userInfo(postData).then((respone) => {
+                respone.hasGift ? wx.reLaunch({url: '/pages/course-module/course'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
                 self.$apply()
             }).catch(error => {
                 wx.showToast({

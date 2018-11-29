@@ -100,7 +100,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import {registered as fetchRegistered} from '../../api'
+    import {registered as fetch} from '../../api'
 
     const store = getStore()
     @connect({
@@ -147,7 +147,7 @@
                 practiceCardID: self.parameter.practiceCardID
             }
 
-            fetchRegistered.discussList(postData).then((respone) => {
+            fetch.discussList(postData).then((respone) => {
                 self.discussList = respone.postList
                 self.headerTitle = `${self.discussList.length}条评论`
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: respone.senceName}) // ga统计
@@ -176,7 +176,7 @@
                     postID: item.postID,
                     clickType: 1 == item.hasLike ? 'cancelLike' : 'like'
                 }
-                fetchRegistered.discussLink(postData).then((respone) => {
+                fetch.discussLink(postData).then((respone) => {
                     item.isPraise = false
                     if (1 == item.hasLike) {
                         item.hasLike = 0
@@ -211,7 +211,7 @@
                     content: self.textareaContent
                 }
 
-                fetchRegistered.discussLeaveMessage(postData).then((respone) => {
+                fetch.discussLeaveMessage(postData).then((respone) => {
                     self.textareaContent = ''
                     self.__discussList()
                     self.$apply()
