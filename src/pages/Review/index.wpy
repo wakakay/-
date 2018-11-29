@@ -7,7 +7,7 @@
             display: flex;width:100%;
             .ui-img image{width: 204rpx;height: 204rpx;border-radius:44rpx;}
             .ui-content{
-                margin-left: 24rpx;
+                margin-left: 24rpx;padding-top:10rpx;
                 .cell-tip{font-size: 22rpx;color:@color-blue;}
                 .cell-name{font-size: 34rpx;color:@color-black;}
                 .cell-dec{margin-top:48rpx;font-size: 30rpx;color:@color-gray;}
