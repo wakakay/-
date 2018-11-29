@@ -116,6 +116,10 @@ export default {
     },
 
     /*--------------------微课-----------------------*/
+    // 课程页
+    coursePageList(parmas) {
+        return fetch({method: 'post', url: 'discover/v1/getDiscoverPageByCourseSeriesByLink', params: parmas, isVisitor: true})
+    },
     // 课程详情
     courseDetail(params) {
         return fetch({method: 'post', url: 'MVP5/getCourseDetail', params: params, isVisitor: true})
