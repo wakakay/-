@@ -52,14 +52,18 @@
                     </view>
                     <view class="ui-content">
                         <view class="cell-tip">微课</view>
-                        <view class="cell-name">{{dataObj.name}}</view>
-                        <view class="cell-dec">{{dataObj.dec}}</view>
+                        <view class="cell-name">{{courseName}}</view>
+                        <view class="cell-dec">{{skill}}</view>
                     </view>
                 </view>
                 <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
             <view class="ui-title">重点卡</view>
-            <view class="ui-swiper-box" wx:if="{{false}}">
+            <view class="ui-empty-list" wx:if="{{hasPointCard && hashBigImage}}">
+                <text class="icon-empty-list"></text>
+                <view>你还没有标为重点的卡片哦</view>
+            </view>
+            <view class="ui-swiper-box" wx:else>
                 <swiper class="ui-swiper-list" 
                         previous-margin="40rpx"
                         next-margin="20rpx"  indicator-dots="{{true}}">
@@ -75,10 +79,7 @@
                     </block>
                 </swiper>
             </view>
-            <view class="ui-empty-list" wx:else>
-                <text class="icon-empty-list"></text>
-                <view>你还没有标为重点的卡片哦</view>
-            </view>
+            
 
         </view>
     </view>
@@ -120,6 +121,9 @@
             senceID: '',
             isLoaded: false,
             courseName: "",
+            skill:"",
+            hasPointCard:false,
+            hashBigImage:false,
             isNewSenceMap: {}, // 进入微课的新老界面判断
             linkList: [{
                 imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
@@ -165,16 +169,17 @@
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
                 self.courseName = res.courseName
+                self.skill = res.skill
                 self.$apply()
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
-                wx.reportAnalytics('review', {
-                    role: self.role,
-                    nickname: self.userName,
-                    coursename: self.courseName,
-                    sencename: self.title,
-                    channel: self.entrance.mappers[self.entrance.scenceID]
-                })
+                // wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
+                // wx.reportAnalytics('review', {
+                //     role: self.role,
+                //     nickname: self.userName,
+                //     coursename: self.courseName,
+                //     sencename: self.title,
+                //     channel: self.entrance.mappers[self.entrance.scenceID]
+                // })
             })
             .catch(error => {
                 console.log('get review error', error)

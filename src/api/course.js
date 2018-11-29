@@ -57,10 +57,11 @@ export const getReview = ({ token, courseID, senceID, teamID }) => {
             url: `${config.baseUrl}MVP3/getReview?token=${token}&courseID=${courseID}&senceID=${senceID}&teamID=${teamID}`,
             method: 'POST'
         })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
+        .then(({ data: { data, message, success } }) => {
+            if (1 !== success) throw new NetworkError(message)
             return data
         })
+        
 }
 
 export const sendFinish = ({ token, senceID, courseID, requestFlag, teamID }) => {
