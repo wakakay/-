@@ -18,8 +18,24 @@
     .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
     .ui-swiper-box{
         .ui-swiper-list{
-            height: 892rpx;
+            height: 1004rpx;
+            .ui-item{
+                width: 670rpx;
+                .ui-content{
+                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;overflow: hidden;width:670rpx;
+                    image{width: 100%;}
+                    .ui-share{
+                        color:@color-blue;position:absolute;top:12rpx;right:28rpx;
+                        text{font-size: 44rpx;}
+                    }
+
+                }
+            }
         }
+    }
+    .ui-empty-list{
+        width: 670rpx;height: 894rpx;border-radius: @border-radius-32;border:2rpx solid @border-gray;margin: 0 auto 172rpx;color:@color-gray;display: flex;flex-direction: column;align-items: center;justify-content: center;font-size:34rpx;
+        text{color: @color-gray-c7;font-size: 110rpx;margin-bottom: 50rpx;}
     }
 }
 
@@ -40,87 +56,47 @@
                         <view class="cell-dec">{{dataObj.dec}}</view>
                     </view>
                 </view>
-                <view class="cell-btn">再学一次</view>
+                <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
             <view class="ui-title">重点卡</view>
-            <view class="ui-swiper-box">
+            <view class="ui-swiper-box" wx:if="{{false}}">
                 <swiper class="ui-swiper-list" 
                         previous-margin="40rpx"
-                        next-margin="20rpx" 
-                        indicator-dots="{{true}}">
+                        next-margin="20rpx"  indicator-dots="{{true}}">
                     <block wx:for="{{dataObj.imgUrls}}">
                         <swiper-item class="ui-item">
                             <view class="ui-content">
                                 <image mode="widthFix" src="{{item}}"/>
+                                <view class="ui-share">
+                                    <text class="icon-share"></text>
+                                </view>
                             </view>
-                            
                         </swiper-item>
                     </block>
                 </swiper>
             </view>
-            
-        </view>
-        <!-- <view class="review-article-header">
-            <view class="review-article-header-subtitle">{{ courseName }} {{ senceIndex }}/{{ courseCount }}</view>
-            <view class="review-article-header-title">{{ title }}</view>
-            <view class="review-article-header-button-row">
-                <view class="review-article-header-tag">{{ skill }}</view>
-                <view class="review-article-flex">
-                    <view class="review-article-header-learn-again" @tap.stop="handleStudyAgain">再学一次</view>
-                    <text class="icon-right-arrow cell-icon"></text>
-                </view>
+            <view class="ui-empty-list" wx:else>
+                <text class="icon-empty-list"></text>
+                <view>你还没有标为重点的卡片哦</view>
             </view>
-        </view> -->
 
-        <!-- <view wx:if="{{ linkList.length }}" class="flex-space-between-row review-article-banner">
-            <image class="review-article-banner__icon" mode="scaleToFill"
-                   src="http://wx-small.runwise.cn/image/imageID5b06c8e3031488821cae44d1189b.svg"></image>
-            <text class="review-article-banner__title"> 扩展阅读</text>
         </view>
-
-        <view wx:if="{{ linkList.length }}" class="flex-start-column reading-wrapper">
-            <image wx:for="{{ linkList }}" wx:key="{{ index }}" class="review-article-banner__photo" mode="widthFix"
-                   src="{{ item.imageUrl }}">
-                <button class="review-article-banner__photo__shade-btn" open-type="contact"
-                        data-index="{{ item.index }}" data-link="{{ item.linkUrl }}"
-                        @tap.stop="handleContactLink"></button>
-            </image>
-        </view> -->
-
-        <!-- <view class="review-article-body">
-            <view class="review-article-header-button-row" style="padding:48rpx 32rpx 20rpx;">
-                <view class="review-article-flex">
-                    <view class="cell-main">课程核心要点</view>
-                </view>
-                <text wx:if="{{ 'show'===showType }}" class="icon-share cell-icon" @tap.stop="handleShare"></text>
-            </view>
-            <image class="review-article__body__icon" src="{{bigimage}}" hidden="{{!imageLoaded}}"
-                   @load="handleImageLoaded" mode="widthFix"></image>
-        </view> -->
     </view>
     <view></view>
 </template>
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi, share as shareApi, contact as contactApi} from "../../api";
+    import {course as courseApi} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
-    import loadingMixin from "../../mixins/loading";
     import header from '../../components/common/header'
-    import {NetworkError} from "../../errors";
-    import {showErrorPage, shareDictionary, redirectToLesson} from "../../utils";
+    import {redirectToLesson} from "../../utils";
 
     @connect({
         token(state) {
             return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
-        },
-        currentCourseID(state) {
-            return state.courses.currentID
-        },
-        currentSenceID(state) {
-            return state.sences.currentID
         },
         userName(state) {
             return state.user.name
@@ -128,35 +104,22 @@
         role(state) {
             return state.user.role
         },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
         },
-        currentSenceName(state) {
-            return state.sences.currentName
-        },
-        platform(state) {
-            return state.user.platform
-        }
+       
     })
     export default class Review extends wepy.page {
-        mixins = [loadingMixin];
-
         components = {
             mloading: Loading,
             'jn-header': header
         };
 
         data = {
-            courseID: 'courseID',
-            senceID: 'senceID',
+            courseID: '',
+            senceID: '',
             isLoaded: false,
-            bigimage: "",
-            courseCount: 0,
-            courseName: "courseName",
-            senceIndex: 0,
-            title: "title",
-            skill: 'skill',
-            showType: 'hidden',
+            courseName: "",
             isNewSenceMap: {}, // 进入微课的新老界面判断
             linkList: [{
                 imageUrl: "http://wx-small.runwise.cn/image/imageIDbe899146af94fe8250ecacbcbddb.png",
@@ -168,112 +131,56 @@
                 name:'建立高效内容制作流程',
                 dec:'如何使内容生产效率倍增',
                 imgUrls: [
-                    'http://wx-small.runwise.cn/image/imageID0313121866848f8d830277374e5c.png',
-                    'http://wx-small.runwise.cn/image/imageID3f8e1b2cc38419a42107f0e913fc.png',
-                    'http://wx-small.runwise.cn/image/imageIDa669993a61445ba0321d97cc82fc.png'
+                    'http://wx-small.runwise.cn/image/imageIDc4d43b7ba344feb9789498a879a1.png',
+                    'http://wx-small.runwise.cn/image/imageID3f67e3b61db4768f160a6b8341ad.png',
+                    'http://wx-small.runwise.cn/image/imageID100e6ec95204878ff13ba42b5b6f.png'
                 ],
             }
         }
 
+
+        onLoad(data) {
+            let self = this ;
+            self.courseID = data.courseID;
+            self.senceID = data.senceID;
+            self.initialize()
+        }
+
         methods = {
-            handleContactLink({currentTarget: {dataset: {link, index}}}) {
-                console.log('tend to link', link, index)
-                contactApi.sendExtendLink({
-                    token: this.token,
-                    courseID: this.courseID,
-                    senceID: this.senceID,
-                    index
-                })
-                    .catch(error => console.log('contact error', error))
-            },
+            // 再学一次
             handleStudyAgain(event) {
-                console.log('this.platform', this.platform)
-                let isNewSence = this.isNewSenceMap && this.isNewSenceMap[this.senceID]
-                redirectToLesson({ courseID:this.courseID, senceID:this.senceID, resumeLastRead: 'NO', isNewSence })
+                let self = this;
+                let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
+                redirectToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence })
             },
-            handleShare(event) {
-                shareApi.getReviewShare({token: this.token, courseID: this.courseID, senceID: this.senceID}).then(({shareImage, shareImageCode}) => {
-                        return {shareImage, shareImageCode}
-                }).then(({shareImage}) => {
-                    wepy.downloadFile({url: shareImage.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')})
-                }).then(({tempFilePath, statusCode, errMsg}) => {
-                    if (200 !== statusCode) throw new Error(errMsg)
-                    return wepy.previewImage({current: tempFilePath, urls: [tempFilePath]})
-                }).then(() => shareApi.reportSharing({
-                    token: this.token,
-                    type: shareDictionary.SHARE_CARD.type,
-                    courseID: this.courseID,
-                    senceID: this.senceID
-                })).then(() => {
-                    console.log(this.role + this.userName + this.entrance.mappers[this.entrance.scenceID])
-                    wx.reportAnalytics('share_event', {
-                        role: this.role,
-                        nickname: this.userName,
-                        coursename: this.courseName,
-                        sencename: '/',
-                        channel: this.entrance.mappers[this.entrance.scenceID],
-                        type: shareDictionary.SHARE_CARD.type,
-                    })
-                }).catch(error => console.log('review error'))
-            }
         }
 
-        initialize({courseID, senceID}) {
-            this.courseID = 'defaultCourseID'
-            this.senceID = 'defaltSenceID'
-            this.showType = 'hidden'
-            this.bigimage = ''
-            this.title = 'title'
-            this.senceIndex = 0
-            this.courseCount = 0
-            this.courseName = 'courseName'
-            this.skill = 'skill'
-            this.isLoaded = false
-            courseApi
-                .getReview({token: this.token, courseID, senceID})
-                .then(({bigimage, title, senceIndex, courseCount, courseName, skill, showType, linkList, isNewSenceMap}) => {
-                    console.log(`bigimage: ${bigimage}, title: ${title}, senceIndex: ${senceIndex}, courseCount: ${courseCount}, courseName: ${courseName}, skill: ${skill}, showType: ${showType}, linkList: ${linkList}`)
-                    wepy.setNavigationBarColor({
-                        frontColor: "#000000",
-                        backgroundColor: "#2DB7B5",
-                        animation: {
-                            duration: 400,
-                            timingFunc: "easeIn"
-                        }
-                    })
-                    this.courseID = courseID
-                    this.senceID = senceID
-                    this.showType = showType
-                    this.bigimage = bigimage
-                    this.title = title
-                    this.senceIndex = senceIndex
-                    this.courseCount = courseCount
-                    this.courseName = courseName
-                    this.skill = skill
-                    this.isNewSenceMap = isNewSenceMap
-                    this.linkList = linkList
-                    this.isLoaded = true
-                    this.$apply()
+        initialize() {
+            let self = this;
+            courseApi.getReview({
+                token: self.token, 
+                courseID:self.courseID, 
+                senceID:self.senceID})
+            .then(res => {
+                self.isLoaded = true
+                self.isNewSenceMap = res.isNewSenceMap
+                self.courseName = res.courseName
+                self.$apply()
 
-                    wepy.$instance.globalData.getLoadHuilder({pageTheme: this.courseName}) // ga统计
-                    wx.reportAnalytics('review', {
-                        role: this.role,
-                        nickname: this.userName,
-                        coursename: this.courseName,
-                        sencename: this.title,
-                        channel: this.entrance.mappers[this.entrance.scenceID]
-                    })
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
+                wx.reportAnalytics('review', {
+                    role: self.role,
+                    nickname: self.userName,
+                    coursename: self.courseName,
+                    sencename: self.title,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
                 })
-                .catch(error => {
-                    console.log('get review error', error)
-                    showErrorPage()
-                })
+            })
+            .catch(error => {
+                console.log('get review error', error)
+            })
         }
 
-        onLoad({courseID, senceID}) {
-            console.log(`in review courseID:${courseID}, senceID: ${senceID}`)
-            this.initialize({courseID, senceID})
-        }
     }
 </script>
 
