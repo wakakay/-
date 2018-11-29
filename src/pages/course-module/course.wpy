@@ -285,7 +285,7 @@
     import CourseSeries from '../../components/course-module/course-series'
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from '../../api'
+    import {auth as authApi, share as shareApi, registered as fetch} from '../../api'
     import {openActivity, setPoster, setParticipationDate, setParticipationTimes} from '../../redux/models/activity'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate} from '../../utils'
 
@@ -303,7 +303,6 @@
             return state.user.token.startsWith('userID')
         },
         token(state) {
-            // return 'userID05a8192f9f2b4d01adef788affd4438b-1540467737468-042160bade12fadbca1c8fc8257fc24f'
             return state.user.token
             
         },
@@ -380,7 +379,7 @@
 
         __fetchCourses(token) {
             let self = this
-            courseApi.getCoursePageList({token: token || self.token})
+            fetch.coursePageList({token: token || self.token})
                 .then((respone) => {
                     self.isLoaded = true
                     self.hotCourseList = respone.hotCourseList
@@ -478,12 +477,7 @@
                 }
 
                 wepy.$instance.globalData.getHuilder(`课程页/${typeSrc}`,'click',`${courseName}`)
-                try {
-                    wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
-                } catch (err) {
-                    console.log('handle attend classes err', err)
-                }
-
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
             },
             /**
              * 课程系列入口

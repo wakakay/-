@@ -17,7 +17,7 @@
                     <navigator wx:if="{{!isHiddenButton && isSrcShare}}"
                                class="cell-back main-center cross-center"
                                open-type="switchTab"
-                               url="/pages/FindList/index">
+                               url="/pages/course-module/course">
                         <text class="icon-home"
                               style="color:{{buttonColor}}"></text>
                     </navigator>
@@ -170,11 +170,9 @@
          */
         __statisticsData (delta) {
             let self = this
-
             let rounter = getCurrentPages()
             let page = rounter[rounter.length - (delta || 1)]
             let title = ROUTERS[page.route]
-
 
             if (title) {
                 // 微信统计

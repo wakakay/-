@@ -286,30 +286,6 @@ export const getCourseIndex = ({ token }) => {
     })
 }
 
-export const getCoursePageList = ({ token }) => {
-    //if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}discover/v1/getDiscoverPageByCourseSeriesByLink?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-
-export const practiceFinishPage = ({ token, senceID, courseID, teamID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}MVP3/practiceFinishPage?token=${token}&senceID=${senceID}&courseID=${courseID}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
 export const getDiscoverPageByCourseSeriesByLinkByDetail = ({ token }) => {
     if (null == token) throw new UnAuthenticationError()
     return wepy.request({
