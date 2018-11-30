@@ -87,7 +87,7 @@
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi, share as shareApi} from "../../api";
+    import {course as courseApi, share as shareApi, registered as fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
@@ -208,7 +208,7 @@
                 }
 
                 self.isSubmit = true
-                self.currentCardID = item.cardID
+                self.currentCardID = item.id
                 let postData = {
                     token: self.token,
                     courseID: self.courseID,
@@ -227,7 +227,7 @@
                 }).catch(error => {
                     self.isSubmit = false
                 })
-            },
+            }
         }
 
         events = {
