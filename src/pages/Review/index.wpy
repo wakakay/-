@@ -137,6 +137,10 @@
             let self = this
             self.courseID = data.courseID
             self.senceID = data.senceID
+        }
+
+        onShow() {
+            let self = this;
             self.initialize()
         }
 
@@ -155,8 +159,8 @@
                 tempList = _.each(tempList, (item)=>{
                     if(item.content){
                         item.content = JSON.parse(item.content)
-                        item['url'] = item.content.bigimage
-                        item['name'] = item.content.title
+                        item.url = item.content.bigimage
+                        item.name = item.content.title
                     }
                 });
                 self.pointCardList = tempList
