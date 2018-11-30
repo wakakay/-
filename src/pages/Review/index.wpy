@@ -59,7 +59,7 @@
                 <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
             <view class="ui-title">重点卡</view>
-            <view class="ui-empty-list" wx:if="{{!hasPointCard && !hashBigImage}}">
+            <view class="ui-empty-list" wx:if="{{hasPointCard && hashBigImage}}">
                 <text class="icon-empty-list"></text>
                 <view>你还没有标为重点的卡片哦</view>
             </view>
@@ -96,7 +96,7 @@
 
     @connect({
         token(state) {
-            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
+            return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
         },
         userName(state) {
