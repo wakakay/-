@@ -313,9 +313,15 @@
 
                 // 恢复上次学习的进度
                 let index = _.findIndex(self.cardsList, {id: respone.lastCardID}) || 0
-                index = -1 !== index ? index : 0
+
+                if (!self.resumeLastRead || self.resumeLastRead == 'NO') {
+                    index = -1 !== index ? index : 0
+                } else {
+                    index = parseInt(self.resumeLastRead) - 1
+                }
+
                 self.cardCurrentInfo.push(self.cardsList[index])
-                self.cardCurrent = self.resumeLastRead == 'NO' ? index : parseInt(self.resumeLastRead) - 1
+                self.cardCurrent =  index
                 /*if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
                     self.__interval()
                 }*/
