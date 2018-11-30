@@ -2,18 +2,20 @@
 @import "../../assets/style/theme";
 .ui-review{
     .ui-lesson{
-        padding:32rpx 0;display: flex;flex-direction: column;align-items: center;margin:0 40rpx;border-bottom:2rpx solid @border-gray;
+        padding:32rpx 0;display: flex;align-items: center;margin:0 40rpx;border-bottom:2rpx solid @border-gray;
         .ui-item{
-            display: flex;width:100%;
-            .ui-img image{width: 204rpx;height: 204rpx;border-radius:44rpx;}
+            display: flex;width:100%;align-items: center;
+            .ui-img{
+                display: flex;align-items: center;
+                image{width: 112rpx;height: 112rpx;border-radius:28rpx;}
+            } 
             .ui-content{
-                margin-left: 24rpx;padding-top:10rpx;
-                .cell-tip{font-size: 22rpx;color:@color-blue;}
-                .cell-name{font-size: 34rpx;color:@color-black;}
-                .cell-dec{margin-top:48rpx;font-size: 30rpx;color:@color-gray;}
+                margin-left: 24rpx;height: 96rpx;
+                .cell-name{font-size: 34rpx;color:@color-black;font-weight: 700}
+                .cell-dec{margin-top:12rpx;font-size: 30rpx;color:@color-gray;}
             }
         }
-        .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-top: 56rpx;}
+        .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700}
     }
     .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
     .ui-swiper-box{
@@ -22,8 +24,8 @@
             .ui-item{
                 width: 670rpx;
                 .ui-content{
-                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;overflow: hidden;width:670rpx;min-height:894rpx;
-                    image{width: 100%;}
+                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;width:670rpx;min-height:894rpx;
+                    image{width: 100%;border-radius: 20rpx;}
                     .ui-share{
                         color:@color-blue;position:absolute;top:12rpx;right:28rpx;
                         text{font-size: 44rpx;}
@@ -51,7 +53,6 @@
                         <image src="{{imageUrl}}" />
                     </view>
                     <view class="ui-content">
-                        <view class="cell-tip">微课</view>
                         <view class="cell-name">{{senceName}}</view>
                         <view class="cell-dec">{{description}}</view>
                     </view>
@@ -81,7 +82,6 @@
             </view>
         </view>
     </view>
-    <view></view>
     <jn-share-card></jn-share-card>
 </template>
 
