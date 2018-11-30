@@ -34,7 +34,7 @@
         }
 
         .ui-button-box{
-            height:auto;background-color:@background-mask-deep-white;padding:24rpx 32rpx;position:relative;z-index:1;
+            height:auto;background-color:@background-mask-deep-white;padding:24rpx 32rpx;position:relative;z-index:1;transform:all .25;
             &.is-iphonex{padding-bottom:58rpx}
             textarea{
                 box-sizing:border-box;width:434rpx;height:80rpx;padding:5rpx 20rpx;float:left;background:@background-gray-F4;font-size:32rpx;color:@color-black;border-radius:@border-radius-20;position:relative;padding-top:20rpx;
@@ -83,11 +83,16 @@
                 <view class="ui-fill-box"></view>
             </scroll-view>
 
-            <view class="ui-button-box main-justify cross-end" :class="{'is-iphonex': isIphonex}">
+            <view class="ui-button-box main-justify cross-end"
+                  :class="{'is-iphonex': isIphonex}" style="bottom:{{keyboardHeight}}px">
                 <textarea maxlength="100"
                           bindinput="getContent"
+                          bindfocus="getFocus"
+                          bindblur="getBlur"
                           value="{{textareaContent}}"
                           placeholder-class="cell-placeholder"
+                          auto-focus
+                          adjust-position="{{false}}"
                           placeholder="评论" />
                 <button hover-class="cell-hover" class="cell-button main-center cross-center" @tap.stop="getMessage">发送</button>
             </view>
@@ -122,6 +127,7 @@
             headerTitle: '',
             headerHeigth: 68,
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            keyboardHeight: 0,
             discussList: [],
             textareaContent: ''
         }
@@ -201,7 +207,23 @@
                 self.textareaContent = value
                 self.$apply()
             },
-
+            /**
+             * textarea聚焦
+             */
+            getFocus(event) {
+                let self = this
+                let {detail:{height}} = event
+                self.keyboardHeight = height
+                self.$apply()
+            },
+            getBlur(event) {
+                let self = this
+                self.keyboardHeight = 0
+                self.$apply()
+            },
+            /**
+             * 发送留言
+             */
             getMessage() {
                 let self = this
                 let postData = {

@@ -117,7 +117,7 @@
                     :class="{'is-selected': selectType==3}"
                     disabled="{{!payInfo.isWeixinPay || isPay}}"
                     data-type="3" @tap.stop="getSelected"
-                    wx:if="{{platform || systemInfo.name=='星塵'}}">
+                    wx:if="{{platform || systemInfo.name=='星塵' && systemInfo.phone == '13660274564'}}">
                 <view class="cell-select flex-box-0">
                     <text class="{{(payInfo.price==0 || isPay) ? 'icon-disabled' : selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
@@ -153,10 +153,10 @@
     const store = getStore()
     @connect({
         systemInfo(state) {
+            console.log(state.user)
             return state.user
         },
         platform(state) {
-            return true
             return state.user.platform === 'android'
         }
     })
@@ -311,6 +311,10 @@
                 postData.senceID = self.paramsInfo.senceID
             } else if (self.paramsInfo.courseID) {
                 postData.courseID = self.paramsInfo.courseID
+            }
+
+            if ('星塵' === self.systemInfo.name && '13660274564' == systemInfo.phone) {
+                postData.price = 0.01
             }
 
             paymentApi.payByPaySignByJinengBin(postData).then(response => {

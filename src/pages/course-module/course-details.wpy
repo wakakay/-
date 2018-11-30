@@ -117,7 +117,7 @@
         }
 
         .ui-recommend-list{
-            padding-left:32rpx;padding-bottom:40rpx;
+            margin-left:42rpx;padding-bottom:40rpx;
             .ui-item{
                 height:220rpx;padding:20rpx 0;border-bottom:1rpx solid @border-gray;transform:translate(-12rpx, 0px) translateZ(0px);
                 .ui-thumb{
