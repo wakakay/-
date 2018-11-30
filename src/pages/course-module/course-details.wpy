@@ -328,7 +328,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import AuthorizationModal from '../../components/AuthorizationModal/index'
-    import {registered as fetch} from '../../api'
+    import {course as courseApi, registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
     import {CustomError} from '../../errors'
@@ -394,6 +394,28 @@
             wx.createSelectorQuery().select('.ui-header-thumb').boundingClientRect((rect) => {
                 self.backgroundHeight = rect.height - 50
             }).exec()
+        }
+        onUnload() {
+            let self = this
+            self.__reportStayTimestamp()
+        }
+
+        onHide() {
+            let self = this
+            self.__reportStayTimestamp()
+        }
+
+        __reportStayTimestamp() {
+            let self = this
+            let time = new Date().getTime() - this.timestamp
+            let postData = {
+                token: self.token,
+                pageTime: time,
+                courseID: self.courseID
+            }
+            courseApi.sendCoursePageTime(postData).then(response => {
+                console.log('sendCoursePageTime report success! ' + time)
+            })
         }
         /**
          * 初始化
