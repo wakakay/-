@@ -11,8 +11,8 @@
             } 
             .ui-content{
                 margin-left: 24rpx;height: 96rpx;
-                .cell-name{font-size: 34rpx;color:@color-black;font-weight: 700}
-                .cell-dec{margin-top:12rpx;font-size: 30rpx;color:@color-gray;}
+                .cell-name{width: 368rpx;font-size: 34rpx;color:@color-black;font-weight: 700;overflow: hidden;white-space: nowrap;text-overflow:ellipsis}
+                .cell-dec{width: 368rpx;margin-top:12rpx;font-size: 30rpx;color:@color-gray;overflow: hidden;white-space: nowrap;text-overflow:ellipsis}
             }
         }
         .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700}
@@ -149,7 +149,7 @@
             .then(res => {
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
-                self.senceName = res.courseName
+                self.senceName = res.senceName
 
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
