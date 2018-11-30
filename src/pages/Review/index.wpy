@@ -237,6 +237,9 @@
              */
             'on-share-card': (data) => {
                 let self = this
+                if (!self.currentCardID) {
+                    return
+                }
                 let postData = {
                     token: self.token,
                     courseID: self.courseID,
