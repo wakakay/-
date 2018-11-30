@@ -22,7 +22,7 @@
             .ui-item{
                 width: 670rpx;
                 .ui-content{
-                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;overflow: hidden;width:670rpx;
+                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;overflow: hidden;width:670rpx;min-height:894rpx;
                     image{width: 100%;}
                     .ui-share{
                         color:@color-blue;position:absolute;top:12rpx;right:28rpx;
@@ -68,7 +68,7 @@
                         previous-margin="40rpx"
                         next-margin="20rpx"  indicator-dots="{{true}}">
                     <repeat wx:for="{{pointCardList}}">
-                        <swiper-item class="ui-item">
+                        <swiper-item class="ui-item" @tap.stop="getStudyLesson" data-item="{{item}}">
                             <view class="ui-content">
                                 <image mode="widthFix" src="{{item.url}}"/>
                                 <view class="ui-share">
@@ -92,11 +92,12 @@
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
-    import {redirectToLesson} from "../../utils";
+    import {navigateToLesson} from "../../utils";
+    import _ from 'underscore'
 
     @connect({
         token(state) {
-            return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
+            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
         },
         userName(state) {
@@ -142,8 +143,24 @@
             handleStudyAgain(event) {
                 let self = this;
                 let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
-                redirectToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence })
+                navigateToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence,isRedirectTo:true})
             },
+            getStudyLesson(event) {
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+
+                // 核心图卡
+                if(!item.xuhao) {
+                    return;
+                }
+
+                let senceName = item.name
+                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
+                let isNewSence = self.isNewSenceMap[self.senceID]
+                
+                navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
+                
+            }
         }
 
         initialize() {
@@ -156,7 +173,17 @@
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
                 self.courseName = res.courseName
-                self.pointCardList = res.pointCardList
+
+                let tempList = res.pointCardList
+                tempList = _.each(tempList, (item)=>{
+                    if(item.xuhao){
+                        item.content = JSON.parse(item.content)
+                        item['url'] = item.content.bigimage
+                        item['name'] = item.content.title
+                    }
+                });
+                self.pointCardList = tempList
+
                 self.imageUrl = res.imageUrl
                 self.description = res.description
                 self.$apply()
