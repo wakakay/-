@@ -1,10 +1,9 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
-    .cell-canvas{width:375px;height:650px;position:fixed;left:150%;top:0;z-index:@z-index-normal;}
+    .cell-canvas{width:375px;height:650px;background-color:@color-white;position:fixed;left:150%;top:0;z-index:@z-index-normal;}
     .ui-share-box{
-        box-sizing:border-box;width:100%;height:100%;padding:128rpx 32rpx 0;position:fixed;left:0;top:0;z-index:@z-index-mask;display:none;
+        box-sizing:border-box;width:100%;height:100%;padding:0 32rpx;position:fixed;left:0;top:0;z-index:@z-index-mask;display:none;
         &.is-iphonex{
-            padding:196rpx 32rpx 0;
             .ui-button-box{margin-top:44rpx;}
         }
         .ui-mask{width:100%;height:100%;background-color:@background-mask-normal;position:absolute;left:0;top:0;}
@@ -32,16 +31,18 @@
 </style>
 
 <template>
-    <view class="ui-share-box" :class="{'is-iphonex': isIphonex, 'is-show': isDrawOver}">
+    <view class="ui-share-box cross-center" :class="{'is-iphonex': isIphonex, 'is-flex-show': isDrawOver}">
         <view class="ui-mask" @tap.stop="getClose"></view>
-        <view class="ui-thumb">
-            <image mode="aspectFit" src="{{shareThumb}}"></image>
-        </view>
-        <view class="ui-button-box main-justify">
-            <button class="main-center cross-center"
-                    @tap.stop="getSaveImage">
-                <text class="icon-down"></text>保存图片
-            </button>
+        <view>
+            <view class="ui-thumb">
+                <image mode="aspectFit" src="{{shareThumb}}"></image>
+            </view>
+            <view class="ui-button-box main-justify">
+                <button class="main-center cross-center"
+                        @tap.stop="getSaveImage">
+                    <text class="icon-down"></text>保存图片
+                </button>
+            </view>
         </view>
     </view>
     <canvas class="cell-canvas" canvas-id="cardShare" style="width:{{cardShareInfo.width}}px;height:{{cardShareInfo.height}}px"></canvas>
@@ -155,6 +156,10 @@
         events = {
             // 监听父组件的触发事件
             'card-share-images-list': (images, event) => {
+                wx.showLoading({
+                    title: '努力生成中...'
+                })
+
                 _.mapObject(images, (val, key) => {
                     if (-1 !== val.toString().indexOf('http://image.runwise.cn/')) {
                         images[key] = val.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
@@ -191,6 +196,9 @@
                     self.isDrawStart = false
                     self.isDrawOver = false
                     self.cardCanvas.clearRect(0, 0, self.cardShareInfo.width, self.cardShareInfo.height)
+                    self.cardCanvas.setFillStyle('white')
+                    self.cardCanvas.fillRect(0, 0, self.cardShareInfo.width, self.cardShareInfo.height)
+
                     self.__initShareCard(images)
                 }
             }
@@ -228,9 +236,6 @@
             let shareImage = self.__loadingImages(images.shareImage) // 二维码
             let logoImage = self.__loadingImages('https://wx-small.runwise.cn/image/imageID33995ff201c444ae1a7e1c7366fd.png')
 
-            wx.showLoading({
-                title: '努力生成中...'
-            })
             Promise.all([senceThumb, cardImage, shareImage, logoImage]).then(res => {
                 self.shareImage = res
 
@@ -257,6 +262,8 @@
 
             self.cardCanvas.save()
             self.cardCanvas.clearRect(x, y, w, h)
+            self.cardCanvas.setFillStyle('#fff')
+            self.cardCanvas.fillRect(x, y, w, h)
             self.__roundedRect(x, y, w, h, r)
             self.cardCanvas.clip() // 通过裁剪得到圆角矩形
             self.cardCanvas.drawImage(shareImage[0].path, x, y, w, h)

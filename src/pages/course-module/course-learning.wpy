@@ -23,7 +23,7 @@
             width:100%;height:128rpx;padding:0 24rpx;position:fixed;left:0;bottom:0;
             &.is-iphonex{
                 height:196rpx;
-                .ui-button-list button .ui-tips{bottom:226rpx;}
+                .ui-button-list .ui-tips{bottom:226rpx;}
             }
             .ui-button-list{
                 width:224rpx;
@@ -614,7 +614,7 @@
          * @returns {event}
          */
         __interval() {
-            let self = this
+            /*let self = this
             clearTimeout(self.timer)
             self.isShowCollection = false
             self.$apply()
@@ -622,7 +622,7 @@
             self.timer = setTimeout(() => {
                 self.isShowCollection = true
                 self.$apply()
-            }, 6000)
+            }, 6000)*/
         }
 
         methods = {
