@@ -27,11 +27,13 @@
                     border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;width:670rpx;min-height:894rpx;
                     image{width: 100%;border-radius: 20rpx;}
                     .ui-share{
-                        color:@color-blue;position:absolute;top:12rpx;right:28rpx;
+                        color:@color-blue;position:absolute;top:28rpx;right:36rpx;
                         text{font-size: 44rpx;}
                     }
+                    .ui-share.ui-dack {color:@color-white;}
 
                 }
+                
             }
         }
     }
@@ -70,9 +72,9 @@
                         next-margin="20rpx"  indicator-dots>
                     <repeat for="{{pointCardList}}" key="index" index="index" item="item">
                         <swiper-item class="ui-item" @tap.stop="getStudyLesson" data-item="{{item}}">
-                            <view class="ui-content">
+                            <view class="ui-content" style="background:{{item.fullImageBgColor ? item.fullImageBgColor : ''}}">
                                 <image mode="widthFix" src="{{item.url}}"/>
-                                <view class="ui-share" data-item="{{item}}" @tap.stop="getShare">
+                                <view class="ui-share" :class="{'ui-dack' : item.fullImageColorIsDark}" data-item="{{item}}" @tap.stop="getShare">
                                     <text class="icon-share"></text>
                                 </view>
                             </view>
@@ -158,9 +160,14 @@
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
                     if(item.content){
-                        item.content = JSON.parse(item.content)
-                        item.url = item.content.bigimage
-                        item.name = item.content.title
+                        item.content = JSON.parse(item.content);
+                        item.url = item.content.bigimage;
+                        item.name = item.content.title;
+
+                        if(item.content.fullImageColorIsDark){
+                            item.fullImageColorIsDark = item.content.fullImageColorIsDark
+                            item.fullImageBgColor = item.content.fullImageBgColor
+                        }
                     }
                 });
                 self.pointCardList = tempList
