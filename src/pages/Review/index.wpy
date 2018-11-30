@@ -28,7 +28,7 @@
                     image{width: 100%;border-radius: 20rpx;}
                     .ui-share{
                         color:@color-blue;position:absolute;top:28rpx;right:36rpx;
-                        text{font-size: 44rpx;}
+                        text{font-size: 50rpx;}
                     }
                     .ui-share.ui-dack {color:@color-white;}
 
