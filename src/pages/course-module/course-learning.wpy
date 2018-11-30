@@ -260,12 +260,17 @@
             self.courseID = parameter.courseID
             self.teamID = parameter.teamID
 
-            let collectionStatus = wx.getStorageSync('collectionStatus')
-            if (!collectionStatus) {
-                self.isShowFirstCollection = true
-                self.$apply()
-                wx.setStorageSync("collectionStatus", true)
-            }
+            wx.getStorage({
+                key: 'collectionStatus',
+                success(respone) {
+                    if (!respone.data) {
+                        self.isShowFirstCollection = true
+                        self.$apply()
+                        wx.setStorageSync("collectionStatus", true)
+                    }
+                }
+            })
+
             self.__originalRouter()
 
             let postData = {
@@ -669,14 +674,10 @@
                     }
 
                     self.cardCurrent += 1
-                    self.isShowCollection = false
-                    self.$apply()
                     self.__interval()
                     self.__touchEnd(1)
                 } else if (distanceX < -space && self.cardCurrent) { // 向左
                     self.cardCurrent -= 1
-                    self.isShowCollection = false
-                    self.$apply()
                     self.__interval()
                     self.__touchEnd(1)
                 }
@@ -709,9 +710,6 @@
                     self.__sumbitResult()
                 } else {
                     self.cardCurrent += 1
-                    self.isShowCollection = false
-                    self.$apply()
-
                     self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
                     self.__interval()
                     self.__hasInitAnimation()
@@ -738,8 +736,6 @@
                 self.cardsList[self.cardCurrent].allowToNext = true
                 self.isAnswerOver = false
                 self.cardCurrent += 1
-                self.isShowCollection = false
-                self.$apply()
 
                 self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
                 self.__interval()

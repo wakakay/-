@@ -144,11 +144,11 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-    import {showErrorPage,shareDictionary,navigateToLesson} from "../../utils";
-    import {course as courseApi,auth as authApi,payment as paymentApi,share as shareApi,registered as fetch} from "../../api";
+    import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils";
+    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from "../../api";
     import {CustomError} from "../../errors";
-    import {getStore,connect} from "wepy-redux";
-    import {renewWechatCode,login} from "../../redux/models/user";
+    import {getStore, connect} from "wepy-redux";
+    import {renewWechatCode, login} from "../../redux/models/user";
     import _ from 'underscore'
 
     const store = getStore();
@@ -221,6 +221,30 @@
             self.initialize()
             
         }
+
+        onUnload() {
+            let self = this
+            self.__reportStayTimestamp()
+        }
+
+        onHide() {
+            let self = this
+            self.__reportStayTimestamp()
+        }
+
+        __reportStayTimestamp() {
+            let self = this
+            let time = new Date().getTime() - this.timestamp
+            let postData = {
+                token: self.token,
+                pageTime: time,
+                courseID: self.courseID
+            }
+            courseApi.sendCoursePageTime(postData).then(response => {
+                console.log('sendCoursePageTime report success! ' + time)
+            })
+        }
+
         initialize() {
             let self = this
             let postData = {
