@@ -147,11 +147,6 @@
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
 
-                // 核心图卡
-                if(!item.xuhao) {
-                    return;
-                }
-
                 let senceName = item.name
                  let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
                 let isNewSence = self.isNewSenceMap[self.senceID]
@@ -174,7 +169,7 @@
 
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
-                    if(item.xuhao){
+                    if(item.content){
                         item.content = JSON.parse(item.content)
                         item['url'] = item.content.bigimage
                         item['name'] = item.content.title
