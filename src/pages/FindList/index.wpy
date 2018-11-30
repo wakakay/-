@@ -58,7 +58,7 @@
                         .ui-img{
                             margin-right: 26rpx;width: 112rpx;
                             image{
-                                width: 112rpx;height: 112rpx;border-radius: @border-radius-20;
+                                width: 112rpx;height: 112rpx;border-radius: 28rpx;
                             }
                         }
                         &:last-of-type .ui-content{border-bottom: none;}
@@ -74,7 +74,7 @@
                             }
                             .ui-btn{
                                 display: flex;align-items:center;height: 100%;flex-direction: column;justify-content:center;
-                                .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 30rpx;}
+                                .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 30rpx;font-weight: 700;}
                                 .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
                             }
                         }
