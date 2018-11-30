@@ -229,7 +229,7 @@ export const fetchCardsWithPreview = ({ token, senceID, courseID, teamID,source 
     dispatch(setCards({ status: 'pending' }))
     dispatch(setRequestFlag(requestFlag))
     return cardApi.getCardListWithPreview({ token, senceID, courseID, requestFlag, teamID,source })
-        .then(({ description, isTryAllowStatus, isTryAllow, listTry, list, name, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow, lessonType }) => {
+        .then(({ description, isTryAllowStatus, isTryAllow, listTry, list, name, imageUrl, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow, lessonType }) => {
             const mArr = list && list.map(item => formatAppointedItem({ item, senceIndex, senceCount }))
             const mArrPreview = listTry && listTry.map(item => formatAppointedItem({ item, senceIndex, senceCount }))
             dispatch(setCards({
@@ -237,7 +237,7 @@ export const fetchCardsWithPreview = ({ token, senceID, courseID, teamID,source 
                 response: mArr
             }))
             dispatch(setCurrentCourseID(courseID))
-            return { isTryAllowStatus, isTryAllow, mArrPreview, senceID, senceName: name, courseID, source,lastCardID, requestFlag, minute, subtitle, isSwitchTipsShow, lessonType, cards: mArr }
+            return { isTryAllowStatus, isTryAllow, mArrPreview, senceID, senceName: name, imageUrl, courseID, source,lastCardID, requestFlag, minute, subtitle, isSwitchTipsShow, lessonType, cards: mArr }
         })
         .catch(error => {
             // console.log('fetch cards error', error)

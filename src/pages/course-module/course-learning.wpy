@@ -303,41 +303,41 @@
             let postData = {token: self.systemInfo.token, senceID, courseID, teamID, source: source}
             self.isLoaded = false
 
-            fetch.courseLearning(postData).then((respone) => {
-                let cards = self.__dataRegroup(respone)
+            return store.dispatch(fetchCardsWithPreview(postData)).then((respone) => {
                 self.isLoaded = true
                 self.senceName = respone.name
                 self.senceThumb = respone.imageUrl
+                let cards = self.__dataRegroup(respone)
                 self.cardsOriginList = deepCopy(cards) // 给swiper使用的数据
                 self.cardsList = cards
-
                 // 恢复上次学习的进度
                 let index = _.findIndex(self.cardsList, {id: respone.lastCardID}) || 0
-
                 if (!self.resumeLastRead || self.resumeLastRead == 'NO') {
                     index = -1 !== index ? index : 0
                 } else {
                     index = parseInt(self.resumeLastRead) - 1
                 }
-
+                index = -1 !== index ? index : 0
                 self.cardCurrentInfo.push(self.cardsList[index])
-                self.cardCurrent =  index
+                self.cardCurrent = index
                 /*if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
                     self.__interval()
                 }*/
                 self.__hasInitAnimation()
                 self.$apply()
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: respone.senceName}) // ga统计
                 // 进入微课事件上报埋点
                 wx.reportAnalytics('opensence', {
                     role: self.systemInfo.role,
                     nickname: self.systemInfo.name,
                     coursename: self.currentCourseName,
-                    sencename: self.senceName,
+                    sencename: respone.senceName,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
             }).catch(error => {
                 self.isLoaded = true
+                !(error instanceof LessonPermissionDenyError) && showErrorPage()
+                console.log('fail to initialize lesson', error)
             })
         }
         /**
@@ -346,8 +346,8 @@
          */
         __dataRegroup(respone) {
             let self = this
-            let length = respone.list.length - 1
-            _.each(respone.list, (data, index) => {
+            let length = respone.cards.length - 1
+            _.each(respone.cards, (data, index) => {
                 data.buttonShow = true
                 if (!data.fullImageBottomtText) {
                     switch (data.type) {
@@ -431,8 +431,8 @@
 
                 if (index === length) {
                     data.lastCard = true
-                    if ('front' === respone.list[length].type && '继续学习' == respone.list[length - 1].fullImageBottomtText) {
-                        respone.list[length - 1].fullImageBottomtText = '即学即练'
+                    if ('front' === respone.cards[length].type && '继续学习' == respone.cards[length - 1].fullImageBottomtText) {
+                        respone.cards[length - 1].fullImageBottomtText = '即学即练'
                     } else {
                         data.fullImageBottomtText = data.fullImageBottomtText || '点击完成微课'
                     }
@@ -445,7 +445,7 @@
                 }
             })
 
-            return respone.list
+            return respone.cards
         }
         /**
          * 计算返回到微课入口页面
