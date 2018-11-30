@@ -218,6 +218,7 @@
             timer: null,
             senceID: null,
             courseID: null,
+            resumeLastRead: null,
             teamID: 'defaultTeamID',
             senceName: '',
             senceThumb: '',
@@ -259,15 +260,14 @@
             self.senceID = parameter.senceID
             self.courseID = parameter.courseID
             self.teamID = parameter.teamID
+            self.resumeLastRead = parameter.resumeLastRead
 
             wx.getStorage({
                 key: 'collectionStatus',
-                success(respone) {
-                    if (!respone.data) {
-                        self.isShowFirstCollection = true
-                        self.$apply()
-                        wx.setStorageSync("collectionStatus", true)
-                    }
+                fail(error) {
+                    self.isShowFirstCollection = true
+                    self.$apply()
+                    wx.setStorageSync("collectionStatus", true)
                 }
             })
 
@@ -302,9 +302,9 @@
             let self = this
             let postData = {token: self.systemInfo.token, senceID, courseID, teamID, source: source}
             self.isLoaded = false
+
             fetch.courseLearning(postData).then((respone) => {
                 let cards = self.__dataRegroup(respone)
-
                 self.isLoaded = true
                 self.senceName = respone.name
                 self.senceThumb = respone.imageUrl
@@ -315,10 +315,10 @@
                 let index = _.findIndex(self.cardsList, {id: respone.lastCardID}) || 0
                 index = -1 !== index ? index : 0
                 self.cardCurrentInfo.push(self.cardsList[index])
-                self.cardCurrent = index
-                if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
+                self.cardCurrent = self.resumeLastRead == 'NO' ? index : parseInt(self.resumeLastRead) - 1
+                /*if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
                     self.__interval()
-                }
+                }*/
                 self.__hasInitAnimation()
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
@@ -614,12 +614,13 @@
          * @returns {event}
          */
         __interval() {
-            /*let self = this
-            clearTimeout(self.timer)
+            let self = this
+            // clearTimeout(self.timer)
             self.isShowCollection = false
+            self.isShowFirstCollection = false
             self.$apply()
 
-            self.timer = setTimeout(() => {
+            /*self.timer = setTimeout(() => {
                 self.isShowCollection = true
                 self.$apply()
             }, 6000)*/

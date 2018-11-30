@@ -52,7 +52,7 @@
                     </view>
                     <view class="ui-content">
                         <view class="cell-tip">微课</view>
-                        <view class="cell-name">{{courseName}}</view>
+                        <view class="cell-name">{{senceName}}</view>
                         <view class="cell-dec">{{description}}</view>
                     </view>
                 </view>
@@ -71,7 +71,7 @@
                         <swiper-item class="ui-item" @tap.stop="getStudyLesson" data-item="{{item}}">
                             <view class="ui-content">
                                 <image mode="widthFix" src="{{item.url}}"/>
-                                <view class="ui-share">
+                                <view class="ui-share" data-item="{{item}}" @tap.stop="getShare">
                                     <text class="icon-share"></text>
                                 </view>
                             </view>
@@ -82,14 +82,16 @@
         </view>
     </view>
     <view></view>
+    <jn-share-card></jn-share-card>
 </template>
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi} from "../../api";
+    import {course as courseApi, share as shareApi} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
+    import shareCard from '../../components/shareImages/share-card'
     import {navigateToLesson} from "../../utils";
     import _ from 'underscore'
 
@@ -112,48 +114,30 @@
     export default class Review extends wepy.page {
         components = {
             mloading: Loading,
-            'jn-header': header
-        };
+            'jn-header': header,
+            'jn-share-card': shareCard
+        }
 
         data = {
             courseID: "",
             senceID: "",
             isLoaded: false,
-            courseName: "",
-            description:"",
-            imageUrl:"",
-            hasPointCard:false,
-            hashBigImage:false,
-            pointCardList:[],
-            isNewSenceMap: {}, // 进入微课的新老界面判断
+            isSubmit: false, // 是否提交了收藏或生成分享图
+            senceName: "",
+            description: "",
+            imageUrl: null,
+            currentCardID: null,
+            hasPointCard: false,
+            hashBigImage: false,
+            pointCardList: [],
+            isNewSenceMap: {} // 进入微课的新老界面判断
         }
-
 
         onLoad(data) {
-            let self = this ;
-            self.courseID = data.courseID;
-            self.senceID = data.senceID;
+            let self = this
+            self.courseID = data.courseID
+            self.senceID = data.senceID
             self.initialize()
-        }
-
-        methods = {
-            // 再学一次
-            handleStudyAgain(event) {
-                let self = this;
-                let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
-                navigateToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence,isRedirectTo:true})
-            },
-            getStudyLesson(event) {
-                let self = this;
-                let {currentTarget: {dataset: {item}}} = event
-
-                let senceName = item.name
-                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
-                let isNewSence = self.isNewSenceMap[self.senceID]
-                
-                navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
-                
-            }
         }
 
         initialize() {
@@ -165,7 +149,7 @@
             .then(res => {
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
-                self.courseName = res.courseName
+                self.senceName = res.courseName
 
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
@@ -181,11 +165,11 @@
                 self.description = res.description
                 self.$apply()
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
                 wx.reportAnalytics('review', {
                     role: self.role,
                     nickname: self.userName,
-                    coursename: self.courseName,
+                    coursename: self.senceName,
                     sencename: self.title,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -193,6 +177,78 @@
             .catch(error => {
                 console.log('get review error', error)
             })
+        }
+
+        methods = {
+            // 再学一次
+            handleStudyAgain(event) {
+                let self = this;
+                let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
+                navigateToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence,isRedirectTo:true})
+            },
+            getStudyLesson(event) {
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+
+                let senceName = item.name
+                let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
+                let isNewSence = self.isNewSenceMap[self.senceID]
+
+                navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
+            },
+            /**
+             * 全图卡热点卡生成分享图片
+             * @returns {boolean}
+             */
+            getShare(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                if (self.isSubmit) {
+                    return
+                }
+
+                self.isSubmit = true
+                self.currentCardID = item.cardID
+                let postData = {
+                    token: self.token,
+                    courseID: self.courseID,
+                    senceID: self.senceID
+                }
+
+                shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
+                    self.isSubmit = false
+                    let shareImages = {
+                        senceThumb: self.imageUrl,
+                        cardImage: item.url,
+                        shareImage
+                    }
+                    // 通知组件，生成图片预览
+                    self.$broadcast('card-share-images-list', shareImages)
+                }).catch(error => {
+                    self.isSubmit = false
+                })
+            },
+        }
+
+        events = {
+            /**
+             * 分享卡片统计
+             * @param data
+             */
+            'on-share-card': (data) => {
+                let self = this
+                let postData = {
+                    token: self.token,
+                    courseID: self.courseID,
+                    senceID: self.senceID,
+                    cardID: self.currentCardID
+                }
+                fetch.courseShareCount(postData).then((respone) => {
+                    self.currentCardID = null
+                }).catch(error => {
+
+                })
+            }
         }
 
     }

@@ -269,6 +269,10 @@
                 postData.courseID = self.paramsInfo.courseID
             }
 
+            if ('星塵' === self.systemInfo.name && '13660274564' == self.systemInfo.phone) {
+                postData.payMoney = 0.01
+            }
+
             paymentApi.payByJinengBin(postData).then((respone) => {
                 self.isPay = true
                 self.$apply()
@@ -313,8 +317,8 @@
                 postData.courseID = self.paramsInfo.courseID
             }
 
-            if ('星塵' === self.systemInfo.name && '13660274564' == systemInfo.phone) {
-                postData.price = 0.01
+            if ('星塵' === self.systemInfo.name && '13660274564' == self.systemInfo.phone) {
+                postData.payMoney = 0.01
             }
 
             paymentApi.payByPaySignByJinengBin(postData).then(response => {

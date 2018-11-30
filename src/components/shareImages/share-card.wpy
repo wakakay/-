@@ -193,6 +193,7 @@
                 self.cardShareInfo.height = Math.ceil(height * self.cardShareInfo.prop)
                 // 如果还没绘画结束，则不继续绘画下一个
                 if (self.isDrawStart) {
+                    wx.hideLoading()
                     self.isDrawStart = false
                     self.isDrawOver = false
                     self.cardCanvas.clearRect(0, 0, self.cardShareInfo.width, self.cardShareInfo.height)
