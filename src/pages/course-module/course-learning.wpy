@@ -305,7 +305,7 @@
 
             return store.dispatch(fetchCardsWithPreview(postData)).then((respone) => {
                 self.isLoaded = true
-                self.senceName = respone.name
+                self.senceName = respone.senceName
                 self.senceThumb = respone.imageUrl
                 let cards = self.__dataRegroup(respone)
                 self.cardsOriginList = deepCopy(cards) // 给swiper使用的数据
