@@ -183,6 +183,7 @@
             headerHeigth: 68,
             headerBackground: 'background-transparent',
             backgroundHeight: 0,
+            timestamp: new Date().getTime(),
             isLoaded: false,
             shareTitle: '分享标题',
             specialCourseName: '',
@@ -249,7 +250,7 @@
             let self = this
             let postData = {
                 token: self.token,
-                id:self.courseID,
+                id: self.courseID,
                 wxPushType: self.wxPushType
             }
 

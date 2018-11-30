@@ -360,6 +360,7 @@
             headerBackground: 'background-transparent',
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isFixed: false,
+            timestamp: new Date().getTime(),
             backgroundHeight: 0,
             targetScroll: 0,
             isLoaded: false,
@@ -407,11 +408,11 @@
 
         __reportStayTimestamp() {
             let self = this
-            let time = new Date().getTime() - this.timestamp
+            let time = new Date().getTime() - self.timestamp
             let postData = {
-                token: self.token,
-                pageTime: time,
-                courseID: self.courseID
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id,
+                pageTime: time
             }
             courseApi.sendCoursePageTime(postData).then(response => {
                 console.log('sendCoursePageTime report success! ' + time)

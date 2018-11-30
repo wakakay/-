@@ -66,8 +66,8 @@
             <view class="ui-swiper-box" wx:else>
                 <swiper class="ui-swiper-list" 
                         previous-margin="40rpx"
-                        next-margin="20rpx"  indicator-dots="{{true}}">
-                    <repeat wx:for="{{pointCardList}}">
+                        next-margin="20rpx"  indicator-dots>
+                    <repeat for="{{pointCardList}}" key="index" index="index" item="item">
                         <swiper-item class="ui-item" @tap.stop="getStudyLesson" data-item="{{item}}">
                             <view class="ui-content">
                                 <image mode="widthFix" src="{{item.url}}"/>
@@ -79,8 +79,6 @@
                     </repeat>
                 </swiper>
             </view>
-            
-
         </view>
     </view>
     <view></view>

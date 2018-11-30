@@ -241,7 +241,7 @@ export const sendCourseUserEvent = ({ token, courseID, senceID }) => {
 }
 
 export const sendCoursePageTime = ({ token, courseID, pageTime }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
+    // if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
         url: `${config.baseUrl}report/sendCoursePageTime?token=${token}&courseID=${courseID}&pageTime=${pageTime}`,
         method: 'POST'
