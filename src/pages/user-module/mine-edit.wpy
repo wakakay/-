@@ -5,11 +5,7 @@
         scroll-with-animation="{{ true }}"
         bindscroll="getScroll"
         class="mine-article__body">
-        <jn-header hiddenButton title="个人信息">
-            <button slot="cursor-button" class="cell-back" @tap.stop="getBackStep">
-                <text class="icon-back"></text>
-            </button>
-        </jn-header>
+        <jn-header title="个人信息"></jn-header>
         <view class="ui-mine-edit">
             <view class="ui-mine">
                 <text>头像</text>
@@ -94,11 +90,6 @@
             'jn-header': header,
         }
         methods = {
-            getBackStep() {
-                wx.navigateTo({
-                    url: '/pages/user-module/mine'
-                })
-            },
             // 跳转修改手机页面
             getEditPhonePage({currentTarget: {dataset: {phone}}}){
                 wx.navigateTo({
