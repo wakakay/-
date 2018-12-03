@@ -153,7 +153,6 @@
     const store = getStore()
     @connect({
         systemInfo(state) {
-            console.log(state.user)
             return state.user
         },
         platform(state) {
