@@ -195,7 +195,7 @@
             handleStudyAgain(event) {
                 let self = this;
                 let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
-                navigateToLesson({ courseID:self.courseID, senceID:self.senceID, resumeLastRead: 'NO', isNewSence,isRedirectTo:true})
+                navigateToLesson({courseID:self.courseID, senceID:self.senceID, isNewSence})
             },
             getStudyLesson(event) {
                 let self = this;
