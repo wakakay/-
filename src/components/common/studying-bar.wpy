@@ -430,7 +430,7 @@
                 wx.reportAnalytics('study_bar_continue', {
                     username: self.systemInfo.name,
                     role: self.systemInfo.role,
-                    channel: self.entrance.mappers[this.entrance.scenceID]
+                    channel: self.entrance.mappers[self.entrance.scenceID]
                 })
                 let courseType = event.currentTarget.dataset.type
                 let courseName = event.currentTarget.dataset.sencename ? event.currentTarget.dataset.sencename : event.currentTarget.dataset.item.senceName

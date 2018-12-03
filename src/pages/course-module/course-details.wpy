@@ -77,16 +77,19 @@
                     text{margin:8rpx;}
                 }
                 .cell-subtitle{font-size:26rpx;color:@color-white-opacity;line-height:36rpx;position:absolute;bottom: 40rpx;;}
-                .ui-circular-progress{
+                .ui-status{
                     position:absolute;right:32rpx;top:32rpx;
-                    &::before{border:6rpx solid @background-mask-white;}
-                    .ui-wrapper{
-                        >view{
-                            &.cell-circle-right{border-top:6rpx solid @background-white;border-right:6rpx solid @background-white;}
-                            &.cell-circle-left{border-bottom:6rpx solid @background-white;border-left:6rpx solid @background-white;}
+                    .ui-circular-progress{
+                        &::before{border:6rpx solid @background-mask-white;}
+                        .ui-wrapper{
+                            >view{
+                                &.cell-circle-right{border-top:6rpx solid @background-white;border-right:6rpx solid @background-white;}
+                                &.cell-circle-left{border-bottom:6rpx solid @background-white;border-left:6rpx solid @background-white;}
+                            }
                         }
+                        .cell-progress-number{color:@color-white;}
                     }
-                    .cell-progress-number{color:@color-white;}
+                    .cell-text{font-size:32rpx;color:@color-white;line-height:72rpx;}
                 }
                 .cell-button{width:148rpx;height:60rpx;font-size:30rpx;font-weight:700;background-color:@background-white;color:@color-blue;border-radius:60rpx;position:absolute;right:30rpx;bottom:40rpx;}
             }
@@ -150,18 +153,19 @@
                 text:nth-of-type(2){font-size:44rpx;font-weight:700;color:@color-black;}
                 .cell-currency{font-size:30rpx;}
             }
-            button{margin-top:20rpx;height:100rpx;background-color:@background-blue;font-size:35rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;line-height: 100rpx;}
+            .ui-button-list{
+                margin-top:20rpx;
+                button{width:320rpx;height:100rpx;font-size:35rpx;border-radius:@border-radius-20;line-height: 100rpx;}
+                button:nth-of-type(1){background-color:@background-gray-F4;color:@color-blue;}
+                button:nth-of-type(2){background-color:@background-blue;color:@color-white;}
+            }
         }
     }
 </style>
 
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
-    <scroll-view
-        scroll-y
-        enable-back-to-top
-        bindscroll="getScroll"
-        class="ui-course-details-box">
+    <view class="ui-course-details-box">
         <jn-header :className.sync="headerBackground"></jn-header>
 
         <view class="ui-board-box">
@@ -172,7 +176,7 @@
                 <view class="cell-subtitle">{{courseDetail.courseSkill}}</view>
                 <view class="cell-title main-justify">
                     <text>{{courseDetail.name}}</text>
-                    <button class="main-center cross-center" formType="submit" open-type="share" >
+                    <button class="main-center cross-center" open-type="share">
                         <text class="icon-share"></text>
                     </button>
                 </view>
@@ -239,16 +243,21 @@
                             <text class="icon-study-bar"></text>{{item.labelName}}
                         </view>
                         <view class="cell-subtitle">{{item.senceTarget}}</view>
-                        <view class="ui-circular-progress">
-                            <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
-                            <view class="ui-wrapper ui-right">
-                                <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
+
+                        <view class="ui-status">
+                            <text class="icon-clock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
+                            <text class="cell-text" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</text>
+                            <view class="ui-circular-progress" wx:else>
+                                <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
+                                <view class="ui-wrapper ui-right">
+                                    <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
+                                </view>
+                                <view class="ui-wrapper ui-left">
+                                    <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
                             </view>
-                            <view class="ui-wrapper ui-left">
-                                <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
                         </view>
 
-                        <view class="cell-button main-center cross-center">{{item.buttonStatusMsg}}</view>
+                        <!--<view class="cell-button main-center cross-center">{{item.buttonStatusMsg}}</view>-->
                     </button>
                 </repeat>
             </form>
@@ -306,20 +315,38 @@
             </repeat>
         </view>
 
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
+        <!--<view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-justify">
                     <text>获取整个课程</text>
                     <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
                 </view>
-                <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                <view class="ui-button-list">
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
                         bindgetuserinfo="getAuthorize"
                         hover-stay-time="100"
                         @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                </view>
+            </view>
+        </view>-->
+
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
+            <view class="ui-container" :class="{'is-fixed': isFixed}">
+                <view class="ui-text main-center">
+                    <text>赠出后，好友成功领取后，你将获得此课程</text>
+                </view>
+                <view class="ui-button-list main-justify">
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                            bindgetuserinfo="getAuthorize"
+                            hover-stay-time="100">{{courseDetail.price}}即能币获取</button>
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
+                            data-role="1"
+                            bindgetuserinfo="getAuthorize"
+                            hover-stay-time="100">赠一得一</button>
+                </view>
             </view>
         </view>
-    </scroll-view>
-    <view></view>
+    </view>
 </template>
 
 <script>
@@ -367,6 +394,7 @@
             isMore: false, // 是否展示更多概述
             shareSenceID: null,
             paramsInfo: {}, // 接受地址栏传进来的值
+            roleType: 'gifter', // {赠送者: gifter, 受赠者: receiver}
             courseDetail: {}
         }
 
@@ -402,12 +430,20 @@
             let self = this
             self.__reportStayTimestamp()
         }
-
         onHide() {
             let self = this
             self.__reportStayTimestamp()
         }
-
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
+            let self = this
+            self.isFixed = res.scrollTop > self.targetScroll ? true : false
+            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            self.$apply()
+        }
         __reportStayTimestamp() {
             let self = this
             let time = new Date().getTime() - self.timestamp
@@ -498,12 +534,11 @@
                 return
             }
             if ('needPay' === buttonStatus) {
-                return this.$navigate(`/pages/course-module/course-pay`, {senceID})
+                self.$navigate(`/pages/course-module/course-pay`, {senceID})
             } else {
                 switch (buttonStatus) {
                     case 'finish': // 回顾
-                        !item.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
+                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/course-module/course-pay`, {senceID})
@@ -532,16 +567,6 @@
         }
 
         methods = {
-            /**
-             * 监听滚动条事件
-             * @param event
-             */
-            getScroll(event) {
-                let self = this
-                let {detail: {scrollTop}} = event
-                self.isFixed = scrollTop > self.targetScroll ? true : false
-                self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
-            },
             /**
              * 课程概述，详情显示更多
              */
@@ -620,7 +645,7 @@
              */
             getAuthorize(event) {
                 let self = this
-                let {detail: {errMsg}, currentTarget: {dataset:{item}}} = event
+                let {detail: {errMsg}, currentTarget: {dataset:{item, role}}} = event
 
                 if (self.isTokenSet) {
                     return
@@ -633,6 +658,10 @@
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
                 }).then((respone) => { // 授权成功
+                    // 赠一得一
+                    if (role) {
+                        return
+                    }
                     item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
                 }).catch(error => { // 拒接授权
 

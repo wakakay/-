@@ -374,8 +374,7 @@
                 let isNewSence = self.isNewSenceMap[senceID]
                 switch (buttonStatus) {
                     case 'finish': // 回顾
-                        !data.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
+                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/course-module/course-pay`, {senceID})
