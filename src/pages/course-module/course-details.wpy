@@ -376,6 +376,8 @@
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
+            console.log(getStore().getState().entrance,'entrance.scenceID')
+            console.log(codeType,'entrance.scenceID')
             let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
             if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
