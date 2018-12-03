@@ -801,7 +801,7 @@
 
                 self.isShowCollection = false
                 fetch.collectionRecord(postData).then((respone) => {
-                    if (respone.cardCollectionCount) {
+                    if (respone.cardCollectionCount > item.cardCollectionCount) {
                         item.userIsSelected = 1
                         item.cardCollectionCount += 1
                         wx.showToast({

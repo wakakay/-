@@ -90,6 +90,7 @@
             description: '',
             name: 'defaultName',
             examID: "E1533788878390",
+            wxPushType: '',
             imageBottomURL: '',
             imageHeaderURL: '',
             imagePracticeURL: '',
@@ -98,10 +99,11 @@
             headerHeigth:0
         }
 
-        onLoad({courseID, senceID, teamID = 'defaultTeamID', examID}) {
+        onLoad({courseID, senceID, teamID = 'defaultTeamID', examID, wxPushType}) {
             this.courseID = courseID
             this.senceID = senceID
             this.examID = examID
+            this.wxPushType = wxPushType
         }
 
         onShow() {
@@ -109,25 +111,32 @@
         }
 
         initialize() {
-            return practiceApi.getExamFront({token: this.token, examID: this.examID}).then(({description, examID, subject, imageBottomURL, imageHeaderURL, imagePracticeURL, imageResultURL, subjectHeading}) => {
-                this.isLoaded = true
-                this.description = description
-                this.imageBottomURL = imageBottomURL
-                this.imageHeaderURL = imageHeaderURL
-                this.imagePracticeURL = imagePracticeURL
-                this.imageResultURL = imageResultURL
-                this.subjectHeading = subjectHeading
-                this.name = subject
+            let self = this
+            let postData = {
+                token: self.token,
+                examID: self.examID
+            }
+            if (self.wxPushType) {
+                postData.wxPushType = self.wxPushType
+            }
+            return practiceApi.getExamFront(postData).then(({description, examID, subject, imageBottomURL, imageHeaderURL, imagePracticeURL, imageResultURL, subjectHeading}) => {
+                self.isLoaded = true
+                self.description = description
+                self.imageBottomURL = imageBottomURL
+                self.imageHeaderURL = imageHeaderURL
+                self.imagePracticeURL = imagePracticeURL
+                self.imageResultURL = imageResultURL
+                self.subjectHeading = subjectHeading
+                self.name = subject
+                self.$apply()
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: this.subjectHeading}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.subjectHeading}) // ga统计
                 wx.reportAnalytics('pre_test_cover', {
-                    username: this.userName,
-                    examid: this.examID,
-                    channel: this.entrance.mappers[this.entrance.scenceID],
-                    role: this.role
+                    username: self.userName,
+                    examid: self.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.role
                 })
-
-                this.$apply()
             })
         }
 

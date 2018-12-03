@@ -15,8 +15,8 @@
     .ui-course-list .ui-header .cell-title view:nth-of-type(2) text{display:block;font-size:26rpx;color:@color-gray;line-height:28rpx;}
 
     .ui-course-list .ui-list{height:0;overflow:hidden;transition:all .3s ease-in-out;}
-    .ui-course-list .ui-item-course{box-sizing:border-box;width:100%;height:144rpx;padding:12rpx 0;position:relative;}
-    .ui-course-list .ui-item-course::before{content:' ';width:100%;height:1px;background-color:@background-gray-F4;position:absolute;left:188rpx;top:0;}
+    .ui-course-list .ui-item-course{box-sizing:border-box;width:100%;height:144rpx;padding:12rpx 0;background:none;position:relative;}
+    .ui-course-list .ui-item-course::before{content:' ';width:100%;border-bottom:1px solid @background-gray-F4;position:absolute;left:164rpx;top:0;}
     .ui-course-list .ui-item-course:first-child::before{width:0;}
     .ui-course-list .ui-item-course .cell-thumb{width:110rpx;height:110rpx;margin-left:28rpx;margin-right:20rpx;background:none;line-height:1;}
     .ui-course-list .ui-item-course .cell-thumb image{width:110rpx;height:110rpx;border-radius:@border-radius-20;}
@@ -35,7 +35,7 @@
 
 <template>
     <view class="ui-course-list">
-        <block wx:for="{{courseList}}" wx:for-item="data" wx:index="pIndex" wx:key="item.courseID">
+        <repeat for="{{courseList}}" item="data" index="pIndex" key="item.courseID">
             <view class="ui-item">
                 <view class="ui-header flex cross-center" data-courseID="{{data.courseID}}" hover-stay-time="100" @tap.stop="getShowCourse">
                     <text class="icon-course cell-seq"></text>
@@ -48,53 +48,37 @@
 
                 <view class="ui-list" style="height: {{data.isShow ? data.senceList.length * 144 : 0}}rpx">
                     <form bindsubmit="handleSavePushCode" report-submit>
-                        <block wx:for="{{data.senceList}}" wx:for-item="item" wx:index="cIndex" wx:key="item.id">
-                            <view class="ui-item-course flex">
-                                <button class="cell-thumb flex-box-0"
-                                        data-courseID="{{data.courseID}}"
-                                        data-item="{{item}}"
-                                        data-is-finish="1"
-                                        form-type="{{isTokenSet ? 'submit': ''}}"
-                                        open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                        bindgetuserinfo="getAuthorize"
-                                        hover-stay-time="100"
-                                        @tap.stop="getSence">
+                        <repeat for="{{data.senceList}}" key="item.id" index="cIndex" item="item">
+                            <button class="ui-item-course flex"
+                                    data-courseID="{{data.courseID}}"
+                                    data-item="{{item}}"
+                                    form-type="{{isTokenSet ? 'submit': ''}}"
+                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                    bindgetuserinfo="getAuthorize"
+                                    hover-stay-time="100"
+                                    @tap.stop="getSence">
+                                <view class="cell-thumb flex-box-0">
                                     <image mode="aspectFit" src="{{item.coverImageUrl}}"></image>
-                                </button>
+                                </view>
                                 <view class="ui-content flex-box-1 main-justify cross-center">
-                                    <button class="ui-content-title"
-                                            data-courseID="{{data.courseID}}"
-                                            data-item="{{item}}"
-                                            data-is-finish="1"
-                                            form-type="{{isTokenSet ? 'submit': ''}}"
-                                            open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                            bindgetuserinfo="getAuthorize"
-                                            bindtap="getSence">
+                                    <view class="ui-content-title">
                                         <text>{{item.senceName}}</text>
                                         <text>{{item.senceTarget}}</text>
-                                    </button>
+                                    </view>
                                     <view class="ui-button">
                                         <view class="ui-progress {{(item.buttonStatus=='continue') ? 'is-show' : ''}}">
                                             <view class="cell-current" style="width: {{item.progress}}%"></view>
                                         </view>
-                                        <button class="cell-button {{item.buttonStatus=='finish' ? 'cell-finish' : ''}}"
-                                                hover-class="cell-button-hover"
-                                                data-courseID="{{data.courseID}}"
-                                                data-item="{{item}}"
-                                                form-type="{{isTokenSet ? 'submit': ''}}"
-                                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                                bindgetuserinfo="getAuthorize"
-                                                hover-stay-time="100"
-                                                @tap.stop="getSence"><text>{{item.statusName}}</text></button>
+                                        <view class="cell-button {{item.buttonStatus=='finish' ? 'cell-finish' : ''}}"><text>{{item.statusName}}</text></view>
                                         <view class="cell-price {{item.buttonStatus=='needPay' ? 'is-show' : ''}}"><text>{{item.sencePrice}} 即能币</text></view>
                                     </view>
                                 </view>
-                            </view>
-                        </block>
+                            </button>
+                        </repeat>
                     </form>
                 </view>
             </view>
-        </block>
+        </repeat>
     </view>
     <view class="cell-clear"></view>
 </template>
@@ -228,7 +212,6 @@
                 type: 'sence',
                 courseID: courseID,
                 item: dataset.item,
-                isFinish: dataset.isFinish,
                 isAuthorize: type
             }
             self.$emit('on-click', data)
