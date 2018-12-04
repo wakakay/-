@@ -426,7 +426,7 @@
                 self.senceID = courseItem.id
 
                 if ('subject' === item.type) {
-                    wepy.$instance.globalData.getHuilder('发现页/本周火爆课程','click',`${senceName}`)
+                    wepy.$instance.globalData.getHuilder('发现页/简易版专题','click',`${senceName}`)
                 } else if ('todayTask' === item.type) {
                     wepy.$instance.globalData.getHuilder('发现页/今日任务','click',`${senceName}`)
                 }
