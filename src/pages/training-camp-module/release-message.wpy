@@ -11,7 +11,7 @@
         <view class="announce-content">
       <textarea focus="{{true}}" class="announce-content-input" placeholder-class="announce-content-input-p"
                 placeholder="{{action==='question'?'请输入你的问题或想法':'请输入消息内容'}}" bindinput="handleCommentInput"
-                maxlength="{{76}}"></textarea>
+                maxlength="{{200}}"></textarea>
             <view class="announce-content-tip">还可以输入{{computeStrLength}}个字</view>
         </view>
         <view class="team-learning-article__footer-btn-wapper" style="{{ipX?'padding-bottom:40rpx':''}}">
@@ -68,7 +68,7 @@
 
         computed = {
             computeStrLength() {
-                return 76 - this.inputValue.replace(/\s/g, "").length
+                return 200 - this.inputValue.replace(/\s/g, "").length
             }
         }
         data = {

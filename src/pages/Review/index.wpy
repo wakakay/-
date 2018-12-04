@@ -19,12 +19,13 @@
     }
     .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
     .ui-swiper-box{
+        margin-bottom: 20rpx;
         .ui-swiper-list{
-            height: 1004rpx;
+            height: 1038rpx;
             .ui-item{
                 width: 670rpx;
                 .ui-content{
-                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;width:670rpx;min-height:894rpx;
+                    border:2rpx solid @border-gray;border-radius: 20rpx;display: flex;justify-content: center;align-items: center;width:670rpx;min-height:958rpx;
                     image{width: 100%;border-radius: 20rpx;}
                     .ui-share{
                         color:@color-blue;position:absolute;top:28rpx;right:36rpx;
@@ -69,6 +70,8 @@
             <view class="ui-swiper-box" wx:else>
                 <swiper class="ui-swiper-list" 
                         previous-margin="40rpx"
+                        current="{{currentCard}}"
+                        bindchange="getChangCard"
                         next-margin="20rpx"  indicator-dots>
                     <repeat for="{{pointCardList}}" key="index" index="index" item="item">
                         <swiper-item class="ui-item" @tap.stop="getStudyLesson" data-item="{{item}}">
@@ -132,7 +135,8 @@
             hasPointCard: false,
             hashBigImage: false,
             pointCardList: [],
-            isNewSenceMap: {} // 进入微课的新老界面判断
+            isNewSenceMap: {}, // 进入微课的新老界面判断
+            currentCard:0
         }
 
         onLoad(data) {
@@ -172,6 +176,11 @@
                 });
                 self.pointCardList = tempList
 
+                // 取消最后一张收藏  bug
+                if(self.pointCardList.length === self.currentCard) {
+                    self.currentCard = self.pointCardList.length - 1
+                }
+                
                 self.imageUrl = res.imageUrl
                 self.description = res.description
                 self.$apply()
@@ -191,6 +200,11 @@
         }
 
         methods = {
+            // swiper改变触发
+            getChangCard(evt){
+                let self = this;
+                self.currentCard = evt.detail.current;
+            },
             // 再学一次
             handleStudyAgain(event) {
                 let self = this;
@@ -200,7 +214,6 @@
             getStudyLesson(event) {
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
-
                 let senceName = item.name
                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
                 let isNewSence = self.isNewSenceMap[self.senceID]
