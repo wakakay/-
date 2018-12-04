@@ -801,22 +801,15 @@
 
                 self.isShowCollection = false
                 fetch.collectionRecord(postData).then((respone) => {
-                    if (respone.cardCollectionCount > item.cardCollectionCount) {
-                        item.userIsSelected = 1
-                        item.cardCollectionCount += 1
-                        wx.showToast({
-                            title: '收藏重点卡成功',
-                            icon: 'success'
-                        })
-                    } else {
-                        item.userIsSelected = 0
-                        item.cardCollectionCount -= 1
-                        wx.showToast({
-                            title: '取消重点卡成功',
-                            icon: 'success'
-                        })
-                    }
+                    item.userIsSelected = !item.userIsSelected
+                    item.cardCollectionCount = respone.cardCollectionCount
+                    wx.showToast({title: respone.message})
                     self.isSubmit = false
+
+                    let index = _.findIndex(self.cardsList, {id: item.id})
+                    self.cardsList[index].userIsSelected = item.userIsSelected
+                    self.cardsList[index].cardCollectionCount = item.cardCollectionCount
+
                     self.$apply()
                 }).catch(error => {
                     self.isSubmit = false
