@@ -534,14 +534,15 @@ const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' })
         user.firstAccess = 0
     }) // 至此initialState的firstAccess值确定
     // 首先校验firstAccess和entrancePath 两个先决条件
-    .then(() => Promise.all(['token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
-    .then(([token, name, equipmentModel, code, phone, avatar, role, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
+    .then(() => Promise.all(['token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'unionID', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
+    .then(([token, name, equipmentModel, code, phone, avatar, role, unionID, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
         user.token = token
         user.name = name
         user.code = code
         user.phone = phone
         user.avatar = avatar
         user.role = role
+        user.unionID = unionID
         user.pixelRatio = pixelRatio
         user.platform = platform
         user.windowWidth = windowWidth
@@ -592,6 +593,7 @@ const initialState = {
             code: 'xxx',
             token: 'defaultToken',
             role: '普通用户',
+            unionID: null,
             pixelRatio: 2,
             windowHeight: 0,
             windowWidth: 0,

@@ -310,6 +310,14 @@
                 self.reportButtonTap()
 
                 wepy.$instance.globalData.getHuilder(`课程专题页/${self.courseName}`,'click',`${senceName}`)
+                if ('needPay' === buttonStatus) {
+                    self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
+                    return
+                }
+                if ('finish' === buttonStatus) {
+                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    return
+                }
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 

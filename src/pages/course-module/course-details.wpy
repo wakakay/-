@@ -89,7 +89,7 @@
                         }
                         .cell-progress-number{color:@color-white;}
                     }
-                    .cell-text{font-size:32rpx;color:@color-white;line-height:72rpx;}
+                    .cell-text{font-size:46rpx;color:@color-white;line-height:68rpx;}
                 }
                 .cell-button{width:148rpx;height:60rpx;font-size:30rpx;font-weight:700;background-color:@background-white;color:@color-blue;border-radius:60rpx;position:absolute;right:30rpx;bottom:40rpx;}
             }
@@ -155,7 +155,7 @@
             }
             .ui-button-list{
                 margin-top:20rpx;
-                button{width:320rpx;height:100rpx;font-size:35rpx;border-radius:@border-radius-20;line-height: 100rpx;}
+                button{width:326rpx;height:100rpx;font-size:35rpx;font-weight:700;border-radius:@border-radius-20;line-height: 100rpx;}
                 button:nth-of-type(1){background-color:@background-gray-F4;color:@color-blue;}
                 button:nth-of-type(2){background-color:@background-blue;color:@color-white;}
             }
@@ -404,8 +404,6 @@
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
-            console.log(getStore().getState().entrance,'entrance.scenceID')
-            console.log(codeType,'entrance.scenceID')
             let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
             if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID

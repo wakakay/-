@@ -144,6 +144,7 @@ export const getUserInfo = () => {
             case '1012':
             case '1047':
             case '1048':
+            case '1049':
                 let outSide = QRcodeType(query);
                 if (outSide) {
                     urlEnd = outSide

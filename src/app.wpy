@@ -19,9 +19,9 @@
     import {store} from './redux/store'
     import {setStore} from 'wepy-redux'
     import {setSceneID, setPath, setQuery} from './redux/models/entrance'
-    import {auth as authApi} from './api'
+    import {registered as fetch} from './api'
     import config from './api/config'
-    import {shareDictionary} from './utils'
+    // import {shareDictionary} from './utils'
     import {ROUTERS} from './utils/router-dictionary'
     import ga from 'wxapp-ga/ga'
 
@@ -99,7 +99,6 @@
                 'pages/user-module/score-rules',
                 'pages/user-module/mine-collect',
                 /* 注册模块 */
-
                 'pages/registered-module/interest-select',
                 'pages/registered-module/recommend',
                 'pages/registered-module/weclome',
@@ -115,11 +114,11 @@
                 navigationBarTitleText: "即能",
                 navigationBarTextStyle: "black",
             },
-            "tabBar": {
-                "color": "#8F8E94",
-                "backgroundColor": "#FFFFFF",
-                "selectedColor": "#007AFF",
-                "list": [
+            tabBar: {
+                color: "#8F8E94",
+                backgroundColor: "#FFFFFF",
+                selectedColor: "#007AFF",
+                list: [
                     {
                         "pagePath": "pages/FindList/index",
                         "text": "发现",
@@ -141,14 +140,23 @@
                 ]
             },
             networkTimeout: {
-                "request": 30000,
-                "downloadFile": 30000
+                request: 30000,
+                downloadFile: 30000
             },
             workers: "workers"
         }
 
         globalData = {
+            staffList: [],
+            token: null,
+            unionID: null,
             newCourseDetailTempele: {},
+            allOpenIDHash(token) {
+                let self = this
+                fetch.allOpenIDHash({token: token || self.token}).then((respone) => {
+                    self.staffList = respone
+                })
+            },
             getTracker() {
                 let self = this
                 let tracker = {}
@@ -161,7 +169,11 @@
                 return tracker
             },
             getHuilder(category, action, label) {
-                var trackerInfo = this.getTracker()
+                let self = this
+                if (-1 !== self.staffList.indexOf(self.unionID)){
+                    return
+                }
+                var trackerInfo = self.getTracker()
                 let builder = {}
                 // console.log('ga----', category, action, label)
                 if (action === 'click') {
@@ -173,6 +185,10 @@
                 trackerInfo.send(builder)
             },
             getLoadHuilder(options) {
+                let self = this
+                if (-1 !== self.staffList.indexOf(self.unionID)){
+                    return
+                }
                 let parameter = options || {}
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
@@ -180,9 +196,9 @@
 
                 if (parameter.screenName || title) {
                     // Google Analytics 统计
-                    var trackerInfo = this.getTracker()
+                    var trackerInfo = self.getTracker()
                     let builder = {}
-                    // console.log('ga----', parameter.screenName || title.screenName, parameter.pageTheme)
+                    console.log('ga----', parameter.screenName || title.screenName, parameter.pageTheme)
                     trackerInfo.setScreenName(parameter.screenName || title.screenName)
                     builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parameter.pageTheme || '-').build()
                     trackerInfo.send(builder)
@@ -212,28 +228,44 @@
         }
 
         onLaunch(option) {
+            let self = this
             let {scene: sceneID, path, query} = option
-            const mDictionary = {
+            /*const mDictionary = {
                 'pages/course-module/lesson-for-android': shareDictionary.SHARE_TEAM,
                 'pages/course-module/lesson': shareDictionary.SHARE_TEAM,
                 'pages/course-module/course-details?': shareDictionary.SHARE_COURSE,
-            }
+            }*/
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
 
+            //
+            wx.getStorage({
+                key: 'token',
+                success (res) {
+                    self.globalData.token = res.data
+                }
+            })
+            wx.getStorage({
+                key: 'unionID',
+                success (res) {
+                    self.globalData.unionID = res.data
+                    res.data && self.globalData.allOpenIDHash()
+                }
+            })
+
             // 强制更新
             const updateManager = wx.getUpdateManager()
-            updateManager.onCheckForUpdate(function (res) {
+            updateManager.onCheckForUpdate((res) => {
                 // 请求完新版本信息的回调
                 // console.log(res.hasUpdate)
             })
 
-            updateManager.onUpdateReady(function () {
+            updateManager.onUpdateReady(() => {
                 wx.showModal({
                     title: '更新提示',
                     content: '新版本已经准备好，是否重启应用？',
-                    success: function (res) {
+                    success(res) {
                         if (res.confirm) {
                             // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
                             updateManager.applyUpdate()
@@ -243,7 +275,7 @@
 
             })
 
-            updateManager.onUpdateFailed(function () {
+            updateManager.onUpdateFailed(() => {
                 // 新的版本下载失败
                 wx.showModal({
                     title: '更新提示',
@@ -259,6 +291,5 @@
             key = key ? key+1 : 1
             wx.setStorageSync('pageLoadNum', key)
         }
-
     }
 </script>

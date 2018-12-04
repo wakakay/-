@@ -440,7 +440,12 @@
                 }
 
                 if ('needPay' === buttonStatus) {
-                    return self.$navigate(`/pages/course-module/course-pay`, {senceID:self.senceID})
+                    self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
+                    return
+                }
+                if ('finish' === buttonStatus) {
+                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    return
                 }
                 let isNewSence = item.isNewSenceMap[self.senceID]
                 navigateToLesson({

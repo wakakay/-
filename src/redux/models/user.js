@@ -20,6 +20,7 @@ export const SET_TOKEN = 'SET_TOKEN'
 export const DROP_TOKEN = 'DROP_TOKEN'
 export const FETCH_TOKEN = 'FETCH_TOKEN'
 export const SET_ROLE = 'SET_ROLE'
+export const UNION_ID = 'UNION_ID'
 export const DROP_ROLE = 'DROP_ROLE'
 export const FAILURE = 'FAILURE'
 export const SET_PIXEL_RATIO = 'SET_PIXEL_RATIO'
@@ -48,6 +49,7 @@ const initialState = {
     code: 'xxx',
     token: 'defaultToken',
     role: '普通用户',
+    unionID: null,
     windowHeight: 0,
     windowWidth: 0,
     screenHeight: 0
@@ -97,6 +99,7 @@ export const setScreenHeight = ({ status = 'pending', response = {}, error = { m
 export const setToken = ({ status = 'pending', response = {}, error = { message: 'Oops' } }) => 'success' === status ? ({ type: SET_TOKEN, payload: {...response } }) : customErrActionBundle
 export const setPhone = ({ status = 'pending', response = {}, error = { message: 'Oops' } }) => 'success' === status ? ({ type: SET_PHONE, payload: {...response } }) : customErrActionBundle
 export const setRole = ({ status = 'pending', response = {}, error = { message: 'Oops' } }) => 'success' === status ? ({ type: SET_ROLE, payload: {...response } }) : customErrActionBundle
+export const setUnionID = ({ status = 'pending', response = {}, error = { message: 'Oops' } }) => 'success' === status ? ({ type: UNION_ID, payload: {...response } }) : customErrActionBundle
 
 // async Actions
 export const login = () => (dispatch, getState) => {
@@ -108,6 +111,7 @@ export const login = () => (dispatch, getState) => {
     dispatch(setPhone({ status: 'pending' }))
     dispatch(setAvatar({ status: 'pending' }))
     dispatch(setRole({ status: 'pending' }))
+    dispatch(setUnionID({ status: 'pending' }))
     dispatch(setPixelRatio({ status: 'pending' }))
     dispatch(setWindowHeight({ status: 'pending' }))
     dispatch(setWindowWidth({ status: 'pending' }))
@@ -121,6 +125,7 @@ export const login = () => (dispatch, getState) => {
             dispatch(setPlatform({ platform: response.equipmentSystem.split(' ')[0].toLowerCase(), status: 'success' }))
             dispatch(setAvatar({ status: 'success', response }))
             dispatch(setRole({ status: 'success', response }))
+            dispatch(setUnionID({ status: 'success', response }))
             dispatch(setPixelRatio({ status: 'success', response }))
             dispatch(setWindowHeight({ status: 'success', response }))
             dispatch(setWindowWidth({ status: 'success', response }))
@@ -139,6 +144,7 @@ export const login = () => (dispatch, getState) => {
             dispatch(setAvatar({ status: 'failure', error }))
             dispatch(setPhone({ status: 'failure', error }))
             dispatch(setRole({ status: 'failure', error }))
+            dispatch(setUnionId({ status: 'success', error }))
             dispatch(setPixelRatio({ status: 'failure', response }))
             dispatch(setWindowWidth({ status: 'failure', error }))
             dispatch(setWindowHeight({ status: 'failure', error }))
@@ -214,8 +220,7 @@ export const checkLoginStatus = () => (dispatch, getState) => {
         })
 }
 
-export const refreshUserInformations = ({ name, avatar, firstAccess, platform, equipmentModel, phone, code, token, role, pixelRatio, windowHeight, windowWidth, screenHeight, statusHeight }) => (dispatch, getState) => {
-
+export const refreshUserInformations = ({ name, avatar, firstAccess, platform, equipmentModel, phone, code, token, role, unionID, pixelRatio, windowHeight, windowWidth, screenHeight, statusHeight }) => (dispatch, getState) => {
     let response = {
         userInfo: {
             nickName: name,
@@ -230,8 +235,12 @@ export const refreshUserInformations = ({ name, avatar, firstAccess, platform, e
         screenHeight,
         statusHeight,
         phone,
-        role
+        role,
+        unionID
     }
+
+    wepy.$instance.globalData.unionID = unionID
+    wepy.$instance.globalData.allOpenIDHash(token)
 
     dispatch(setFirstAccess({ status: 'success', firstAccess }))
     dispatch(setPlatform({ status: 'success', platform }))
@@ -247,6 +256,7 @@ export const refreshUserInformations = ({ name, avatar, firstAccess, platform, e
     dispatch(setScreenHeight({ status: 'success', response }))
     dispatch(setPhone({ status: 'success', response }))
     dispatch(setRole({ status: 'success', response }))
+    dispatch(setUnionID({ status: 'success', response }))
     dispatch(setStatusBarHeight(statusHeight))
 }
 
@@ -343,6 +353,13 @@ const ACTIONS_HANDLERS = {
             data: role
         })
         return Object.assign({}, user, { role })
+    },
+    [UNION_ID]: (user, { payload: { unionID } }) => {
+        wepy.setStorage({
+            key: 'unionID',
+            data: unionID
+        })
+        return Object.assign({}, user, { unionID })
     },
     [SET_STATUS_BAR_HEIGHT]: (user, { payload: { height } }) => {
         wepy.setStorage({

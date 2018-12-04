@@ -168,8 +168,14 @@ export default {
     getNewSpecialCourse(params) {
         return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params, isVisitor: true})
     },
-    // 专题投票 POST /api/course/sendUserPoll
+    // 专题投票
     sendUserPoll(params) {
         return fetch({method: 'post', url: 'course/sendUserPoll', params: params})
+    },
+
+    /*--------------------其他公共-----------------------*/
+    // 获取staff的openid
+    allOpenIDHash(params) {
+        return fetch({method: 'post', url: 'common/getAllOpenIDHash', params: params, isVisitor: true})
     }
 }
