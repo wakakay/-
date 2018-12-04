@@ -71,7 +71,7 @@
             padding:0 32rpx 40rpx;
             .ui-item{
                 width:100%;height:346rpx;padding:40rpx 32rpx;margin-top:24rpx;background-size:cover;background-repeat:no-repeat;background-position:center center;text-align:left;line-height:1;border-radius:@border-radius-20;position:relative;
-                .cell-title{padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;width:540rpx;line-height:50rpx;}
+                .cell-title{width:460rpx;padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;line-height:50rpx;overflow:hidden;}
                 .ui-skills{
                     font-size: 26rpx;color: rgba(255,255,255,.70);
                     text{margin:8rpx;}
@@ -90,6 +90,7 @@
                         .cell-progress-number{color:@color-white;}
                     }
                     .cell-text{font-size:46rpx;color:@color-white;line-height:68rpx;}
+                    .cell-status{width:140rpx;height:60rpx;background-color:@background-mask-white;font-size:34rpx;color:@color-white;text-align:center;line-height:60rpx;border-radius:@border-radius-32;}
                 }
                 .cell-button{width:148rpx;height:60rpx;font-size:30rpx;font-weight:700;background-color:@background-white;color:@color-blue;border-radius:60rpx;position:absolute;right:30rpx;bottom:40rpx;}
             }
@@ -245,8 +246,8 @@
                         <view class="cell-subtitle">{{item.senceTarget}}</view>
 
                         <view class="ui-status">
-                            <text class="icon-clock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
-                            <text class="cell-text" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</text>
+                            <text class="icon-lock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
+                            <view class="cell-status" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</view>
                             <view class="ui-circular-progress" wx:else>
                                 <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
                                 <view class="ui-wrapper ui-right">
@@ -347,6 +348,7 @@
             </view>
         </view>
     </view>
+    <jn-toast></jn-toast>
 </template>
 
 <script>
@@ -354,6 +356,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
+    import toast from '../../components/common/toast'
     import AuthorizationModal from '../../components/AuthorizationModal/index'
     import {course as courseApi, registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
@@ -379,7 +382,8 @@
 
         components = {
             'jn-header': header,
-            'jn-loading': Loading
+            'jn-loading': Loading,
+            'jn-toast': toast
         }
 
         data = {
@@ -674,13 +678,32 @@
             }
         }
 
-        onShareAppMessage() {
+        /**
+         * 新赠一得一设计逻辑：
+         1.进入课程详情页的地方有很多个，但共用的接口只有一个。…、服务通知等，roleType(请求角色)默认为normal(普通)。
+         前端需要修改多处？
+         2.赠送者发出去的「课程赠送页」需附带roleType=receiver(受赠者)和赠送时生成的giftID(需要一个生成giftID的新接口)
+         3.赠送者发出「课程赠送页」后回到原来的「课程详情页」(接口参数中roleType=gifter(赠送者)和赠送时生成的giftID)。
+         4.受赠者[其它用户(包括赠送者)]点击该「课程赠送页」是进入课程详情页(接口参数中roleType=receiver和赠送时生成的giftID，接口内埋点——打开赠送页面记录)，此时的课程详情页已经确定了受赠者能不能领取课程(具体表现为按钮状态：购买/赠一得一/领取)。
+         怎么提示用户他已经领取超过2次？
+         5.受赠者点击「领取」或「微课列表按钮」并确认授权后上报一个新接口(记录用户领取成功/失败情况，接口内埋点——接受领取记录)。
+         接口返回领取成功 or 失败后前端动态修改按钮状态 or 重新load页面？
+         6.(异步)受赠者若能成功接受：发服务通知给赠送者或接收者。
+         如何保证赠送者或受赠者均有有效的formID？
+         7.领取成功者的免费有效期为3天。定时任务监控。Zebin Lin Allan Xie 看看哪些地方是跟产品设计和前端实现预期不符的地方。
+         */
+        onShareAppMessage(event) {
             let self = this
+            let dataset = event.target.dataset
+            let path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
+            if (dataset && dataset.role) {
+                path += '&roleType=receiver'
+            }
 
             return {
-                title: '我在即能学习',
-                path: `/pages/course-module/course-details?id=${self.paramsInfo.id}`,
-                success: function (respone) {
+                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                path: path,
+                complete(respone) {
                     wepy.$instance.globalData.getHuilder('新课程详情页/分享', 'click', `${self.courseDetail.name}`)
 
                     shareApi.reportSharing({
@@ -697,9 +720,6 @@
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         type: shareDictionary.SHARE_COURSE.type,
                     })
-                },
-                fail: function (respone) {
-
                 }
             }
         }
