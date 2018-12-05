@@ -118,11 +118,11 @@ export default {
         return fetch({method: 'post', url: 'reviewTestPost/v1/post', params: params})
     },
     /*--------------------微课完成-----------------------*/
-    // 发送评论
+    // 第一次完成微课的，奖励即能币
     sendFinish(params) {
         return fetch({method: 'post', url: 'course/sendFinish', params: params})
     },
-    // 发送评论
+    // 完成微课的信息
     sendFinishResults(params) {
         return fetch({method: 'post', url: 'MVP3/getSenceFinishInitPage', params: params})
     },
@@ -135,6 +135,14 @@ export default {
     // 课程详情
     courseDetail(params) {
         return fetch({method: 'post', url: 'MVP5/getCourseDetail', params: params, isVisitor: true})
+    },
+    // 生成赠一得一
+    createGiftID(params) {
+        return fetch({method: 'post', url: 'gift/getGiftID', params: params})
+    },
+    // 接受赠一得一
+    receiveCourseGift(params) {
+        return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params})
     },
     // 课程详情
     courseShareCount(params) {

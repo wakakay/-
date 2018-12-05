@@ -156,6 +156,9 @@
             }
             .ui-button-list{
                 margin-top:20rpx;
+                &.ui-column button:nth-of-type(1){
+                    width:100%;background-color:@background-blue;color:@color-white;
+                }
                 button{width:326rpx;height:100rpx;font-size:35rpx;font-weight:700;border-radius:@border-radius-20;line-height: 100rpx;}
                 button:nth-of-type(1){background-color:@background-gray-F4;color:@color-blue;}
                 button:nth-of-type(2){background-color:@background-blue;color:@color-white;}
@@ -316,22 +319,7 @@
             </repeat>
         </view>
 
-        <!--<view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
-            <view class="ui-container" :class="{'is-fixed': isFixed}">
-                <view class="ui-text main-justify">
-                    <text>获取整个课程</text>
-                    <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
-                </view>
-                <view class="ui-button-list">
-                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                        bindgetuserinfo="getAuthorize"
-                        hover-stay-time="100"
-                        @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
-                </view>
-            </view>
-        </view>-->
-
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!paramsInfo.giftID && courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-center">
                     <text>赠出后，好友成功领取后，你将获得此课程</text>
@@ -343,12 +331,29 @@
                     <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
                             data-role="1"
                             bindgetuserinfo="getAuthorize"
-                            hover-stay-time="100">赠一得一</button>
+                            hover-stay-time="100">{{courseDetail.giftButtonMsg}}</button>
+                </view>
+            </view>
+        </view>
+
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{paramsInfo.giftID}}">
+            <view class="ui-container" :class="{'is-fixed': isFixed}">
+                <view class="ui-text main-center">
+                    <text>3天内学完所有微课，你将获取本课程</text>
+                </view>
+                <view class="ui-button-list ui-column">
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
+                            data-role="1"
+                            bindgetuserinfo="getAuthorize"
+                            hover-stay-time="100" @tap.stop="getStudy">马上学习{{countDown}}</button>
                 </view>
             </view>
         </view>
     </view>
-    <jn-toast></jn-toast>
+    <jn-actionSheet :isShow.sync="isShowActionSheet"
+            :title.sync="actionSheetTitle"
+            :content.sync="actionSheetContent"
+            buttonConfirm='我知道了'></jn-actionSheet>
 </template>
 
 <script>
@@ -356,9 +361,9 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import toast from '../../components/common/toast'
+    import actionSheet from '../../components/common/actionSheet'
     import AuthorizationModal from '../../components/AuthorizationModal/index'
-    import {course as courseApi, registered as fetch} from '../../api'
+    import {course as courseApi, share as shareApi, registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
     import {CustomError} from '../../errors'
@@ -383,7 +388,7 @@
         components = {
             'jn-header': header,
             'jn-loading': Loading,
-            'jn-toast': toast
+            'jn-actionSheet': actionSheet
         }
 
         data = {
@@ -399,7 +404,12 @@
             shareSenceID: null,
             paramsInfo: {}, // 接受地址栏传进来的值
             roleType: 'gifter', // {赠送者: gifter, 受赠者: receiver}
-            courseDetail: {}
+            giftID: '',
+            courseDetail: {},
+            countDown: '',
+            isShowActionSheet: false,
+            actionSheetTitle: '已送出',
+            actionSheetContent: '好友领取后，你即可免费获得此课程。'
         }
 
         onLoad(parameter) {
@@ -464,10 +474,13 @@
         initialize() {
             let self = this
             let postData = {
-                token: self.systemInfo.token,
+                token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
                 courseID: self.paramsInfo.id,
                 source: self.paramsInfo.source,
                 wxPushType: self.paramsInfo.wxPushType
+            }
+            if (self.paramsInfo.giftID) {
+                postData.giftID = self.paramsInfo.giftID
             }
 
             fetch.courseDetail(postData).then((respone) => {
@@ -483,6 +496,7 @@
                     }
                 })
                 self.courseDetail.price = parseFloat(self.courseDetail.price)
+                self.courseDetail.giftButtonMsg = self.courseDetail.giftButtonMsg || '赠一得一'
 
                 // 微课分享进来重定向
                 if (self.shareSenceID && 'defaultToken' !== self.systemInfo.token) {
@@ -511,6 +525,11 @@
             }).catch(error => {
                 self.isLoaded = true
             })
+
+            if (self.isTokenSet) {
+                self.__getGiftID()
+                self.__countDown()
+            }
         }
         /**
          * 去微课学习页面
@@ -543,12 +562,55 @@
                         self.$navigate(`/pages/Review/index`, {courseID, senceID})
                         break
                     case 'needPay': // 付费
-                        self.$navigate(`/pages/course-module/course-pay`, {senceID})
+                        self.$navigate(`/pages/course-module/course-pay`, {courseID})
                         break
                     default:
                         navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
                 }
             }
+        }
+        /**
+         * 获取赠一得一ID
+         */
+        __getGiftID() {
+            let self = this
+            let postData = {
+                token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
+                courseID: self.paramsInfo.id
+            }
+
+            fetch.createGiftID(postData).then((respone) => {
+                self.giftID = respone
+            })
+        }
+        /**
+         * 倒计时
+         */
+        __countDown() {
+            let self = this
+            let giftCountdown = 3600 * 24 * 3 // self.courseDetail.giftCountdown
+            let timer = setInterval(function () {
+                if (!giftCountdown) {
+                    clearInterval(timer)
+                }
+                let dd = Math.floor(giftCountdown / 60 / 60 / 24)
+                let hh = Math.floor((giftCountdown / 60 / 60) % 24)
+                let mm = Math.floor(giftCountdown / 60 % 60)
+                let ss = Math.floor(giftCountdown % 60)
+
+                if (hh < 10) {
+                    hh = "0" + hh
+                }
+                if (mm < 10) {
+                    mm = "0" + mm
+                }
+                if (ss < 10) {
+                    ss = "0" + ss
+                }
+                giftCountdown--
+                self.countDown = `（剩${dd}天${hh}小时${mm}分钟${ss}秒）`
+                self.$apply()
+            }, 1000)
         }
         /**
          * 微信点击统计
@@ -662,12 +724,26 @@
                 }).then((respone) => { // 授权成功
                     // 赠一得一
                     if (role) {
+                        self.initialize()
                         return
                     }
                     item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
                 }).catch(error => { // 拒接授权
 
                 })
+            },
+            getStudy() {
+                let self = this
+                let postData = {
+                    token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
+                    courseID: self.paramsInfo.id,
+                    giftID: self.paramsInfo.giftID
+                }
+
+                fetch.receiveCourseGift(postData).then((respone) => {
+                    self.giftID = respone
+                })
+
             }
         }
         events = {
@@ -695,33 +771,45 @@
         onShareAppMessage(event) {
             let self = this
             let dataset = event.target.dataset
-            let path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
-            if (dataset && dataset.role) {
-                path += '&roleType=receiver'
-            }
+
+            /*if (!(dataset && dataset.role)) {
+                self.__share()
+                return
+            }*/
+
+            setTimeout(() => {
+                self.isShowActionSheet = true
+                self.$apply()
+
+                wepy.$instance.globalData.getHuilder('新课程详情页/分享', 'click', `${self.courseDetail.name}`)
+
+                shareApi.reportSharing({
+                    token: self.systemInfo.token,
+                    type: shareDictionary.SHARE_COURSE.type,
+                    courseID: self.paramsInfo.id
+                })
+
+                wx.reportAnalytics('share_event', {
+                    role: self.systemInfo.role,
+                    nickname: self.systemInfo.name,
+                    coursename: self.courseDetail.name,
+                    sencename: '/',
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: shareDictionary.SHARE_COURSE.type
+                })
+            }, 2000)
 
             return {
                 title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
-                path: path,
-                complete(respone) {
-                    wepy.$instance.globalData.getHuilder('新课程详情页/分享', 'click', `${self.courseDetail.name}`)
-
-                    shareApi.reportSharing({
-                        token: self.systemInfo.token,
-                        type: shareDictionary.SHARE_COURSE.type,
-                        courseID: self.paramsInfo.id
-                    })
-
-                    wx.reportAnalytics('share_event', {
-                        role: self.systemInfo.role,
-                        nickname: self.systemInfo.name,
-                        coursename: self.courseDetail.name,
-                        sencename: '/',
-                        channel: self.entrance.mappers[self.entrance.scenceID],
-                        type: shareDictionary.SHARE_COURSE.type,
-                    })
-                }
+                path: `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
             }
+        }
+
+        __share(giftID) {
+            let self = this
+            console.log('giftID', giftID)
+
+
         }
 
     }
