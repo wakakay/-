@@ -132,6 +132,10 @@
         button{background:none;}
         image{width:160rpx;height:160rpx;}
     }
+    .ui-registed-toast{
+        position: absolute;bottom:110rpx;animation-name:fadeOut;animation-duration:1s;animation-delay:5s;animation-iteration-count:1;animation-fill-mode:forwards;
+        image{height: 68rpx;width: 750rpx;}
+    }
 </style>
 
 <template>
@@ -262,7 +266,9 @@
 
         <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
     </scroll-view>
-
+    <view class="ui-registed-toast courseFadeOut" wx:if="{{isShowToast}}">
+        <image src="http://wx-small.runwise.cn/image/imageIDc8fe4c4dd6c49f96cf67b9fad670.png" />
+    </view>
     <form bindsubmit="handleSavePushCode" report-submit>
         <view class="ui-gift" wx:if="{{isShowGift}}">
             <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
@@ -347,15 +353,16 @@
             isShowGift: false,
             isShowEvaluate:false,
             isShowCourseSeries:false,
-            courseSeriesModalList:[]
+            courseSeriesModalList:[],
+            isShowToast:false,
 
         }
 
-        onLoad() {
+        onLoad(data) {
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-
+            self.isShowToast = data.isShowToast ? true : false;
             let storageToken = wx.getStorageSync("token") || 'defaultToken'
             if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
