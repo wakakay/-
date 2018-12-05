@@ -177,5 +177,10 @@ export default {
     // 获取staff的openid
     allOpenIDHash(params) {
         return fetch({method: 'post', url: 'common/getAllOpenIDHash', params: params, isVisitor: true})
-    }
+    },
+    // 训练营 提问
+    sendTeamPost(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPost', params: params, isVisitor: true})
+    },
+
 }

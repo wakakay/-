@@ -595,7 +595,7 @@
 									<view class="cell-tip">发起提问</view>
 								</view>
 							</view>
-							<view class="cell-question-name">{{item.postContent}}</view>
+							<text class="cell-question-name">{{item.postContent}}</text>
 							<view class="ui-bar" wx:if="{{item.senceName}}" @tap.stop="handleStartSence" data-sence-i-d="{{item.senceID}}" data-course-i-d="{{ item.courseID }}">
 								<view class="cell-name">{{item.senceName}}</view>
 								<view class="ui-arrow">
