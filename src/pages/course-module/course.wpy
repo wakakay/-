@@ -133,8 +133,8 @@
         image{width:160rpx;height:160rpx;}
     }
     .ui-registed-toast{
-        position: absolute;bottom:110rpx;animation-name:fadeOut;animation-duration:1s;animation-delay:5s;animation-iteration-count:1;animation-fill-mode:forwards;
-        image{height: 68rpx;width: 750rpx;}
+        position: absolute;bottom:110rpx;left:24rpx;
+        image{height: 84rpx;width: 452rpx;}
     }
 </style>
 
@@ -266,8 +266,8 @@
 
         <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
     </scroll-view>
-    <view class="ui-registed-toast courseFadeOut" wx:if="{{isShowToast}}">
-        <image src="http://wx-small.runwise.cn/image/imageIDc8fe4c4dd6c49f96cf67b9fad670.png" />
+    <view class="ui-registed-toast courseFadeOut" wx:if="{{isShowToast}}" @tap.stop="getCloseToast">
+        <image src="http://wx-small.runwise.cn/image/imageID7618264dab0493be413342508fae.png" />
     </view>
     <form bindsubmit="handleSavePushCode" report-submit>
         <view class="ui-gift" wx:if="{{isShowGift}}">
@@ -446,6 +446,11 @@
         }
 
         methods = {
+            // 隐藏 toast
+            getCloseToast(){
+                let self = this;
+                self.isShowToast = false;
+            },
             // 系列 组件 的返回按钮
             OnClickBack(){
                 let self = this
