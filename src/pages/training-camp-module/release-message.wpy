@@ -1,24 +1,26 @@
 <template>
     <view class="ui-team-announce">
         <jn-header title="问题和想法"></jn-header>
-        <view class="announce-top" wx:if="{{senceID}}">
-            <image class="announce-top-img" mode="aspectFill" src="{{imageUrl}}"/>
+        <view class="ui-announce-top" wx:if="{{senceID}}">
+            <image class="cell-img" mode="aspectFill" src="{{imageUrl}}"/>
             <view>
-                <view class="announce-top-title">{{senceName}}</view>
-                <view class="announce-top-desc">{{skillGroup}}</view>
+                <view class="cell-title">{{senceName}}</view>
+                <view class="cell-desc">{{skillGroup}}</view>
             </view>
         </view>
-        <view class="announce-content">
-      <textarea focus="{{true}}" class="announce-content-input" placeholder-class="announce-content-input-p"
-                placeholder="{{action==='question'?'请输入你的问题或想法':'请输入消息内容'}}" bindinput="handleCommentInput"
-                maxlength="{{2000}}"></textarea>
-            <view class="announce-content-tip">还可以输入{{computeStrLength}}个字</view>
+        <view class="ui-content">
+            <textarea   maxlength="2000"
+                bindinput="handleCommentInput"
+                value="{{inputValue}}"
+                placeholder-class="cell-placeholder"
+                class="cell-input" focus="{{true}}" 
+                placeholder="{{action==='question'?'请输入你的问题或想法':'请输入消息内容'}}" />
+            <view class="cell-tip">还可以输入{{computeStrLength}}个字</view>
         </view>
-        <view class="team-learning-article__footer-btn-wapper" style="{{ipX?'padding-bottom:40rpx':''}}">
-            <button wx:if="{{readyToSend}}" class="team-learning-article__footer-btn " plain="{{ true }}"
+        <view class="ui-button" style="{{ipX?'padding-bottom:40rpx':''}}">
+            <button class="cell-item" :class="{'cell-disable' : !readyToSend}" plain="{{ true }}"
                     @tap.stop="handleSubmit">提 交
             </button>
-            <button wx:else class="team-learning-article__footer-btn disable" plain="{{ true }}">提 交</button>
         </view>
     </view>
 </template>
@@ -26,49 +28,28 @@
 <script>
     import wepy from "wepy";
     import {sleep} from "../../utils"
-    import loadingMixin from "../../mixins/loading";
     import header from '../../components/common/header'
-    import {
-        showErrorPage
-    } from "../../utils";
-    import Toast from "wepy-com-toast";
-    import {
-        course as courseApi, team as teamApi
-    } from "../../api";
-    import {
-        NetworkError
-    } from "../../errors";
-    import {
-        getStore,
-        connect
-    } from "wepy-redux";
+    import {registered as fetch} from "../../api";
+    import {getStore,connect} from "wepy-redux";
 
     const store = getStore();
     const state = store.getState();
     @connect({
         userName(state) {
             return state.user.name;
-        }, // mapState 即getters
-        avatar(state) {
-            return state.user.avatar;
         },
         token(state) {
             // return 'userID67eaa3af1eca4c5e99d90ef07c8b0353-1529130257419-29071e22805ed65d7aba43ad3fc07aad'
             return state.user.token;
-        },
-        code(state) {
-            return state.user.code;
         },
         ipX(state) {
             return state.user.equipmentModel.startsWith('iPhone X')
         }
     })
     export default class TeamLearningAnnounce extends wepy.page {
-        mixins = [loadingMixin]; // end mixins
-
         computed = {
             computeStrLength() {
-                return 2000 - this.inputValue.replace(/\s/g, "").length
+                return 2000 - this.inputValue.length
             }
         }
         data = {
@@ -102,54 +83,65 @@
 
         methods = {
             handleSubmit() {
-                teamApi.sendTeamPost({
-                    token: this.token,
-                    senceID: this.senceID,
-                    action: this.action,
-                    postContent: this.inputValue,
-                    teamID: this.teamID
-                })
-                    .then(data => {
-                        wx.showToast({
-                            icon: 'success',
-                            title: '消息发布成功'
-                        })
-                        return sleep(1)
-                            .then(() => {
-                                wx.navigateBack({
-                                    delta: 1
-                                })
-                            })
+                let self = this ;
+
+                if(!self.readyToSend) {
+                    return;
+                }
+                let postData = {
+                    token: self.token,
+                    senceID: self.senceID,
+                    action: self.action,
+                    teamID: self.teamID,
+                    postContent: {postContent:self.inputValue},
+                }
+                fetch.sendTeamPost(postData).then((respone) => {
+                    wx.showToast({
+                        icon: 'success',
+                        title: '消息发布成功'
                     })
+                    return sleep(1)
+                    .then(() => {
+                        wx.navigateBack({
+                            delta: 1
+                        })
+                    })
+                })
             },
-            handleCommentInput({
-                                   detail: {
-                                       value
-                                   }
-                               }) {
-                this.inputValue = value
-                this.readyToSend = value ? true : false
-                this.$apply()
+            handleCommentInput(event) {
+                let self = this;
+                let {detail:{value}} = event;
+                self.inputValue = value
+                self.readyToSend = value.length ? true : false
+                console.log(self.readyToSend)
+                self.$apply()
             },
-        }; // end methods
-        events = {}; // end events
+        };
     }
 </script>
 
 <style lang="less" scoped>
     @import "../../assets/style/theme";     
     .ui-team-announce{
-        width: 100%;height: 100%;background-color: @background-gray-F4;
-        .announce-top {width: 100%;height: 180rpx;background-color: @background-white;display: flex;align-items: center;border-top: @border-gray solid 2rpx;}
+        width: 100%;height: 100%;background-color: @background-gray-F4;overflow:hidden;
+        .ui-announce-top{
+            width: 100%;height: 180rpx;background-color: @background-white;display: flex;align-items: center;border-top: @border-gray solid 2rpx;
+            .cell-img{margin-left: 56rpx;width: 120rpx;height: 120rpx;}
+            .cell-title{width: 500rpx;font-family: PingFangSC-Semibold;font-size: 32rpx;color: @color-black;line-height: 40rpx;margin-left: 16rpx;}
+            .cell-desc{font-family: PingFangSC-Regular;font-size: 24rpx;color: @color-gray;line-height: 26rpx;margin-top: 28rpx;margin-left: 16rpx;}
+
+        }
+        .ui-content{
+            width: 100%;height: 350rpx;position: relative;border-top: 20rpx solid @border-gray;background-color: @background-white;display: flex;flex-direction: column;align-items: center;height: 680rpx;
+            .cell-input {font-size: 16px;color: @color-black;width: 670rpx;min-height: 220rpx;margin-top: 44rpx;height:560rpx;}
+            .cell-placeholder {color:@color-gray;}
+            .cell-tip{font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-gray;text-align: right;position: absolute;right: 26rpx;bottom: 22rpx}
+
+        }
+        .ui-button{
+            width: 100%;height: 140rpx;position: fixed;left: 0;bottom: 0;display: flex;justify-content: center;align-items: center;background-color: @background-white;border-top: @border-gray 2rpx solid;z-index: 1100;
+            .cell-item{width: 702rpx;height: 100rpx;line-height: 100rpx;background-color: @background-blue !important;color: @color-white !important;border: 0 !important;border-radius: @border-radius-20;}
+            .cell-item.cell-disable {opacity: 0.2;}
+        }
     }
-  .team-learning-article__footer-btn-wapper {width: 100%;height: 140rpx;position: fixed;left: 0;bottom: 0;display: flex;justify-content: center;align-items: center;background-color: @background-white;border-top: @border-gray 2rpx solid;z-index: 1100;}
-  .team-learning-article__footer-btn {width: 702rpx;height: 100rpx;line-height: 100rpx;background-color: @background-blue !important;color: @color-white !important;border: 0 !important;border-radius: @border-radius-20;}
-  .disable {opacity: 0.2;}
-  .announce-top-img {margin-left: 56rpx;width: 120rpx;height: 120rpx;}
-  .announce-top-title {width: 500rpx;font-family: PingFangSC-Semibold;font-size: 32rpx;color: @color-black;line-height: 40rpx;margin-left: 16rpx;}
-  .announce-top-desc {font-family: PingFangSC-Regular;font-size: 24rpx;color: @color-gray;line-height: 26rpx;margin-top: 28rpx;margin-left: 16rpx;}
-  .announce-content {width: 100%;height: 350rpx;position: relative;border-top: 20rpx solid @border-gray;background-color: @background-white;display: flex;flex-direction: column;align-items: center;}
-  .announce-content-input {font-size: 16px;color: @color-black;width: 670rpx;min-height: 220rpx;height: fit-content;margin-top: 44rpx;}
-  .announce-content-input-p {color:@color-gray;}
-  .announce-content-tip {font-family: PingFangSC-Regular;font-size: 28rpx;color: @color-gray;text-align: right;position: absolute;right: 26rpx;bottom: 22rpx}
 </style>
