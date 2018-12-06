@@ -1,6 +1,7 @@
 // Contents
 import wepy from 'wepy'
-import { getStorageAsync, setStorageAsync } from './helper'
+import {getStorageAsync, setStorageAsync} from './helper'
+
 export const OPEN_ACTIVITY = 'OPEN_ACTIVITY'
 export const CLOSE_ACTIVITY = 'CLOSE_ACTIVITY'
 export const SET_PARTICIPATION_TIMES = 'SET_PARTICIPATION_TIMES'
@@ -17,143 +18,131 @@ export const SET_POSTER = 'SET_POSTER'
 export const FAILURE = 'FAILURE'
 
 const customErrActionBundle = {
-  type: FAILURE,
-  payload: {
-    status: 'failure',
-    response: {},
-    error: {message: '错误'}
-  } // end payload
+    type: FAILURE,
+    payload: {
+        status: 'failure',
+        response: {},
+        error: {message: '错误'}
+    }
 }
 
-// async Actions Creaters
-
-// sync Actions Creaters
 export const openActivity = () => {
-  return {
-    type: OPEN_ACTIVITY
-  } // end payload
-} // end openActivity
+    return {
+        type: OPEN_ACTIVITY
+    }
+}
 
 export const closeActivity = () => {
-  return {
-    type: CLOSE_ACTIVITY
-  } // end payload
-} // end openActivity
+    return {
+        type: CLOSE_ACTIVITY
+    }
+}
 
 export const setParticipationTimes = times => {
-  return {
-    type: SET_PARTICIPATION_TIMES,
-    payload: {
-      times
+    return {
+        type: SET_PARTICIPATION_TIMES,
+        payload: {
+            times
+        }
     }
-  } // end payload
-} // end setParticipationTimes
+}
 
 export const clearParticipationTimes = () => {
-  return {
-    type: CLEAR_PARTICIPATION_TIMES
-  } // end payload
-} // end clearParticipationTimes
+    return {
+        type: CLEAR_PARTICIPATION_TIMES
+    }
+}
 
 export const setParticipationDate = date => {
-  return {
-    type: SET_PARTICIPATION_DATE,
-    payload: {
-      date
+    return {
+        type: SET_PARTICIPATION_DATE,
+        payload: {
+            date
+        }
     }
-  } // end payload
-} // end setParticipationDate
+}
 
 export const setPoster = poster => {
-  return {
-    type: SET_POSTER,
-    payload: {
-      poster
+    return {
+        type: SET_POSTER,
+        payload: {
+            poster
+        }
     }
-  } // end payload
-} // end setPoster
+}
 
-export const refreshActivity = ({ participationTimes, participationDate, beginDate, terminalDate, isActivityOn, poster }) => ({
-  type: REFRESH_ACTIVITY,
-  payload: { participationTimes, participationDate, beginDate, terminalDate, isActivityOn, poster }
-}) // end refreshActivity
+export const refreshActivity = ({participationTimes, participationDate, beginDate, terminalDate, isActivityOn, poster}) => ({
+    type: REFRESH_ACTIVITY,
+    payload: {participationTimes, participationDate, beginDate, terminalDate, isActivityOn, poster}
+})
 
-// handlers
 const ACTIONS_HANDLERS = {
-  [OPEN_ACTIVITY]: (activity) => {
-    let tmp = {...activity, isActivityOn: true}
+    [OPEN_ACTIVITY]: (activity) => {
+        let tmp = {...activity, isActivityOn: true}
         // console.log('准备设置activity storage', tmp)
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('设置 isActivityOn失败', error))
-    return tmp
-  },
-  [CLOSE_ACTIVITY]: (activity) => {
-    // console.log('in close activity')
-    let tmp = {...activity, isActivityOn: false}
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('设置 isActivityOn失败', error))
-    return tmp
-  },
-  [SET_PARTICIPATION_TIMES]: (activity, { payload: { times } }) => {
-    let tmp = {...activity, participationTimes: times}
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('设置 times失败', error))
-    return tmp
-  },
-  [CLEAR_PARTICIPATION_TIMES]: (activity) => {
-    let tmp = {...activity, participationTimes: 0}
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('清除 times失败', error))
-    return tmp
-  },
-  [SET_PARTICIPATION_DATE]: (activity, { payload: { date } }) => {
-    let tmp = {...activity, participationDate: date}
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('设置 date失败', error))
-    return tmp
-  },
-  [SET_POSTER]: (activity, { payload: { poster } }) => {
-    let tmp = {...activity, poster}
-    setStorageAsync({
-      key: 'activity',
-      value: tmp
-    })
-      .catch(error => console.log('设置 poster失败', error))
-    return tmp
-  },
-  [REFRESH_ACTIVITY]: (activity, { payload }) => {
-    setStorageAsync({
-      key: 'activity',
-      value: { ...payload }
-    })
-      .catch(error => console.log('fail to setting activity storage', error))
-    return { ...payload }
-  }
-} // end handlers
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('设置 isActivityOn失败', error))
+        return tmp
+    },
+    [CLOSE_ACTIVITY]: (activity) => {
+        let tmp = {...activity, isActivityOn: false}
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('设置 isActivityOn失败', error))
+        return tmp
+    },
+    [SET_PARTICIPATION_TIMES]: (activity, {payload: {times}}) => {
+        let tmp = {...activity, participationTimes: times}
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('设置 times失败', error))
+        return tmp
+    },
+    [CLEAR_PARTICIPATION_TIMES]: (activity) => {
+        let tmp = {...activity, participationTimes: 0}
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('清除 times失败', error))
+        return tmp
+    },
+    [SET_PARTICIPATION_DATE]: (activity, {payload: {date}}) => {
+        let tmp = {...activity, participationDate: date}
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('设置 date失败', error))
+        return tmp
+    },
+    [SET_POSTER]: (activity, {payload: {poster}}) => {
+        let tmp = {...activity, poster}
+        setStorageAsync({
+            key: 'activity',
+            value: tmp
+        }).catch(error => console.log('设置 poster失败', error))
+        return tmp
+    },
+    [REFRESH_ACTIVITY]: (activity, {payload}) => {
+        setStorageAsync({
+            key: 'activity',
+            value: {...payload}
+        }).catch(error => console.log('fail to setting activity storage', error))
+        return {...payload}
+    }
+}
 
 export const activityReducer = (activity = {
-  participationTimes: 0, // 用户参与次数
-  participationDate: -1, // 用户参与时间 时间戳
-  beginDate: -1, // 活动开始时间 时间戳
-  terminalDate: -1, // 活动结束时间 时间戳
-  isActivityOn: false, // 是否开启活动
-  poster: 'http://wx-small.runwise.cn/image/imageIDd48efe7053f43db7f5fe023ae523.png' // 海报
+    participationTimes: 0, // 用户参与次数
+    participationDate: -1, // 用户参与时间 时间戳
+    beginDate: -1, // 活动开始时间 时间戳
+    terminalDate: -1, // 活动结束时间 时间戳
+    isActivityOn: false, // 是否开启活动
+    poster: 'http://wx-small.runwise.cn/image/imageIDd48efe7053f43db7f5fe023ae523.png' // 海报
 }, action) => {
-  const handler = ACTIONS_HANDLERS[action.type]
-  return handler ? handler(activity, action) :activity 
+    const handler = ACTIONS_HANDLERS[action.type]
+    return handler ? handler(activity, action) : activity
 }

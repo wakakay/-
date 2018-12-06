@@ -319,7 +319,7 @@
             </repeat>
         </view>
 
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!paramsInfo.giftID && courseDetail.price>0}}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!paramsInfo.giftID && isShowButton}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-center">
                     <text>赠出后，好友成功领取后，你将获得此课程</text>
@@ -336,16 +336,16 @@
             </view>
         </view>
 
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{paramsInfo.giftID}}">
-            <view class="ui-container" :class="{'is-fixed': isFixed}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{paramsInfo.giftID && isShowButton}}">
+            <view class="ui-container is-fixed">
                 <view class="ui-text main-center">
                     <text>3天内学完所有微课，你将获取本课程</text>
                 </view>
                 <view class="ui-button-list ui-column">
-                    <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
-                            data-role="1"
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                            data-role="2"
                             bindgetuserinfo="getAuthorize"
-                            hover-stay-time="100" @tap.stop="getStudy">马上学习{{countDown}}</button>
+                            hover-stay-time="100" @tap.stop="getReceiveCourse">马上学习{{countDown}}</button>
                 </view>
             </view>
         </view>
@@ -401,12 +401,14 @@
             targetScroll: 0,
             isLoaded: false,
             isMore: false, // 是否展示更多概述
-            shareSenceID: null,
+            isShowButton: false, // 是否显示底部按钮
+            shareSenceID: null, // 分享进来的微课id
             paramsInfo: {}, // 接受地址栏传进来的值
             roleType: 'gifter', // {赠送者: gifter, 受赠者: receiver}
             giftID: '',
-            courseDetail: {},
-            countDown: '',
+            courseDetail: {}, // 课程详情
+            countDown: '', // 倒计时事件
+            isReceive: false,
             isShowActionSheet: false,
             actionSheetTitle: '已送出',
             actionSheetContent: '好友领取后，你即可免费获得此课程。'
@@ -414,6 +416,7 @@
 
         onLoad(parameter) {
             let self = this
+            console.log('哇咔咔',parameter)
             self.paramsInfo = parameter
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
@@ -452,10 +455,17 @@
          */
         onPageScroll(res) {
             let self = this
+            if (self.paramsInfo.giftID) {
+                return
+            }
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
             self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
         }
+        /**
+         * 中台上报埋点
+         * @param
+         */
         __reportStayTimestamp() {
             let self = this
             let time = new Date().getTime() - self.timestamp
@@ -474,10 +484,12 @@
         initialize() {
             let self = this
             let postData = {
-                token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
+                token: self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source,
-                wxPushType: self.paramsInfo.wxPushType
+                source: self.paramsInfo.source
+            }
+            if (self.paramsInfo.wxPushType) {
+                postData.wxPushType = self.paramsInfo.wxPushType
             }
             if (self.paramsInfo.giftID) {
                 postData.giftID = self.paramsInfo.giftID
@@ -512,8 +524,17 @@
                     }
                 }
                 self.isLoaded = true
-                self.$apply()
 
+                // 是否需要显示底部的按钮框
+                if (self.courseDetail.price > 0) {
+                    self.isShowButton = true
+                }
+                if (self.paramsInfo.giftID && self.courseDetail.giftCountdown) {
+                    self.isShowButton = true
+                    self.__countDown()
+                }
+
+                self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
                 wx.reportAnalytics('coursedetail_pageload', {
                     role: self.systemInfo.role,
@@ -526,9 +547,8 @@
                 self.isLoaded = true
             })
 
-            if (self.isTokenSet) {
+            if (self.isTokenSet && !self.paramsInfo.giftID) {
                 self.__getGiftID()
-                self.__countDown()
             }
         }
         /**
@@ -554,19 +574,16 @@
                 navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                 return
             }
-            if ('needPay' === buttonStatus) {
-                self.$navigate(`/pages/course-module/course-pay`, {senceID})
-            } else {
-                switch (buttonStatus) {
-                    case 'finish': // 回顾
-                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                        break
-                    case 'needPay': // 付费
-                        self.$navigate(`/pages/course-module/course-pay`, {courseID})
-                        break
-                    default:
-                        navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
-                }
+
+            switch (buttonStatus) {
+                case 'finish': // 回顾
+                    self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                    break
+                case 'needPay': // 付费
+                    self.$navigate(`/pages/course-module/course-pay`, {courseID})
+                    break
+                default:
+                    navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
             }
         }
         /**
@@ -575,7 +592,7 @@
         __getGiftID() {
             let self = this
             let postData = {
-                token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
+                token: self.systemInfo.token,
                 courseID: self.paramsInfo.id
             }
 
@@ -584,11 +601,41 @@
             })
         }
         /**
+         * 受赠者确定领取课程
+         */
+        __receiveCourse() {
+            let self = this
+            if (!self.isTokenSet || self.isReceive) {
+                return
+            }
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id,
+                giftID: self.paramsInfo.giftID
+            }
+
+            fetch.receiveCourseGift(postData).then((respone) => {
+                self.isReceive = true
+                if (1 === respone.sucess) {
+                    self.isShowActionSheet = true,
+                        self.actionSheetTitle = '恭喜你！领取成功。',
+                        self.actionSheetContent = '3天内学完所有微课即可获得该课程哦。'
+                    self.isShowButton = false
+                    self.$apply()
+                    self.initialize()
+                    return
+                }
+                wx.showToast({title: respone.message})
+            }).catch((error) => {
+
+            })
+        }
+        /**
          * 倒计时
          */
         __countDown() {
             let self = this
-            let giftCountdown = 3600 * 24 * 3 // self.courseDetail.giftCountdown
+            let giftCountdown = self.courseDetail.giftCountdown / 1000
             let timer = setInterval(function () {
                 if (!giftCountdown) {
                     clearInterval(timer)
@@ -722,9 +769,12 @@
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
                 }).then((respone) => { // 授权成功
-                    // 赠一得一
-                    if (role) {
+                    if (1 == role) { // 赠送者：赠一得一
                         self.initialize()
+                        return
+                    }
+                    if (2 == role) {// 受赠者：领取课程
+                        self.__receiveCourse()
                         return
                     }
                     item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
@@ -732,18 +782,14 @@
 
                 })
             },
-            getStudy() {
+            /**
+             * 接受赠一得一
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getReceiveCourse() {
                 let self = this
-                let postData = {
-                    token: 'userIDb1f22df23a2d46358d5dd76d62469429-1543995490333-2ce14877c1d4373c0218dd3c893732d6', //self.systemInfo.token,
-                    courseID: self.paramsInfo.id,
-                    giftID: self.paramsInfo.giftID
-                }
-
-                fetch.receiveCourseGift(postData).then((respone) => {
-                    self.giftID = respone
-                })
-
+                self.__receiveCourse()
             }
         }
         events = {
@@ -772,11 +818,6 @@
             let self = this
             let dataset = event.target.dataset
 
-            /*if (!(dataset && dataset.role)) {
-                self.__share()
-                return
-            }*/
-
             setTimeout(() => {
                 self.isShowActionSheet = true
                 self.$apply()
@@ -799,18 +840,14 @@
                 })
             }, 2000)
 
+            let path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
+            if (dataset && dataset.role) {
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+            }
             return {
                 title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
-                path: `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+                path: path
             }
         }
-
-        __share(giftID) {
-            let self = this
-            console.log('giftID', giftID)
-
-
-        }
-
     }
 </script>

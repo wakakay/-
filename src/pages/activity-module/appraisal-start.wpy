@@ -75,7 +75,7 @@
             return state.user.equipmentModel.startsWith('iPhone X')
         }
     })
-    export default class PreviousPracticeBeginning extends wepy.page {
+    export default class appraisalStart extends wepy.page {
         config = {
             disableScroll: true
         }
@@ -89,8 +89,9 @@
             senceID: 'defaultSenceID',
             description: '',
             name: 'defaultName',
-            examID: "E1533788878390",
+            examID: null,
             wxPushType: '',
+            isFirst: false,
             imageBottomURL: '',
             imageHeaderURL: '',
             imagePracticeURL: '',
@@ -139,6 +140,29 @@
                 })
             })
         }
+        /**
+         * 服务通知数据上报
+         */
+        __report() {
+            let self = this
+            if (self.isFirst) {
+                return
+            }
+            self.isFirst = true
+            let postData = {
+                token: self.token,
+                body: {
+                    json: {
+                        pageType: "测评首页",
+                        EventType: "服务通知点击",
+                        ComponentName: "测评服务通知点击",
+                        senceID: self.examID,
+                        CpnPresentName: "测评服务通知点击"
+                    }
+                }
+            }
+            reportApi.doUserBehaviourLog(postData)
+        }
 
         methods = {
             handleAuthorize({detail: {errMsg}}) {
@@ -171,27 +195,30 @@
                 })
             },
             handleBeginPractice() {
+                let self = this
+                self.__report()
+
                 store.dispatch(fetchPreviousPractices({
-                    token: this.token,
-                    courseID: this.courseID,
-                    senceID: this.senceID,
-                    examID: this.examID
+                    token: self.token,
+                    courseID: self.courseID,
+                    senceID: self.senceID,
+                    examID: self.examID
                 })).then(data => {
                     if (data === 'done') {
-                        this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
+                        self.$navigate('/pages/activity-module/appraisal-results', {examID: self.examID})
                         return
                     }
                     let params = {
-                        examID: this.examID,
-                        bgUrl: this.imageBottomURL,
-                        imagePracticeURL: this.imagePracticeURL,
-                        subjectHeading: this.subjectHeading
+                        examID: self.examID,
+                        bgUrl: self.imageBottomURL,
+                        imagePracticeURL: self.imagePracticeURL,
+                        subjectHeading: self.subjectHeading
                     }
-                    if (this.imageResultURL) {
-                        params.imageResultURL = this.imageResultURL
+                    if (self.imageResultURL) {
+                        params.imageResultURL = self.imageResultURL
                     }
                     wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
-                    this.$redirect('/pages/activity-module/appraisal-questions', params)
+                    self.$redirect('/pages/activity-module/appraisal-questions', params)
                 })
             }
         }

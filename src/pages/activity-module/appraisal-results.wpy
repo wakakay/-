@@ -118,7 +118,7 @@
             return state.entrance
         },
     })
-    export default class PreviousPracticeEndingNew extends wepy.page {
+    export default class appraisalResults extends wepy.page {
         components = {
             'jn-header': header,
             'mloading': Loading,

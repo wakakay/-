@@ -54,15 +54,19 @@ const fetch = (actionObj) => {
     return wepy.request(requestData).then((respone) => {
         let data = respone.data
 
-        if (data.success) {
+        if (!_.isUndefined(data.success)) {
             if (1 === data.success) {
                 return data.data
             } else {
-                wx.showToast({title: respone.data.message})
+                if (actionObj.isUnFilter) {
+                    return data
+                } else {
+                    wx.showToast({title: data.message})
+                }
             }
         } else {
             if (200 !== data.status) {
-                throw new Error(message)
+                throw new Error(data.message)
             } else {
                 return data.data
             }
@@ -142,7 +146,7 @@ export default {
     },
     // 接受赠一得一
     receiveCourseGift(params) {
-        return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params})
+        return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params, isUnFilter: true})
     },
     // 课程详情
     courseShareCount(params) {

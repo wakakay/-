@@ -117,7 +117,7 @@
             return state.entrance;
         },
     })
-    export default class PreviousPracticePage extends wepy.page {
+    export default class appraisalQuestions extends wepy.page {
         config = {
             disableScroll: true
         }
