@@ -1,4 +1,4 @@
-import { auth as authApi } from '../../api'
+import {auth as authApi} from '../../api'
 import wepy from 'wepy'
 
 // Contents
@@ -35,7 +35,7 @@ const customErrActionBundle = {
         status: 'failure',
         response: {},
         error: { message: '错误' }
-    } // end payload
+    }
 }
 
 const initialState = {
@@ -189,7 +189,6 @@ export const checkLoginStatus = () => (dispatch, getState) => {
         // wx.clearStorage()
     return wepy.checkSession() // 验证微信登陆session是否还有效
         .then(({ errMsg }) => {
-            //console.log('check wechat session result', errMsg)
             if ('checkSession:ok' !== errMsg) {
                 throw errMsg // session失效
             } else {

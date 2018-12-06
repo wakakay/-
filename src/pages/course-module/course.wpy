@@ -183,6 +183,37 @@
                     </block>
                 </swiper>
             </view>
+
+            <view class="ui-new-course">
+                <view class="cell-tip">限时赠一得一</view>
+                <swiper class="ui-swiper-list"
+                        previous-margin="40rpx"
+                        next-margin="20rpx">
+                    <repeat for="{{limitedTimeGiftCourseList}}" key="index" index="index" item="data">
+                        <swiper-item class="ui-swiper-box">
+                            <repeat for="{{data}}" key="index" index="index" item="item">
+                                <view class="ui-item"
+                                      hover-stay-time="100"
+                                      @tap.stop="getCourseDetail" data-item="{{item}}" data-type="4">
+                                    <view class="ui-img">
+                                        <image src="{{item.image}}"></image>
+                                    </view>
+                                    <view class="ui-right">
+                                        <view class="ui-content">
+                                            <view class="cell-name">{{item.name}}</view>
+                                            <view class="cell-dec">{{item.showPoint}}</view>
+                                        </view>
+                                        <view class="ui-btn">
+                                            <view class="cell-item">获取</view>
+                                        </view>
+                                    </view>
+                                </view>
+                            </repeat>
+                        </swiper-item>
+                    </repeat>
+                </swiper>
+            </view>
+
             <view class="ui-hot-course">
                 <view class="cell-tip">热门课程</view>
                 <swiper class="ui-swiper-list"
@@ -205,7 +236,7 @@
                                             <view class="cell-dec">{{item.userCount}}人在学</view>
                                         </view>
                                     </view>
-                                    
+
                                 </view>
                             </view>
                             <view class="cell-border"></view>
@@ -213,19 +244,19 @@
                     </block>
                 </swiper>
             </view>
-           
+
             <view class="ui-course-series">
                 <view class="ui-tip">
                     <view class="cell-title">热门系列</view>
                     <view class="cell-all" @tap.stop="getAllSeries" data-item="{{courseSeriesList}}">查看全部</view>
                 </view>
                 <view class="ui-content">
-                    <view class="ui-item" hover-class="ui-item-hover"  hover-stay-time="100" 
-                    wx:for="{{courseSeriesList}}"  wx:for-item="item" wx:index="{{index}}" 
-                    wx:key="{{index}}" data-index="{{index}}"  data-item="{{item}}" 
+                    <view class="ui-item" hover-class="ui-item-hover"  hover-stay-time="100"
+                    wx:for="{{courseSeriesList}}"  wx:for-item="item" wx:index="{{index}}"
+                    wx:key="{{index}}" data-index="{{index}}"  data-item="{{item}}"
                     @tap.stop="getCategory" wx:if="{{index <= 4}}">
                         <view class="ui-img">
-                            <image src="{{item.icon}}" mode="scaleToFill"></image>  
+                            <image src="{{item.icon}}" mode="scaleToFill"></image>
                         </view>
                         <view class="cell-name">{{item.seriesName}}</view>
                     </view>
@@ -260,7 +291,7 @@
                     </block>
                 </swiper>
             </view>
-           
+
         </form>
         <view class="ui-clear"></view>
 
@@ -282,9 +313,7 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import ga from 'wxapp-ga/ga'
     import PushMixin from '../../mixins/push'
-    import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
@@ -292,11 +321,9 @@
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
     import {auth as authApi, share as shareApi, registered as fetch} from '../../api'
-    import {openActivity, setPoster, setParticipationDate, setParticipationTimes} from '../../redux/models/activity'
-    import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate} from '../../utils'
+    import {shareDictionary, getStorageAsync} from '../../utils'
+    import _ from 'underscore'
 
-    const GoogleAnalytics = ga.GoogleAnalytics
-    const HitBuilders = ga.HitBuilders
     const store = getStore()
     @connect({
         avatar(state) {
@@ -310,7 +337,7 @@
         },
         token(state) {
             return state.user.token
-            
+
         },
         role(state) {
             return state.user.role
@@ -320,7 +347,7 @@
         }
     })
     export default class Home extends wepy.page {
-        mixins = [PushMixin, loadingMixin]
+        mixins = [PushMixin]
 
         components = {
             'jn-header': header,
@@ -346,6 +373,7 @@
             swiperList: [],
             swiperCurrent: 0,
             courseSeriesList: [],
+            limitedTimeGiftCourseList: [],
             newCourseList: [],
             hotCourseList: [],
             personalInfo: {}, // 头部用户信息
@@ -389,6 +417,19 @@
             fetch.coursePageList({token: token || self.token})
                 .then((respone) => {
                     self.isLoaded = true
+
+                    let number = 0
+                    _.each(respone.limitedTimeGiftCourseList, (item, index) => {
+                        if(0 !== (index+1)% 4) {
+                            if (!self.limitedTimeGiftCourseList[number]) {
+                                self.limitedTimeGiftCourseList[number] = []
+                            }
+                            self.limitedTimeGiftCourseList[number].push(item)
+                        } else {
+                            number++
+                        }
+                    })
+
                     self.hotCourseList = respone.hotCourseList
                     self.courseSeriesList = respone.courseSeriesList
                     self.newCourseList = respone.newCourseList
@@ -483,9 +524,19 @@
 
                 let typeSrc = ''
                 switch (type) {
-                    case '1':typeSrc = '轮播图';   break
-                    case '2':typeSrc = '最新上线';  break
-                    case '3':typeSrc = '热门课程';  break
+                    case '1':
+                        typeSrc = '轮播图'
+                        break
+                    case '2':
+                        typeSrc = '最新上线'
+                        break
+                    case '3':
+                        typeSrc = '热门课程'
+                        break
+                    case '4':
+                        typeSrc = '限时赠一得一'
+                        courseType = 'limitedTimeGift'
+                        break
                 }
 
                 wepy.$instance.globalData.getHuilder(`课程页/${typeSrc}`,'click',`${courseName}`)
@@ -566,10 +617,11 @@
                 }
             },
             review(courseID, $event) {
+                let self = this
                 wx.reportAnalytics('tap_descover_course', {
-                    role: this.role,
-                    nickname: this.userName,
-                    channel: this.entrance.mappers[this.entrance.scenceID],
+                    role: self.role,
+                    nickname: self.userName,
+                    channel: self.entrance.mappers[this.entrance.scenceID],
                     courseid: courseID
                 })
                 try {

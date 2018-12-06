@@ -199,12 +199,10 @@
     const store = getStore();
     @connect({
         avatar(state) {
+            console.log(67, state.user)
             return state.user.avatar;
         },
         token(state) {
-			// return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
-        	// return 'userIDe843f9cc21194f45b3eec68544a5961a-1531659221846-8f9281b71c0f2203970a24bb425c0bd3'
-            //return 'userID3f776b9e9d9642328bc5ce53b3aeb7ed-1524810226026-eb777bd01e997ee88ce1e98094d7966d'
             return state.user.token;
         }
     })

@@ -38,12 +38,8 @@
         }
         .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
-            height:240rpx;margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:justify;line-height:48rpx;overflow:hidden;position:relative;transition:all .5s ease-in-out;
-            .cell-more{width:140rpx;height:48rpx;background-image:linear-gradient(90deg, rgba(255,255,255,.85) 0%, #FFFFFF 100%);color:@color-blue;line-height:48rpx;text-align:right;position:absolute;right:0;bottom:0;}
-            &.is-more{
-                height:auto;
-                .cell-more{width:auto;height:auto;background-image:none;position:static;}
-            }
+            margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
+            image{width:100%;}
         }
         .cell-border{height:22rpx;}
 
@@ -203,9 +199,9 @@
         </view>
 
         <view class="ui-title">课程概述</view>
-        <view class="ui-introduction-content" :class="{'is-more': isMore}">
+        <view class="ui-introduction-content">
             <text>{{courseDetail.textDescription}}</text>
-            <text class="cell-more" hover-stay-time="100" @tap.stop="getMore">{{!isMore ? '更多' : '收起'}}</text>
+            <image mode="aspectFit" src="{{courseDetail.imageList}}"></image>
         </view>
         <view class="cell-border"></view>
 
@@ -271,7 +267,7 @@
         <view class="ui-comments-box" wx:if="{{courseDetail.feedbackList.length}}">
             <swiper class="ui-comments-list"
                 next-margin="28rpx" previous-margin="38rpx">
-                <block wx:for="{{courseDetail.feedbackList}}" 
+                <block wx:for="{{courseDetail.feedbackList}}"
                     wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item">
                     <swiper-item class="ui-swiper">
                         <view class="ui-item">
@@ -362,10 +358,9 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import actionSheet from '../../components/common/actionSheet'
-    import AuthorizationModal from '../../components/AuthorizationModal/index'
     import {course as courseApi, share as shareApi, registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
-    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
+    import {initializationDeligate, navigateToLesson, shareDictionary, getStorageAsync} from '../../utils'
     import {CustomError} from '../../errors'
     import {login} from '../../redux/models/user'
     import _ from 'underscore'
@@ -382,7 +377,7 @@
             return state.entrance
         }
     })
-    export default class courseLearning extends wepy.page {
+    export default class courseDetails extends wepy.page {
         mixins = [PushMixin]
 
         components = {
@@ -400,7 +395,6 @@
             backgroundHeight: 0,
             targetScroll: 0,
             isLoaded: false,
-            isMore: false, // 是否展示更多概述
             isShowButton: false, // 是否显示底部按钮
             shareSenceID: null, // 分享进来的微课id
             paramsInfo: {}, // 接受地址栏传进来的值
@@ -425,7 +419,10 @@
             if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
             }
-            self.initialize()
+
+            initializationDeligate({
+                initializeFunc: self.initialize.bind(self, true)
+            })
         }
         onShow() {
             let self = this
@@ -616,16 +613,16 @@
 
             fetch.receiveCourseGift(postData).then((respone) => {
                 self.isReceive = true
-                if (1 === respone.sucess) {
+                self.isShowButton = false
+                self.initialize()
+                if (1 === respone.success) {
                     self.isShowActionSheet = true,
-                        self.actionSheetTitle = '恭喜你！领取成功。',
-                        self.actionSheetContent = '3天内学完所有微课即可获得该课程哦。'
-                    self.isShowButton = false
+                    self.actionSheetTitle = '恭喜你！领取成功。',
+                    self.actionSheetContent = '3天内学完所有微课即可获得该课程哦。'
                     self.$apply()
-                    self.initialize()
                     return
                 }
-                wx.showToast({title: respone.message})
+                // wx.showToast({title: respone.message})
             }).catch((error) => {
 
             })
@@ -636,7 +633,7 @@
         __countDown() {
             let self = this
             let giftCountdown = self.courseDetail.giftCountdown / 1000
-            let timer = setInterval(function () {
+            let timer = setInterval(() => {
                 if (!giftCountdown) {
                     clearInterval(timer)
                 }
@@ -678,14 +675,6 @@
         }
 
         methods = {
-            /**
-             * 课程概述，详情显示更多
-             */
-            getMore() {
-                let self = this
-                self.isMore = !self.isMore
-                self.$apply()
-            },
             /**
              * 你将获得
              * @param event

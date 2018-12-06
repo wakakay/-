@@ -177,7 +177,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import couseList from '../../components/course-module/course-list'
-    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
+    import {navigateToLesson, shareDictionary} from '../../utils'
     import {share as shareApi} from "../../api";
     import _ from 'underscore'
 
