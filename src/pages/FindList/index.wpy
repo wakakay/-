@@ -259,7 +259,6 @@
             let storageToken = wx.getStorageSync("token") || 'defaultToken'
             if (self.isTokenSet || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
-                wepy.$instance.globalData.getLoadHuilder() // ga统计
             } else {
                 wx.redirectTo({url: '/pages/registered-module/weclome'})
             }
@@ -271,6 +270,9 @@
 
             if (self.senceID) {
                 self.initialize()
+            }
+            if (self.isTokenSet) {
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
             }
         }
         /**

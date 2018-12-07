@@ -52,7 +52,7 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             swiperList: [],
-            banner: null,
+            banner: '',
             isClick: false
         }
 
@@ -64,7 +64,7 @@
             }
 
             fetch.weclomeSwiper(postData).then((respone) => {
-                self.banner = respone.imageList[0].url
+                self.banner = respone.imageList ? respone.imageList[0].url : ''
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
                 self.$apply()
             }).catch(error => {

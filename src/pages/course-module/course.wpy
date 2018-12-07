@@ -204,7 +204,7 @@
                                             <view class="cell-dec">{{item.showPoint}}</view>
                                         </view>
                                         <view class="ui-btn">
-                                            <view class="cell-item">获取</view>
+                                            <view class="cell-item">赠送</view>
                                         </view>
                                     </view>
                                 </view>
@@ -402,6 +402,13 @@
         onShow() {
             let self = this
             self.recommendCourseList.length && self.$broadcast('studying-bar')
+
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
+            wx.reportAnalytics('discovery', {
+                role: self.role,
+                nickname: self.userName,
+                channel: self.entrance.mappers[this.entrance.scenceID]
+            })
         }
 
         initialize(token) {
@@ -435,13 +442,6 @@
                     self.newCourseList = respone.newCourseList
                     self.recommendCourseList = respone.recommendCourseList
                     self.$apply()
-
-                    wepy.$instance.globalData.getLoadHuilder() // ga统计
-                    wx.reportAnalytics('discovery', {
-                        role: self.role,
-                        nickname: self.userName,
-                        channel: self.entrance.mappers[this.entrance.scenceID]
-                    })
                 }) .catch(error => {
                     console.log('home fetch courses error', error)
                     throw error

@@ -423,11 +423,15 @@ export const shareDictionary = {
         event: 'SHARE_TEAM',
         type: '分享团队',
         report: '分享成绩单'
-    }, // 分享团队
+    },
     SHARE_COURSE: {
         event: 'SHARE_COURSE',
         type: '分享课程详情'
-    }, // 分享课程
+    },
+    RECEIVE_COURSE: {
+        event: 'RECEIVE_COURSE',
+        type: '课程赠一得一'
+    },
     SHARE_WE_APP: {
         event: 'SHARE_WE_APP',
         type: '分享HOME小程序'

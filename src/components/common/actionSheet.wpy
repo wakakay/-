@@ -4,22 +4,28 @@
 
 <template>
     <view class="module-actionSheet-box main-center cross-center" :class="{'is-opacity-show': isShow}">
-        <view class="ui-actionSheet">
-            <view class="ui-content">
-                <view class="cell-title">{{titleInfo}}</view>
-                <view class="cell-content">{{contentInfo}}</view>
+        <form bindsubmit="handleSavePushCode" report-submit>
+            <view class="ui-actionSheet">
+                <view class="ui-content">
+                    <view class="cell-title">{{titleInfo}}</view>
+                    <view class="cell-content">{{contentInfo}}</view>
+                </view>
+                <view class="ui-botton-box main-center">
+                    <button formType="submit"
+                            @tap.shop="getConfirm">{{buttonConfirm}}</button>
+                </view>
             </view>
-            <view class="ui-botton-box main-center">
-                <button @tap.shop="getConfirm">{{buttonConfirm}}</button>
-            </view>
-        </view>
+        </form>
     </view>
 </template>
 
 <script>
     import wepy from 'wepy'
+    import PushMixin from '../../mixins/push'
 
     export default class actionSheet extends wepy.component {
+        mixins = [PushMixin]
+
         props = {
             isShow: {
                 type: Boolean,

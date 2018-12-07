@@ -199,7 +199,6 @@
     const store = getStore();
     @connect({
         avatar(state) {
-            console.log(67, state.user)
             return state.user.avatar;
         },
         token(state) {
@@ -254,7 +253,7 @@
         }
 
         onLoad() {
-            wepy.$instance.globalData.getLoadHuilder() // ga统计
+
         }
 
         onShow() {
@@ -355,6 +354,8 @@
 				this.memberTeamStatus = res.memberTeam.memberTeamStatus //是否参加过训练营
 				this.adminTeamBeforList = res.adminTeam.adminTeamBeforList
 				this.$apply()
+
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
 			})
 			.then(()=>{
 				wx.showTabBar()
