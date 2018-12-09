@@ -421,10 +421,11 @@
             courseDetail: {}, // 课程详情
             countDown: '', // 倒计时事件
             timer: null, // 定时器
+            isReceived: false, // 已经领取过了
             isReceive: false,
             isShowActionSheet: false,
-            actionSheetTitle: '已送出',
-            actionSheetContent: '好友成功领取后，你将获得此课程'
+            actionSheetTitle: '',
+            actionSheetContent: ''
         }
 
         onLoad(parameter) {
@@ -530,6 +531,8 @@
                 self.isLoaded = true
 
                 if ('receiver' === self.courseDetail.roleType && self.courseDetail.giftCountdown) {
+                    self.isReceive = true
+                    self.$apply()
                     self.__countDown()
                 }
                 // 是受赠者且未登录，显示马上领取
@@ -542,9 +545,12 @@
                     }
                 }
 
-                if (self.courseDetail.hasGiftState && 'receiver' === self.courseDetail.roleType && '马上领取' === self.courseDetail.giftButtonMsg) {
+                if (self.courseDetail.hasGiftState
+                    && 'receiver' === self.courseDetail.roleType
+                    && '马上领取' === self.courseDetail.giftButtonMsg
+                    && !self.isReceived) {
                     self.__receiveCourse()
-                    // return
+                    return
                 }
 
                 self.$apply()
@@ -622,8 +628,13 @@
                 courseID: self.paramsInfo.id,
                 giftID: self.paramsInfo.giftID
             }
+            if (self.isReceived) {
+                return
+            }
             fetch.receiveCourseGift(postData).then((respone) => {
                 self.isReceive = true
+                self.isReceived = true
+                self.$apply()
                 self.initialize()
                 if (1 === respone.success) {
                     self.isShowActionSheet = true
@@ -633,7 +644,7 @@
                     self.$apply()
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                 } else {
-                    wx.showToast({title: respone.message})
+                    !self.isReceive && wx.showToast({title: respone.message})
                 }
             }).catch((error) => {
 
@@ -644,6 +655,7 @@
          */
         __countDown() {
             let self = this
+            clearInterval(self.timer)
             let giftCountdown = self.courseDetail.giftCountdown / 1000
             self.timer = setInterval(() => {
                 if (!giftCountdown) {
@@ -811,15 +823,15 @@
                 self.__receiveCourse()
 
                 // 如果已经领取了，则依次跑去未学习的微课
-                let item = _.find(self.courseDetail.senceList, (data) => {
-                    if ('finish' !== data.buttonStatus || 'needPay' !== data.buttonStatus) {
+                let data = _.find(self.courseDetail.senceList, (item) => {
+                    if ('finish' !== item.buttonStatus || 'needPay' !== item.buttonStatus) {
                         return item
                     }
                 })
 
-                if (item) {
-                    self.__goToCourseLearning(item)
-                    wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${item.senceName}`)
+                if (data) {
+                    self.__goToCourseLearning(data)
+                    wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
                 }
             }
         }
@@ -834,11 +846,6 @@
         onShareAppMessage(event) {
             let self = this
             let dataset = event.target.dataset
-
-            setTimeout(() => {
-                self.isShowActionSheet = true
-                self.$apply()
-            }, 2000)
 
             let path = ''
             let reportType = ''

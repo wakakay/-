@@ -53,13 +53,12 @@ const fetch = (actionObj) => {
 
     return wepy.request(requestData).then((respone) => {
         let data = respone.data
-
         if (!_.isUndefined(data.success)) {
-            if (1 === data.success) {
-                return data.data
+            if (actionObj.isUnFilter) {
+                return data
             } else {
-                if (actionObj.isUnFilter) {
-                    return data
+                if (1 === data.success) {
+                    return data.data
                 } else {
                     wx.showToast({title: data.message})
                 }
