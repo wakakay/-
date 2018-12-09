@@ -424,8 +424,8 @@
             isReceived: false, // 已经领取过了
             isReceive: false,
             isShowActionSheet: false,
-            actionSheetTitle: '已送出',
-            actionSheetContent: '好友成功领取后，你将获得此课程'
+            actionSheetTitle: '',
+            actionSheetContent: ''
         }
 
         onLoad(parameter) {
@@ -655,6 +655,7 @@
          */
         __countDown() {
             let self = this
+            clearInterval(self.timer)
             let giftCountdown = self.courseDetail.giftCountdown / 1000
             self.timer = setInterval(() => {
                 if (!giftCountdown) {
@@ -827,7 +828,7 @@
                         return item
                     }
                 })
-                console.log('马上学习', data)
+
                 if (data) {
                     self.__goToCourseLearning(data)
                     wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
@@ -845,11 +846,6 @@
         onShareAppMessage(event) {
             let self = this
             let dataset = event.target.dataset
-
-            setTimeout(() => {
-                self.isShowActionSheet = true
-                self.$apply()
-            }, 2000)
 
             let path = ''
             let reportType = ''
