@@ -38,12 +38,8 @@
         }
         .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
-            height:240rpx;margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:justify;line-height:48rpx;overflow:hidden;position:relative;transition:all .5s ease-in-out;
-            .cell-more{width:140rpx;height:48rpx;background-image:linear-gradient(90deg, rgba(255,255,255,.85) 0%, #FFFFFF 100%);color:@color-blue;line-height:48rpx;text-align:right;position:absolute;right:0;bottom:0;}
-            &.is-more{
-                height:auto;
-                .cell-more{width:auto;height:auto;background-image:none;position:static;}
-            }
+            margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
+            image{width:100%;}
         }
         .cell-border{height:22rpx;}
 
@@ -71,22 +67,26 @@
             padding:0 32rpx 40rpx;
             .ui-item{
                 width:100%;height:346rpx;padding:40rpx 32rpx;margin-top:24rpx;background-size:cover;background-repeat:no-repeat;background-position:center center;text-align:left;line-height:1;border-radius:@border-radius-20;position:relative;
-                .cell-title{padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;width:540rpx;line-height:50rpx;}
+                .cell-title{width:460rpx;padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;line-height:50rpx;overflow:hidden;}
                 .ui-skills{
                     font-size: 26rpx;color: rgba(255,255,255,.70);
                     text{margin:8rpx;}
                 }
                 .cell-subtitle{font-size:26rpx;color:@color-white-opacity;line-height:36rpx;position:absolute;bottom: 40rpx;;}
-                .ui-circular-progress{
+                .ui-status{
                     position:absolute;right:32rpx;top:32rpx;
-                    &::before{border:6rpx solid @background-mask-white;}
-                    .ui-wrapper{
-                        >view{
-                            &.cell-circle-right{border-top:6rpx solid @background-white;border-right:6rpx solid @background-white;}
-                            &.cell-circle-left{border-bottom:6rpx solid @background-white;border-left:6rpx solid @background-white;}
+                    .ui-circular-progress{
+                        &::before{border:6rpx solid @background-mask-white;}
+                        .ui-wrapper{
+                            >view{
+                                &.cell-circle-right{border-top:6rpx solid @background-white;border-right:6rpx solid @background-white;}
+                                &.cell-circle-left{border-bottom:6rpx solid @background-white;border-left:6rpx solid @background-white;}
+                            }
                         }
+                        .cell-progress-number{color:@color-white;}
                     }
-                    .cell-progress-number{color:@color-white;}
+                    .cell-text{font-size:46rpx;color:@color-white;line-height:68rpx;}
+                    .cell-status{width:140rpx;height:60rpx;background-color:@background-mask-white;font-size:34rpx;color:@color-white;text-align:center;line-height:60rpx;border-radius:@border-radius-32;}
                 }
                 .cell-button{width:148rpx;height:60rpx;font-size:30rpx;font-weight:700;background-color:@background-white;color:@color-blue;border-radius:60rpx;position:absolute;right:30rpx;bottom:40rpx;}
             }
@@ -135,33 +135,36 @@
         }
 
         .ui-button-box{
-            width:100%;height:240rpx;
+            width:100%;height:186rpx;
             &.is-phonex{
-                height:308rpx;
-                .ui-container{height:308rpx;}
+                height:254rpx;
+                .ui-container{height:254rpx;}
             }
             .ui-container{
-                width:100%;height:240rpx;padding:0 32rpx;background-color:rgba(255,255,255,.9);position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
+                width:100%;height:186rpx;padding:0 32rpx;background-color:rgba(255,255,255,.9);position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
                 &.is-fixed{transform:translateY(0);}
             }
             .ui-text{
-                height:80rpx;line-height:80rpx;
+                height:62rpx;line-height:62rpx;
                 text:nth-of-type(1){font-size:30rpx;color:@color-black;}
                 text:nth-of-type(2){font-size:44rpx;font-weight:700;color:@color-black;}
                 .cell-currency{font-size:30rpx;}
             }
-            button{margin-top:20rpx;height:100rpx;background-color:@background-blue;font-size:35rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;line-height: 100rpx;}
+            .ui-button-list{
+                &.ui-column button:nth-of-type(1){
+                    width:100%;background-color:@background-blue;color:@color-white;
+                }
+                button{width:326rpx;height:100rpx;font-size:35rpx;font-weight:700;border-radius:@border-radius-20;line-height: 100rpx;}
+                button:nth-of-type(1){background-color:@background-gray-F4;color:@color-blue;}
+                button:nth-of-type(2){background-color:@background-blue;color:@color-white;}
+            }
         }
     }
 </style>
 
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
-    <scroll-view
-            scroll-y
-            enable-back-to-top
-            bindscroll="getScroll"
-            class="ui-course-details-box">
+    <view class="ui-course-details-box">
         <jn-header :className.sync="headerBackground"></jn-header>
 
         <view class="ui-board-box">
@@ -172,7 +175,7 @@
                 <view class="cell-subtitle">{{courseDetail.courseSkill}}</view>
                 <view class="cell-title main-justify">
                     <text>{{courseDetail.name}}</text>
-                    <button class="main-center cross-center" formType="submit" open-type="share" >
+                    <button class="main-center cross-center" open-type="share">
                         <text class="icon-share"></text>
                     </button>
                 </view>
@@ -195,9 +198,9 @@
         </view>
 
         <view class="ui-title">课程概述</view>
-        <view class="ui-introduction-content" :class="{'is-more': isMore}">
+        <view class="ui-introduction-content">
             <text>{{courseDetail.textDescription}}</text>
-            <text class="cell-more" hover-stay-time="100" @tap.stop="getMore">{{!isMore ? '更多' : '收起'}}</text>
+            <image mode="aspectFit" src="{{courseDetail.imageList}}" wx:if="{{courseDetail.imageList}}"></image>
         </view>
         <view class="cell-border"></view>
 
@@ -239,16 +242,21 @@
                             <text class="icon-study-bar"></text>{{item.labelName}}
                         </view>
                         <view class="cell-subtitle">{{item.senceTarget}}</view>
-                        <view class="ui-circular-progress">
-                            <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
-                            <view class="ui-wrapper ui-right">
-                                <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
+
+                        <view class="ui-status">
+                            <text class="icon-lock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
+                            <view class="cell-status" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</view>
+                            <view class="ui-circular-progress" wx:else>
+                                <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
+                                <view class="ui-wrapper ui-right">
+                                    <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
+                                </view>
+                                <view class="ui-wrapper ui-left">
+                                    <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
                             </view>
-                            <view class="ui-wrapper ui-left">
-                                <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
                         </view>
 
-                        <view class="cell-button main-center cross-center">{{item.buttonStatusMsg}}</view>
+                        <!--<view class="cell-button main-center cross-center">{{item.buttonStatusMsg}}</view>-->
                     </button>
                 </repeat>
             </form>
@@ -306,20 +314,60 @@
             </repeat>
         </view>
 
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.price>0}}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!courseDetail.isLimitedTimeGiftCourse && courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-justify">
                     <text>获取整个课程</text>
                     <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
                 </view>
-                <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                        bindgetuserinfo="getAuthorize"
-                        hover-stay-time="100"
-                        @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                <view class="ui-button-list ui-column">
+                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                            bindgetuserinfo="getAuthorize"
+                            hover-stay-time="100"
+                            @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                </view>
             </view>
         </view>
-    </scroll-view>
-    <view></view>
+
+        <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter') ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
+                <view class="ui-container" :class="{'is-fixed': isFixed}">
+                    <view class="ui-text main-center">
+                        <text>好友成功领取后，你将获得此课程</text>
+                    </view>
+                    <view class="ui-button-list main-justify">
+                        <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                bindgetuserinfo="getAuthorize"
+                                hover-stay-time="100"
+                                @tap.stop="getAllPay">{{courseDetail.price}} 即能币</button>
+                        <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
+                                data-role="1"
+                                bindgetuserinfo="getAuthorize"
+                                hover-stay-time="100">{{courseDetail.giftButtonMsg}}</button>
+                    </view>
+                </view>
+            </view>
+
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg != '赠一得一') || (courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='马上领取') || isGifter}}">
+                <view class="ui-container is-fixed">
+                    <view class="ui-text main-center">
+                        <text>3天内学完所有微课，你将获得此课程。</text>
+                    </view>
+                    <view class="ui-button-list ui-column">
+                        <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                                data-role="2"
+                                bindgetuserinfo="getAuthorize"
+                                hover-stay-time="100"
+                                @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <jn-actionSheet :isShow.sync="isShowActionSheet"
+                    :title.sync="actionSheetTitle"
+                    :content.sync="actionSheetContent"
+                    buttonConfirm='我知道了'></jn-actionSheet>
 </template>
 
 <script>
@@ -327,10 +375,10 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import AuthorizationModal from '../../components/AuthorizationModal/index'
-    import {course as courseApi, registered as fetch} from '../../api'
+    import actionSheet from '../../components/common/actionSheet'
+    import {course as courseApi, share as shareApi, registered as fetch} from '../../api'
     import PushMixin from "../../mixins/push"
-    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
+    import {initializationDeligate, navigateToLesson, shareDictionary, getStorageAsync} from '../../utils'
     import {CustomError} from '../../errors'
     import {login} from '../../redux/models/user'
     import _ from 'underscore'
@@ -347,12 +395,13 @@
             return state.entrance
         }
     })
-    export default class courseLearning extends wepy.page {
+    export default class courseDetails extends wepy.page {
         mixins = [PushMixin]
 
         components = {
             'jn-header': header,
-            'jn-loading': Loading
+            'jn-loading': Loading,
+            'jn-actionSheet': actionSheet
         }
 
         data = {
@@ -364,14 +413,23 @@
             backgroundHeight: 0,
             targetScroll: 0,
             isLoaded: false,
-            isMore: false, // 是否展示更多概述
-            shareSenceID: null,
+            shareSenceID: null, // 分享进来的微课id
             paramsInfo: {}, // 接受地址栏传进来的值
-            courseDetail: {}
+            roleType: 'gifter', // {赠送者: gifter, 受赠者: receiver}
+            giftID: '',
+            isGifter: false,
+            courseDetail: {}, // 课程详情
+            countDown: '', // 倒计时事件
+            timer: null, // 定时器
+            isReceive: false,
+            isShowActionSheet: false,
+            actionSheetTitle: '已送出',
+            actionSheetContent: '好友成功领取后，你将获得此课程'
         }
 
         onLoad(parameter) {
             let self = this
+            console.log('课程详情', parameter)
             self.paramsInfo = parameter
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
@@ -380,7 +438,15 @@
             if (-1 !== isCode && parameter.senceID) {
                 self.shareSenceID = parameter.senceID
             }
-            self.initialize()
+
+            if ('defaultToken' === self.systemInfo.token) {
+                console.log(11, self.systemInfo.token)
+                let storageToken = wx.getStorageSync("token") || 'defaultToken'
+                self.initialize({token: storageToken})
+            } else {
+                console.log(22, self.systemInfo.token)
+                initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            }
         }
         onShow() {
             let self = this
@@ -398,36 +464,40 @@
         }
         onUnload() {
             let self = this
+            clearInterval(self.timer)
             self.__reportStayTimestamp()
         }
-
         onHide() {
             let self = this
             self.__reportStayTimestamp()
         }
-
-        __reportStayTimestamp() {
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
             let self = this
-            let time = new Date().getTime() - self.timestamp
-            let postData = {
-                token: self.systemInfo.token,
-                courseID: self.paramsInfo.id,
-                pageTime: time
-            }
-            courseApi.sendCoursePageTime(postData).then(response => {
-                console.log('sendCoursePageTime report success! ' + time)
-            })
+
+            self.isFixed = res.scrollTop > self.targetScroll ? true : false
+            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            self.$apply()
         }
         /**
          * 初始化
          */
-        initialize() {
+        initialize(params) {
             let self = this
             let postData = {
-                token: self.systemInfo.token,
+                token: params && params.token || self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source,
-                wxPushType: self.paramsInfo.wxPushType
+                source: self.paramsInfo.source
+            }
+            if (self.paramsInfo.wxPushType) {
+                postData.wxPushType = self.paramsInfo.wxPushType
+            }
+            if (self.paramsInfo.giftID) {
+                postData.giftID = self.paramsInfo.giftID
+                self.isGifter = true
             }
 
             fetch.courseDetail(postData).then((respone) => {
@@ -445,7 +515,7 @@
                 self.courseDetail.price = parseFloat(self.courseDetail.price)
 
                 // 微课分享进来重定向
-                if (self.shareSenceID && 'defaultToken' !== self.systemInfo.token) {
+                if (self.shareSenceID && 'defaultToken' !== postData.token) {
                     let senceItem = _.find(self.courseDetail.senceList, {id: self.shareSenceID})
                     if ('finish' === senceItem.buttonStatus) {
                         senceItem.buttonStatus = ''
@@ -458,8 +528,26 @@
                     }
                 }
                 self.isLoaded = true
-                self.$apply()
 
+                if ('receiver' === self.courseDetail.roleType && self.courseDetail.giftCountdown) {
+                    self.__countDown()
+                }
+                // 是受赠者且未登录，显示马上领取
+                if (self.paramsInfo.giftID && 'defaultToken' === postData.token) {
+                    self.courseDetail.giftButtonMsg = '马上领取'
+                } else {
+                    self.courseDetail.giftButtonMsg = self.courseDetail.giftButtonMsg || '赠一得一'
+                    if ('赠一得一' === self.courseDetail.giftButtonMsg) {
+                        self.isGifter = false
+                    }
+                }
+
+                if (self.courseDetail.hasGiftState && 'receiver' === self.courseDetail.roleType && '马上领取' === self.courseDetail.giftButtonMsg) {
+                    self.__receiveCourse()
+                    // return
+                }
+
+                self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
                 wx.reportAnalytics('coursedetail_pageload', {
                     role: self.systemInfo.role,
@@ -471,6 +559,10 @@
             }).catch(error => {
                 self.isLoaded = true
             })
+
+            if (self.isTokenSet && !self.paramsInfo.giftID) {
+                self.__getGiftID()
+            }
         }
         /**
          * 去微课学习页面
@@ -486,7 +578,6 @@
             let buttonStatus = item.buttonStatus
             let resumeLastRead = item.resume ? item.resume : 'NO'
 
-            // let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
             let isNewSence = self.courseDetail.isNewSenceMap[senceID]
             let isRedirectTo = false
             if (self.shareSenceID) {
@@ -495,21 +586,89 @@
                 navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
                 return
             }
-            if ('needPay' === buttonStatus) {
-                return this.$navigate(`/pages/course-module/course-pay`, {senceID})
-            } else {
-                switch (buttonStatus) {
-                    case 'finish': // 回顾
-                        !item.isFinish ? self.$navigate(`/pages/Review/index`, {courseID, senceID})
-                            : navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
-                        break
-                    case 'needPay': // 付费
-                        self.$navigate(`/pages/course-module/course-pay`, {senceID})
-                        break
-                    default:
-                        navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
-                }
+
+            switch (buttonStatus) {
+                case 'finish': // 回顾
+                    self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                    break
+                case 'needPay': // 付费
+                    self.$navigate(`/pages/course-module/course-pay`, {courseID})
+                    break
+                default:
+                    navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
             }
+        }
+        /**
+         * 获取赠一得一ID
+         */
+        __getGiftID() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id
+            }
+
+            fetch.createGiftID(postData).then((respone) => {
+                self.giftID = respone
+            })
+        }
+        /**
+         * 受赠者确定领取课程
+         */
+        __receiveCourse() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id,
+                giftID: self.paramsInfo.giftID
+            }
+            fetch.receiveCourseGift(postData).then((respone) => {
+                self.isReceive = true
+                self.initialize()
+                if (1 === respone.success) {
+                    self.isShowActionSheet = true
+                    self.isGifter = false
+                    self.actionSheetTitle = '恭喜你！领取成功',
+                        self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
+                    self.$apply()
+                    wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
+                } else {
+                    wx.showToast({title: respone.message})
+                }
+            }).catch((error) => {
+
+            })
+        }
+        /**
+         * 倒计时
+         */
+        __countDown() {
+            let self = this
+            let giftCountdown = self.courseDetail.giftCountdown / 1000
+            self.timer = setInterval(() => {
+                if (!giftCountdown) {
+                    clearInterval(self.timer)
+                    self.initialize()
+                }
+
+                let dd = Math.floor(giftCountdown / 60 / 60 / 24)
+                let hh = Math.floor(giftCountdown / 60 / 60 % 24)
+                let mm = Math.floor(giftCountdown / 60 % 60)
+                let ss = Math.floor(giftCountdown % 60)
+
+                if (hh < 10) {
+                    hh = '0' + hh
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                if (ss < 10) {
+                    ss = '0' + ss
+                }
+                giftCountdown--
+                self.countDown = `（${dd}天 ${hh}:${mm}:${ss}）`
+                self.$apply()
+            }, 1000)
         }
         /**
          * 微信点击统计
@@ -528,26 +687,21 @@
                 source: self.paramsInfo.source
             })
         }
-
+        /**
+         * 中台上报埋点
+         * @param
+         */
+        __reportStayTimestamp() {
+            let self = this
+            let time = new Date().getTime() - self.timestamp
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id,
+                pageTime: time
+            }
+            courseApi.sendCoursePageTime(postData).then(response => {})
+        }
         methods = {
-            /**
-             * 监听滚动条事件
-             * @param event
-             */
-            getScroll(event) {
-                let self = this
-                let {detail: {scrollTop}} = event
-                self.isFixed = scrollTop > self.targetScroll ? true : false
-                self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
-            },
-            /**
-             * 课程概述，详情显示更多
-             */
-            getMore() {
-                let self = this
-                self.isMore = !self.isMore
-                self.$apply()
-            },
             /**
              * 你将获得
              * @param event
@@ -618,7 +772,7 @@
              */
             getAuthorize(event) {
                 let self = this
-                let {detail: {errMsg}, currentTarget: {dataset:{item}}} = event
+                let {detail: {errMsg}, currentTarget: {dataset:{item, role}}} = event
 
                 if (self.isTokenSet) {
                     return
@@ -631,10 +785,42 @@
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
                 }).then((respone) => { // 授权成功
+                    if (1 == role) { // 赠送者：赠一得一
+                        self.initialize()
+                        return
+                    }
+                    if (2 == role) {// 受赠者：领取课程
+                        self.initialize()
+                        return
+                    }
                     item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
                 }).catch(error => { // 拒接授权
 
                 })
+            },
+            /**
+             * 接受赠一得一，马上学习
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getReceiveCourse() {
+                let self = this
+                if (!self.isTokenSet || !self.isReceive) {
+                    return
+                }
+                self.__receiveCourse()
+
+                // 如果已经领取了，则依次跑去未学习的微课
+                let item = _.find(self.courseDetail.senceList, (data) => {
+                    if ('finish' !== data.buttonStatus || 'needPay' !== data.buttonStatus) {
+                        return item
+                    }
+                })
+
+                if (item) {
+                    self.__goToCourseLearning(item)
+                    wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${item.senceName}`)
+                }
             }
         }
         events = {
@@ -645,35 +831,45 @@
             }
         }
 
-        onShareAppMessage() {
+        onShareAppMessage(event) {
             let self = this
+            let dataset = event.target.dataset
+
+            setTimeout(() => {
+                self.isShowActionSheet = true
+                self.$apply()
+            }, 2000)
+
+            let path = ''
+            let reportType = ''
+            if (dataset && dataset.role) {
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+                reportType = shareDictionary.RECEIVE_COURSE.type
+                wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
+            } else {
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
+                reportType = shareDictionary.SHARE_COURSE.type
+                wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
+                wx.reportAnalytics('share_event', {
+                    role: self.systemInfo.role,
+                    nickname: self.systemInfo.name,
+                    coursename: self.courseDetail.name,
+                    sencename: '/',
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: shareDictionary.SHARE_COURSE.type
+                })
+            }
+
+            shareApi.reportSharing({
+                token: self.systemInfo.token,
+                type: reportType,
+                courseID: self.paramsInfo.id
+            })
 
             return {
-                title: '我在即能学习',
-                path: `/pages/course-module/course-details?id=${self.paramsInfo.id}`,
-                success: function (respone) {
-                    wepy.$instance.globalData.getHuilder('新课程详情页/分享', 'click', `${self.courseDetail.name}`)
-
-                    shareApi.reportSharing({
-                        token: self.systemInfo.token,
-                        type: shareDictionary.SHARE_COURSE.type,
-                        courseID: self.paramsInfo.id
-                    })
-
-                    wx.reportAnalytics('share_event', {
-                        role: self.systemInfo.role,
-                        nickname: self.systemInfo.name,
-                        coursename: self.courseDetail.name,
-                        sencename: '/',
-                        channel: self.entrance.mappers[self.entrance.scenceID],
-                        type: shareDictionary.SHARE_COURSE.type,
-                    })
-                },
-                fail: function (respone) {
-
-                }
+                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                path: path
             }
         }
-
     }
 </script>

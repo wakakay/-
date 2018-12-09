@@ -542,7 +542,6 @@
                     }
                 }
 
-
                 if (self.courseDetail.hasGiftState && 'receiver' === self.courseDetail.roleType && '马上领取' === self.courseDetail.giftButtonMsg) {
                     self.__receiveCourse()
                     // return
@@ -625,12 +624,12 @@
             }
             fetch.receiveCourseGift(postData).then((respone) => {
                 self.isReceive = true
+                self.initialize()
                 if (1 === respone.success) {
                     self.isShowActionSheet = true
                     self.isGifter = false
                     self.actionSheetTitle = '恭喜你！领取成功',
                     self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
-                    self.initialize()
                     self.$apply()
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                 } else {
