@@ -190,7 +190,6 @@
             },
             getLoadHuilder(options) {
                 let self = this
-                console.log('waklaka')
                 if (-1 !== self.staffList.indexOf(self.unionID)){
                     return
                 }
