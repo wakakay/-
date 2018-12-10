@@ -147,6 +147,10 @@ export default {
     receiveCourseGift(params) {
         return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params, isUnFilter: true})
     },
+    // 保存giftID的接口
+    saveGiftId(params) {
+        return fetch({method: 'post', url: 'gift/saveGiftId', params: params, isUnFilter: true})
+    },
     // 课程详情
     courseShareCount(params) {
         return fetch({method: 'post', url: 'sence/senceShareRecord', params: params, isVisitor: true})
