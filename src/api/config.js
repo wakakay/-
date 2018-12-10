@@ -1,4 +1,4 @@
-const NODE_ENV = 'develop'
+const NODE_ENV = 'release'
 export default {
     environment: NODE_ENV,
     baseUrl: NODE_ENV === 'release' ? 'https://wx-small.runwise.cn/release/api/' : 'https://wx-small.runwise.cn/develop/api/',

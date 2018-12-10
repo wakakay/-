@@ -25,8 +25,8 @@ const paramsData = (data) => {
         object: {}
     }
     let params = []
-    _.mapObject(data, function(val, key) {
-        if(_.isArray(val)) {
+    _.mapObject(data, function (val, key) {
+        if (_.isArray(val)) {
             result.array[key] = val
         } else if (_.isObject(val)) {
             result.object = val
