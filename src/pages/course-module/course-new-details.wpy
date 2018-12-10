@@ -330,7 +330,7 @@
         </view>
 
         <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
-            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter') ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter' && courseDetail.price>0) ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
                 <view class="ui-container" :class="{'is-fixed': isFixed}">
                     <view class="ui-text main-center">
                         <text>好友成功领取后，你将获得此课程</text>

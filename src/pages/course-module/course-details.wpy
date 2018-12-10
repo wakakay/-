@@ -39,7 +39,7 @@
         .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
             margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
-            image{width:100%;}
+            image{width:100%;height:2250rpx;}
         }
         .cell-border{height:22rpx;}
 
@@ -330,7 +330,7 @@
         </view>
 
         <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
-            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter') ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter' && courseDetail.price>0) ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
                 <view class="ui-container" :class="{'is-fixed': isFixed}">
                     <view class="ui-text main-center">
                         <text>好友成功领取后，你将获得此课程</text>
