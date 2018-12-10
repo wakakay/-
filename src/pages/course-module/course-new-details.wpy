@@ -39,7 +39,7 @@
         .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
             margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
-            image{width:100%;}
+            image{width:100%;height:2250rpx;}
         }
         .cell-border{height:22rpx;}
 
@@ -824,7 +824,7 @@
 
                 // 如果已经领取了，则依次跑去未学习的微课
                 let data = _.find(self.courseDetail.senceList, (item) => {
-                    if ('finish' !== item.buttonStatus || 'needPay' !== item.buttonStatus) {
+                    if ('finish' !== item.buttonStatus && 'needPay' !== item.buttonStatus) {
                         return item
                     }
                 })
