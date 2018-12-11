@@ -132,7 +132,7 @@
         </view>
 
         <jn-share-card></jn-share-card>
-        <jn-learning-discuss></jn-learning-discuss>
+        <jn-learning-discuss :headerHeigth.sync="headerHeigth"></jn-learning-discuss>
     </view>
 
     <view class="module-result-box dir-bottom"

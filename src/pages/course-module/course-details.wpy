@@ -794,7 +794,7 @@
                     return
                 }
 
-                wepy.$instance.globalData.getHuilder('新课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
+                wepy.$instance.globalData.getHuilder('课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
                 return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
             },
             /**

@@ -77,9 +77,57 @@
 }
 /* 微课中的想法 */
 .module-learning-discuss{
-    width:100%;height:100%;
-    .ui-message{width:192rpx;height:60rpx;background-color:@background-mask-normal-2;border-radius:@border-radius-32;position:fixed;right:24rpx;top:10%;}
-    
+    width:100%;
+    .ui-mask{width:100%;height:100%;background-color:@background-mask-slightly;position:fixed;left:0;top:0;z-index:@z-index-mask;}
+    .ui-message{
+        width:192rpx;height:60rpx;background-color:@background-mask-normal-2;font-size:26rpx;color:@color-white;border-radius:@border-radius-32;position:fixed;right:24rpx;top:10%;
+        text{font-size:34rpx;margin-right:8rpx;}
+    }
+    .ui-discuss-list{
+        box-sizing:border-box;width:100%;height:90%;padding:48rpx 24rpx 36rpx;position:fixed;left:0;top:0;z-index:@z-index-highest;transition:all .5;
+        view{box-sizing:border-box;}
+        &.is-iphonex{padding-top:88rpx;}
+        .ui-item{
+            margin-bottom:36rpx;
+            &.ui-self{
+                flex-direction:row-reverse;
+                .ui-content{
+                    margin-right:24rpx;
+                    > text{transform: rotate(90deg);right:-26rpx;}
+                }
+            }
+            &.ui-thire{
+                .ui-content{
+                    margin-left:24rpx;
+                    > text{transform: rotate(-90deg);left:-26rpx;}
+                }
+            }
+            .ui-portrait{
+                width:72rpx;height:72rpx;border:4rpx solid @border-white;border-radius:50%;overflow:hidden;
+                image{width:100%;height:100%;}
+            }
+            .ui-content{
+                width:510rpx;background-color:@background-white;border-radius:@border-radius-20;position:relative;
+                >text{display:block;font-size:38rpx;color:@color-white;transform:rotate(-90deg);position:absolute;top:30rpx;}
+            }
+            .cell-content{padding:24rpx;font-size:30rpx;color:@color-black;}
+            .ui-button-list{
+                width:100%;height:65rpx;padding:0 24rpx;border-top:2rpx solid @border-gray;font-size:24rpx;color:@color-gray-A3;
+                view{width:auto;}
+                button{
+                    height:100%;background:none;font-size:24rpx;color:@color-gray-A3;text-align:right;
+                    &:nth-of-type(1){margin-right:50rpx;}
+                    &.active text{color:@color-blue;}
+                    text{font-size:32rpx;margin-right:12rpx;}
+                }
+            }
+        }
+    }
+    .ui-textarea{
+        box-sizing:border-box;width:100%;height:12%;padding:0 36rpx;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
+        text{margin-right:28rpx;font-size:56rpx;color:@background-gray-cc;}
+        textarea{box-sizing:border-box;width:510rpx;padding:0 24rpx;background-color:@background-white;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
+    }
 }
 /* 全图卡 */
 .module-full-image-box{
