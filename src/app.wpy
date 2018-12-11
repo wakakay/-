@@ -30,6 +30,8 @@
     export default class extends wepy.app {
         config = {
             pages: [
+                /* 今日模板 */
+                'pages/Today/index',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -119,6 +121,12 @@
                 backgroundColor: "#FFFFFF",
                 selectedColor: "#007AFF",
                 list: [
+                    {
+                        "pagePath": "pages/Today/index",
+                        "text": "今日",
+                        "iconPath": "assets/img/discover-off.png",
+                        "selectedIconPath": "assets/img/discover-on.png"
+                    },
                     {
                         "pagePath": "pages/FindList/index",
                         "text": "发现",
