@@ -132,6 +132,7 @@
         </view>
 
         <jn-share-card></jn-share-card>
+        <jn-learning-discuss></jn-learning-discuss>
     </view>
 
     <view class="module-result-box dir-bottom"
@@ -176,6 +177,7 @@
     import session from '../../components/cards-type/session'
     import hotSpot from '../../components/cards-type/hot-spot'
     import front from '../../components/cards-type/front'
+    import learningDiscuss from '../../components/course-module/learning-discuss'
     import _ from 'underscore'
 
     const store = getStore()
@@ -204,7 +206,8 @@
             'jn-poll': poll,
             'jn-session': session,
             'jn-hot-spot': hotSpot,
-            'jn-front': front
+            'jn-front': front,
+            'jn-learning-discuss': learningDiscuss
         }
 
         data = {

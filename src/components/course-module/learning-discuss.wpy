@@ -1,0 +1,41 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <view class="module-learning-discuss">
+        <view class="ui-message">
+            <text class="icon-message">8个想法</text>
+        </view>
+
+
+
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class learningDiscuss extends wepy.component {
+        props = {
+
+        }
+
+        data = {}
+
+        onLoad() {
+            let self = this
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>
