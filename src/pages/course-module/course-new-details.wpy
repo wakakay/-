@@ -141,16 +141,17 @@
                 .ui-container{height:254rpx;}
             }
             .ui-container{
-                width:100%;height:186rpx;padding:0 32rpx;background-color:rgba(255,255,255,.9);position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
+                width:100%;height:auto;padding:0 32rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
                 &.is-fixed{transform:translateY(0);}
             }
             .ui-text{
-                height:62rpx;line-height:62rpx;
+                height:auto;padding:10rpx 8rpx;line-height:42rpx;
                 text:nth-of-type(1){font-size:30rpx;color:@color-black;}
                 text:nth-of-type(2){font-size:44rpx;font-weight:700;color:@color-black;}
                 .cell-currency{font-size:30rpx;}
             }
             .ui-button-list{
+                padding-bottom:20rpx;
                 &.ui-column button:nth-of-type(1){
                     width:100%;background-color:@background-blue;color:@color-white;
                 }
@@ -330,10 +331,10 @@
         </view>
 
         <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
-            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'gifter' && courseDetail.price>0) ||  (courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg == '赠一得一')}}">
-                <view class="ui-container" :class="{'is-fixed': isFixed}">
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.coursePayStatus!='hidden' && ((courseDetail.hasGiftState && courseDetail.roleType=='gifter' && courseDetail.price>0) || (courseDetail.hasGiftState && courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='赠一得一') || (courseDetail.roleType=='normal' && courseDetail.price>0))}}">
+                <view class="ui-container is-fixed">
                     <view class="ui-text main-center">
-                        <text>好友成功领取后，你将获得此课程</text>
+                        <text>好友成功领取后，你将获得此课程。好友只能通过此途径领取一个课程。</text>
                     </view>
                     <view class="ui-button-list main-justify">
                         <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
@@ -348,10 +349,10 @@
                 </view>
             </view>
 
-            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg != '赠一得一') || (courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='马上领取') || isGifter}}">
+            <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{(courseDetail.hasGiftState && courseDetail.roleType == 'receiver' && courseDetail.giftButtonMsg != '赠一得一') || isGifter}}">
                 <view class="ui-container is-fixed">
                     <view class="ui-text main-center">
-                        <text>3天内学完所有微课，你将获得此课程。</text>
+                        <text>{{countDown ? '3天内学完所有微课，你将获得此课程。' : '领取后，你的好友将获得此课程。你只能通过此途径领取1个课程。'}}</text>
                     </view>
                     <view class="ui-button-list ui-column">
                         <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
@@ -383,6 +384,24 @@
     import {login} from '../../redux/models/user'
     import _ from 'underscore'
 
+    /*
+       * 赠一得一，字段
+       * isLimitedTimeGiftCourse: 是否是限时赠一得一
+       * coursePayStatus: 是否显示底部购买按钮（2个按钮的条件之一）
+       * hasGiftState: 是否有赠送状态
+       * giftButtonMsg: 底部按钮文案
+       * roleType: {gifter: 赠送者, receiver: 受赠者, normal: 普通者}
+       *
+       * 赠送者
+       * 1、访客身份：点击按钮需要授权，之后重新调取课程详情
+       * 2、用户身份: 1) isLimitedTimeGiftCourse && roleType!='receiver' 需要获取giftID，弹窗分享接口，如果请求接口回来再弹窗好友列表是不可以的
+       *             2) 如果giftButtonMsg=='赠一得一' && roleType!='gifter'
+       *
+       * 受赠者
+       * 1、访客身份：点击按钮需要授权，之后重新调取课程详情
+       * 2、用户身份: 1) 如果没有领取过，进来自动领取
+       *             2) 如果giftButtonMsg=='赠一得一' && roleType!='gifter'
+       * */
     const store = getStore()
     @connect({
         systemInfo(state) {
@@ -478,7 +497,6 @@
          */
         onPageScroll(res) {
             let self = this
-
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
             self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
@@ -552,6 +570,12 @@
                     self.__receiveCourse()
                     return
                 }
+                // 获取赠送的giftID
+                if (self.isTokenSet
+                    && self.courseDetail.isLimitedTimeGiftCourse
+                    && 'receiver' != self.courseDetail.roleType) {
+                    self.__getGiftID()
+                }
 
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
@@ -565,10 +589,6 @@
             }).catch(error => {
                 self.isLoaded = true
             })
-
-            if (self.isTokenSet && !self.paramsInfo.giftID) {
-                self.__getGiftID()
-            }
         }
         /**
          * 去微课学习页面
@@ -851,6 +871,15 @@
             let reportType = ''
             if (dataset && dataset.role) {
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+                if (self.giftID) {
+                    let postData = {
+                        token: self.systemInfo.token,
+                        courseID: self.paramsInfo.id,
+                        giftID: self.giftID
+                    }
+
+                    fetch.saveGiftId(postData).then((respone) => {}).catch((error) => {})
+                }
                 reportType = shareDictionary.RECEIVE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
             } else {
@@ -875,7 +904,8 @@
 
             return {
                 title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
-                path: path
+                path: path,
+                imageUrl: self.courseDetail.shareCoverImageUrl || ''
             }
         }
     }
