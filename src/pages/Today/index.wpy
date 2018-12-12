@@ -39,8 +39,12 @@
             .ui-item{
                 box-sizing:border-box;
                 .ui-course-image{
-                    height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;
-                    .cell-image{height: 480rpx;width: 670rpx;}
+                    height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
+                    .ui-bg-content{
+                        position: absolute;bottom:74rpx;left: 32rpx;
+                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;}
+                        .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;}
+                    }
                     .ui-progress{
                         position:absolute;right:32rpx;top:32rpx;
                         .ui-circular-progress{
@@ -170,8 +174,12 @@
                             next-margin="22rpx">
                         <repeat for="{{studyingList}}" index="{{ index }}" key="{{ index }}">
                             <swiper-item class="ui-item" formType="submit" hover-stay-time="100">
-                                <view class="ui-course-image">
-                                    <image class="cell-image" src="{{item.bgImg}}" />
+                                <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')">
+                                    <view class="ui-bg-content">
+                                        <view class="cell-title">{{item.courseName}}</view>
+                                        <view class="cell-dec">{{item.courseDec}}</view>
+                                    </view>
+                                    <!-- <image class="cell-image" src="{{item.bgImg}}" /> -->
                                     <view class="ui-progress">
                                         <view class="ui-circular-progress">
                                             <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
@@ -191,7 +199,7 @@
                                             <image src="{{item.lessonImg}}" />
                                         </view>
                                         <view class="ui-detail">
-                                            <view class="cell-title">{{item.title}}{{item.precent}}</view>
+                                            <view class="cell-title">{{item.title}}</view>
                                             <view class="cell-dec">{{item.dec}}</view>
                                         </view>
                                     </view>
@@ -405,6 +413,8 @@
                     allLesson:5,
                     finishLesson:2,
                     precent:40,
+                    courseName:'内容营销方法',
+                    courseDec:'平均10w+阅读量的自媒体大咖的经验分享'
                 },
                 {
                     bgImg:"http://wx-small.runwise.cn/image/imageID5da14a29fdf4699d035d1f96b1d4.png",
@@ -415,6 +425,8 @@
                     allLesson:3,
                     finishLesson:0,
                     precent:0,
+                    courseName:'新任leader的团队管理指南',
+                    courseDec:'史上最成功设计团队IEDO…'
                 },
                 {
                     bgImg:"http://wx-small.runwise.cn/image/imageIDd6eb40c2a0244dab828a5464c42d.png",
@@ -425,6 +437,8 @@
                     allLesson:4,
                     finishLesson:3,
                     precent:70,
+                    courseName:'时间管理，我的时间我作主',
+                    courseDec:'平均10w+阅读量的自媒体大咖的经验分享'
                 },
             ],
             discoverPageTitle: '',
