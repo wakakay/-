@@ -192,7 +192,7 @@
                         <view class="dir-top main-justify"><text>微课</text><text>{{courseDetail.senceCount}}节</text></view>
                         <view class="dir-top main-justify"><text>学习时长</text><text>{{courseDetail.courseMinute}}分钟</text></view>
                         <view class="dir-top main-justify"><text>测练</text><text>{{courseDetail.practiceCount}}道</text></view>
-                        <view class="dir-top main-justify"><text>正在学</text><text>{{courseDetail.userCount}}人</text></view>
+                        <view class="dir-top main-justify"><text>已学</text><text>{{courseDetail.userCount}}人</text></view>
                     </view>
                 </view>
             </view>

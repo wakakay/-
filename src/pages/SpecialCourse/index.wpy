@@ -53,7 +53,7 @@
                                 <view class="cell-dec">{{courseItem.description}}</view>
                                 <view class="ui-btn-bottom">
                                     <view class="cell-btn">{{courseItem.buttonMsg}}</view>
-                                    <view class="cell-tip">{{courseItem.userCount}}人在学</view>
+                                    <view class="cell-tip">{{courseItem.userCount}}人已学</view>
                                 </view>
                             </view>
                         </button>

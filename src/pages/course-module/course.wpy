@@ -233,7 +233,7 @@
                                         <view class="cell-dec">{{item.showPoint}}</view>
                                         <view class="ui-btn">
                                             <view class="cell-item">获取</view>
-                                            <view class="cell-dec">{{item.userCount}}人在学</view>
+                                            <view class="cell-dec">{{item.userCount}}人已学</view>
                                         </view>
                                     </view>
 
