@@ -58,6 +58,7 @@ button::after{border:0;}
 .flex-space-around-row{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-around;}
 .flex-items-center{align-items:center;}
 .inline-block{display:inline-block;vertical-align:top;}
+.flex-center{display:flex;align-items:center;justify-content:center;}
 
 .text-title{display:block;font-size:56rpx;line-height:80rpx;color:#303f48;font-family:PingFangSC-Semibold;}
 .text-title-richText{color:#007aff;font-weight:bold;}

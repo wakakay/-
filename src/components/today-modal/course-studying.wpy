@@ -1,0 +1,126 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    @keyframes fadeInLeft{
+        0%{left:100%}
+        100%{left:0}
+    }
+    .ui-studying-modal{
+        position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: @z-index-mask;width: 100%;height: 100%;background: @background-white;animation: fadeInLeft 200ms ease-out;
+        .ui-item{
+            display: flex;height: 240rpx;box-sizing: border-box;margin-left:32rpx;border-bottom:2rpx solid @border-gray;justify-content: space-between;align-items: center;padding-right:32rpx;
+            .ui-content{
+                display: flex;height: 240rpx;flex:1;
+                .ui-img{
+                    margin-right: 28rpx;
+                    image{width: 176rpx;height: 176rpx;border-radius: @border-radius-44}
+                }
+                .ui-detail{
+                    >view{width:400rpx ;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;}
+                    .cell-title{font-size: 34rpx;color: @color-black;font-weight: bold;}
+                    .cell-dec{font-size: 28rpx;color: @color-gray}
+                }
+            }
+            .ui-status{
+                width: 72rpx;
+                .cell-progress-number{line-height: 72rpx;text-align: center;}
+                .cell-circle-right,.cell-circle-left{box-sizing:border-box;}
+            }
+        }
+        .ui-hover{background: @background-mask-normal-2;}
+        .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:96rpx 0rpx;}
+    }
+</style>
+
+<template>
+    <view class="ui-studying-modal" hidden="{{ !isShow }}">
+        <jn-header hiddenButton title="全部在学课程">
+            <button slot="cursor-button" class="cell-back" @tap.stop="getBackStep">
+                <text class="icon-back"></text>
+            </button>
+        </jn-header>
+        <scroll-view scroll-y style="height: calc(100% - {{headerHeigth}}px)">
+            <repeat for="{{CourseStudyingList}}" key="{{index}}" index="{{index}}">
+                <view class="ui-item" hover-class="ui-hover">
+                    <view class="ui-content">
+                        <view class="ui-img flex-center">
+                            <image src="{{item.bgImg}}"/>
+                        </view>
+                        <view class="ui-detail flex-center-column">
+                            <view class="cell-title">{{item.title}}</view>
+                            <view class="cell-dec">{{item.dec}}</view>
+                        </view>
+                    </view>
+                    <view class="ui-status">
+                        <view class="ui-circular-progress">
+                            <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                            <view class="ui-wrapper ui-right">
+                                <view class="cell-circle-right" style="transform:rotate({{item.precent <= 50 ? (-135 + 3.6 * item.precent) : 45}}deg);"></view>
+                            </view>
+                            <view class="ui-wrapper ui-left">
+                                <view class="cell-circle-left" style="transform:rotate({{item.precent > 50 ? (-135 + 3.6 * (item.precent - 50)) : -135}}deg);"></view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+            <view class="cell-more">没有更多内容了</view>
+        </scroll-view>
+    </view>
+    
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class CourseSeries extends wepy.component {
+        props = {
+            CourseStudyingList: {
+                type: Array,
+                default: []
+            },
+            isShowCourseStudying:{
+                type: Boolean
+            }
+        }
+        components = {
+            'jn-header': header,
+        }
+        computed = {
+            isShow () {
+                let self = this;
+                return self.isShowCourseStudying;
+            }
+        }
+
+        data = {
+            headerHeigth: 68,
+        }
+
+        methods = {
+            getBackStep() {
+                let self = this
+                self.$emit('onClickBack')
+            },
+            getItem(event){
+                let self = this
+                self.$emit('on-all-course',event)
+            }
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>

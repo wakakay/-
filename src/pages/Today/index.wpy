@@ -82,7 +82,7 @@
             .ui-title-dec{
                 display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
                 .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
-                .cell-average{
+                .cell-num{
                     font-size: 24rpx;color: @color-gray;
                     text{font-size:20rpx;}
                 }
@@ -102,9 +102,23 @@
                         .ui-detail{
                             width:312rpx;height:120rpx;
                             .cell-name{font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-                            .cell-dec{
-                                font-size: 26rpx;color:@color-gray;margin-top:12rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-                                text{color:@color-black;font-size: 28rpx}
+                            .cell-subtitle{
+                                width:282rpx;font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;position:relative;display:flex;margin:8rpx 0 6rpx;
+                                .cell-target{width: 210rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                                text:nth-of-type(1){font-size: 28rpx;margin-right: 4rpx;}
+                                text:nth-of-type(2){position:absolute;right:0;}
+                            }
+                            .ui-progress{
+                                width:282rpx;height:6rpx;margin-top:8rpx;background-color:#D8D8D8;border-radius:16rpx;position:relative;
+                                >view{position:absolute;left:0;top:0;}
+                                .cell-line{
+                                    width:100%;height:100%;z-index:3;
+                                    view{width:20%;height:100%;border-left:4rpx solid @background-white;}
+                                    view:first-child{border-left:0;}
+                                }
+                                .cell-percent{width:50%;height:100%;background-color:#FF9500;z-index:2;transition:width .2s;}
+                                .icon-triangle{font-size:20rpx;color:@color-gray;position:absolute;left:0%;bottom:-24rpx;}
+                                .cell-average-num{font-size:20rpx;color:@color-gray;position:absolute;left:0%;bottom:-26rpx;}
                             }
                         }
                         .ui-btn{
@@ -124,7 +138,10 @@
     <view catchtouchmove="{{!isScroll}}">
         <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
         <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
-
+        <jn-course-studying wx:if="{{ true }}"
+            :isShowCourseStudying.sync="isShowCourseStudying" :CourseStudyingList.sync="courseStudyModalList"
+            @onClickBack.user="OnClickBack" @on-all-course.user="getCourseStudying">
+        </jn-course-studying>
         <scroll-view
                 scroll-with-animation
                 scroll-y="{{isScroll}}"
@@ -141,7 +158,7 @@
                 <view wx:if="{{studyingList.length}}" class="ui-studying">
                     <view class="ui-top">
                         <view class="cell-title">在学课程</view>
-                        <view class="cell-all">
+                        <view class="cell-all" @tap.stop="getAllStudyingCourse"  data-item="{{studyingList}}">
                             查看全部(3)
                             <text class="icon-right-arrow"></text>
                         </view>
@@ -190,7 +207,7 @@
                         <view class="cell-tip">{{informationList.sceneType}}</view>
                         <view class="ui-title-dec">
                             <view class="cell-title">{{informationList.name}}</view>
-                            <view class="cell-average">
+                            <view class="cell-num">
                                 <text class="icon-triangle"></text>
                                 平均水平
                             </view>
@@ -209,7 +226,22 @@
                                 <view class="ui-content">
                                     <view class="ui-detail">
                                         <view class="cell-name">{{courseItem.senceName}}</view>
-                                        <view class="cell-dec">{{courseItem.senceTarget}}</view>
+                                        <view class="cell-subtitle">
+                                            <text class="icon-study-bar"></text>
+                                            <view class="cell-target">{{courseItem.senceTarget}}</view>
+                                            <text>{{courseItem.mySenceScore || 0}}</text>
+                                        </view>
+                                        <view class="ui-progress">
+                                            <view class="cell-line box-mean">
+                                                <view></view><view></view><view></view><view></view><view></view>
+                                            </view>
+                                            <view class="cell-percent" style="width: {{courseItem.mySenceScore * 10}}%;"></view>
+                                            <text class="icon-triangle" style="left:{{courseItem.averageScore * 10}}%;"></text>
+                                            <text class="cell-average-num" style="left:{{courseItem.averageScore * 10 + 8}}%;">
+                                                {{courseItem.averageScore}}
+                                            </text>
+                                        </view>
+
                                     </view>
                                     <view class="ui-btn">
                                         <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
@@ -246,6 +278,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
+    import CourseStudying from '../../components/today-modal/course-studying'
     import studyingBar from '../../components/common/studying-bar'
     import {share as shareApi, registered as fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
@@ -285,7 +318,8 @@
             'jn-header': header,
             'jn-loading': Loading,
             'jn-evaluate': EvaluateModal,
-            'studying-bar': studyingBar
+            'studying-bar': studyingBar,
+            'jn-course-studying': CourseStudying
         }
 
         data = {
@@ -295,6 +329,8 @@
             scrollTop: 0,
             isShowGift: false,
             isShowEvaluate: false,
+            isShowCourseStudying:false,
+            courseStudyModalList:[],
             informationList: {
                 id:1,
                 isNewSenceMap:{senceID6ee334bae9245fba2a7e7f714a29: true, senceID799ff47e9d14a8a85f17b8f061cc: true},
@@ -315,7 +351,9 @@
                         resume:0,
                         senceName:"用演讲传递价值，影响成员",
                         sencePrice:0,
-                        senceTarget:"马云挂在嘴边的“赋能”第一步"
+                        mySenceScore:5.3,
+                        averageScore:5.8,
+                        senceTarget:"马云"
                     },
                     {
                         buttonStatus:"notBeginOrTry",
@@ -329,6 +367,8 @@
                         minuteTime:5,
                         progress:0,
                         resume:0,
+                        mySenceScore:2.5,
+                        averageScore:6.9,
                         senceName:"持续提升招聘效率",
                         sencePrice:0,
                         senceTarget:"更快招到合适的人"
@@ -345,9 +385,11 @@
                         minuteTime:5,
                         progress:0,
                         resume:0,
+                        mySenceScore:4.4,
+                        averageScore:3.1,
                         senceName:"组建一支“增长黑客”团队",
                         sencePrice:0,
-                        senceTarget:"用数据驱动增长"
+                        senceTarget:"用数据驱动增"
                     },
                 ],
                 type:"todayTask",
@@ -489,6 +531,20 @@
             })
         }
         methods = {
+            // 点击查看全部 触发组件
+            getAllStudyingCourse({currentTarget: {dataset: {item}}}){
+                let self = this
+                self.isShowCourseStudying = true
+                self.courseStudyModalList = item
+                console.log(self.courseStudyModalList,'courseStudyModalList')
+                self.$apply()
+            },
+            // 系列 组件 的返回按钮
+            OnClickBack(){
+                let self = this
+                self.isShowCourseStudying = false
+                self.$apply()
+            },
             getAvatar() {
                 let self = this
                 wepy.$instance.globalData.getHuilder('今日/头像', 'click', '我的页面')
