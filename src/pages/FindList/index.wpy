@@ -130,7 +130,7 @@
                                 <view class="cell-dec">{{item.subtitle}}</view>
                             </view>
                         </view>
-                        <view wx:if="{{item.type == 'subject' || item.type == 'todayTask'}}" class="ui-tody-subject">
+                        <view wx:if="{{item.type == 'subject'}}" class="ui-tody-subject">
                             <view class="cell-tip">{{item.sceneType}}</view>
                             <view class="cell-title">{{item.name}}</view>
                             <view class="ui-subject">
