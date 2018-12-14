@@ -41,10 +41,11 @@
                 .ui-course-image{
                     height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
                     .ui-bg-content{
-                        position: absolute;bottom:74rpx;left: 32rpx;
+                        position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
                         .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;}
                         .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;}
                     }
+                    .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
                     .ui-progress{
                         position:absolute;right:32rpx;top:32rpx;
                         .ui-circular-progress{
@@ -179,6 +180,7 @@
                                         <view class="cell-dec">{{item.courseDec}}</view>
                                     </view>
                                     <!-- <image class="cell-image" src="{{item.bgImg}}" /> -->
+                                    <view class="ui-shadow"></view>
                                     <view class="ui-progress">
                                         <view class="ui-circular-progress">
                                             <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
