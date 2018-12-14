@@ -41,7 +41,7 @@
 
 <script>
     import wepy from 'wepy'
-    import {practice as practiceApi} from '../../api'
+    import {practice as practiceApi, report as reportApi} from '../../api'
     import {redirectToPreviousPractice} from '../../utils'
     import {getStore, connect} from 'wepy-redux'
     import {login} from "../../redux/models/user"
