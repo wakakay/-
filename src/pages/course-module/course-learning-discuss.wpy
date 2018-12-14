@@ -12,6 +12,7 @@
         .ui-content{padding:14rpx 0;font-size:34rpx;color:@color-black;line-height:50rpx;}
         .ui-praise-names{
             padding:14rpx 0 24rpx;font-size:30rpx;color:@color-gray;line-height:42rpx;
+            &.active text{color:@color-blue;}
             text{margin-right:16rpx;font-size:40rpx;}
         }
     }
@@ -32,6 +33,7 @@
         width:100%;height:128rpx;border-top:1rpx solid @border-gray;position:fixed;left:0;bottom:0;
         button{
             display:block;width:50%;height:100%;float:left;padding-right:86rpx;background:none;font-size:30rpx;color:@color-gray;text-align:right;line-height:128rpx;
+            &.active{color:@color-blue;}
             text{margin-right:12rpx;font-size:42rpx;}
         }
         .ui-textarea{
@@ -46,8 +48,6 @@
 
 <template>
     <jn-header title="2条讨论"></jn-header>
-
-
     <scroll-view class="ui-scroll-box" scroll-y>
         <view class="ui-discuss-info">
             <view class="ui-title main-justify">
@@ -60,7 +60,9 @@
 
             <view class="ui-content"><text>{{discussDetails.content}}</text></view>
 
-            <view class="ui-praise-names"><text class="icon-praise"></text>{{discussDetails.likeNames}}</view>
+            <view class="ui-praise-names" :class="{'active': discussDetails.isliked}" wx:if="{{discussDetails.likeNames}}">
+                <text class="icon-praise"></text>{{discussDetails.likeNames}}
+            </view>
         </view>
 
         <view class="ui-discuss-list">
@@ -80,7 +82,7 @@
     </scroll-view>
 
     <view class="ui-button-list" style="bottom:{{keyboardHeight}}px">
-        <button @tap.stop="getLike"><text class="icon-praise"></text>{{discussDetails.likeList.length}}</button>
+        <button :class="{'active': discussDetails.isliked}" @tap.stop="getLike"><text class="icon-praise"></text>{{discussDetails.likeCount || 0}}</button>
         <view class="ui-textarea cross-center">
             <text class="icon-comment1"></text>
             <textarea :class="{'is-focus': keyboardHeight>0}"
@@ -90,7 +92,6 @@
                       value="{{messageValue}}"
                       selection-start="{{messageValue.length}}"
                       selection-end="{{messageValue.length}}"
-                      auto-focus="autoFocus"
                       bindfocus="getFocus"
                       bindblur="getBlur"
                       bindinput="getChange"
@@ -121,7 +122,6 @@
             viewID: '',
             discussDetails: {},
             keyboardHeight: 0,
-            autoFocus: false,
             messageValue: ''
         }
 
@@ -158,6 +158,10 @@
 
         __replyDiscuss() {
             let self = this
+            if ('' === self.messageValue) {
+                return
+            }
+
             let postData = {
                 token: self.systemInfo.token,
                 viewID: self.viewID,
@@ -183,17 +187,10 @@
                     token: self.systemInfo.token,
                     viewID: self.viewID
                 }
-                let http = item.isliked ? fetch.dislikeSenceViews : fetch.likeSenceViews
+                let http = self.discussDetails.isliked ? fetch.dislikeSenceViews : fetch.likeSenceViews
                 http(postData).then(respone => {
                     if (1 === respone.success) {
-                        let data = _.find(self.discussList, {viewID: item.viewID})
-                        if (item.isliked) {
-                            data.isliked = 0
-                            data.likeCount -= 1
-                        } else {
-                            data.isliked = 1
-                            data.likeCount += 1
-                        }
+                        self.initialize()
                         self.$apply()
                     }
                 })

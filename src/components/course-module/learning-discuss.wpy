@@ -5,10 +5,11 @@
 <template>
     <view class="module-learning-discuss" wx:if="{{cardItem.type=='fullimage' || cardItem.type=='hotSpot'}}">
         <view class="ui-message main-center cross-center"
+              :class="{'is-dark': cardItem.fullImageColorIsDark}"
               style="top:{{headerHeigth}}px"
               data-type="1"
               @tap.stop="getShowStatus">
-            <text class="icon-comment1"></text>{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
+            <text class="icon-comment1"></text>{{isFocus}}-{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
         </view>
 
         <view class="ui-mask"
@@ -28,7 +29,9 @@
                     <view class="ui-portrait flex-box-0"><image mode="scaleToFill" src="{{item.avatarUrl}}"></image></view>
                     <view class="ui-content">
                         <text class="icon-arrow"></text>
-                        <view class="cell-content"><text selectable>{{item.content}}</text></view>
+                        <view class="cell-content"
+                              data-item="{{item}}"
+                              @tap.stop="getDicussDetail"><text selectable>{{item.content}}</text></view>
                         <view class="ui-button-list main-justify">
                             <view class="cell-time cross-center">{{item.createTime}}</view>
                             <view class="cell-button dir-left">
@@ -57,11 +60,10 @@
             <text class="icon-close flex-box-0" data-type="0" @tap.stop="getShowStatus"></text>
             <textarea class="cross-start"
                       maxlength="200"
-                      placeholder="写下这一刻的想法……"
-                      auto-height
+                      placeholder="{{!viewID ? '写下这一刻的想法……' : '回复'+viewName+'：'}}"
                       adjust-position="{{false}}"
                       value="{{messageValue}}"
-                      auto-focus="autoFocus"
+                      focus="{{isFocus}}"
                       bindfocus="getFocus"
                       bindblur="getBlur"
                       bindinput="getChange"
@@ -96,6 +98,7 @@
         computed = {
             cardItem() {
                 let self = this
+                console.log(self.discussCount[0])
                 return self.discussCount[0]
             }
         }
@@ -106,7 +109,9 @@
             scrollTop: 0,
             currentPage: 1,
             isMore: true, // 是否能加载更多
-            autoFocus: false,
+            isFocus: false,
+            viewID: null,
+            viewName: '',
             keyboardHeight: 0,
             messageValue: '',
             discussList: []
@@ -153,7 +158,7 @@
                         }).exec()
                     }, 50)
                 } else {
-                    setTimeout(() => {
+                    /*setTimeout(() => {
                         query.selectAll('.ui-item').boundingClientRect((response) => {
                             response.length = discussList.length - 1
                             let sum = _.reduce(response, (memo, item) => {return memo + item.height}, 0)
@@ -162,7 +167,7 @@
                             }
                             self.$apply()
                         }).exec()
-                    }, 50)
+                    }, 50)*/
                 }
             }).catch(error => {
 
@@ -174,6 +179,9 @@
          */
         __publishDiscuss() {
             let self = this
+            if ('' === self.messageValue) {
+                return
+            }
             let postData = {
                 token: self.systemInfo.token,
                 courseID: self.$parent.courseID,
@@ -192,7 +200,31 @@
 
             })
         }
+        /**
+         * 回复想法
+         * @private
+         */
+        __replyDiscuss() {
+            let self = this
+            if ('' === self.messageValue) {
+                return
+            }
 
+            let postData = {
+                token: self.systemInfo.token,
+                viewID: self.viewID,
+                content: self.messageValue
+            }
+            fetch.replySenceViews(postData).then(respone => {
+                self.messageValue = ''
+                self.viewID = null
+                self.viewName = ''
+                self.$apply()
+                self.initialize()
+            }).catch(error => {
+
+            })
+        }
         methods = {
             /**
              * 滚动到顶部加载更多想法
@@ -216,6 +248,7 @@
                 self.isShow = 1==type ? true : false
                 if (self.isShow) {
                     self.__discussList()
+                    self.isFocus = true
                 }
                 self.$apply()
             },
@@ -236,6 +269,8 @@
             getBlur(event) {
                 let self = this
                 self.keyboardHeight = 0
+                self.isFocus = false
+                self.viewID = null
                 self.$apply()
             },
             /**
@@ -253,7 +288,7 @@
              */
             getConfirm(event) {
                 let self = this
-                self.__publishDiscuss()
+                !self.viewID ? self.__publishDiscuss() : self.__replyDiscuss()
             },
             /**
              * 点赞
@@ -283,13 +318,25 @@
                 })
             },
             /**
+             * 去发现想法详情
+             * @param event
+             */
+            getDicussDetail(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                wx.navigateTo({url: `/pages/course-module/course-learning-discuss?viewID=${item.viewID}`})
+            },
+            /**
              * 回复一个想法
              * @param event
              */
             getReply(event) {
                 let self = this
                 let {currentTarget: {dataset: {item}}} = event
-                wx.navigateTo({url: `/pages/course-module/course-learning-discuss?viewID=${item.viewID}`})
+                self.viewID = item.viewID
+                self.viewName = item.nickName
+                self.isFocus = true
+                self.$apply()
             }
         }
 
