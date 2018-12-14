@@ -466,7 +466,7 @@
 						</view>
 						<view class="ui-item" wx:if="{{taskList.TaskContentList}}" wx:for="{{ taskList.TaskContentList }}" wx:key="{{ index }}" wx:for-index="index"
 							  @tap.stop="handleTapSence" data-item="{{item}}"  data-task-tips="{{false}}"
-							  data-phone="{{ phone }}" data-resume="{{ true? 'YES': 'NO' }}"
+							  data-phone="{{ phone }}" 
 							  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
 							  data-task-offset="{{index}}" data-button="{{false}}">
 							<view wx:if="{{ 'online' === item.taskType }}" class="ui-on-line">
@@ -485,7 +485,7 @@
 
 								<view class="ui-botton" >
 									<view class="cell-item" @tap.stop="handleTapSence" data-item="{{item}}"   data-task-tips="{{false}}"
-										  data-phone="{{ phone }}" data-resume="{{ true? 'YES': 'NO' }}"
+										  data-phone="{{ phone }}"
 										  data-button="{{ 'review' === item.buttonStatus ? 'question' : false}}"
 										  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
 										  data-task-offset="{{index}}">{{item.buttonMsg}}</view>
@@ -533,7 +533,7 @@
 						</view>
 						<view class="ui-botton-bar" @tap.stop="handleTapSence"
 							  data-item="{{taskList.continueSence}}" data-phone="{{ phone }}"
-							  data-resume="{{ true? 'YES': 'NO' }}"  data-task-tips="{{taskList.taskTips}}"
+							data-task-tips="{{taskList.taskTips}}"
 							  data-button="{{ 'review' === item.buttonStatus ? 'question' : false}}"
 							  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}">
 							{{taskList.taskTips}}
@@ -1107,8 +1107,7 @@
             },
             handleStartSence({currentTarget: {dataset: {courseID, senceID, resume, teamID, lessonType}}}) {//打开小节
                 let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: true, teamID: this.teamID, isNewSence})
-
+                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID: this.teamID, isNewSence})
             },
             // 评论
             handleCommentSence({currentTarget: {dataset: {active, postID, nickName}}}) {//评论
@@ -1306,7 +1305,7 @@
                 })
             },
             // 进入微课 页面
-            handleTapSence({currentTarget: {dataset: {item,resume, phone,button,taskTips}}}) {
+            handleTapSence({currentTarget: {dataset: {item, phone,button,taskTips}}}) {
                 // 没有senceID，说明是线下课程，点击没有任何反应
                 if (!item.senceID) {
                     return
@@ -1348,49 +1347,8 @@
                     senceID
                 })
                 if ('review' === buttonStatus) return this.$navigate('/pages/Review/index', {courseID, senceID, teamID}) // 回顾
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: resume, teamID, isNewSence}) // 其他进入课程
-            },
-            handleTapTry({target: {dataset: {courseID, senceID, resume, phone, teamID, taskOffset}}}) {
-                if (false === this.checkIfIsTheTimeToGetInLesson(taskOffset)) return false
-                if ('deadNumber' === phone || null == phone) return false
-                console.log('receive try')
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, teamID, isNewSence})
-            }, // 试学
-            handleTapBegin({target: {dataset: {courseID, senceID, resume, phone, teamID, taskOffset}}}) {
-                if (false === this.checkIfIsTheTimeToGetInLesson(taskOffset)) return false
-                console.log('receive begin')
-                if ('deadNumber' === phone || null == phone) return false
-                if ('member' === this.teamRole && false === this.isSignUp) return wepy.showModal({
-                    title: "提示",
-                    content: "请先报名",
-                    showCancel: false,
-                    confirmText: "知道了"
-                })
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, teamID, isNewSence})
-            },
-            handleTapContinue({target: {dataset: {courseID, senceID, resume, teamID, taskOffset}}}) {
-                if (false === this.checkIfIsTheTimeToGetInLesson(taskOffset)) return false
-                console.log('receive continue')
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: resume, teamID, isNewSence})
-            },
-            handleTapContinueCopy({target: {dataset: {courseID, senceID, resume, teamID, taskOffset}}}) {
-                console.log('receive continue')
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: resume, teamID, isNewSence})
-            },
-            handleTapReview({target: {dataset: {courseID, senceID, resume, teamID, taskOffset}}}) {
-                if (false === this.checkIfIsTheTimeToGetInLesson(taskOffset)) return false
-                console.log('receive review')
-                this.$navigate('/pages/Review/index', {courseID, senceID, teamID})
-            },
-            handleTapPractice({target: {dataset: {courseID, senceID, resume, teamID, taskOffset}}}) {
-                if (false === this.checkIfIsTheTimeToGetInLesson(taskOffset)) return false
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, teamID, isNewSence})
+				let isNewSence = this.isNewSenceMap[senceID]
+                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID, isNewSence}) // 其他进入课程
             },
             // 管理训练营
             handleSubmit() {
