@@ -125,8 +125,8 @@
                     {
                         "pagePath": "pages/Today/index",
                         "text": "今日",
-                        "iconPath": "assets/img/discover-off.png",
-                        "selectedIconPath": "assets/img/discover-on.png"
+                        "iconPath": "assets/img/task-off.png",
+                        "selectedIconPath": "assets/img/task-on.png"
                     },
                     {
                         "pagePath": "pages/FindList/index",
