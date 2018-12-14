@@ -122,7 +122,6 @@
                                 }
                                 .cell-percent{width:50%;height:100%;background-color:#FF9500;z-index:2;transition:width .2s;}
                                 .icon-triangle{font-size:20rpx;color:@color-gray;position:absolute;left:0%;bottom:-24rpx;}
-                                .cell-average-num{font-size:20rpx;color:@color-gray;position:absolute;left:0%;bottom:-26rpx;}
                             }
                         }
                         .ui-btn{
@@ -245,9 +244,6 @@
                                             </view>
                                             <view class="cell-percent" style="width: {{courseItem.mySenceScore * 10}}%;"></view>
                                             <text class="icon-triangle" style="left:{{courseItem.averageScore * 10}}%;"></text>
-                                            <!-- <text class="cell-average-num" style="left:{{courseItem.averageScore * 10 + 8}}%;">
-                                                {{courseItem.averageScore}}
-                                            </text> -->
                                         </view>
 
                                     </view>
