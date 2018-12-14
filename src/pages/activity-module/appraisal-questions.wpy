@@ -223,6 +223,7 @@
                         'practiceList':self.commitList
                     }
                 }
+                console.log(postData,'postData')
                 fetch.sendUserDoExam(postData).then((res)=>{
                     self.isShowShade = false;
                     wx.hideLoading()
@@ -265,6 +266,11 @@
             self.$apply()
 
             self.__getExamPracticeList()
+        }
+
+        onShow() {
+            let self = this;
+            self.commitList = []
         }
 
         events = {
