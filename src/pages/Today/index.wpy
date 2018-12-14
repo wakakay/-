@@ -245,9 +245,9 @@
                                             </view>
                                             <view class="cell-percent" style="width: {{courseItem.mySenceScore * 10}}%;"></view>
                                             <text class="icon-triangle" style="left:{{courseItem.averageScore * 10}}%;"></text>
-                                            <text class="cell-average-num" style="left:{{courseItem.averageScore * 10 + 8}}%;">
+                                            <!-- <text class="cell-average-num" style="left:{{courseItem.averageScore * 10 + 8}}%;">
                                                 {{courseItem.averageScore}}
-                                            </text>
+                                            </text> -->
                                         </view>
 
                                     </view>
