@@ -132,7 +132,7 @@
         </view>
 
         <jn-share-card></jn-share-card>
-        <jn-learning-discuss :headerHeigth.sync="headerHeigth"></jn-learning-discuss>
+        <jn-learning-discuss :headerHeigth.sync="headerHeigth" :discussCount.sync="cardCurrentInfo"></jn-learning-discuss>
     </view>
 
     <view class="module-result-box dir-bottom"
@@ -295,6 +295,9 @@
             let self = this
             // 通知卡片组件，重置初始化数据
             self.$broadcast('broadcast-reset-status')
+            if (self.cardCurrentInfo.length) {
+                self.$broadcast('broadcast-learning-discuss')
+            }
         }
 
         /**
@@ -841,6 +844,15 @@
                 }
 
                 self.cardCurrentInfo.splice(0, 1, item)
+                self.$apply()
+            },
+            /**
+             * 添加想法
+             * @param data
+             */
+            'on-learning-discuss': (data) => {
+                let self = this
+                self.cardCurrentInfo[0].viewsCount += 1
                 self.$apply()
             },
             /**
