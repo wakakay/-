@@ -285,7 +285,7 @@
                     }
                 })
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName.name}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
                 self.$apply()
             })
         }
