@@ -132,7 +132,7 @@
         </view>
 
         <jn-share-card></jn-share-card>
-        <jn-learning-discuss :headerHeigth.sync="headerHeigth" :discussCount.sync="cardCurrentInfo"></jn-learning-discuss>
+        <jn-learning-discuss :headerHeigth.sync="headerHeigth"></jn-learning-discuss>
     </view>
 
     <view class="module-result-box dir-bottom"
@@ -326,6 +326,7 @@
                 index = -1 !== index ? index : 0
                 self.cardCurrentInfo.push(self.cardsList[index])
                 self.cardCurrent = index
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 /*if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
                     self.__interval()
                 }*/
@@ -491,6 +492,7 @@
             self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
             self.startTouches = {}
             self.isAnimationFinish = false
+            self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
             type && self.__recordProgress()
             self.$apply()
         }
@@ -724,6 +726,7 @@
                 } else {
                     self.cardCurrent += 1
                     self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                    self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                     self.__interval()
                     self.__hasInitAnimation()
                     self.__recordProgress()
@@ -751,6 +754,7 @@
                 self.cardCurrent += 1
 
                 self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 self.__interval()
                 self.__hasInitAnimation()
             },
@@ -844,6 +848,7 @@
                 }
 
                 self.cardCurrentInfo.splice(0, 1, item)
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 self.$apply()
             },
             /**

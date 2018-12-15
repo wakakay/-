@@ -9,20 +9,21 @@
               style="top:{{headerHeigth}}px"
               data-type="1"
               @tap.stop="getShowStatus">
-            <text class="icon-comment1"></text>{{isFocus}}-{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
+            <text class="icon-comment1"></text>{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
         </view>
 
         <view class="ui-mask"
+              wx:if="{{isShow}}"
               data-type="0"
-              @tap.stop="getShowStatus"
-              wx:if="{{isShow}}"></view>
+              @tap.stop="getShowStatus"></view>
 
         <scroll-view class="ui-discuss-list"
                      :class="{'is-iphonex': isIphonex}"
                      style="top:-{{keyboardHeight}}px"
                      scroll-y
                      scroll-top="{{scrollTop}}"
-                     bindscrolltoupper="getScrolltoupper"
+                     data-type="0"
+                     @tap.stop="getShowStatus"
                      wx:if="{{isShow}}">
             <repeat for="{{discussList}}" key="index" index="index" item="item">
                 <view class="ui-item flex {{item.isViewed ? 'ui-self' : 'ui-thire'}}">
@@ -56,8 +57,10 @@
 
         <view class="ui-textarea flex"
               style="bottom:{{keyboardHeight}}px"
+              data-type="0"
+              @tap.stop="getShowStatus"
               wx:if="{{isShow}}">
-            <text class="icon-close flex-box-0" data-type="0" @tap.stop="getShowStatus"></text>
+            <text class="icon-close flex-box-0"></text>
             <textarea class="cross-start"
                       maxlength="200"
                       placeholder="{{!viewID ? '写下这一刻的想法……' : '回复'+viewName+'：'}}"
@@ -89,17 +92,6 @@
             headerHeigth: {
                 type: Number,
                 default: 68
-            },
-            discussCount: {
-                type: Array
-            }
-        }
-
-        computed = {
-            cardItem() {
-                let self = this
-                console.log(self.discussCount[0])
-                return self.discussCount[0]
             }
         }
 
@@ -114,7 +106,8 @@
             viewName: '',
             keyboardHeight: 0,
             messageValue: '',
-            discussList: []
+            discussList: [],
+            cardItem: {}
         }
 
         onLoad() {
@@ -169,6 +162,10 @@
                         }).exec()
                     }, 50)*/
                 }
+                self.cardItem && !self.cardItem.viewsCount && setTimeout(()=>{
+                    self.isFocus = true
+                    self.$apply()
+                }, 50)
             }).catch(error => {
 
             })
@@ -230,13 +227,12 @@
              * 滚动到顶部加载更多想法
              */
             getScrolltoupper() {
-                let self = this
+                /*let self = this
                 if (!self.isMore) {
                     return
                 }
                 self.currentPage += 1
-                console.log(555, self.currentPage)
-                self.__discussList()
+                self.__discussList()*/
             },
             /**
              * 是否展示想法模板
@@ -248,7 +244,6 @@
                 self.isShow = 1==type ? true : false
                 if (self.isShow) {
                     self.__discussList()
-                    self.isFocus = true
                 }
                 self.$apply()
             },
@@ -341,6 +336,11 @@
         }
 
         events = {
+            'broadcast-learning-discuss-reset': (data) => {
+                let self = this
+                self.cardItem = data
+                self.$apply()
+            },
             'broadcast-learning-discuss': (data) => {
                 let self = this
                 self.__discussList()
