@@ -128,8 +128,13 @@
     }
     .ui-textarea{
         box-sizing:border-box;width:100%;height:10%;padding:0 36rpx;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
-        text{margin-right:28rpx;font-size:56rpx;color:@background-gray-cc;}
-        textarea{box-sizing:border-box;width:510rpx;height:96rpx;padding:0 24rpx;background-color:@background-white;font-size:30rpx;;color:@color-black;line-height:48rpx;border-radius:@border-radius-20;}
+        >text{margin-right:28rpx;font-size:56rpx;color:@background-gray-cc;}
+        textarea{box-sizing:border-box;width:510rpx;height:96rpx;padding:24rpx 24rpx;background-color:@background-white;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
+        button{
+            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;position:relative;
+            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
+        }
     }
 }
 /* 全图卡 */

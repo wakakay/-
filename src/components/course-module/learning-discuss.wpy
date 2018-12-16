@@ -57,12 +57,11 @@
 
         <view class="ui-textarea flex"
               style="bottom:{{keyboardHeight}}px"
-              data-type="0"
-              @tap.stop="getShowStatus"
               wx:if="{{isShow}}">
-            <text class="icon-close flex-box-0"></text>
-            <textarea class="cross-start"
-                      maxlength="200"
+            <text class="icon-close flex-box-0"
+                  data-type="0"
+                  @tap.stop="getShowStatus"></text>
+            <textarea maxlength="200"
                       placeholder="{{!viewID ? '写下这一刻的想法……' : '回复'+viewName+'：'}}"
                       adjust-position="{{false}}"
                       value="{{messageValue}}"
@@ -71,6 +70,7 @@
                       bindblur="getBlur"
                       bindinput="getChange"
                       bindconfirm="getConfirm"></textarea>
+            <button @tap.stop="getConfirm" wx:if="{{messageValue.length}}"><text class="icon-send"></text></button>
         </view>
     </view>
 </template>
@@ -100,7 +100,6 @@
             isShow: false,
             scrollTop: 0,
             currentPage: 1,
-            isMore: true, // 是否能加载更多
             isFocus: false,
             viewID: null,
             viewName: '',
@@ -134,34 +133,10 @@
                     return respone[length - index]
                 })
 
-                self.discussList = discussList //_.union(discussList, self.discussList)
+                self.discussList = discussList
+                self.scrollTop = 8000
                 self.$apply()
 
-                /*if (discussList.length < 1000) {
-                    self.isMore = false
-                }*/
-
-                let query = wx.createSelectorQuery()
-                if (1 == self.currentPage && self.discussList.length) {
-                    setTimeout(() => {
-                        query.selectAll('.ui-item').boundingClientRect((response) => {
-                            let size = response.length - 1
-                            self.scrollTop = response[size].bottom
-                            self.$apply()
-                        }).exec()
-                    }, 50)
-                } else {
-                    /*setTimeout(() => {
-                        query.selectAll('.ui-item').boundingClientRect((response) => {
-                            response.length = discussList.length - 1
-                            let sum = _.reduce(response, (memo, item) => {return memo + item.height}, 0)
-                            if (sum) {
-                                self.scrollTop = sum
-                            }
-                            self.$apply()
-                        }).exec()
-                    }, 50)*/
-                }
                 self.cardItem && !self.cardItem.viewsCount && setTimeout(()=>{
                     self.isFocus = true
                     self.$apply()
@@ -217,23 +192,12 @@
                 self.viewID = null
                 self.viewName = ''
                 self.$apply()
-                self.initialize()
+                self.__discussList()
             }).catch(error => {
 
             })
         }
         methods = {
-            /**
-             * 滚动到顶部加载更多想法
-             */
-            getScrolltoupper() {
-                /*let self = this
-                if (!self.isMore) {
-                    return
-                }
-                self.currentPage += 1
-                self.__discussList()*/
-            },
             /**
              * 是否展示想法模板
              * @param event
@@ -241,6 +205,9 @@
             getShowStatus(event) {
                 let self = this
                 let {currentTarget: {dataset: {type}}} = event
+                if (self.keyboardHeight) {
+                    return
+                }
                 self.isShow = 1==type ? true : false
                 if (self.isShow) {
                     self.__discussList()
@@ -254,7 +221,7 @@
             getFocus(event) {
                 let self = this
                 let {detail: {value, height}} = event
-                self.keyboardHeight = height - 30
+                self.keyboardHeight = height - 15
                 self.$apply()
             },
             /**

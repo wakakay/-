@@ -32,23 +32,27 @@
     .ui-button-list{
         width:100%;height:128rpx;border-top:1rpx solid @border-gray;position:fixed;left:0;bottom:0;
         button{
-            display:block;width:50%;height:100%;float:left;padding-right:86rpx;background:none;font-size:30rpx;color:@color-gray;text-align:right;line-height:128rpx;
+            display:block;width:50%;height:100%;float:left;background:none;font-size:30rpx;color:@color-gray;line-height:128rpx;
             &.active{color:@color-blue;}
+            &:nth-of-type(1){padding-right:86rpx;text-align:right;}
+            &:nth-of-type(2){padding-left:86rpx;text-align:left;}
             text{margin-right:12rpx;font-size:42rpx;}
         }
-        .ui-textarea{
-            width:50%;padding-left:86rpx;float:left;font-size:30rpx;color:@color-gray;position:relative;
-            textarea{
-                width:100%;padding:40rpx 24rpx;color:rgba(255,255,255,0);position:absolute;left:0;top:0%;
-                &.is-focus{width:200%;padding:0 24rpx;background-color:@background-white;color:@color-black;left:-100%;}
-            }
+    }
+    .ui-textarea{
+        width:50%;height:128rpx;position:fixed;right:0;bottom:0;z-index:@z-index-header;
+        textarea{box-sizing:border-box;width:100%;height:96rpx;padding:24rpx 24rpx;background-color:transparent;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
+        button{
+            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;
+            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
         }
     }
 </style>
 
 <template>
     <jn-header title="2条讨论"></jn-header>
-    <scroll-view class="ui-scroll-box" scroll-y>
+    <view class="ui-scroll-box">
         <view class="ui-discuss-info">
             <view class="ui-title main-justify">
                 <view class="ui-portrait cross-center">
@@ -79,24 +83,29 @@
                 </view>
             </repeat>
         </view>
-    </scroll-view>
+    </view>
 
-    <view class="ui-button-list" style="bottom:{{keyboardHeight}}px">
-        <button :class="{'active': discussDetails.isliked}" @tap.stop="getLike"><text class="icon-praise"></text>{{discussDetails.likeCount || 0}}</button>
-        <view class="ui-textarea cross-center">
-            <text class="icon-comment1"></text>
-            <textarea :class="{'is-focus': keyboardHeight>0}"
-                      maxlength="200"
-                      auto-height
-                      adjust-position="{{false}}"
-                      value="{{messageValue}}"
-                      selection-start="{{messageValue.length}}"
-                      selection-end="{{messageValue.length}}"
-                      bindfocus="getFocus"
-                      bindblur="getBlur"
-                      bindinput="getChange"
-                      bindconfirm="getConfirm"></textarea>
-        </view>
+    <view class="ui-button-list">
+        <button :class="{'active': discussDetails.isliked}"
+                @tap.stop="getLike"><text class="icon-praise"></text>{{discussDetails.likeCount || 0}}</button>
+
+        <button :class="{'active': discussDetails.isReplied}"><text class="icon-comment1"></text></button>
+    </view>
+
+    <view class="ui-textarea flex"
+          style="width:{{keyboardHeight>0 ? '100%' : '50%'}};background:{{keyboardHeight>0 ? 'transparent': '#fff'}};bottom:{{keyboardHeight}}px;">
+        <textarea class="flex-box-1"
+                  maxlength="200"
+                  placeholder="{{keyboardHeight>0 ? '回复'+discussDetails.nickName+'：' : ''}}"
+                  adjust-position="{{false}}"
+                  value="{{messageValue}}"
+                  bindfocus="getFocus"
+                  bindblur="getBlur"
+                  bindinput="getChange"
+                  bindconfirm="getConfirm"></textarea>
+        <button class="main-center flex-box-0"
+                wx:if="{{messageValue.length}}"
+                @tap.stop="getConfirm"><text class="icon-send"></text></button>
     </view>
 </template>
 
@@ -202,7 +211,7 @@
             getFocus(event) {
                 let self = this
                 let {detail: {value, height}} = event
-                self.keyboardHeight = height - 30
+                self.keyboardHeight = height - 15
                 self.$apply()
             },
             /**
