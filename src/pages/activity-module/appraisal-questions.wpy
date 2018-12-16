@@ -180,7 +180,7 @@
                     }
                 }
                 setTimeout(()=>{
-                    if(self.activedIndex < self.prePracticeObj.practiceList.length -1 ) {
+                    if(self.activedIndex < self.tempList.length -1 ) {
                         self.activedIndex = self.activedIndex + 1
                     }
                     self.$apply()
