@@ -96,9 +96,9 @@
             .cell-tip{font-size: 32rpx;color:@color-gray;}
             .ui-title-dec{
                 display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
-                .cell-title{font-size: 50rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;width: 468rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
                 .cell-num{
-                    font-size: 24rpx;color: @color-gray;width: 124rpx;
+                    font-size: 24rpx;color: @color-gray;
                     text{font-size:20rpx;}
                 }
             }
@@ -165,7 +165,7 @@
         <view class="ui-top">
             <view class="cell-title">在学课程</view>
             <view class="cell-all" @tap.stop="getAllStudyingCourse">
-                查看全部({{taskNum}})
+                查看全部({{courseCount}})
                 <text class="icon-right-arrow"></text>
             </view>
         </view>
@@ -230,9 +230,9 @@
     <view class="cell-date">{{todayDate}}</view>
     <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
         <view class="ui-tody-subject">
-            <view class="cell-tip">{{todayTitle}}</view>
+            <view class="cell-tip">{{todayText}}</view>
             <view class="ui-title-dec">
-                <view class="cell-title">{{todayText}}</view>
+                <view class="cell-title">{{todayTitle}}</view>
                 <view class="cell-num">
                     <text class="icon-triangle"></text>
                     平均水平
@@ -344,7 +344,7 @@
             isShowCourseStudying:false,
             courseStudyModalList:[],
             recommendCourseList:[],
-            taskNum:null,
+            courseCount:'',
             todayText:'',
             todayTitle:'',
             todaySenceList:[],
@@ -405,7 +405,7 @@
                 self.todayDate = respone.todayDate;
                 self.recommendCourseList = respone.recommendCourseList;
                 self.todaySenceList = respone.todaySenceList;
-                self.taskNum = respone.taskNum;
+                self.courseCount = respone.courseCount;
                 self.isNewSenceMap = respone.isNewSenceMap;
                 self.todayText = respone.todayText;
                 self.todayTitle = respone.todayTitle;
