@@ -224,5 +224,13 @@ export default {
     sendTeamPost(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPost', params: params, isVisitor: true})
     },
+    //获取今日任务
+    todayTaskList(params) {
+        return fetch({method: 'post', url: 'todayTask/tasks', params: params, isVisitor: true})
+    },
+    //获取全部未学课程
+    todayToLearnCourses(params) {
+        return fetch({method: 'post', url: 'todayTask/toLearnCourses', params: params, isVisitor: true})
+    },
 
 }

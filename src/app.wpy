@@ -31,7 +31,8 @@
         config = {
             pages: [
                 /* 今日模板 */
-                'pages/Today/index',
+                'pages/today-module/index',
+                'pages/today-module/all-course',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -123,7 +124,7 @@
                 selectedColor: "#007AFF",
                 list: [
                     {
-                        "pagePath": "pages/Today/index",
+                        "pagePath": "pages/today-module/index",
                         "text": "今日",
                         "iconPath": "assets/img/task-off.png",
                         "selectedIconPath": "assets/img/task-on.png"

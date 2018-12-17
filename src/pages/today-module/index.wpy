@@ -42,7 +42,7 @@
                     height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
                     .ui-bg-content{
                         position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
-                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;}
+                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
                         .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;}
                     }
                     .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
@@ -69,8 +69,8 @@
                         .ui-lesson-image image{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 28rpx;border-radius: 28rpx;}
                         .ui-detail{
                             height: 96rpx;
-                            .cell-title{font-size: 32rpx;font-weight: bold;}
-                            .cell-dec{font-size: 26rpx;color:@color-gray;}
+                            .cell-title{font-size: 32rpx;font-weight: bold;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
                         }
                     }
                     .ui-btn{width: 148rpx;height: 60rpx;border-radius: 30rpx;background-color: @background-white;color: @color-blue;font-weight: bold;font-size: 30rpx;line-height: 60rpx;text-align: center}
@@ -142,10 +142,6 @@
     <view catchtouchmove="{{!isScroll}}">
         <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
         <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
-        <jn-course-studying wx:if="{{ true }}"
-            :isShowCourseStudying.sync="isShowCourseStudying" :CourseStudyingList.sync="courseStudyModalList"
-            @onClickBack.user="OnClickBack" @on-all-course.user="getCourseStudying">
-        </jn-course-studying>
         <scroll-view
                 scroll-with-animation
                 scroll-y="{{isScroll}}"
@@ -159,11 +155,11 @@
                                hover-class="none"
                                url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
                 </view>
-                <view wx:if="{{studyingList.length}}" class="ui-studying">
+                <view wx:if="{{recommendCourseList.length}}" class="ui-studying">
                     <view class="ui-top">
                         <view class="cell-title">在学课程</view>
-                        <view class="cell-all" @tap.stop="getAllStudyingCourse"  data-item="{{studyingList}}">
-                            查看全部(3)
+                        <view class="cell-all" @tap.stop="getAllStudyingCourse">
+                            查看全部({{taskNum}})
                             <text class="icon-right-arrow"></text>
                         </view>
                     </view>
@@ -172,50 +168,55 @@
                             duration="300"
                             previous-margin="38rpx"
                             next-margin="22rpx">
-                        <repeat for="{{studyingList}}" index="{{ index }}" key="{{ index }}">
+                        <repeat for="{{recommendCourseList}}" index="{{ index }}" key="{{ index }}">
                             <swiper-item class="ui-item" formType="submit" hover-stay-time="100">
-                                <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')">
+                                <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
+                                    @tap.stop="getCourseDetail" data-item="{{item}}">
                                     <view class="ui-bg-content">
                                         <view class="cell-title">{{item.courseName}}</view>
                                         <view class="cell-dec">{{item.courseDec}}</view>
                                     </view>
-                                    <!-- <image class="cell-image" src="{{item.bgImg}}" /> -->
                                     <view class="ui-shadow"></view>
                                     <view class="ui-progress">
                                         <view class="ui-circular-progress">
                                             <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
                                             <view class="ui-wrapper ui-right">
-                                                <view class="cell-circle-right" style="transform:rotate({{item.precent <= 50 ? (-135 + 3.6 * item.precent) : 45}}deg);"></view>
+                                                <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
                                             </view>
                                             <view class="ui-wrapper ui-left">
-                                                <view class="cell-circle-left" style="transform:rotate({{item.precent > 50 ? (-135 + 3.6 * (item.precent - 50)) : -135}}deg);"></view>
+                                                <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
                                             </view>
                                         </view>
                                     </view>
                                    
                                 </view>
-                                <view class="ui-content">
+                                <view class="ui-content" 
+                                    wx:for="{{item.senceList}}" 
+                                    wx:for-item="senceItem" 
+                                    wx:key="senceIndex"
+                                    @tap.stop="handleStartLesson"
+                                    data-item="{{item.senceList[0]}}">
                                     <view class="ui-left">
                                         <view class="ui-lesson-image">
-                                            <image src="{{item.lessonImg}}" />
+                                            <image src="{{senceItem.imageUrl}}" />
                                         </view>
                                         <view class="ui-detail">
-                                            <view class="cell-title">{{item.title}}</view>
-                                            <view class="cell-dec">{{item.dec}}</view>
+                                            <view class="cell-title">{{senceItem.senceName}}</view>
+                                            <view class="cell-dec">{{senceItem.senceTarget}}</view>
                                         </view>
                                     </view>
-                                    <view class="ui-btn">{{item.btnMsg}}</view>
+                                    <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
                                 </view>
                             </swiper-item>
                         </repeat>
                     </swiper>
                 </view>
-                <view class="cell-date">12月6日星期四</view>
-                <view class="ui-today-box">
+                <view class="cell-date">{{todayDate}}</view>
+                <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
                     <view class="ui-tody-subject">
-                        <view class="cell-tip">{{informationList.sceneType}}</view>
+                        <view class="cell-tip">{{todayTitle}}</view>
                         <view class="ui-title-dec">
-                            <view class="cell-title">{{informationList.name}}</view>
+                            <view class="cell-title">{{todayText}}</view>
                             <view class="cell-num">
                                 <text class="icon-triangle"></text>
                                 平均水平
@@ -223,35 +224,34 @@
                         </view>
                         
                         <view class="ui-subject">
-                            <view wx:for="{{informationList.senceList}}" wx:for-item="courseItem" wx:key="{{index}}" wx:index="{{index}}"
+                            <view wx:for="{{todaySenceList}}" wx:key="{{index}}" wx:index="{{index}}"
                                     hover-stay-time="100"
                                     class="ui-subject-item"
                                     data-item="{{item}}"
-                                    data-course-item="{{courseItem}}"
                                     @tap.stop="handleStartLesson">
                                 <view class="ui-img">
-                                    <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
+                                    <image mode="aspectFill" src="{{item.imageUrl}}" />
                                 </view>
                                 <view class="ui-content">
                                     <view class="ui-detail">
-                                        <view class="cell-name">{{courseItem.senceName}}</view>
+                                        <view class="cell-name">{{item.senceName}}</view>
                                         <view class="cell-subtitle">
                                             <text class="icon-study-bar"></text>
-                                            <view class="cell-target">{{courseItem.senceTarget}}</view>
-                                            <text>{{courseItem.mySenceScore || 0}}</text>
+                                            <view class="cell-target">{{item.senceTarget}}</view>
+                                            <text>{{item.mySenceScore || 0}}</text>
                                         </view>
                                         <view class="ui-progress">
                                             <view class="cell-line box-mean">
                                                 <view></view><view></view><view></view><view></view><view></view>
                                             </view>
-                                            <view class="cell-percent" style="width: {{courseItem.mySenceScore * 10}}%;"></view>
-                                            <text class="icon-triangle" style="left:{{courseItem.averageScore * 10}}%;"></text>
+                                            <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                                            <text class="icon-triangle" style="left:{{item.averageScore * 10}}%;"></text>
                                         </view>
 
                                     </view>
                                     <view class="ui-btn">
-                                        <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
-                                        <view class="cell-btn-tip">{{courseItem.giftStatus}}</view>
+                                        <view class="cell-btn">{{item.buttonStatusMsg}}</view>
+                                        <view class="cell-btn-tip">{{item.giftStatus}}</view>
                                     </view>
                                 </view>
 
@@ -284,7 +284,6 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
-    import CourseStudying from '../../components/today-modal/course-studying'
     import studyingBar from '../../components/common/studying-bar'
     import {share as shareApi, registered as fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
@@ -313,7 +312,7 @@
             return state.entrance
         }
     })
-    export default class Today extends wepy.page  {
+    export default class todayModule extends wepy.page  {
         config = {
             backgroundTextStyle: "dark"
         }
@@ -324,8 +323,7 @@
             'jn-header': header,
             'jn-loading': Loading,
             'jn-evaluate': EvaluateModal,
-            'studying-bar': studyingBar,
-            'jn-course-studying': CourseStudying
+            'studying-bar': studyingBar
         }
 
         data = {
@@ -337,112 +335,17 @@
             isShowEvaluate: false,
             isShowCourseStudying:false,
             courseStudyModalList:[],
-            informationList: {
-                id:1,
-                isNewSenceMap:{senceID6ee334bae9245fba2a7e7f714a29: true, senceID799ff47e9d14a8a85f17b8f061cc: true},
-                name:"今日任务",
-                sceneType:"练技能，赚即能币",
-                senceList:[
-                    {
-                        buttonStatus:"notBeginOrTry",
-                        buttonStatusMsg:"免费学",
-                        courseID:"courseID9399a7f2a984c496f0d80199ea32",
-                        courseName:"如何增强团队执行力？",
-                        giftStatus:"+1即能币",
-                        id:"senceID6ee334bae9245fba2a7e7f714a29",
-                        imageUrl:"http://image.runwise.cn/image/imageID4990904224e486bf5112205c61be.png",
-                        lessonType:"lesson",
-                        minuteTime:5,
-                        progress:0,
-                        resume:0,
-                        senceName:"用演讲传递价值，影响成员",
-                        sencePrice:0,
-                        mySenceScore:5.3,
-                        averageScore:5.8,
-                        senceTarget:"马云"
-                    },
-                    {
-                        buttonStatus:"notBeginOrTry",
-                        buttonStatusMsg:"免费学",
-                        courseID:"courseID9399a7f2a984c496f0d80199ea32",
-                        courseName:"在工作中实践敏捷",
-                        giftStatus:"+1即能币",
-                        id:"senceID6ee334bae9245fba2a7e7f714a29",
-                        imageUrl:"http://image.runwise.cn/image/imageID5f5a80a80e94fab6f4e89d5f6e15.png",
-                        lessonType:"lesson",
-                        minuteTime:5,
-                        progress:0,
-                        resume:0,
-                        mySenceScore:2.5,
-                        averageScore:6.9,
-                        senceName:"持续提升招聘效率",
-                        sencePrice:0,
-                        senceTarget:"更快招到合适的人"
-                    },
-                    {
-                        buttonStatus:"notBeginOrTry",
-                        buttonStatusMsg:"免费学",
-                        courseID:"courseID9399a7f2a984c496f0d80199ea32",
-                        courseName:"如何实现规模化扩张？",
-                        giftStatus:"+1即能币",
-                        id:"senceID6ee334bae9245fba2a7e7f714a29",
-                        imageUrl:"http://image.runwise.cn/image/imageID3da3dbc2069402a7975e3d3b9f1b.png",
-                        lessonType:"lesson",
-                        minuteTime:5,
-                        progress:0,
-                        resume:0,
-                        mySenceScore:4.4,
-                        averageScore:3.1,
-                        senceName:"组建一支“增长黑客”团队",
-                        sencePrice:0,
-                        senceTarget:"用数据驱动增"
-                    },
-                ],
-                type:"todayTask",
-                userID:"userIDef94a7b2676743c5bd9e6d46ee79af6f",
-            },
-            studyingList:[
-                {
-                    bgImg:"http://wx-small.runwise.cn/image/imageID5427cd9debd433a3c4799e289044.png",
-                    lessonImg:"http://wx-small.runwise.cn/image/imageID31f9b217a724fabc3f2c474247ae.png",
-                    title:"内容生产方法论",
-                    dec:"内容生产方法",
-                    btnMsg:"继续学",
-                    allLesson:5,
-                    finishLesson:2,
-                    precent:40,
-                    courseName:'内容营销方法',
-                    courseDec:'平均10w+阅读量的自媒体大咖的经验分享'
-                },
-                {
-                    bgImg:"http://wx-small.runwise.cn/image/imageID5da14a29fdf4699d035d1f96b1d4.png",
-                    lessonImg:"http://wx-small.runwise.cn/image/imageIDd2993f5025c4c5bd2b136f19d453.png",
-                    title:"管理你的产品价值",
-                    dec:"让你的产品",
-                    btnMsg:"继续学",
-                    allLesson:3,
-                    finishLesson:0,
-                    precent:0,
-                    courseName:'新任leader的团队管理指南',
-                    courseDec:'史上最成功设计团队IEDO…'
-                },
-                {
-                    bgImg:"http://wx-small.runwise.cn/image/imageIDd6eb40c2a0244dab828a5464c42d.png",
-                    lessonImg:"http://wx-small.runwise.cn/image/imageIDb95c12c893e49dbfef32ccf98970.png",
-                    title:"内容营销策略",
-                    dec:"内容营销策略",
-                    btnMsg:"继续学",
-                    allLesson:4,
-                    finishLesson:3,
-                    precent:70,
-                    courseName:'时间管理，我的时间我作主',
-                    courseDec:'平均10w+阅读量的自媒体大咖的经验分享'
-                },
-            ],
+            recommendCourseList:[],
+            taskNum:null,
+            todayText:'',
+            todayTitle:'',
+            todaySenceList:[],
             discoverPageTitle: '',
             courseID: null,
             senceID: null,
             sencePage: null,
+            todayDate:'',
+            isNewSenceMap:[]
         }
 
         onLoad() {
@@ -453,14 +356,12 @@
             if (self.isTokenSet || 'defaultToken' !== storageToken) {
                 self.initialize(storageToken)
             } else {
-                wx.redirectTo({url: '/pages/registered-module/weclome'})
+                wx.redirectTo({url: 'pages/today-module/index'})
             }
         }
 
         onShow() {
             let self = this
-            self.informationList.length && self.$broadcast('studying-bar')
-
             if (self.senceID) {
                 self.initialize()
             }
@@ -491,19 +392,21 @@
         __fetchCourses(parameter) {
             let self = this
             let postData = {
-                token: parameter && parameter.token || self.token,
-                page:1,
-                pageSize:10
+                token: parameter && parameter.token || self.token
             }
-            self.isLoaded = true
-            // fetch.discoverPage(postData).then((respone) => {
-            //     self.isLoaded = true
-            //     self.discoverPageTitle = respone.discoverPageTitle
-            //     self.informationList = respone.informationList
-            //     self.$apply()
-            // }).catch(error => {
-            //     throw error
-            // })
+            fetch.todayTaskList(postData).then((respone) => {
+                self.isLoaded = true
+                self.todayDate = respone.todayDate;
+                self.recommendCourseList = respone.recommendCourseList;
+                self.todaySenceList = respone.todaySenceList;
+                self.taskNum = respone.taskNum;
+                self.isNewSenceMap = respone.isNewSenceMap;
+                self.todayText = respone.todayText;
+                self.todayTitle = respone.todayTitle;
+                self.$apply()
+            }).catch(error => {
+                throw error
+            })
         }
         /**
          * 是否领取过新手礼包
@@ -543,19 +446,18 @@
             })
         }
         methods = {
-            // 点击查看全部 触发组件
-            getAllStudyingCourse({currentTarget: {dataset: {item}}}){
-                let self = this
-                self.isShowCourseStudying = true
-                self.courseStudyModalList = item
-                console.log(self.courseStudyModalList,'courseStudyModalList')
-                self.$apply()
+            getCourseDetail(event){
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+                let courseID = item.courseID;
+                let name = item.courseName;
+                let resume = item.resume ? item.resume : ''
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
-            // 系列 组件 的返回按钮
-            OnClickBack(){
+            // 点击查看全部 触发组件
+            getAllStudyingCourse(){
                 let self = this
-                self.isShowCourseStudying = false
-                self.$apply()
+                self.$navigate('/pages/today-module/all-course');
             },
             getAvatar() {
                 let self = this
@@ -566,25 +468,16 @@
                 if (!self.isTokenSet) {
                     return
                 }
+                let {currentTarget: {dataset: {item}}} = event
+                let buttonStatus = item.buttonStatus
+                let lessonType = item.lessonType
+                let source = 'todayPage'
+                let senceName = item.senceName
+                let resume = item.resume ? item.resume : ''
 
-                let {currentTarget: {dataset: {item, courseItem}}} = event
-                let buttonStatus = courseItem.buttonStatus
-                let lessonType = courseItem.lessonType
-                let source = 'discoverPage'
-                let senceName = courseItem.senceName
-                let resume = courseItem.resume
-
-                self.sencePage = item.page
-                self.courseID = courseItem.courseID
-                self.senceID = courseItem.id
-
-                if ('subject' === item.type) {
-                    wepy.$instance.globalData.getHuilder('发现页/简易版专题','click',`${senceName}`)
-                } else if ('todayTask' === item.type) {
-                    wepy.$instance.globalData.getHuilder('发现页/今日任务','click',`${senceName}`)
-                }
-
-                //
+                self.courseID = item.courseID
+                self.senceID = item.id
+                
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID, 
@@ -596,11 +489,13 @@
                     self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
                     return
                 }
+
                 if ('finish' === buttonStatus) {
                     self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
-                let isNewSence = item.isNewSenceMap[self.senceID]
+
+                let isNewSence = self.isNewSenceMap[self.senceID]
                 navigateToLesson({
                     courseID:self.courseID, 
                     senceID:self.senceID, 
@@ -609,6 +504,7 @@
                     isNewSence
                 })
             },
+           
             /**
              * 关闭新人礼包
              * @param
@@ -662,7 +558,7 @@
         onShareAppMessage(options) {
             return {
                 title: '即能，互联网微学习',
-                path: '/pages/FindList/index',
+                path: '/pages/today-module/index',
                 success(res) {
                     getStorageAsync({key: 'name'}).then(name => {
                         wx.reportAnalytics('share_event', {
