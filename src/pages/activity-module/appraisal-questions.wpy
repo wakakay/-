@@ -11,6 +11,7 @@
         /* 题目 */
         .ui-practice-block{
             background-color: transparent;margin-top:182rpx;padding: 0 72rpx;box-sizing:border-box;
+            .cell-shadow{position: absolute;left: 0;right: 0;top: 0;bottom: 0;z-index: 1;}
             .cell-title{font-family: PingFangSC-Medium;font-size: 34rpx;color: @color-black;margin-bottom:82rpx;}
             .ui-item{
                 height: 112rpx;border-radius: @border-radius-20;display: flex;align-items: center;width: 606rpx;
@@ -57,13 +58,18 @@
                 <view class="cell-number">{{currentIndex}}/{{prePracticeObj.practiceList.length}}</view>
             </view>
         </jn-header>
-        <swiper class="ui-practice-block" style="height: calc(100% - {{headerHeigth}}px)"
-                current="{{activedIndex}}" bindchange="getSwiperItem" duration="{{300}}">
+        <swiper class="ui-practice-block" 
+                style="height: calc(100% - {{headerHeigth}}px)"
+                current="{{activedIndex}}" 
+                bindchange="getSwiperItem" 
+                duration="{{300}}"
+                bindanimationfinish="getFinish">
             <block wx:for="{{tempList}}" wx:index="{{index}}" wx:key="{{index}}">
                 <swiper-item
                         bindtouchstart="getTouchStart"
                         bindtouchmove="getTouchMove"
                         data-practice-id="{{item.practiceID}}">
+                    <view class="cell-shadow" wx:if="{{isPracticeShow}}"></view>
                     <view class="cell-title">{{item.content}}</view>
                     <block wx:for="{{item.optionList}}" wx:key="{{optionIndex}}"
                            wx:for-item="selectItem" wx:index="{{optionIndex}}" >
@@ -146,7 +152,8 @@
             startPoint:[0,0],
             curPoint:[0,0],
             commitList:[],
-            arrLength:[]
+            arrLength:[],
+            isPracticeShow:false
         };
         methods = {
             handleTapToFinish() {
@@ -165,6 +172,7 @@
             // 点击单选
             getSelectItem(event){
                 let self = this
+                self.isPracticeShow = true;
                 let dataset = event.currentTarget.dataset
                 let item = dataset.item
                 let index = item.optionID
@@ -192,6 +200,10 @@
                 let self = this
                 self.startPoint = [e.touches[0].clientX,e.touches[0].clientY]
                 self.$apply()
+            },
+            getFinish(e){
+                let self = this;
+                self.isPracticeShow = false
             },
             getTouchMove(e) {
                 let self = this
