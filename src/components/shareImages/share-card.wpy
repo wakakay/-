@@ -8,8 +8,8 @@
         }
         .ui-mask{width:100%;height:100%;background-color:@background-mask-normal;position:absolute;left:0;top:0;}
         .ui-thumb{
-            width:686rpx;height:1070rpx;position:relative;z-index:@z-index-normal;border-radius:@border-radius-20;overflow:hidden;
-            image{width:100%;height:100%;}
+            width:686rpx;height:1070rpx;position:relative;z-index:@z-index-normal;overflow:hidden;
+            image{width:100%;height:100%;border-radius:@border-radius-20;}
         }
         .ui-button-box{
             width:100%;height:100rpx;margin-top:10rpx;
@@ -34,7 +34,7 @@
     <view class="ui-share-box cross-center" :class="{'is-iphonex': isIphonex, 'is-flex-show': isDrawOver}">
         <view class="ui-mask" @tap.stop="getClose"></view>
         <view>
-            <view class="ui-thumb">
+            <view class="ui-thumb main-center">
                 <image mode="aspectFit" src="{{shareThumb}}"></image>
             </view>
             <view class="ui-button-box main-justify">
@@ -181,13 +181,13 @@
                 // 计算等比例缩放的比值
                 if (self.systemInfo.pixelRatio > 2 && self.systemInfo.pixelRatio < 3) {
                     self.cardShareInfo.prop = self.systemInfo.pixelRatio / 3
-                    self.cardShareInfo.width = Math.ceil(self.systemInfo.windowWidth * self.cardShareInfo.prop)
+                    self.cardShareInfo.width = Math.ceil(width * self.cardShareInfo.prop)
                 } else if (self.systemInfo.pixelRatio > 1 && self.systemInfo.pixelRatio < 2) {
                     self.cardShareInfo.prop = self.systemInfo.pixelRatio / 2
-                    self.cardShareInfo.width = Math.ceil(self.systemInfo.windowWidth * self.cardShareInfo.prop)
+                    self.cardShareInfo.width = Math.ceil(width * self.cardShareInfo.prop)
                 } else {
                     self.cardShareInfo.prop = self.systemInfo.windowWidth / width
-                    self.cardShareInfo.width = Math.ceil(self.cardShareInfo.width * self.cardShareInfo.prop)
+                    self.cardShareInfo.width = Math.ceil(width * self.cardShareInfo.prop)
                 }
 
                 self.cardShareInfo.height = Math.ceil(height * self.cardShareInfo.prop)
