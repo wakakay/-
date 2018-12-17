@@ -344,7 +344,7 @@
             isShowCourseStudying:false,
             courseStudyModalList:[],
             recommendCourseList:[],
-            taskNum:null,
+            courseCount:'',
             todayText:'',
             todayTitle:'',
             todaySenceList:[],
@@ -405,7 +405,7 @@
                 self.todayDate = respone.todayDate;
                 self.recommendCourseList = respone.recommendCourseList;
                 self.todaySenceList = respone.todaySenceList;
-                self.taskNum = respone.taskNum;
+                self.courseCount = respone.courseCount;
                 self.isNewSenceMap = respone.isNewSenceMap;
                 self.todayText = respone.todayText;
                 self.todayTitle = respone.todayTitle;
