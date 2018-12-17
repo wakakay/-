@@ -96,9 +96,9 @@
             .cell-tip{font-size: 32rpx;color:@color-gray;}
             .ui-title-dec{
                 display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
-                .cell-title{font-size: 50rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;width: 468rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
                 .cell-num{
-                    font-size: 24rpx;color: @color-gray;width: 124rpx;
+                    font-size: 24rpx;color: @color-gray;
                     text{font-size:20rpx;}
                 }
             }
