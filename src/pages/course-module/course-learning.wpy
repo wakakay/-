@@ -321,7 +321,7 @@
                 if (!self.resumeLastRead || self.resumeLastRead == 'NO') {
                     index = -1 !== index ? index : 0
                 } else {
-                    index = parseInt(self.resumeLastRead) - 1
+                    index = self.resumeLastRead > cards.length ? 0 : parseInt(self.resumeLastRead) - 1
                 }
                 index = -1 !== index ? index : 0
                 self.cardCurrentInfo.push(self.cardsList[index])
