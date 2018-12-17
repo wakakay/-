@@ -134,7 +134,7 @@
                 })
 
                 self.discussList = discussList
-                self.scrollTop = 8000
+                self.scrollTop = 8000 + _.random(1, 100)
                 self.$apply()
 
                 self.cardItem && !self.cardItem.viewsCount && setTimeout(()=>{
@@ -142,7 +142,6 @@
                     self.$apply()
                 }, 50)
             }).catch(error => {
-
             })
         }
         /**
@@ -166,8 +165,8 @@
                 self.discussList = []
                 self.currentPage = 1
                 self.$apply()
-                self.$emit('on-learning-discuss') // 通知卡片的想法要+1
                 self.__discussList()
+                self.$emit('on-learning-discuss') // 通知卡片的想法要+1
             }).catch(error => {
 
             })

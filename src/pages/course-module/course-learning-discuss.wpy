@@ -93,7 +93,7 @@
     </view>
 
     <view class="ui-textarea flex"
-          style="width:{{keyboardHeight>0 ? '100%' : '50%'}};background:{{keyboardHeight>0 ? 'transparent': '#fff'}};bottom:{{keyboardHeight}}px;">
+          style="width:{{keyboardHeight>0 ? '100%' : '50%'}};background:{{keyboardHeight>0 ? '#fff': 'transparent'}};bottom:{{keyboardHeight}}px;">
         <textarea class="flex-box-1"
                   maxlength="200"
                   placeholder="{{keyboardHeight>0 ? '回复'+discussDetails.nickName+'：' : ''}}"
