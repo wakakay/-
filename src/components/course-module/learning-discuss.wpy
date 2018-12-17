@@ -137,6 +137,9 @@
                     self.isMore = false
                 }
                 self.discussList = _.union(self.discussList, respone)
+                if (!self.discussList.length) {
+                    self.isFocus = true
+                }
                 self.$apply()
             }).catch(error => {
             })
