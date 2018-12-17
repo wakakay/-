@@ -56,7 +56,7 @@
             </scroll-view>
         </view>
         <view class="ui-textarea flex"
-              style="bottom:{{keyboardHeight}}px"
+              style="background:{{keyboardHeight>0 ? '#fff' : ''}};bottom:{{keyboardHeight}}px;"
               wx:if="{{isShow}}">
             <text class="icon-close flex-box-0"
                   data-type="0"
@@ -106,11 +106,12 @@
             keyboardHeight: 0,
             messageValue: '',
             discussList: [],
-            cardItem: {}
+            cardItem: []
         }
 
         onLoad() {
             let self = this
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
         /**
          * 想法列表
@@ -118,7 +119,6 @@
          */
         __discussList() {
             let self = this
-            console.log(self.currentPage)
             if (!self.isMore) {
                 return
             }
@@ -127,10 +127,11 @@
                 token: self.systemInfo.token,
                 courseID: self.$parent.courseID,
                 senceID: self.$parent.senceID,
-                cardID: self.$parent.cardCurrentInfo[0].id,
+                cardID: self.cardItem.id,
                 page: self.currentPage,
                 pageSize: 10
             }
+
             fetch.senceViewList(postData).then(respone => {
                 if (respone.length < 10) {
                     self.isMore = false
@@ -312,6 +313,8 @@
             'broadcast-learning-discuss-reset': (data) => {
                 let self = this
                 self.cardItem = data
+                self.isMore = true
+                self.discussList = []
                 self.$apply()
             },
             'broadcast-learning-discuss': (data) => {

@@ -9,8 +9,10 @@
  *
  */
 export const ROUTERS = {
-
-    /*-------------------课程-----------------------*/
+    /*-------------------今日-----------------------*/
+    'pages/today-module/index': {screenName: '今日页', isLevel: true},
+    'pages/today-module/all-course': {screenName: '今日页-全部在学课程'},
+    /*-------------------发现页-----------------------*/
     'pages/FindList/index': {screenName: '发现页', isLevel: true},
     /*-------------------课程-----------------------*/
     'pages/course-module/course': {screenName: '课程页', isLevel: true},
@@ -18,6 +20,7 @@ export const ROUTERS = {
     'pages/course-module/course-details': {screenName: '课程详情页'}, // 需要记录哪门子课程详情
     'pages/course-module/assortment': {screenName: '系列详情页'}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习'}, // 需要记录哪门子的微课
+    'pages/course-module/course-learning-discuss': {screenName: '微课学习想法详情'}, // 需要记录哪门子的微课
     'pages/course-module/lesson': {screenName: '微课学习'},
     'pages/course-module/lesson-for-android': {screenName: '微课学习'},
     'pages/Review/index': {screenName: '微课回顾'},

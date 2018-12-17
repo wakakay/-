@@ -39,7 +39,7 @@
                 'pages/course-module/course-details', // 课程详情
                 'pages/course-module/course-new-details', // 课程详情
                 'pages/course-module/course-learning', // 新微课学习
-                'pages/course-module/course-learning-discuss', // 新微课学习
+                'pages/course-module/course-learning-discuss', // 新微课学习想法详情
                 'pages/course-module/lesson', // 旧ios微课学习
                 'pages/course-module/lesson-for-android', // 旧android微课学习
                 'pages/course-module/course-exercises', // 微课课后练习题
