@@ -139,140 +139,133 @@
 </style>
 
 <template>
-    <view catchtouchmove="{{!isScroll}}">
-        <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-        <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
-        <scroll-view
-                scroll-with-animation
-                scroll-y="{{isScroll}}"
-                bindscrolltolower="getScrollMore">
-            <jn-header hiddenButton className="background-transparent"></jn-header>
+<jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+<jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
 
-            <form bindsubmit="handleSavePushCode" report-submit>
-                <view class="ui-course-header">
-                    <view class="cell-title">今日</view>
-                    <navigator class="ui-avatar"
-                               hover-class="none"
-                               url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
-                </view>
-                <view wx:if="{{recommendCourseList.length}}" class="ui-studying">
-                    <view class="ui-top">
-                        <view class="cell-title">在学课程</view>
-                        <view class="cell-all" @tap.stop="getAllStudyingCourse">
-                            查看全部({{taskNum}})
-                            <text class="icon-right-arrow"></text>
-                        </view>
-                    </view>
-                    <swiper class="ui-swiper-list"
-                            interval="7000"
-                            duration="300"
-                            previous-margin="38rpx"
-                            next-margin="22rpx">
-                        <repeat for="{{recommendCourseList}}" index="{{ index }}" key="{{ index }}">
-                            <swiper-item class="ui-item" formType="submit" hover-stay-time="100">
-                                <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
-                                    @tap.stop="getCourseDetail" data-item="{{item}}">
-                                    <view class="ui-bg-content">
-                                        <view class="cell-title">{{item.courseName}}</view>
-                                        <view class="cell-dec">{{item.courseDec}}</view>
-                                    </view>
-                                    <view class="ui-shadow"></view>
-                                    <view class="ui-progress">
-                                        <view class="ui-circular-progress">
-                                            <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
-                                            <view class="ui-wrapper ui-right">
-                                                <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
-                                            </view>
-                                            <view class="ui-wrapper ui-left">
-                                                <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
-                                            </view>
-                                        </view>
-                                    </view>
-                                   
-                                </view>
-                                <view class="ui-content" 
-                                    wx:for="{{item.senceList}}" 
-                                    wx:for-item="senceItem" 
-                                    wx:key="senceIndex"
-                                    @tap.stop="handleStartLesson"
-                                    data-item="{{item.senceList[0]}}">
-                                    <view class="ui-left">
-                                        <view class="ui-lesson-image">
-                                            <image src="{{senceItem.imageUrl}}" />
-                                        </view>
-                                        <view class="ui-detail">
-                                            <view class="cell-title">{{senceItem.senceName}}</view>
-                                            <view class="cell-dec">{{senceItem.senceTarget}}</view>
-                                        </view>
-                                    </view>
-                                    <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
-                                </view>
-                            </swiper-item>
-                        </repeat>
-                    </swiper>
-                </view>
-                <view class="cell-date">{{todayDate}}</view>
-                <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
-                    <view class="ui-tody-subject">
-                        <view class="cell-tip">{{todayTitle}}</view>
-                        <view class="ui-title-dec">
-                            <view class="cell-title">{{todayText}}</view>
-                            <view class="cell-num">
-                                <text class="icon-triangle"></text>
-                                平均水平
-                            </view>
-                        </view>
-                        
-                        <view class="ui-subject">
-                            <view wx:for="{{todaySenceList}}" wx:key="{{index}}" wx:index="{{index}}"
-                                    hover-stay-time="100"
-                                    class="ui-subject-item"
-                                    data-item="{{item}}"
-                                    @tap.stop="handleStartLesson">
-                                <view class="ui-img">
-                                    <image mode="aspectFill" src="{{item.imageUrl}}" />
-                                </view>
-                                <view class="ui-content">
-                                    <view class="ui-detail">
-                                        <view class="cell-name">{{item.senceName}}</view>
-                                        <view class="cell-subtitle">
-                                            <text class="icon-study-bar"></text>
-                                            <view class="cell-target">{{item.senceTarget}}</view>
-                                            <text>{{item.mySenceScore || 0}}</text>
-                                        </view>
-                                        <view class="ui-progress">
-                                            <view class="cell-line box-mean">
-                                                <view></view><view></view><view></view><view></view><view></view>
-                                            </view>
-                                            <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
-                                            <text class="icon-triangle" style="left:{{item.averageScore * 10}}%;"></text>
-                                        </view>
+<jn-header hiddenButton className="background-transparent"></jn-header>
 
-                                    </view>
-                                    <view class="ui-btn">
-                                        <view class="cell-btn">{{item.buttonStatusMsg}}</view>
-                                        <view class="cell-btn-tip">{{item.giftStatus}}</view>
-                                    </view>
-                                </view>
-
-                            </view>
-                        </view>
-                    </view>
-                </view>
-            </form>
-            <view class="ui-clear"></view>
-            <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
-        </scroll-view>
-
-        <form bindsubmit="handleSavePushCode" report-submit>
-            <view class="ui-gift" wx:if="{{isShowGift}}">
-                <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
-                <button formType="submit" hover-stay-time="100" @tap.stop="getGift">
-                    <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
-                </button>
-            </view>
-        </form>
+<form bindsubmit="handleSavePushCode" report-submit>
+    <view class="ui-course-header">
+        <view class="cell-title">今日</view>
+        <navigator class="ui-avatar"
+                   hover-class="none"
+                   url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
     </view>
+    <view wx:if="{{recommendCourseList.length}}" class="ui-studying">
+        <view class="ui-top">
+            <view class="cell-title">在学课程</view>
+            <view class="cell-all" @tap.stop="getAllStudyingCourse">
+                查看全部({{taskNum}})
+                <text class="icon-right-arrow"></text>
+            </view>
+        </view>
+        <swiper class="ui-swiper-list"
+                interval="7000"
+                duration="300"
+                previous-margin="38rpx"
+                next-margin="22rpx">
+            <repeat for="{{recommendCourseList}}" index="{{ index }}" key="{{ index }}">
+                <swiper-item class="ui-item" formType="submit" hover-stay-time="100">
+                    <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
+                        @tap.stop="getCourseDetail" data-item="{{item}}">
+                        <view class="ui-bg-content">
+                            <view class="cell-title">{{item.courseName}}</view>
+                            <view class="cell-dec">{{item.courseDec}}</view>
+                        </view>
+                        <view class="ui-shadow"></view>
+                        <view class="ui-progress">
+                            <view class="ui-circular-progress">
+                                <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                                <view class="ui-wrapper ui-right">
+                                    <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                                </view>
+                                <view class="ui-wrapper ui-left">
+                                    <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="ui-content"
+                        wx:for="{{item.senceList}}"
+                        wx:for-item="senceItem"
+                        wx:key="senceIndex"
+                        @tap.stop="handleStartLesson"
+                        data-item="{{item.senceList[0]}}">
+                        <view class="ui-left">
+                            <view class="ui-lesson-image">
+                                <image src="{{senceItem.imageUrl}}" />
+                            </view>
+                            <view class="ui-detail">
+                                <view class="cell-title">{{senceItem.senceName}}</view>
+                                <view class="cell-dec">{{senceItem.senceTarget}}</view>
+                            </view>
+                        </view>
+                        <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
+                    </view>
+                </swiper-item>
+            </repeat>
+        </swiper>
+    </view>
+    <view class="cell-date">{{todayDate}}</view>
+    <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
+        <view class="ui-tody-subject">
+            <view class="cell-tip">{{todayTitle}}</view>
+            <view class="ui-title-dec">
+                <view class="cell-title">{{todayText}}</view>
+                <view class="cell-num">
+                    <text class="icon-triangle"></text>
+                    平均水平
+                </view>
+            </view>
+
+            <view class="ui-subject">
+                <view wx:for="{{todaySenceList}}" wx:key="{{index}}" wx:index="{{index}}"
+                        hover-stay-time="100"
+                        class="ui-subject-item"
+                        data-item="{{item}}"
+                        @tap.stop="handleStartLesson">
+                    <view class="ui-img">
+                        <image mode="aspectFill" src="{{item.imageUrl}}" />
+                    </view>
+                    <view class="ui-content">
+                        <view class="ui-detail">
+                            <view class="cell-name">{{item.senceName}}</view>
+                            <view class="cell-subtitle">
+                                <text class="icon-study-bar"></text>
+                                <view class="cell-target">{{item.senceTarget}}</view>
+                                <text>{{item.mySenceScore || 0}}</text>
+                            </view>
+                            <view class="ui-progress">
+                                <view class="cell-line box-mean">
+                                    <view></view><view></view><view></view><view></view><view></view>
+                                </view>
+                                <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                                <text class="icon-triangle" style="left:{{item.averageScore * 10}}%;"></text>
+                            </view>
+
+                        </view>
+                        <view class="ui-btn">
+                            <view class="cell-btn">{{item.buttonStatusMsg}}</view>
+                            <view class="cell-btn-tip">{{item.giftStatus}}</view>
+                        </view>
+                    </view>
+
+                </view>
+            </view>
+        </view>
+    </view>
+</form>
+<view class="ui-clear"></view>
+<studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+
+<form bindsubmit="handleSavePushCode" report-submit>
+    <view class="ui-gift" wx:if="{{isShowGift}}">
+        <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
+        <button formType="submit" hover-stay-time="100" @tap.stop="getGift">
+            <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
+        </button>
+    </view>
+</form>
 </template>
 
 <script>
@@ -289,8 +282,6 @@
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
-    const GoogleAnalytics = ga.GoogleAnalytics
-    const HitBuilders = ga.HitBuilders
     const store = getStore()
     @connect({
         avatar(state) {
@@ -313,10 +304,6 @@
         }
     })
     export default class todayModule extends wepy.page  {
-        config = {
-            backgroundTextStyle: "dark"
-        }
-
         mixins = [PushMixin, loadingMixin]
 
         components = {
@@ -452,6 +439,7 @@
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
+                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
             // 点击查看全部 触发组件
@@ -477,7 +465,7 @@
 
                 self.courseID = item.courseID
                 self.senceID = item.id
-                
+                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${senceName}`)
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID, 
