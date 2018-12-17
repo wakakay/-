@@ -87,12 +87,15 @@
             text{color:@color-white;}
         }
     }
+    .ui-list-box{
+        box-sizing:border-box;width:100%;height:90%;position:absolute;left:0;top:0;z-index:@z-index-mask;
+        &.is-iphonex{padding-bottom:88rpx;}
+    }
     .ui-discuss-list{
-        box-sizing:border-box;width:100%;height:90%;padding:48rpx 24rpx 36rpx;position:absolute;left:0;top:0;z-index:@z-index-mask;transition:all .5;
+        box-sizing:border-box;width:100%;height:100%;padding:36rpx 24rpx 48rpx;transform:rotateX(180deg);
         view{box-sizing:border-box;}
-        &.is-iphonex{padding-top:88rpx;}
         .ui-item{
-            margin-bottom:36rpx;
+            margin-bottom:36rpx;transform:rotateX(180deg);
             &.ui-self{
                 flex-direction:row-reverse;
                 .ui-content{

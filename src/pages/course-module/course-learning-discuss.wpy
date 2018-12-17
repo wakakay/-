@@ -31,6 +31,7 @@
 
     .ui-button-list{
         width:100%;height:128rpx;border-top:1rpx solid @border-gray;position:fixed;left:0;bottom:0;
+        &.is-iphonex{height:176rpx;}
         button{
             display:block;width:50%;height:100%;float:left;background:none;font-size:30rpx;color:@color-gray;line-height:128rpx;
             &.active{color:@color-blue;}
@@ -41,6 +42,7 @@
     }
     .ui-textarea{
         width:50%;height:128rpx;position:fixed;right:0;bottom:0;z-index:@z-index-header;
+        &.is-iphonex{height:176rpx;}
         textarea{box-sizing:border-box;width:100%;height:96rpx;padding:24rpx 24rpx;background-color:transparent;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
         button{
             width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;
@@ -85,7 +87,8 @@
         </view>
     </view>
 
-    <view class="ui-button-list">
+    <view class="ui-button-list"
+          :class="{'is-iphonex': isIphonex}">
         <button :class="{'active': discussDetails.isliked}"
                 @tap.stop="getLike"><text class="icon-praise"></text>{{discussDetails.likeCount || 0}}</button>
 
@@ -93,6 +96,7 @@
     </view>
 
     <view class="ui-textarea flex"
+          :class="{'is-iphonex': isIphonex}"
           style="width:{{keyboardHeight>0 ? '100%' : '50%'}};background:{{keyboardHeight>0 ? '#fff': 'transparent'}};bottom:{{keyboardHeight}}px;">
         <textarea class="flex-box-1"
                   maxlength="200"
@@ -128,6 +132,7 @@
         }
 
         data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             viewID: '',
             discussDetails: {},
             keyboardHeight: 0,

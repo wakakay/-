@@ -17,44 +17,44 @@
               data-type="0"
               @tap.stop="getShowStatus"></view>
 
-        <scroll-view class="ui-discuss-list"
-                     :class="{'is-iphonex': isIphonex}"
-                     style="top:-{{keyboardHeight}}px"
-                     scroll-y
-                     scroll-top="{{scrollTop}}"
-                     data-type="0"
-                     @tap.stop="getShowStatus"
-                     wx:if="{{isShow}}">
-            <repeat for="{{discussList}}" key="index" index="index" item="item">
-                <view class="ui-item flex {{item.isViewed ? 'ui-self' : 'ui-thire'}}">
-                    <view class="ui-portrait flex-box-0"><image mode="scaleToFill" src="{{item.avatarUrl}}"></image></view>
-                    <view class="ui-content">
-                        <text class="icon-arrow"></text>
-                        <view class="cell-content"
-                              data-item="{{item}}"
-                              @tap.stop="getDicussDetail"><text selectable>{{item.content}}</text></view>
-                        <view class="ui-button-list main-justify">
-                            <view class="cell-time cross-center">{{item.createTime}}</view>
-                            <view class="cell-button dir-left">
-                                <button class="cross-center main-end"
-                                        :class="{'active': item.isliked}"
-                                        data-item="{{item}}"
-                                        @tap.stop="getLike">
-                                    <text class="icon-praise"></text>{{item.likeCount}}
-                                </button>
-                                <button class="cross-center main-end"
-                                        :class="{'active': item.isReplied}"
-                                        data-item="{{item}}"
-                                        @tap.stop="getReply">
-                                    <text class="icon-comment1"></text>{{item.replyCount}}
-                                </button>
+        <view class="ui-list-box"
+              :class="{'is-iphonex': isIphonex}"
+              style="top:-{{keyboardHeight}}px"
+              @tap.stop="getShowStatus" wx:if="{{isShow}}">
+            <scroll-view class="ui-discuss-list"
+                         scroll-y
+                         data-type="0"
+                         bindscrolltolower="getScrolltolower">
+                <repeat for="{{discussList}}" key="index" index="index" item="item">
+                    <view class="ui-item flex {{item.isViewed ? 'ui-self' : 'ui-thire'}}">
+                        <view class="ui-portrait flex-box-0"><image mode="scaleToFill" src="{{item.avatarUrl}}"></image></view>
+                        <view class="ui-content">
+                            <text class="icon-arrow"></text>
+                            <view class="cell-content"
+                                  data-item="{{item}}"
+                                  @tap.stop="getDicussDetail"><text selectable>{{item.content}}</text></view>
+                            <view class="ui-button-list main-justify">
+                                <view class="cell-time cross-center">{{item.createTime}}</view>
+                                <view class="cell-button dir-left">
+                                    <button class="cross-center main-end"
+                                            :class="{'active': item.isliked}"
+                                            data-item="{{item}}"
+                                            @tap.stop="getLike">
+                                        <text class="icon-praise"></text>{{item.likeCount}}
+                                    </button>
+                                    <button class="cross-center main-end"
+                                            :class="{'active': item.isReplied}"
+                                            data-item="{{item}}"
+                                            @tap.stop="getReply">
+                                        <text class="icon-comment1"></text>{{item.replyCount}}
+                                    </button>
+                                </view>
                             </view>
                         </view>
                     </view>
-                </view>
-            </repeat>
-        </scroll-view>
-
+                </repeat>
+            </scroll-view>
+        </view>
         <view class="ui-textarea flex"
               style="bottom:{{keyboardHeight}}px"
               wx:if="{{isShow}}">
@@ -98,8 +98,8 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isShow: false,
-            scrollTop: 0,
             currentPage: 1,
+            isMore: true, // 是否能加载更多
             isFocus: false,
             viewID: null,
             viewName: '',
@@ -118,29 +118,25 @@
          */
         __discussList() {
             let self = this
+            console.log(self.currentPage)
+            if (!self.isMore) {
+                return
+            }
+
             let postData = {
                 token: self.systemInfo.token,
                 courseID: self.$parent.courseID,
                 senceID: self.$parent.senceID,
                 cardID: self.$parent.cardCurrentInfo[0].id,
                 page: self.currentPage,
-                pageSize: 1000
+                pageSize: 10
             }
             fetch.senceViewList(postData).then(respone => {
-                let discussList = []
-                let length = respone.length-1
-                discussList = _.map(respone, (item, index) => {
-                    return respone[length - index]
-                })
-
-                self.discussList = discussList
-                self.scrollTop = 8000 + _.random(1, 100)
+                if (respone.length < 10) {
+                    self.isMore = false
+                }
+                self.discussList = _.union(self.discussList, respone)
                 self.$apply()
-
-                self.cardItem && !self.cardItem.viewsCount && setTimeout(()=>{
-                    self.isFocus = true
-                    self.$apply()
-                }, 50)
             }).catch(error => {
             })
         }
@@ -197,6 +193,17 @@
             })
         }
         methods = {
+            /**
+             * 滚动到顶部加载更多想法
+             */
+            getScrolltolower() {
+                let self = this
+                if (!self.isMore) {
+                    return
+                }
+                self.currentPage += 1
+                self.__discussList()
+            },
             /**
              * 是否展示想法模板
              * @param event

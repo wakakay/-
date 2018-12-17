@@ -47,7 +47,6 @@
     </view>
     <canvas class="cell-canvas" canvas-id="cardShare" style="width:{{cardShareInfo.width}}px;height:{{cardShareInfo.height}}px"></canvas>
 
-
     <view class="ui-toast-box" :class="{'is-show': isShowToast}">
         <view class="ui-toast-content dir-top main-justify">
             <view class="ui-content">
@@ -58,7 +57,6 @@
                     bindopensetting='getSetting'>确定</button>
         </view>
     </view>
-
 </template>
 
 <script>

@@ -90,7 +90,6 @@
     import {redirectToLesson} from '../../utils'
 
     const store = getStore()
-
     @connect({
         avatar(state) {
             return state.user.avatar
@@ -137,7 +136,6 @@
             subject: '',
             subjectHeading: '',
             userAvatarUrl: '',
-            userName: '',
             radarParam: {},
             radarInfo: {},
             radarImage: null,
@@ -162,12 +160,6 @@
             self.senceID = senceID
             self.examID = examID
             self.$apply()
-
-            wx.reportAnalytics('pre_test_end', {
-                username: this.userName,
-                examid: this.examID,
-                channel: this.entrance.mappers[this.entrance.scenceID]
-            })
         }
 
         onShow() {
@@ -202,7 +194,7 @@
         initialize() {
             let self = this
             return practiceApi.getUserExamScore({
-                token: this.token, examID: this.examID
+                token: self.token, examID: self.examID
             }).then(data => {
                 self.isLoaded = true
                 self.resultObj.buttonAttr = data.buttonAttr
@@ -214,6 +206,11 @@
                 self.resultObj.course = data.course
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
+                wx.reportAnalytics('pre_test_end', {
+                    username: self.userName,
+                    examid: self.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
+                })
             })
         }
 
