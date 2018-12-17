@@ -77,6 +77,16 @@
                 }
             }
         }
+        .ui-studying-empty{
+            width: 670rpx;height: 670rpx;background: #F5F5F7;border-radius: 16px;margin:auto;display: flex;flex-direction: column;align-items: center;padding-top:144rpx;box-sizing:border-box;
+            .cell-icon{
+                margin-bottom: 36rpx;
+                text{font-size: 110rpx;color: @background-gray-cc;}
+            } 
+            .cell-content{font-size: 34rpx;color: @color-gray}
+            .cell-btn{width: 478rpx;height: 100rpx;border-radius: @border-radius-16;text-align: center;line-height: 100rpx;color: @color-white;font-weight: bold;background: @background-blue;margin-top: 106rpx;}
+            .cell-hover{background: @background-blue-hover;}
+        }
     }
     .cell-date{font-size: 26rpx;color:@color-gray;margin:56rpx 0 24rpx 40rpx;}
     .ui-today-box{
@@ -86,9 +96,9 @@
             .cell-tip{font-size: 32rpx;color:@color-gray;}
             .ui-title-dec{
                 display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
-                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
+                .cell-title{font-size: 50rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;width: 468rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                 .cell-num{
-                    font-size: 24rpx;color: @color-gray;
+                    font-size: 24rpx;color: @color-gray;width: 124rpx;
                     text{font-size:20rpx;}
                 }
             }
@@ -151,7 +161,7 @@
                    hover-class="none"
                    url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
     </view>
-    <view wx:if="{{recommendCourseList.length}}" class="ui-studying">
+    <view class="ui-studying">
         <view class="ui-top">
             <view class="cell-title">在学课程</view>
             <view class="cell-all" @tap.stop="getAllStudyingCourse">
@@ -160,6 +170,7 @@
             </view>
         </view>
         <swiper class="ui-swiper-list"
+                wx:if="{{recommendCourseList.length}}"
                 interval="7000"
                 duration="300"
                 previous-margin="38rpx"
@@ -205,6 +216,16 @@
                 </swiper-item>
             </repeat>
         </swiper>
+        <view wx:else class="ui-studying-empty">
+            <view class="cell-icon">
+                <text class="icon-coursr-empty"></text>
+            </view>
+            <view class="cell-content">你还没有在学课程哦，马上去学习吧</view>
+            <view class="cell-btn" hover-class="cell-hover" @tap.stop="getCoursePage">
+                去看看
+            </view>
+        </view>
+
     </view>
     <view class="cell-date">{{todayDate}}</view>
     <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
@@ -349,9 +370,7 @@
 
         onShow() {
             let self = this
-            if (self.senceID) {
-                self.initialize()
-            }
+            self.__fetchCourses({token: self.token})
             if (self.isTokenSet) {
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
             }
@@ -370,7 +389,6 @@
             // 通知组件
             self.$broadcast('studying-bar')
             !self.senceID && self.__isGetGift(token)
-            self.__fetchCourses({token: token})
         }
         /**
          * 列表数据
@@ -380,6 +398,7 @@
             let self = this
             let postData = {
                 token: parameter && parameter.token || self.token
+                // token: 'userIDce6e4f66b54c4edd8b3aaffa26d4f91c-1544881434930-535d04693bc293ca4b09d8adc81c54b0'
             }
             fetch.todayTaskList(postData).then((respone) => {
                 self.isLoaded = true
@@ -433,6 +452,9 @@
             })
         }
         methods = {
+            getCoursePage(){
+                wepy.switchTab({ url: '/pages/course-module/course'})
+            },
             getCourseDetail(event){
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
@@ -456,7 +478,7 @@
                 if (!self.isTokenSet) {
                     return
                 }
-                let {currentTarget: {dataset: {item}}} = event
+                let {currentTarget: {dataset: {item,result}}} = event
                 let buttonStatus = item.buttonStatus
                 let lessonType = item.lessonType
                 let source = 'todayPage'
@@ -474,8 +496,7 @@
                 }
 
                 if ('needPay' === buttonStatus) {
-                    self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
-                    return
+                    return wepy.navigateTo({url:`/pages/course-module/course-pay?courseID=${self.courseID}`})
                 }
 
                 if ('finish' === buttonStatus) {
