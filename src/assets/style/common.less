@@ -18,12 +18,18 @@
 
     .ui-header-box{width:100%;background-color:rgba(255,255,255,.95);position:fixed;left:0;top:0;z-index:20;}
     .ui-content{height:100%;position:relative;}
-    .ui-button{width:96rpx;height:100%;position:absolute;}
-    .ui-button text{font-size:40rpx;color:#13171A;}
-    .ui-button .cell-back{width:96rpx;height:100%;background-color:transparent;}
-    .ui-button .cell-back::after{border:0;}
-    .ui-titile{box-sizing:border-box;width:320rpx;margin:0 auto;}
-    .ui-titile text{display:block;width:100%;font-size:36rpx;text-align:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+    .ui-button{
+        width:96rpx;height:100%;position:absolute;
+        text{font-size:40rpx;color:#13171A;position:relative;z-index:@z-index-normal;}
+        &.is-after::after{content:' ';width:60rpx;height:60rpx;margin:-28rpx 0 0 -30rpx;background-color:@background-mask-mid-white;border-radius:50%;border:0;position:absolute;left:50%;top:50%;}
+        .cell-back{
+            width:96rpx;height:100%;background-color:transparent;
+        }
+    }
+    .ui-titile{
+        box-sizing:border-box;width:320rpx;margin:0 auto;
+        text{display:block;width:100%;font-size:36rpx;text-align:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+    }
 }
 /* 加载框 */
 .module-loading{

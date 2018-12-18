@@ -38,7 +38,10 @@
     /* 最新上线入口 */
     .ui-new-course{
         padding-top: 36rpx;
-        .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 22rpx;}
+        .cell-tip{
+            font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 22rpx;
+            text{color:@color-red;}
+        }
         .ui-swiper-list{
             height: 496rpx;
             .ui-swiper-box{
@@ -185,7 +188,7 @@
             </view>
 
             <view class="ui-new-course">
-                <view class="cell-tip">限时赠一得一</view>
+                <view class="cell-tip"><text>限时</text>赠一得一</view>
                 <swiper class="ui-swiper-list"
                         previous-margin="40rpx"
                         next-margin="20rpx">
@@ -204,7 +207,7 @@
                                             <view class="cell-dec">{{item.showPoint}}</view>
                                         </view>
                                         <view class="ui-btn">
-                                            <view class="cell-item">赠送</view>
+                                            <view class="cell-item">免费领</view>
                                         </view>
                                     </view>
                                 </view>
