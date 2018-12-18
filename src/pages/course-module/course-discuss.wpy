@@ -124,9 +124,9 @@
         }
 
         data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerTitle: '',
             headerHeigth: 68,
-            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             keyboardHeight: 0,
             discussList: [],
             textareaContent: ''

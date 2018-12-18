@@ -8,8 +8,8 @@
             <view class="ui-status-bar" style="height:{{statusBarHeight}}px"></view>
 
             <view class="ui-content" style="height:{{contentHeight}}px">
-                <view class="ui-button">
-                    <button class="cell-back" @tap.stop="getBack" wx:if="{{!isHiddenButton && !isSrcShare}}">
+                <view class="ui-button" :class="{'is-after': buttonAfter}">
+                    <button class="cell-back main-center cross-center" @tap.stop="getBack" wx:if="{{!isHiddenButton && !isSrcShare}}">
                         <text class="icon-{{buttonIcon}}"
                               style="color:{{buttonColor}}"></text>
                     </button>
@@ -43,6 +43,7 @@
      * @param {title} [String] - 标题文字----【即能】
      * @param {gaTitle} [String] - 发送到ga的自定义纬度用的----【】
      * @param {hiddenButton} [String] - 不需要显示左侧按钮，写这个字段即可，不需要传值- ----【0显示】
+     * @param {buttonAfter} [String] - 是否显示左侧按钮背景，写这个字段即可，不需要传值- ----【0显示】
      * @param {buttonIcon} [String] - 左侧的按钮的字体图标，会自动补全icon- ----【back】
      * @param {delta} [Number] - 返回路由的第几层- ----【1】
      * @param {className} [String] - 修改整个导航栏的样式，请在layout查找注释（header组件）并添加对应的classname，推荐使用----【白底黑字】
@@ -87,6 +88,10 @@
                 type: String
             },
             hiddenButton: {
+                type: String,
+                default: 0
+            },
+            buttonAfter: {
                 type: String,
                 default: 0
             },
