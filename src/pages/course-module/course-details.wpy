@@ -141,6 +141,7 @@
             }
             button{background:none;font-size:34rpx;color:@color-blue;}
         }
+        .ui-clear{width:100%;height:254rpx;}
 
         .ui-button-box{
             width:100%;
@@ -334,6 +335,8 @@
                     hover-stay-time="100"
                     @tap.stop="getAllPay">{{courseDetail.price}} 即能币购买 <text class="icon-details"></text></button>
         </view>
+
+        <view class="ui-clear"></view>
 
         <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!courseDetail.isLimitedTimeGiftCourse && courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
