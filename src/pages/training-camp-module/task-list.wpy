@@ -25,12 +25,7 @@
                     </view>
                 </view>
                 <view class="ui-on-line" wx:else
-                data-sence-i-d="{{item.senceID}}"
-                data-readable="{{item.isActive}}"
-                data-lesson-type="{{item.lessonType}}"
-                data-button-status="{{item.buttonStatus}}"
-                data-course-i-d="{{item.courseID}}"
-                data-resume="YES"
+                data-item="{{item}}"
                 data-team-i-d="{{teamID}}"
                 @tap.stop="handleSenceTap">
                     <view class="ui-top">
@@ -114,48 +109,46 @@
             this.initialize()
         }
         methods = {
-            handleSenceTap({
-                currentTarget: {
-                    dataset: {
+            handleSenceTap(event) {
+                let {currentTarget:{dataset: {item,teamID}}} = event
+                let courseID = item.courseID;
+                let senceID = item.senceID;
+                let readable = item.isActive;
+                let buttonStatus = item.buttonStatus;
+                let lessonType = item.lessonType;
+                let isNewSence = this.isNewSenceMap[senceID]
+                if (!readable){
+                    return wepy.showToast({
+                        title: '任务尚未开始,请耐心等待',
+                        icon: 'none',
+                        duration: 1000,
+                        mask: true
+                    })
+                } 
+
+                if ('previewTest' === lessonType){
+                    return this.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID,
                         senceID,
-                        resume,
+                        isNewSence
+                    })
+                } 
+                if ('review' === buttonStatus) {
+                    return this.$navigate('/pages/Review/index', {
+                        courseID,
+                        senceID,
                         teamID,
-                        readable,
-                        buttonStatus,
-                        lessonType
-                    }
-                }
-            }) {
-                console.log(senceID, readable)
-                let isNewSence = this.isNewSenceMap[senceID]
-                if (!readable) return wepy.showToast({
-                    title: '任务尚未开始,请耐心等待',
-                    icon: 'none',
-                    duration: 1000,
-                    mask: true
-                }) // 任务未开始
-                // if ('deadNumber'===phone || !phone) return wepy.showToast({ title: '未授权手机号', icon: 'none', duration: 1000, mask: true }) // 未授权手机号
-                if ('previewTest' === lessonType) return this.$navigate(`/pages/activity-module/appraisal-start`, {
-                    courseID,
-                    senceID,
-                    isNewSence
-                }) // 课前练习
-                if ('review' === buttonStatus) return this.$navigate('/pages/Review/index', {
-                    courseID,
-                    senceID,
-                    teamID,
-                    isNewSence
-                }) // 回顾
+                        isNewSence
+                    })
+                } 
                 navigateToLesson({
                     courseID,
                     senceID,
-                    resumeLastRead: resume,
                     teamID,
                     isNewSence
-                }) // 其他进入课程
+                })
             },
-        } // end methods
+        }
         initialize() {
             teamApi.getTeamTaskAll({
                     token: this.token,

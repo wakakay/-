@@ -4,9 +4,9 @@
 <template>
     <scroll-view class="module-hot-spot-box" :class="{'is-phonex': isIphonex}"
                  scroll-y>
-        <view class="ui-title">{{cardItem.title}}</view>
+        <view class="ui-title" wx:if="{{cardItem && cardItem.title}}">{{cardItem.title}}</view>
         <view class="ui-thumb">
-            <image model="aspectFit" src="{{cardItem.bigimage}}" style="width:{{cardItem.imgWidth}}px;height:{{cardItem.imgHeight}}px"></image>
+            <image model="aspectFit" src="{{cardItem.bigimage}}" style="height:{{cardItem.imgHeight}}px"></image>
             <repeat for="{{cardItem.hotSpotPosition}}" key="index" index="index" item="item">
                 <view class="ui-hot-pointer"
                       style="left:{{item.left}}%;top:{{item.top}}%"

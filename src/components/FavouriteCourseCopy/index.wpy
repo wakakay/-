@@ -16,7 +16,7 @@
           <image wx:for="{{ userAvatarUrlList }}" class="favourite-course-copy-article__footer__stars-wrapper__star" wx:for-index="$favouritecourse$index" wx:for-item="$favouritecourse$item" wx:key="$favouritecourse$index" wx:key="{{ index }}" data-score="{{ $favouritecourse$item.avatarUrl }}" data-test="{{score}}" class="" src="{{ $favouritecourse$item.avatarUrl }}" mode="scaleToFill" ></image>
         </view>
 
-        <text class="favourite-course-copy-article__footer__caption" wx:if="{{userCount}}"> {{ userCount }}人在学 </text>
+        <text class="favourite-course-copy-article__footer__caption" wx:if="{{userCount}}"> {{ userCount }}人已学 </text>
 
         <view wx:if="{{payType==='free' || price=='0'}}" class="favourite-course-copy-article__footer__price temporary }}">限时免费</view>
 

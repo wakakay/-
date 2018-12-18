@@ -86,7 +86,7 @@
                     <swiper-item style="background-color: {{item.fullImageBgColor}}"
                         catchtouchmove="getCatchTouchMove">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
-                        <view style="height: calc(100% - {{!isIpad ? headerHeigth+64 : 210}}px)">
+                        <view style="height: calc(100% - {{!isIpad ? headerHeigth : 210}}px)">
                             <jn-full-image :cardItem.sync="item" :cardIndex.sync="index"
                                            wx:if="{{item.type==='fullimage'}}"></jn-full-image>
                             <jn-single-choice :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
@@ -132,6 +132,7 @@
         </view>
 
         <jn-share-card></jn-share-card>
+        <jn-learning-discuss :headerHeigth.sync="headerHeigth"></jn-learning-discuss>
     </view>
 
     <view class="module-result-box dir-bottom"
@@ -176,6 +177,7 @@
     import session from '../../components/cards-type/session'
     import hotSpot from '../../components/cards-type/hot-spot'
     import front from '../../components/cards-type/front'
+    import learningDiscuss from '../../components/course-module/learning-discuss'
     import _ from 'underscore'
 
     const store = getStore()
@@ -204,7 +206,8 @@
             'jn-poll': poll,
             'jn-session': session,
             'jn-hot-spot': hotSpot,
-            'jn-front': front
+            'jn-front': front,
+            'jn-learning-discuss': learningDiscuss
         }
 
         data = {
@@ -292,6 +295,9 @@
             let self = this
             // 通知卡片组件，重置初始化数据
             self.$broadcast('broadcast-reset-status')
+            if (self.cardCurrentInfo.length) {
+                self.$broadcast('broadcast-learning-discuss')
+            }
         }
 
         /**
@@ -315,11 +321,12 @@
                 if (!self.resumeLastRead || self.resumeLastRead == 'NO') {
                     index = -1 !== index ? index : 0
                 } else {
-                    index = parseInt(self.resumeLastRead) - 1
+                    index = self.resumeLastRead > cards.length ? 0 : parseInt(self.resumeLastRead) - 1
                 }
                 index = -1 !== index ? index : 0
                 self.cardCurrentInfo.push(self.cardsList[index])
                 self.cardCurrent = index
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 /*if ('hotSpot' === self.cardCurrentInfo[0].type || 'fullimage' === self.cardCurrentInfo[0].type) {
                     self.__interval()
                 }*/
@@ -485,6 +492,7 @@
             self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
             self.startTouches = {}
             self.isAnimationFinish = false
+            self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
             type && self.__recordProgress()
             self.$apply()
         }
@@ -718,6 +726,7 @@
                 } else {
                     self.cardCurrent += 1
                     self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                    self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                     self.__interval()
                     self.__hasInitAnimation()
                     self.__recordProgress()
@@ -745,6 +754,7 @@
                 self.cardCurrent += 1
 
                 self.cardCurrentInfo.splice(0, 1, self.cardsList[self.cardCurrent])
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 self.__interval()
                 self.__hasInitAnimation()
             },
@@ -838,6 +848,16 @@
                 }
 
                 self.cardCurrentInfo.splice(0, 1, item)
+                self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
+                self.$apply()
+            },
+            /**
+             * 添加想法
+             * @param data
+             */
+            'on-learning-discuss': (data) => {
+                let self = this
+                self.cardCurrentInfo[0].viewsCount += 1
                 self.$apply()
             },
             /**

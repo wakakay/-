@@ -75,6 +75,71 @@
     .ui-button{width:700rpx;height:100rpx;font-size:32rpx;color:@color-blue;border-top:1px solid @border-color;}
     .ui-button text{padding-left:18rpx;}
 }
+/* 微课中的想法 */
+.module-learning-discuss{
+    width:100%;
+    .ui-mask{width:100%;height:100%;background-color:@background-mask-slightly;position:absolute;left:0;top:0;z-index:@z-index-mask;}
+    .ui-message{
+        width:192rpx;height:60rpx;background:@background-gray-F4;font-size:26rpx;color:@color-blue;border-radius:@border-radius-32;position:fixed;right:24rpx;top:10%;
+        text{font-size:34rpx;margin-right:8rpx;color:@color-blue;}
+        &.is-dark{
+            background:@background-mask-normal-2;color:@color-white;
+            text{color:@color-white;}
+        }
+    }
+    .ui-list-box{
+        box-sizing:border-box;width:100%;height:90%;position:absolute;left:0;top:0;z-index:@z-index-mask;
+        &.is-iphonex .ui-discuss-list{padding-bottom:88rpx;}
+    }
+    .ui-discuss-list{
+        box-sizing:border-box;width:100%;height:100%;padding:36rpx 24rpx 48rpx;transform:rotateX(180deg);
+        view{box-sizing:border-box;}
+        .ui-item{
+            margin-bottom:36rpx;transform:rotateX(180deg);
+            &.ui-self{
+                flex-direction:row-reverse;
+                .ui-content{
+                    margin-right:24rpx;
+                    > text{transform: rotate(90deg);right:-26rpx;}
+                }
+            }
+            &.ui-thire{
+                .ui-content{
+                    margin-left:24rpx;
+                    > text{transform: rotate(-90deg);left:-26rpx;}
+                }
+            }
+            .ui-portrait{
+                width:72rpx;height:72rpx;border:4rpx solid @border-white;border-radius:50%;overflow:hidden;position:relative;z-index:@z-index-highest;
+                image{width:100%;height:100%;}
+            }
+            .ui-content{
+                width:510rpx;background-color:@background-white;border-radius:@border-radius-20;position:relative;z-index:@z-index-highest;
+                >text{display:block;font-size:38rpx;color:@color-white;transform:rotate(-90deg);position:absolute;top:30rpx;}
+            }
+            .cell-content{padding:24rpx;font-size:30rpx;color:@color-black;position:relative;}
+            .ui-button-list{
+                width:100%;height:65rpx;padding:0 24rpx;border-top:2rpx solid @border-gray;font-size:24rpx;color:@color-gray-A3;
+                view{width:auto;}
+                button{
+                    width:116rpx;height:100%;padding-right:4rpx;background:none;font-size:24rpx;color:@color-gray-A3;
+                    &.active text{color:@color-blue;}
+                    text{font-size:32rpx;margin-right:12rpx;}
+                }
+            }
+        }
+    }
+    .ui-textarea{
+        box-sizing:border-box;width:100%;height:10%;padding:0 36rpx;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
+        >text{margin:20rpx 28rpx 0 0;font-size:56rpx;color:@background-gray-cc;}
+        textarea{box-sizing:border-box;width:510rpx;height:96rpx;padding:24rpx 24rpx;background-color:@background-white;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
+        button{
+            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;position:relative;
+            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
+        }
+    }
+}
 /* 全图卡 */
 .module-full-image-box{
     width:100%;height:100%;
@@ -250,7 +315,7 @@
 }
 /* 热点卡 */
 .module-hot-spot-box{
-    box-sizing:border-box;width:100%;height:100%;padding:0 6%;position:relative;
+    box-sizing:border-box;width:100%;height:100%;position:relative;
     &.is-phonex{width:100%;height:calc(~"100% - 96px");}
     view{box-sizing:border-box;}
     .ui-title{padding:72rpx 0 40rpx;font-size:48rpx;color:@color-black;line-height:66rpx;}

@@ -86,7 +86,7 @@
                 <block wx:for="{{courseInfo.seseriesUserAvatarUrlList}}" wx:index="index" wx:key="item.id">
                     <image mode="scaleToFill" src="{{item}}"></image>
                 </block>
-                <text class="ui-text">{{courseInfo.seseriesUserCount || 0}}人正在学</text>
+                <text class="ui-text">{{courseInfo.seseriesUserCount || 0}}人已学</text>
             </view>
             <view class="ui-button">
                 <button formType="submit" open-type="share">

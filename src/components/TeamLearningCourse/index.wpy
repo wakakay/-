@@ -84,7 +84,7 @@
 					<image wx:for="{{ userAvatarUrlList }}" wx:key="{{ index }}"   src="{{item.avatarUrl }}" mode="scaleToFill" />
 				</view>
 				<text class="ui-content" style="margin-left:-110rpx;" wx:if="{{count && statusMsg !== '进行中'}}"> {{ count}}人已报名 </text>
-				<text class="ui-content" style="margin-left:-110rpx;" wx:if="{{count && statusMsg === '进行中'}}"> {{ count }}人正在学 </text>
+				<text class="ui-content" style="margin-left:-110rpx;" wx:if="{{count && statusMsg === '进行中'}}"> {{ count }}人已学 </text>
 				<view class="ui-button" @tap.stop="handleManager" data-team-i-d="{{id}}">管理</view>
 			</view>
       	</view>

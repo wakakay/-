@@ -29,8 +29,8 @@
         .ui-item{
             padding: 0 40rpx;margin-bottom:56rpx;
             .ui-special-subject{
-                width: 100%;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-20;
-                image{width: 100%;height: 824rpx;border-radius: @border-radius-32}
+                width: 100%;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
+                image{width: 100%;height: 824rpx;}
             }
             .ui-evaluation{
                 height: 824rpx;width: 100%;border-radius: @border-radius-32;background-size:100% 606rpx;background-position:top left;background-repeat:no-repeat;display:flex;position: relative;display: flex;align-items:flex-end;box-sizing:border-box;box-shadow:@box-shadow-hight;
@@ -130,7 +130,7 @@
                                 <view class="cell-dec">{{item.subtitle}}</view>
                             </view>
                         </view>
-                        <view wx:if="{{item.type == 'subject' || item.type == 'todayTask'}}" class="ui-tody-subject">
+                        <view wx:if="{{item.type == 'subject'}}" class="ui-tody-subject">
                             <view class="cell-tip">{{item.sceneType}}</view>
                             <view class="cell-title">{{item.name}}</view>
                             <view class="ui-subject">

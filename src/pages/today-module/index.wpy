@@ -1,0 +1,591 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-clear-button{width:160rpx;background-color:rgba(0,0,0,.3);font-size:24rpx;color:#fff;position:fixed;right:10rpx;top:20%;z-index:50;}
+    .ui-container{width:100%;height:100%;background-color:@background-white;}
+    .ui-clear{width:100%;height:70rpx;}
+    /* 头部 */
+    .ui-course-header{
+        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
+        .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
+        .ui-avatar{
+            image{width:72rpx;height:72rpx;border-radius:50%;}
+        }
+    }
+    .ui-empty{width:100%;margin:22rpx auto 120rpx;color:#14292c;font-family:PingFangSC-Regular;font-size:24rpx;opacity:.7;}
+    /* 新人礼包  */
+    .ui-gift{
+        width:160rpx;height:160rpx;position:fixed;right:28rpx;bottom:140rpx;z-index:35;
+        .cell-icon{
+            width:44rpx;height:44rpx;text-align:center;line-height:44rpx;position:absolute;right:-12rpx;top:-40rpx;
+            &::before{content:' ';width:24rpx;height:24rpx;background-color:@background-white;position:absolute;left:22rpx;top:22rpx;}
+            text{font-size:44rpx;color:rgba(0,0,0,.8);position:relative;}
+        }
+        button{background:none;}
+        image{width:160rpx;height:160rpx;}
+    }
+    /* 最新推荐 */
+    .ui-studying{
+        text-align: left;
+        .ui-top{
+            display: flex;height: 112rpx;align-items: center;justify-content: space-between;padding: 0 30rpx;
+            .cell-title{font-size: 44rpx;font-weight: bold;color:@color-black;}
+            .cell-all{
+                font-size: 34rpx;color:@color-blue;display: flex;align-items: center;
+                text{font-size: 24rpx;margin-left: 8rpx;}
+            }
+        }
+        .ui-swiper-list{
+            height: 671rpx;
+            .ui-item{
+                box-sizing:border-box;
+                .ui-course-image{
+                    height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
+                    .ui-bg-content{
+                        position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
+                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
+                        .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;}
+                    }
+                    .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
+                    .ui-progress{
+                        position:absolute;right:32rpx;top:32rpx;
+                        .ui-circular-progress{
+                            &::before{border:6rpx solid @background-mask-white;}
+                            .cell-progress-number{color:@color-white;line-height: 72rpx;text-align: center;}
+                            .ui-wrapper{
+                                >view{
+                                    box-sizing:border-box;
+                                    &.cell-circle-right{border-top:6rpx solid @border-white;border-right:6rpx solid @border-white;}
+                                    &.cell-circle-left{border-bottom:6rpx solid @border-white;border-left:6rpx solid @border-white;}
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                .ui-content{
+                    display: flex;align-items: center;justify-content: space-between;padding:0 32rpx;height: 190rpx;background:#F5F5F7;;margin-right: 20rpx;border-bottom-left-radius: 32rpx;border-bottom-right-radius: 32rpx;
+                    .ui-left{
+                        display: flex;align-items: center;
+                        .ui-lesson-image image{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 28rpx;border-radius: 28rpx;}
+                        .ui-detail{
+                            height: 96rpx;
+                            .cell-title{font-size: 32rpx;font-weight: bold;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
+                        }
+                    }
+                    .ui-btn{width: 148rpx;height: 60rpx;border-radius: 30rpx;background-color: @background-white;color: @color-blue;font-weight: bold;font-size: 30rpx;line-height: 60rpx;text-align: center}
+                }
+            }
+        }
+        .ui-studying-empty{
+            width: 670rpx;height: 670rpx;background: #F5F5F7;border-radius: 16px;margin:auto;display: flex;flex-direction: column;align-items: center;padding-top:144rpx;box-sizing:border-box;
+            .cell-icon{
+                margin-bottom: 36rpx;
+                text{font-size: 110rpx;color: @background-gray-cc;}
+            } 
+            .cell-content{font-size: 34rpx;color: @color-gray}
+            .cell-btn{width: 478rpx;height: 100rpx;border-radius: @border-radius-16;text-align: center;line-height: 100rpx;color: @color-white;font-weight: bold;background: @background-blue;margin-top: 106rpx;}
+            .cell-hover{background: @background-blue-hover;}
+        }
+    }
+    .cell-date{font-size: 26rpx;color:@color-gray;margin:56rpx 0 24rpx 40rpx;}
+    .ui-today-box{
+        padding: 0  40rpx;margin-bottom:56rpx;
+        .ui-tody-subject{
+            width: 100%;border-radius: @border-radius-32;padding:28rpx 0 28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
+            .cell-tip{font-size: 32rpx;color:@color-gray;}
+            .ui-title-dec{
+                display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
+                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
+                .cell-num{
+                    font-size: 24rpx;color: @color-gray;
+                    text{font-size:20rpx;}
+                }
+            }
+            .ui-subject{
+                .ui-subject-item{
+                    height: 176rpx;display: flex;align-items: center;
+                    .ui-img{
+                        margin-right: 26rpx;width: 112rpx;
+                        image{
+                            width: 112rpx;height: 112rpx;border-radius: 28rpx;
+                        }
+                    }
+                    &:last-of-type .ui-content{border-bottom: none;}
+                    .ui-content{
+                        box-sizing:border-box;display: flex;align-items: center;justify-content: space-between;flex:1;height: 164rpx;border-bottom:2rpx solid @border-gray;padding:10rpx 32rpx 0  0;
+                        .ui-detail{
+                            width:312rpx;height:120rpx;
+                            .cell-name{font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                            .cell-subtitle{
+                                width:282rpx;font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;position:relative;display:flex;margin:8rpx 0 6rpx;
+                                .cell-target{width: 210rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                                text:nth-of-type(1){font-size: 28rpx;margin-right: 4rpx;}
+                                text:nth-of-type(2){position:absolute;right:0;}
+                            }
+                            .ui-progress{
+                                width:282rpx;height:6rpx;margin-top:8rpx;background-color:#D8D8D8;border-radius:16rpx;position:relative;
+                                >view{position:absolute;left:0;top:0;}
+                                .cell-line{
+                                    width:100%;height:100%;z-index:3;
+                                    view{width:20%;height:100%;border-left:4rpx solid @background-white;}
+                                    view:first-child{border-left:0;}
+                                }
+                                .cell-percent{width:50%;height:100%;background-color:#FF9500;z-index:2;transition:width .2s;}
+                                .icon-triangle{font-size:20rpx;color:@color-gray;position:absolute;left:0%;bottom:-24rpx;}
+                            }
+                        }
+                        .ui-btn{
+                            display: flex;align-items:center;height: 100%;flex-direction: column;justify-content:center;
+                            .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 30rpx;font-weight: 700;}
+                            .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
+                        }
+                    }
+                    
+                }
+            }
+        }
+    }
+</style>
+
+<template>
+<jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+<jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
+
+<jn-header hiddenButton className="background-transparent"></jn-header>
+
+<form bindsubmit="handleSavePushCode" report-submit>
+    <view class="ui-course-header">
+        <view class="cell-title">今日</view>
+        <navigator class="ui-avatar"
+                   hover-class="none"
+                   url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
+    </view>
+    <view class="ui-studying">
+        <view class="ui-top">
+            <view class="cell-title">在学课程</view>
+            <view class="cell-all" @tap.stop="getAllStudyingCourse">
+                查看全部({{courseCount}})
+                <text class="icon-right-arrow"></text>
+            </view>
+        </view>
+        <swiper class="ui-swiper-list"
+                wx:if="{{recommendCourseList.length}}"
+                interval="7000"
+                duration="300"
+                previous-margin="38rpx"
+                next-margin="22rpx">
+            <repeat for="{{recommendCourseList}}" index="{{ index }}" key="{{ index }}">
+                <swiper-item class="ui-item" formType="submit" hover-stay-time="100">
+                    <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
+                        @tap.stop="getCourseDetail" data-item="{{item}}">
+                        <view class="ui-bg-content">
+                            <view class="cell-title">{{item.courseName}}</view>
+                            <view class="cell-dec">{{item.courseDec}}</view>
+                        </view>
+                        <view class="ui-shadow"></view>
+                        <view class="ui-progress">
+                            <view class="ui-circular-progress">
+                                <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                                <view class="ui-wrapper ui-right">
+                                    <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                                </view>
+                                <view class="ui-wrapper ui-left">
+                                    <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="ui-content"
+                        wx:for="{{item.senceList}}"
+                        wx:for-item="senceItem"
+                        wx:key="senceIndex"
+                        @tap.stop="handleStartLesson"
+                        data-item="{{item.senceList[0]}}">
+                        <view class="ui-left">
+                            <view class="ui-lesson-image">
+                                <image src="{{senceItem.imageUrl}}" />
+                            </view>
+                            <view class="ui-detail">
+                                <view class="cell-title">{{senceItem.senceName}}</view>
+                                <view class="cell-dec">{{senceItem.senceTarget}}</view>
+                            </view>
+                        </view>
+                        <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
+                    </view>
+                </swiper-item>
+            </repeat>
+        </swiper>
+        <view wx:else class="ui-studying-empty">
+            <view class="cell-icon">
+                <text class="icon-coursr-empty"></text>
+            </view>
+            <view class="cell-content">你还没有在学课程哦，马上去学习吧</view>
+            <view class="cell-btn" hover-class="cell-hover" @tap.stop="getCoursePage">
+                去看看
+            </view>
+        </view>
+
+    </view>
+    <view class="cell-date">{{todayDate}}</view>
+    <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
+        <view class="ui-tody-subject">
+            <view class="cell-tip">{{todayText}}</view>
+            <view class="ui-title-dec">
+                <view class="cell-title">{{todayTitle}}</view>
+                <view class="cell-num">
+                    <text class="icon-triangle"></text>
+                    平均水平
+                </view>
+            </view>
+
+            <view class="ui-subject">
+                <view wx:for="{{todaySenceList}}" wx:key="{{index}}" wx:index="{{index}}"
+                        hover-stay-time="100"
+                        class="ui-subject-item"
+                        data-item="{{item}}"
+                        @tap.stop="handleStartLesson">
+                    <view class="ui-img">
+                        <image mode="aspectFill" src="{{item.imageUrl}}" />
+                    </view>
+                    <view class="ui-content">
+                        <view class="ui-detail">
+                            <view class="cell-name">{{item.senceName}}</view>
+                            <view class="cell-subtitle">
+                                <text class="icon-study-bar"></text>
+                                <view class="cell-target">{{item.senceTarget}}</view>
+                                <text>{{item.mySenceScore || 0}}</text>
+                            </view>
+                            <view class="ui-progress">
+                                <view class="cell-line box-mean">
+                                    <view></view><view></view><view></view><view></view><view></view>
+                                </view>
+                                <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                                <text class="icon-triangle" style="left:{{item.averageScore * 10}}%;"></text>
+                            </view>
+
+                        </view>
+                        <view class="ui-btn">
+                            <view class="cell-btn">{{item.buttonStatusMsg}}</view>
+                            <view class="cell-btn-tip">{{item.giftStatus}}</view>
+                        </view>
+                    </view>
+
+                </view>
+            </view>
+        </view>
+    </view>
+</form>
+<view class="ui-clear"></view>
+<studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+
+<form bindsubmit="handleSavePushCode" report-submit>
+    <view class="ui-gift" wx:if="{{isShowGift}}">
+        <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
+        <button formType="submit" hover-stay-time="100" @tap.stop="getGift">
+            <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
+        </button>
+    </view>
+</form>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import ga from 'wxapp-ga/ga'
+    import PushMixin from '../../mixins/push'
+    import loadingMixin from '../../mixins/loading'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import EvaluateModal from '../../components/EvaluateModal/index'
+    import studyingBar from '../../components/common/studying-bar'
+    import {share as shareApi, registered as fetch} from '../../api'
+    import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
+    import _ from 'underscore'
+
+    const store = getStore()
+    @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
+        userName(state) {
+            return state.user.name
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
+        },
+        token(state) {
+            return state.user.token
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {
+            return state.entrance
+        }
+    })
+    export default class todayModule extends wepy.page  {
+        mixins = [PushMixin, loadingMixin]
+
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading,
+            'jn-evaluate': EvaluateModal,
+            'studying-bar': studyingBar
+        }
+
+        data = {
+            isLoaded: false,
+            hasStudyingBar: false, // 是否有学习bar
+            isScroll: true, // 是否能滚动
+            scrollTop: 0,
+            isShowGift: false,
+            isShowEvaluate: false,
+            isShowCourseStudying:false,
+            courseStudyModalList:[],
+            recommendCourseList:[],
+            courseCount:'',
+            todayText:'',
+            todayTitle:'',
+            todaySenceList:[],
+            discoverPageTitle: '',
+            courseID: null,
+            senceID: null,
+            sencePage: null,
+            todayDate:'',
+            isNewSenceMap:[]
+        }
+
+        onLoad() {
+            let self = this
+            let pageNum = wx.getStorageSync('pageLoadNum')
+            self.isShowEvaluate = pageNum !== 2 ? false : true
+            let storageToken = wx.getStorageSync("token") || 'defaultToken'
+            if (self.isTokenSet || 'defaultToken' !== storageToken) {
+                self.initialize(storageToken)
+            } else {
+                wx.redirectTo({url: 'pages/today-module/index'})
+            }
+        }
+
+        onShow() {
+            let self = this
+            self.__fetchCourses({token: self.token})
+            if (self.isTokenSet) {
+                wepy.$instance.globalData.getLoadHuilder() // ga统计
+            }
+        }
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
+            let self = this
+            self.scrollTop = res.scrollTop
+            self.$apply()
+        }
+        initialize(token) {
+            let self = this
+            // 通知组件
+            self.$broadcast('studying-bar')
+            !self.senceID && self.__isGetGift(token)
+        }
+        /**
+         * 列表数据
+         * @private
+         */
+        __fetchCourses(parameter) {
+            let self = this
+            let postData = {
+                token: parameter && parameter.token || self.token
+                // token: 'userIDce6e4f66b54c4edd8b3aaffa26d4f91c-1544881434930-535d04693bc293ca4b09d8adc81c54b0'
+            }
+            fetch.todayTaskList(postData).then((respone) => {
+                self.isLoaded = true
+                self.todayDate = respone.todayDate;
+                self.recommendCourseList = respone.recommendCourseList;
+                self.todaySenceList = respone.todaySenceList;
+                self.courseCount = respone.courseCount;
+                self.isNewSenceMap = respone.isNewSenceMap;
+                self.todayText = respone.todayText;
+                self.todayTitle = respone.todayTitle;
+                self.$apply()
+            }).catch(error => {
+                throw error
+            })
+        }
+        /**
+         * 是否领取过新手礼包
+         * @private
+         */
+        __isGetGift(token) {
+            let self = this
+            let analyticsInfo = {
+                username: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                role: self.role
+            }
+            let postData = {
+                token: token || self.token
+            }
+
+            fetch.userInfo(postData).then((respone) => {
+                let giftStatus = wx.getStorageSync('giftStatus')
+                // 没有记录缓存
+                if (!giftStatus) {
+                    self.isShowGift = !respone.hasGift
+                    wx.setStorageSync("giftStatus", {
+                        isShow: self.isShowGift,
+                        isReceive: respone.hasGift
+                    })
+                } else {
+                    if (!respone.hasGift) {
+                        self.isShowGift = giftStatus.isShow ? true : false
+                    } else {
+                        self.isShowGift = false
+                    }
+                }
+                self.isShowGift && wx.reportAnalytics('exclusive_gift', analyticsInfo)
+                self.$apply()
+            }).catch(error => {
+
+            })
+        }
+        methods = {
+            getCoursePage(){
+                wepy.switchTab({ url: '/pages/course-module/course'})
+            },
+            getCourseDetail(event){
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+                let courseID = item.courseID;
+                let name = item.courseName;
+                let resume = item.resume ? item.resume : ''
+                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${name}`)
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
+            },
+            // 点击查看全部 触发组件
+            getAllStudyingCourse(){
+                let self = this
+                self.$navigate('/pages/today-module/all-course');
+            },
+            getAvatar() {
+                let self = this
+                wepy.$instance.globalData.getHuilder('今日/头像', 'click', '我的页面')
+            },
+            handleStartLesson(event) {
+                let self = this
+                if (!self.isTokenSet) {
+                    return
+                }
+                let {currentTarget: {dataset: {item,result}}} = event
+                let buttonStatus = item.buttonStatus
+                let lessonType = item.lessonType
+                let source = 'todayPage'
+                let senceName = item.senceName
+                let resume = item.resume ? item.resume : ''
+
+                self.courseID = item.courseID
+                self.senceID = item.id
+                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${senceName}`)
+                if ('previewTest' === lessonType) {
+                    return self.$navigate(`/pages/activity-module/appraisal-start`, {
+                        courseID:self.courseID, 
+                        senceID:self.senceID, 
+                        source})
+                }
+
+                if ('needPay' === buttonStatus) {
+                    return wepy.navigateTo({url:`/pages/course-module/course-pay?courseID=${self.courseID}`})
+                }
+
+                if ('finish' === buttonStatus) {
+                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    return
+                }
+
+                let isNewSence = self.isNewSenceMap[self.senceID]
+                navigateToLesson({
+                    courseID:self.courseID, 
+                    senceID:self.senceID, 
+                    resumeLastRead: resume,
+                    source, 
+                    isNewSence
+                })
+            },
+           
+            /**
+             * 关闭新人礼包
+             * @param
+             */
+            getCloseGift() {
+                let self = this
+                self.isShowGift = false
+                wx.setStorage({
+                    key: "giftStatus",
+                    data: {
+                        isShow: false,
+                        isReceive: false
+                    }
+                })
+            },
+            /**
+             * 去领取新人礼包
+             * @param
+             */
+            getGift() {
+                let self = this
+                wx.reportAnalytics('exclusive_gift_click', {
+                    username: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.role
+                })
+                wx.navigateTo({url: '/pages/registered-module/interest-select'})
+            },
+        }
+
+        events = {
+            /**
+             * 监听是否要禁止滚动
+             * @param options
+             */
+            'on-studying-bar': (data) => {
+                let self = this
+                self.isScroll = data.isShow
+            },
+            'on-is-studying-bar': (data) => {
+                let self = this
+                self.hasStudyingBar = data.isShowBar
+            }
+        }
+
+        /**
+         * 分享
+         * @param options
+         * @returns {{title: string, path: string, success: success, fail: fail}}
+         */
+        onShareAppMessage(options) {
+            return {
+                title: '即能，互联网微学习',
+                path: '/pages/today-module/index',
+                success(res) {
+                    getStorageAsync({key: 'name'}).then(name => {
+                        wx.reportAnalytics('share_event', {
+                            nickname: name,
+                            type: shareDictionary.SHARE_WE_APP.type,
+                        })
+
+                    }).catch(error => error)
+
+                    getStorageAsync({key: 'token'}).then(token => {
+                        shareApi.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+
+                    }).catch(error => error)
+                },
+                fail(res) {
+                    console.log('转发失败')
+                }
+            }
+        }
+    }
+</script>

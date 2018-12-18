@@ -163,7 +163,34 @@ export default {
     collectionRecord(params) {
         return fetch({method: 'post', url: 'sence/cardCollectionRecord', params: params})
     },
-
+    // 想法详情
+    viewsDetails(params) {
+        return fetch({method: 'post', url: 'senceViews/viewsDetails', params: params})
+    },
+    // 想法列表
+    senceViewList(params) {
+        return fetch({method: 'post', url: 'senceViews/senceViews', params: params})
+    },
+    // 发表一个想法
+    publishSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/saveSenceViews', params: params})
+    },
+    // 回复一个想法
+    replySenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/replySenceViews', params: params})
+    },
+    // 给一个想法点赞
+    likeSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/likeSenceViews', params: params, isUnFilter: true})
+    },
+    // 取消对一个想法的点赞
+    dislikeSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/dislikeSenceViews', params: params, isUnFilter: true})
+    },
+    // 删除一个想法
+    deleteSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/deleteSenceViews', params: params})
+    },
     /*--------------------发现页-----------------------*/
     // 发现页列表
     discoverPage(params) {
@@ -196,6 +223,14 @@ export default {
     // 训练营 提问
     sendTeamPost(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPost', params: params, isVisitor: true})
+    },
+    //获取今日任务
+    todayTaskList(params) {
+        return fetch({method: 'post', url: 'todayTask/tasks', params: params, isVisitor: true})
+    },
+    //获取全部未学课程
+    todayToLearnCourses(params) {
+        return fetch({method: 'post', url: 'todayTask/toLearnCourses', params: params, isVisitor: true})
     },
 
 }

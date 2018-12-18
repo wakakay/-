@@ -53,7 +53,7 @@
                                 <view class="cell-dec">{{courseItem.description}}</view>
                                 <view class="ui-btn-bottom">
                                     <view class="cell-btn">{{courseItem.buttonMsg}}</view>
-                                    <view class="cell-tip">{{courseItem.userCount}}人在学</view>
+                                    <view class="cell-tip">{{courseItem.userCount}}人已学</view>
                                 </view>
                             </view>
                         </button>
@@ -285,7 +285,7 @@
                     }
                 })
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName.name}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
                 self.$apply()
             })
         }
@@ -440,29 +440,25 @@
 
         onShareAppMessage(res) {
             let self = this
+            wepy.$instance.globalData.getHuilder('课程专题页/分享', 'click', `${self.courseName}`)
+            shareApi.reportSharing({
+                token:self.token,
+                type: shareDictionary.SHARE_SPECIAL_COURSE.type,
+                courseID:self.courseID,
+                senceID:self.senceID
+            })
+            wx.reportAnalytics('share_event', {
+                role: self.role,
+                nickname: self.userName,
+                coursename: self.courseName,
+                sencename: '/',
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                type: shareDictionary.SHARE_SPECIAL_COURSE.type,
+            })
             return {
                 title: self.shareCoverTitle,
                 path: `/pages/SpecialCourse/index?courseID=${self.courseID}`,
-                imageUrl:self.shareCoverImageUrl,
-                success: function (res) {
-                    wepy.$instance.globalData.getHuilder('课程专题页/分享', 'click', `${self.courseName}`)
-                    shareApi.reportSharing({
-                        token:self.token,
-                        type: shareDictionary.SHARE_SPECIAL_COURSE.type,
-                        courseID:self.courseID,
-                        senceID:self.senceID
-                    })
-                    wx.reportAnalytics('share_event', {
-                        role: self.role,
-                        nickname: self.userName,
-                        coursename: self.courseName,
-                        sencename: '/',
-                        channel: self.entrance.mappers[self.entrance.scenceID],
-                        type: shareDictionary.SHARE_SPECIAL_COURSE.type,
-                    });
-                },
-                fail(res) {
-                }
+                imageUrl:self.shareCoverImageUrl
             };
         }
     }
