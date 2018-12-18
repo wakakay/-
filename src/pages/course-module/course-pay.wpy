@@ -205,9 +205,7 @@
                 }
                 // 如果定价为0的话，不能微信支付
                 self.payInfo.isWeixinPay = 0 !== parseFloat(self.payInfo.price) ? true : false
-
                 self.$apply()
-
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.payInfo.name}) // ga统计
             }).catch(error => {
 
@@ -341,7 +339,7 @@
                             channel: self.entrance.mappers[self.entrance.scenceID],
                             paytype: '微信支付',
                             sencename: self.payInfo.name,
-                            goods: self.paramsInfo.senceID ? '微课购买' : '课程购买',
+                            goods: self.paramsInfo.senceID ? '微课购买' : '课程购买'
                         })
                     },
                     fail(error) {

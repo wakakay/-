@@ -159,6 +159,7 @@
                 cardID: self.paramsInfo.cardID,
                 senceID: self.paramsInfo.senceID,
                 courseID: self.paramsInfo.courseID,
+                requestFlag: self.requestFlag,
                 teamID: self.paramsInfo.teamID || 'defaultTeamID'
             }
             self.isLoaded = false
