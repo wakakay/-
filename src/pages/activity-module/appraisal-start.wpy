@@ -24,7 +24,7 @@
         <jn-header className="background-transparent"></jn-header>
         <view wx:if="{{ isLoaded }}" class="ui-pre-practice">
             <view class="ui-img">
-                <image mode="widthFix" src="{{imageBottomURL}}"></image>
+                <image mode="widthFix" src="{{imageBottomURL}}" />
             </view>
             <view class="ui-box">
                 <button wx:if="{{ !isTokenSet }}" hover-class="cell-hover" class="cell-btn"
@@ -36,32 +36,28 @@
             </view>
         </view>
     </scroll-view>
-
+    <view></view>
 </template>
 
 <script>
     import wepy from 'wepy'
     import {practice as practiceApi, report as reportApi} from '../../api'
-    import {redirectToPreviousPractice} from '../../utils'
     import {getStore, connect} from 'wepy-redux'
     import {login} from "../../redux/models/user"
-    import {fetchPreviousPractices, setCurrentPracticeOffset} from '../../redux/models/practice'
+    import {fetchPreviousPractices} from '../../redux/models/practice'
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
 
     const store = getStore()
 
     @connect({
-        avatar(state) {
-            return state.user.avatar
-        },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
         },
         userName(state) {
             return state.user.name
         },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
         },
         token(state) {
@@ -70,9 +66,6 @@
         },
         role(state) {
             return state.user.role
-        },
-        ipX(state) {
-            return state.user.equipmentModel.startsWith('iPhone X')
         }
     })
     export default class appraisalStart extends wepy.page {
