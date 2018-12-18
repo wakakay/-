@@ -207,9 +207,9 @@
             ]
         }
 
-        onLoad(parameter) {
+        onLoad(params) {
             let self = this
-            if (parameter && parameter.src === 'weclome') {
+            if (params && params.src === 'weclome') {
                 self.initialize()
             } else {
                 self.__isGetGift()

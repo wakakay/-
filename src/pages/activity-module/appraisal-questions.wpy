@@ -269,10 +269,10 @@
             reportApi.doUserBehaviourLog(postData)
         }
 
-        __getExamPracticeList(parameter){
+        __getExamPracticeList(params){
             let self = this
             let postData = {
-                token: parameter && parameter.token || self.token,
+                token: params && params.token || self.token,
                 examID: self.examID
             }
             fetch.getExamPracticeList(postData).then((res) => {

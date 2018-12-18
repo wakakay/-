@@ -81,8 +81,7 @@
         <view class="ui-pay-way">
             <button class="ui-item flex"
                     :class="{'is-selected': selectType==1}"
-                    data-type="1" @tap.stop="getSelected"
-                    wx:if="{{paramsInfo.senceID}}">
+                    data-type="1" @tap.stop="getSelected">
                 <view class="cell-select flex-box-0">
                     <text class="{{selectType==1 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
@@ -117,7 +116,7 @@
                     :class="{'is-selected': selectType==3}"
                     disabled="{{!payInfo.isWeixinPay || isPay}}"
                     data-type="3" @tap.stop="getSelected"
-                    wx:if="{{systemInfo.phone == '13660274564'}}">
+                    wx:if="{{platform || systemInfo.phone == '13660274564'}}">
                 <view class="cell-select flex-box-0">
                     <text class="{{(payInfo.price==0 || isPay) ? 'icon-disabled' : selectType==3 ? 'icon-selected' : 'icon-selectable'}}"></text>
                 </view>
@@ -132,13 +131,15 @@
 
         <view class="ui-button-box">
             <view class="ui-title main-justify cross-center">
-                <text wx:if="{{selectType!=1 || !isPay}}">总共</text>
-                <view class="cell-money" wx:if="{{selectType!=1 || !isPay}}">
+                <text wx:if="{{selectType!=1 && !isPay}}">总共</text>
+                <view class="cell-money" wx:if="{{selectType!=1 && !isPay}}">
                     <image mode="aspectFill" src="http://wx-small.runwise.cn/image/imageID9b0ae340ecc459b8c3012e22fd92.png" wx:if="{{selectType==2}}"></image>
                     <text wx:if="{{selectType==3}}">￥</text>{{payInfo.price}}
                 </view>
             </view>
-            <button disabled="{{!selectType || isPay}}" @tap.stop="getPay">{{selectType!=1 ? '支付' : '赠一得一'}}</button>
+            <button disabled="{{!selectType || isPay}}"
+                    open-type="{{selectType==1 ? 'getUserInfo': ''}}"
+                    @tap.stop="getPay">{{selectType!=1 ? '支付' : '赠一得一'}}</button>
         </view>
     </view>
 </template>
@@ -149,6 +150,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import {payment as paymentApi} from "../../api"
+    import {initializationDeligate} from '../../utils'
 
     const store = getStore()
     @connect({
@@ -176,7 +178,7 @@
             let self = this
             self.paramsInfo = params || {}
 
-            self.initialize()
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {
@@ -200,15 +202,11 @@
 
             fetch.then(respone => {
                 self.payInfo = respone
-                if (postData.courseID) {
-                    self.selectType = self.payInfo.userJinengBinIsEnough ? 2 : 3
-                }
                 // 如果定价为0的话，不能微信支付
                 self.payInfo.isWeixinPay = 0 !== parseFloat(self.payInfo.price) ? true : false
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.payInfo.name}) // ga统计
             }).catch(error => {
-
             })
         }
 
@@ -231,6 +229,9 @@
             getPay() {
                 let self = this
                 let type = parseInt(self.selectType)
+                if (1 === self.selectType && !self.paramsInfo.senceID) {
+                    return
+                }
                 switch(type) {
                     case 1: // 赠一得一
                         wepy.$instance.globalData.getHuilder('支付页/赠一得一', 'click', self.payInfo.name)
@@ -336,10 +337,10 @@
                             role: self.systemInfo.role,
                             nickname: self.systemInfo.name,
                             coursename: '/',
-                            channel: self.entrance.mappers[self.entrance.scenceID],
+                            channel: self.entrance.mappers[this.entrance.scenceID],
                             paytype: '微信支付',
                             sencename: self.payInfo.name,
-                            goods: self.paramsInfo.senceID ? '微课购买' : '课程购买'
+                            goods: self.paramsInfo.senceID ? '微课购买' : '课程购买',
                         })
                     },
                     fail(error) {
@@ -358,5 +359,51 @@
         }
 
         events = {}
+
+        onShareAppMessage(event) {
+            let self = this
+            let dataset = event.target.dataset
+
+            let path = ''
+            let reportType = ''
+            if (dataset && dataset.role) {
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+                if (self.giftID) {
+                    let postData = {
+                        token: self.systemInfo.token,
+                        courseID: self.paramsInfo.id,
+                        giftID: self.giftID
+                    }
+
+                    fetch.saveGiftId(postData).then((respone) => {}).catch((error) => {})
+                }
+                reportType = shareDictionary.RECEIVE_COURSE.type
+                wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
+            } else {
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
+                reportType = shareDictionary.SHARE_COURSE.type
+                wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
+                wx.reportAnalytics('share_event', {
+                    role: self.systemInfo.role,
+                    nickname: self.systemInfo.name,
+                    coursename: self.courseDetail.name,
+                    sencename: '/',
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: shareDictionary.SHARE_COURSE.type
+                })
+            }
+
+            shareApi.reportSharing({
+                token: self.systemInfo.token,
+                type: reportType,
+                courseID: self.paramsInfo.id
+            })
+
+            return {
+                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                path: path,
+                imageUrl: self.courseDetail.shareCoverImageUrl || ''
+            }
+        }
     }
 </script>

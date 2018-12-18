@@ -267,13 +267,13 @@
             }
         };
 
-        onLoad(parameter) {
+        onLoad(params) {
             let self = this
             self.isShowGift = false
             wepy.$instance.globalData.getLoadHuilder() // ga统计
 
-            if (parameter && parameter.type) {
-                let name = 1==parameter.type ? '课程页/头像' : '发现页/头像'
+            if (params && params.type) {
+                let name = 1==params.type ? '课程页/头像' : '发现页/头像'
                 wepy.$instance.globalData.getHuilder('课程页/头像', 'click', '我的页面')
             }
 

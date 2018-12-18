@@ -205,18 +205,18 @@
                 if (-1 !== self.staffList.indexOf(self.unionID)){
                     return
                 }
-                let parameter = options || {}
+                let params = options || {}
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                if (parameter.screenName || title) {
+                if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
                     let builder = {}
-                    console.log('ga----', parameter.screenName || title.screenName, parameter.pageTheme)
-                    trackerInfo.setScreenName(parameter.screenName || title.screenName)
-                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, parameter.pageTheme || '-').build()
+                    console.log('ga----', params.screenName || title.screenName, params.pageTheme)
+                    trackerInfo.setScreenName(params.screenName || title.screenName)
+                    builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, params.pageTheme || '-').build()
                     trackerInfo.send(builder)
                 }
             },

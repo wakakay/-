@@ -394,11 +394,10 @@
          * 列表数据
          * @private
          */
-        __fetchCourses(parameter) {
+        __fetchCourses(params) {
             let self = this
             let postData = {
-                token: parameter && parameter.token || self.token
-                // token: 'userIDce6e4f66b54c4edd8b3aaffa26d4f91c-1544881434930-535d04693bc293ca4b09d8adc81c54b0'
+                token: params && params.token || self.token
             }
             fetch.todayTaskList(postData).then((respone) => {
                 self.isLoaded = true

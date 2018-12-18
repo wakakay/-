@@ -464,16 +464,16 @@
             actionSheetContent: ''
         }
 
-        onLoad(parameter) {
+        onLoad(params) {
             let self = this
-            console.log('课程详情', parameter)
-            self.paramsInfo = parameter
+            console.log('课程详情', params)
+            self.paramsInfo = params
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
             let codeType = getStore().getState().entrance.scenceID
             let isCode = _.indexOf([1047, 1048, 1049, 1089], codeType)
-            if (-1 !== isCode && parameter.senceID) {
-                self.shareSenceID = parameter.senceID
+            if (-1 !== isCode && params.senceID) {
+                self.shareSenceID = params.senceID
             }
 
             if ('defaultToken' === self.systemInfo.token) {
@@ -635,7 +635,7 @@
                     self.$navigate(`/pages/Review/index`, {courseID, senceID})
                     break
                 case 'needPay': // 付费
-                    self.$navigate(`/pages/course-module/course-pay`, {courseID})
+                    self.$navigate(`/pages/course-module/course-pay`, {courseID, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
                     break
                 default:
                     navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
@@ -812,7 +812,7 @@
                 }
 
                 wepy.$instance.globalData.getHuilder('课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
-                return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
+                return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
             },
             /**
              * 授权登录信息
@@ -842,7 +842,7 @@
                         self.initialize()
                         return
                     }
-                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
+                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
                 }).catch(error => { // 拒接授权
 
                 })

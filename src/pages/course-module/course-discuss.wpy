@@ -132,9 +132,9 @@
             textareaContent: ''
         }
 
-        onLoad(parameter) {
+        onLoad(params) {
             let self = this
-            self.parameter = parameter
+            self.params = params
         }
 
         onShow() {
@@ -149,8 +149,8 @@
             let self = this
             let postData = {
                 token: self.systemInfo.token,
-                senceID: self.parameter.senceID,
-                practiceCardID: self.parameter.practiceCardID
+                senceID: self.params.senceID,
+                practiceCardID: self.params.practiceCardID
             }
 
             fetch.discussList(postData).then((respone) => {
@@ -228,8 +228,8 @@
                 let self = this
                 let postData = {
                     token: self.systemInfo.token,
-                    senceID: self.parameter.senceID,
-                    practiceCardID: self.parameter.practiceCardID,
+                    senceID: self.params.senceID,
+                    practiceCardID: self.params.practiceCardID,
                     content: self.textareaContent
                 }
 

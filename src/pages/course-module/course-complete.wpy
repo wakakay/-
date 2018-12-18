@@ -183,7 +183,7 @@
                 'pages/SingleSelection/index']
         }
 
-        onLoad(parameter) {
+        onLoad(params) {
             let self = this
             self.isLoaded = false
             // 分享进来的
@@ -192,7 +192,7 @@
                 return
             }
 
-            let {courseID, senceID, teamID} = parameter
+            let {courseID, senceID, teamID} = params
             let {user: {token, platform}, cards: {requestFlag}} = getStore().getState()
             self.paramsInfo = {courseID, senceID, teamID, platform, requestFlag}
 
@@ -359,14 +359,14 @@
                 }
 
                 let isNewSence = finishResultInfo.isNewSenceMap && finishResultInfo.isNewSenceMap[finishResultInfo.nextSenceID]
-                let parameter = {
+                let params = {
                     courseID: finishResultInfo.nextCourseID,
                     senceID: finishResultInfo.nextSenceID,
                     teamID: self.paramsInfo.teamID,
                     isNewSence
                 }
                 wepy.$instance.globalData.getHuilder('微课完成页/继续学习', 'click', self.finishResultInfo.nextSenceName)
-                redirectToLesson(parameter)
+                redirectToLesson(params)
             }
         }
 
