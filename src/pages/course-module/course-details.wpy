@@ -143,10 +143,9 @@
         }
 
         .ui-button-box{
-            width:100%;height:186rpx;
+            width:100%;
             &.is-phonex{
-                height:254rpx;
-                .ui-container{height:254rpx;}
+                .ui-container{padding-bottom:48rpx;}
             }
             .ui-container{
                 width:100%;height:auto;padding:0 32rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
