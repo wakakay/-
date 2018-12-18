@@ -104,7 +104,7 @@
 
 <script>
     import wepy from "wepy";
-    import {registered as fetch} from "../../api"
+    import {registered as fetch, report as reportApi} from "../../api"
     import {getStore, connect} from "wepy-redux"
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
@@ -176,7 +176,10 @@
                 let dataset = event.currentTarget.dataset
                 let item = dataset.item
                 let index = item.optionID
-                let id = dataset.practiceId
+                let id = dataset.practiceId;
+
+                self.__report(id);
+
                 // 获得已选的id
                 self.selectObj[id] = index
                 self.arrLength = _.keys(self.selectObj)
@@ -244,6 +247,28 @@
                 self.$apply()
             },
         };
+
+        /**
+         * 服务通知数据上报
+         */
+        __report(practiceID) {
+            let self = this
+            let postData = {
+                token: self.token,
+                body: {
+                    json: {
+                        pageType: "测评做题页",
+                        eventType: "测评做题事件上报",
+                        componentName: "测评模块",
+                        courseID: self.examID,
+                        cpnPresentName: "测评做题",
+                        senceID: practiceID
+                    }
+                }
+            }
+            reportApi.doUserBehaviourLog(postData)
+        }
+
         __getExamPracticeList(parameter){
             let self = this
             let postData = {

@@ -126,6 +126,7 @@
         data = {
             examID: '',
             isLoaded: false,
+            isFirstShare: false,
             senceID: '',
             abilityList: [],
             course: {},
@@ -170,15 +171,26 @@
                 })
         }
 
-        onShareAppMessage(res) {
-            let self = this
-
-            wepy.$instance.globalData.getHuilder('测评/分享','click', `${self.resultObj.subjectHeading}`)
+        /**
+         * 微信分享埋点
+         */
+        getWchatShare(){
+            if (self.isFirstShare) {
+                return
+            }
+            self.isFirstShare = true
             wx.reportAnalytics('pre_result_share', {
                 username: self.userName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 examid: self.examID
             })
+        }
+
+        onShareAppMessage(res) {
+            let self = this
+
+            wepy.$instance.globalData.getHuilder('测评/分享','click', `${self.resultObj.subjectHeading}`)
+            self.getWchatShare()
 
             return {
                 title: self.resultObj.subjectHeading,
