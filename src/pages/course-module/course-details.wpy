@@ -635,7 +635,10 @@
                     self.$navigate(`/pages/Review/index`, {courseID, senceID})
                     break
                 case 'needPay': // 付费
-                    self.$navigate(`/pages/course-module/course-pay`, {courseID, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
+                    self.$navigate(`/pages/course-module/course-pay`, {
+                        courseID,
+                        isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                        giftID: self.giftID || self.paramsInfo.giftID})
                     break
                 default:
                     navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
@@ -812,7 +815,10 @@
                 }
 
                 wepy.$instance.globalData.getHuilder('课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
-                return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
+                self.$navigate(`/pages/course-module/course-pay`, {
+                    courseID: self.paramsInfo.id,
+                    isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                    giftID: self.giftID || self.paramsInfo.giftID})
             },
             /**
              * 授权登录信息
@@ -842,7 +848,10 @@
                         self.initialize()
                         return
                     }
-                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id, isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse})
+                    item ? self.__goToCourseLearning(item) : self.$navigate(`/pages/course-module/course-pay`, {
+                        courseID: self.paramsInfo.id,
+                        isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                        giftID: self.giftID || self.paramsInfo.giftID})
                 }).catch(error => { // 拒接授权
 
                 })

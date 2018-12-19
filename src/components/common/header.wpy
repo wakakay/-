@@ -9,17 +9,23 @@
 
             <view class="ui-content" style="height:{{contentHeight}}px">
                 <view class="ui-button" :class="{'is-after': buttonAfter}">
-                    <button class="cell-back main-center cross-center" @tap.stop="getBack" wx:if="{{!isHiddenButton && !isSrcShare}}">
-                        <text class="icon-{{buttonIcon}}"
-                              style="color:{{buttonColor}}"></text>
+                    <button wx:if="{{!isHiddenButton && !isSrcShare}}"
+                            class="cell-back main-center cross-center"
+                            @tap.stop="getBack">
+                        <view class="cell-after main-center cross-center">
+                            <text class="icon-{{buttonIcon}}"
+                                  style="color:{{buttonColor}}"></text>
+                        </view>
                     </button>
 
                     <navigator wx:if="{{!isHiddenButton && isSrcShare}}"
                                class="cell-back main-center cross-center"
                                open-type="switchTab"
                                url="/pages/course-module/course">
-                        <text class="icon-home"
-                              style="color:{{buttonColor}}"></text>
+                        <view class="cell-after main-center cross-center">
+                            <text class="icon-home"
+                                  style="color:{{buttonColor}}"></text>
+                        </view>
                     </navigator>
                     <slot name="cursor-button"></slot>
                 </view>

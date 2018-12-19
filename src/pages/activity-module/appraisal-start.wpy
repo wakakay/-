@@ -21,7 +21,7 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
     <scroll-view class="ui-scroll">
-        <jn-header className="background-transparent"></jn-header>
+        <jn-header className="background-transparent" buttonAfter></jn-header>
         <view wx:if="{{ isLoaded }}" class="ui-pre-practice">
             <view class="ui-img">
                 <image mode="widthFix" src="{{imageBottomURL}}" />

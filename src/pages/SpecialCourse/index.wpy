@@ -1,7 +1,7 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
     <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
-        <jn-header :className.sync="headerBackground"></jn-header>
+        <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
                 <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">

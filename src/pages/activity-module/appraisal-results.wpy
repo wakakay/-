@@ -45,7 +45,7 @@
 
 <template>
     <view catchtouchmove="{{!isLoaded}}">
-        <jn-header className="background-transparent"></jn-header>
+        <jn-header className="background-transparent" buttonAfter></jn-header>
         <view class="ui-practice-end">
             <view class="ui-user" style="position:absolute;top:{{headerHeigth}}px">
                 <view class="ui-img">
