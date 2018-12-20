@@ -2,10 +2,10 @@
     @import "../../assets/style/theme";
     .ui-clear-button{width:160rpx;background-color:rgba(0,0,0,.3);font-size:24rpx;color:#fff;position:fixed;right:10rpx;top:20%;z-index:50;}
     .ui-container{width:100%;height:100%;background-color:#fff;position:relative;text-align:center;}
-    .ui-clear{width:100%;height:70rpx;}
+    .ui-clear{width:100%;height:120rpx;}
     /* 头部 */
     .ui-course-header{
-        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;border-bottom:2rpx solid @border-gray;box-sizing: border-box;
+        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
         .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
         .ui-avatar{
             image{width: 72rpx;height: 72rpx;border-radius: 50%;}
@@ -13,37 +13,37 @@
     }
     /* 课程系列入口 */
     .ui-course-series{
+        margin-bottom:20rpx;
         .ui-tip{
-            padding: 0 30rpx;margin:36rpx 0 20rpx;display: flex;justify-content: space-between;
+            padding: 0 30rpx;margin:28rpx 0 20rpx;display: flex;justify-content: space-between;
             .cell-all{color:@color-blue;font-size: 34rpx}
             .cell-title{font-size:44rpx;color:@color-black;font-weight: bold;}
         }
         .ui-content{
-            border-bottom:2rpx solid @border-gray;padding-bottom:40rpx;
             .ui-item{
-                display: flex;height: 100rpx;width: 100%;align-items: center;padding:0 40rpx;box-sizing:border-box;
+                display: flex;height: 100rpx;align-items: center;padding:0 40rpx;box-sizing:border-box;
                 .ui-img{
                     margin-right: 32rpx;display: flex;align-items: center;height: 100rpx;
                     image{width: 60rpx;height: 60rpx;border-radius: @border-radius-8;}
                 }
                 .cell-name{
-                    font-size: 40rpx;color: @color-black;display: flex;flex: 1;border-top:2rpx solid @border-gray;height: 100rpx;align-items: center;
+                    font-size: 40rpx;color: @color-black;display: flex;flex: 1;height: 100rpx;align-items: center;
                     
                 }
-                &:first-child .cell-name{border-top: none;}
             }
             .ui-item-hover{background: @background-mask-normal-2;}
         }
+        .cell-border{height: 20rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;margin: 0 30rpx;}
     }
     /* 最新上线入口 */
     .ui-new-course{
-        padding-top: 36rpx;
+        padding-top: 26rpx;
         .cell-tip{
             font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 22rpx;
             text{color:@color-red;}
         }
         .ui-swiper-list{
-            height: 496rpx;
+            height: 476rpx;
             .ui-swiper-box{
                 .ui-item{
                     display: flex;margin-bottom:12rpx;margin-right:10rpx;
@@ -68,12 +68,14 @@
                         }
                     }
                 }
+                .cell-border{position:absolute;bottom:0;left: 0;height: 14rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
             }
             
         }
     }
     .ui-hot-course{
-        .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;margin-bottom: 20rpx;}
+        padding-top: 36rpx;
+        .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;}
         .ui-swiper-list{
             height: 496rpx;
             .ui-swiper-box{
@@ -107,19 +109,21 @@
     }
     /* 最新推荐 */
     .ui-recommend{
-        padding-top:32rpx;text-align: left;
+        padding-top:20rpx;text-align: left;
         .ui-swiper-list{
-            height: 671rpx;
+            height: 476rpx;
             .ui-item{
                 box-sizing:border-box;
-                .cell-tip{height:35rpx;font-size: 26rpx;color:@color-blue;line-height:35rpx;}
-                .cell-name{font-size: 44rpx;color:@color-black;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
-                .cell-dec{font-size: 32rpx;color:@color-gray;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
-                .ui-img{
-                    margin:16rpx 0 20rpx;width: 674rpx;border-bottom:1rpx solid @border-gray;overflow:hidden;
-                    .cell-margin{height:40rpx;width:100%}
-                    image{width: 674rpx;height: 430rpx;border-radius: @border-radius-12;}
+                .ui-content-box{
+                    margin-bottom:40rpx;width: 674rpx;overflow:hidden;height: 430rpx;border-radius: @border-radius-12;position: relative;background-position:center center;background-size:100% auto;
+                    .ui-shadow{
+                        position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);padding:26rpx 0 48rpx 32rpx;box-sizing:border-box;
+                        .cell-tip{font-size: 32rpx;color:@color-white;}
+                        .cell-name{font-size: 48rpx;color:@color-white;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:180rpx 0 12rpx;}
+                        .cell-dec{font-size: 32rpx;color:rgba(255,255,255,0.60);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                    }
                 }
+                .cell-margin{height:40rpx;border-top:1rpx solid @border-gray;width: 674rpx;}
             }
         }
         .ui-border{width:674rpx;height:2rpx;}
@@ -175,13 +179,14 @@
                     <block wx:for="{{recommendCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}">
                         <swiper-item class="ui-item" formType="submit" hover-stay-time="100"
                              @tap.stop="getCourseDetail" data-item="{{item}}" data-type="1">
-                            <view class="cell-tip">{{item.sceneType}}</view>
-                            <view class="cell-name">{{item.name}}</view>
-                            <view class="cell-dec">{{item.showPoint}}</view>
-                            <view class="ui-img">
-                                <image src="{{item.image}}"></image>
-                                <view class="cell-margin"></view>
+                            <view class="ui-content-box" style="background-image:url('{{item.image}}')">
+                                <view class="ui-shadow">
+                                    <view class="cell-tip">{{item.sceneType}}</view>
+                                    <view class="cell-name">{{item.name}}</view>
+                                    <view class="cell-dec">{{item.showPoint}}</view>
+                                </view>
                             </view>
+                            <view class="cell-margin"></view>
                         </swiper-item>
                     </block>
                 </swiper>
@@ -211,6 +216,7 @@
                                         </view>
                                     </view>
                                 </view>
+                                <view class="cell-border"></view>
                             </repeat>
                         </swiper-item>
                     </repeat>
@@ -264,6 +270,7 @@
                         <view class="cell-name">{{item.seriesName}}</view>
                     </view>
                 </view>
+                <view class="cell-border"></view>
             </view>
 
             <view class="ui-new-course">
