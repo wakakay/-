@@ -4,8 +4,8 @@
         <jn-header :className.sync="headerBackground" buttonAfter isHeadHeight="{{false}}"></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
-                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}" style="height: calc(952rpx - {{headerHeigth * 2 }}rpx)">
-                    <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth * 2}}rpx);top:-{{headerHeigth * 2}}rpx;">
+                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}" style="height: calc(456px - {{headerHeigth  }}px)">
+                    <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth }}px;">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
