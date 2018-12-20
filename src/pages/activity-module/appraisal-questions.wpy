@@ -50,7 +50,7 @@
     <mloading wx:if="{{ !isLoaded }}" />
     <view class="ui-pre-practice" wx:if="{{ isLoaded }}"
           style="background-image: url('{{prePracticeObj.imagePracticeURL}}');">
-        <jn-header className="background-transparent">
+        <jn-header className="background-transparent" buttonAfter>
             <view slot="content" class="ui-progress-box main-center cross-center">
                 <view class="ui-progress">
                     <view class="cell-current" style="width:{{((currentIndex)/(prePracticeObj.practiceList.length)) * 100}}%"></view>
