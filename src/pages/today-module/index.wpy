@@ -1,8 +1,9 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
-    .ui-clear-button{width:160rpx;background-color:rgba(0,0,0,.3);font-size:24rpx;color:#fff;position:fixed;right:10rpx;top:20%;z-index:50;}
-    .ui-container{width:100%;height:100%;background-color:@background-white;}
     .ui-clear{width:100%;height:70rpx;}
+    .module-header.ui-today-header{
+        .ui-button{width: 200rpx;}
+    }
     /* 头部 */
     .ui-course-header{
         display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
@@ -22,6 +23,10 @@
         }
         button{background:none;}
         image{width:160rpx;height:160rpx;}
+    }
+    .ui-special-subject{
+        width: 670rpx;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;margin:44rpx 40rpx 30rpx;
+        image{width: 100%;height: 824rpx;}
     }
     /* 最新推荐 */
     .ui-studying{
@@ -88,9 +93,8 @@
             .cell-hover{background: @background-blue-hover;}
         }
     }
-    .cell-date{font-size: 26rpx;color:@color-gray;margin:56rpx 0 24rpx 40rpx;}
     .ui-today-box{
-        padding: 0  40rpx;margin-bottom:56rpx;
+        padding: 0  40rpx;margin-top:56rpx;
         .ui-tody-subject{
             width: 100%;border-radius: @border-radius-32;padding:28rpx 0 28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
             .cell-tip{font-size: 32rpx;color:@color-gray;}
@@ -146,13 +150,24 @@
             }
         }
     }
+    .ui-before-subject{
+        padding: 60rpx 40rpx 0;
+        .cell-date{font-size: 44rpx;font-weight: bold;margin-bottom: 20rpx;color: @color-black}
+        .ui-content{
+            width: 670rpx;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
+            image{width: 100%;height: 824rpx;}
+        }
+    }
+    
 </style>
 
 <template>
 <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
 <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
 
-<jn-header hiddenButton className="background-transparent"></jn-header>
+<jn-header hiddenButton class="ui-today-header">
+    <view slot="cursor-button" class="cell-header-date">{{todayDate}}</view>
+</jn-header>
 
 <form bindsubmit="handleSavePushCode" report-submit>
     <view class="ui-course-header">
@@ -160,6 +175,10 @@
         <navigator class="ui-avatar"
                    hover-class="none"
                    url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
+    </view>
+    <view class="ui-special-subject" hover-stay-time="100"
+                @tap.stop="getItem" data-item="{{subject}}">
+            <image mode="aspectFit" src="{{subject.coverImageURL}}" />
     </view>
     <view class="ui-studying">
         <view class="ui-top">
@@ -227,7 +246,6 @@
         </view>
 
     </view>
-    <view class="cell-date">{{todayDate}}</view>
     <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
         <view class="ui-tody-subject">
             <view class="cell-tip">{{todayText}}</view>
@@ -275,6 +293,14 @@
             </view>
         </view>
     </view>
+    <repeat for="{{subjectList}}" key="index" index="index" item="item">
+        <view class="ui-before-subject" @tap.stop="getItem" data-item="{{item}}">
+            <view class="cell-date">{{item.date}}</view>
+            <view class="ui-content">
+                <image mode="aspectFit" src="{{item.coverImageURL}}" />
+            </view>
+        </view>
+    </repeat>
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
@@ -352,8 +378,47 @@
             courseID: null,
             senceID: null,
             sencePage: null,
+            subject:{
+                coverImageURL:"http://image.runwise.cn/image/imageIDb87578e52ec4bbbc1aec4d220869.png",
+                id:"courseIDc11cdeca7e74ee922f84e5cf77d7",
+                name:"今日技能（12月18日）",
+                sceneType:"",
+                subtitle:"工作时，我们是怎么浪费时间的？",
+                type:"editor"
+            },
+            subjectList:[
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageIDb87578e52ec4bbbc1aec4d220869.png",
+                    id:"courseIDc11cdeca7e74ee922f84e5cf77d7",
+                    name:"今日技能（12月18日）",
+                    sceneType:"",
+                    subtitle:"工作时，我们是怎么浪费时间的？",
+                    type:"editor",
+                    date:'12月23日星期四'
+                },
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageID3d01141a00549ba52bf9b726b54e.png",
+                    id:"courseIDf444fd4149441fab7f303757fcdc",
+                    name:"今日技能（12月19日）",
+                    sceneType:"",
+                    subtitle:"如何避免简历制作中的“雷区”？",
+                    type:"editor",
+                    date:'12月23日星期四'
+                },
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageIDa3fc0596551440bcf992947b6add.png",
+                    id:"courseID42ea9c168fb4b58aadd19423c1bb",
+                    name:"开发眼中产品经理的三宗罪",
+                    sceneType:"",
+                    subtitle:"有人中枪了嘛？",
+                    type:"editor",
+                    date:'12月17日星期二'
+                },
+
+            ],
             todayDate:'',
-            isNewSenceMap:[]
+            isNewSenceMap:[],
+            headerHeigth:''
         }
 
         onLoad() {
@@ -451,6 +516,15 @@
             })
         }
         methods = {
+            getItem(event) {
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+                let courseID = item.id;
+                let name = item.name
+
+                wepy.$instance.globalData.getHuilder('今日tab/专题','click', `${name}`)
+                return self.$navigate('/pages/SpecialCourse/index', {courseID})
+            },
             getCoursePage(){
                 wepy.switchTab({ url: '/pages/course-module/course'})
             },
@@ -512,6 +586,7 @@
                     isNewSence
                 })
             },
+            
            
             /**
              * 关闭新人礼包
@@ -555,6 +630,11 @@
             'on-is-studying-bar': (data) => {
                 let self = this
                 self.hasStudyingBar = data.isShowBar
+            },
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
             }
         }
 
