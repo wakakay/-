@@ -220,7 +220,8 @@
                         wx:for-item="senceItem"
                         wx:key="senceIndex"
                         @tap.stop="handleStartLesson"
-                        data-item="{{item.senceList[0]}}">
+                        data-item="{{item.senceList[0]}}"
+                        data-click-source="course">
                         <view class="ui-left">
                             <view class="ui-lesson-image">
                                 <image src="{{senceItem.imageUrl}}" />
@@ -262,7 +263,8 @@
                         hover-stay-time="100"
                         class="ui-subject-item"
                         data-item="{{item}}"
-                        @tap.stop="handleStartLesson">
+                        @tap.stop="handleStartLesson"
+                        data-click-source="today">
                     <view class="ui-img">
                         <image mode="aspectFill" src="{{item.imageUrl}}" />
                     </view>
@@ -526,6 +528,7 @@
                 return self.$navigate('/pages/SpecialCourse/index', {courseID})
             },
             getCoursePage(){
+                wepy.$instance.globalData.getHuilder('在学课程/去看看', 'click', '')
                 wepy.switchTab({ url: '/pages/course-module/course'})
             },
             getCourseDetail(event){
@@ -534,12 +537,13 @@
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${name}`)
+                wepy.$instance.globalData.getHuilder('在学课程/进入课程','click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
             // 点击查看全部 触发组件
             getAllStudyingCourse(){
                 let self = this
+                wepy.$instance.globalData.getHuilder('在学课程/查看全部', 'click', '')
                 self.$navigate('/pages/today-module/all-course');
             },
             getAvatar() {
@@ -551,16 +555,21 @@
                 if (!self.isTokenSet) {
                     return
                 }
-                let {currentTarget: {dataset: {item,result}}} = event
+                let {currentTarget: {dataset: {item,clickSource}}} = event
                 let buttonStatus = item.buttonStatus
                 let lessonType = item.lessonType
                 let source = 'todayPage'
                 let senceName = item.senceName
                 let resume = item.resume ? item.resume : ''
 
+                if(clickSource === 'course') {
+                    wepy.$instance.globalData.getHuilder('在学课程/微课学习','click',`${senceName}`)
+                }else {
+                    wepy.$instance.globalData.getHuilder('今日任务/微课学习','click',`${senceName}`)
+                }
+
                 self.courseID = item.courseID
                 self.senceID = item.id
-                wepy.$instance.globalData.getHuilder('今日任务/微课点击','click',`${senceName}`)
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID, 
