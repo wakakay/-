@@ -23,13 +23,13 @@ const PHONE_ERRORS_MAPPER = {
 }
 
 const PRACTICES_ROUTER_MAPPER = {
-        'textSelectionVer2': '/pages/SingleSelection/index',
-        'order': '/pages/Sorting/index'
-    } // edn mMap
+    textSelectionVer2: '/pages/SingleSelection/index',
+    order: '/pages/Sorting/index'
+}
 
 const PREVIOUS_PRACTICES_ROUTER_MAPPER = {
-        'textSelectionVer2': '/pages/PreviousPracticeSingleSelection/index'
-    } // edn mMap
+    textSelectionVer2: '/pages/PreviousPracticeSingleSelection/index'
+}
 
 export const showErrorPage = () => {
     return wepy.navigateTo({
@@ -50,16 +50,11 @@ export const downLoadPhoto = url => {
 
 export const previewPhoto = ({ url }) => {
     let tmpUrl = null
-    return wepy.downloadFile({
-            url
-        })
-        .then(({ tempFilePath, statusCode, errMsg }) => {
-            //console.log('tmp', tempFilePath)
+    return wepy.downloadFile({url}).then(({ tempFilePath, statusCode, errMsg }) => {
             if ('downloadFile:ok' !== errMsg) throw new Error('fail to download image')
             tmpUrl = tempFilePath
             return wepy.previewImage({ current: url, urls: [url] })
-        })
-        .then(({ errMsg }) => ({ errMsg, tmpUrl }))
+        }).then(({ errMsg }) => ({ errMsg, tmpUrl }))
 }
 
 export const canvasPreviewAndSave = ({ fileType = 'jpg', width, height, canvasID }) => {
@@ -91,9 +86,9 @@ export const canvasPreviewAndSave = ({ fileType = 'jpg', width, height, canvasID
                             success: res => resolve(res),
                             fail: error => reject(error)
                         })
-                    }) // end promise
+                    })
             })
-    } // end saveAndPreview
+    }
 
 export const drawText = ({ ctx, color = '#000', fontSize = '18', fontStyle = 'normal', fontWeight = 'normal', fontFamily = 'PingFangSC-Regular', align = 'left', lineHeight = 0 }) => ({ x = 0, y = 0, content = 'text from canvas' }) => {
         let mArr = content.split('\n')
@@ -103,7 +98,6 @@ export const drawText = ({ ctx, color = '#000', fontSize = '18', fontStyle = 'no
             ctx.setFontSize(fontSize)
             ctx.setFillStyle(color)
             ctx.setTextAlign(align)
-            //console.log('高度', content, y + index * fontSize + index * (lineHeight - fontSize))
             ctx.fillText(item.toString(), x, y + index * fontSize + index * (lineHeight - fontSize)) // 写课程标题
         })
     } // drawText 画多行文字
@@ -217,7 +211,7 @@ export const getStorageAsync = ({ key }) => {
                 success: ({ errMsg, data }) => 'getStorage:ok' === errMsg && resolve(data) || reject(data),
                 fail: error => reject(`getStorage: fail to get ${key}`)
             })
-        }) // end return
+        })
 }
 
 export const setStorageAsync = ({ key, value }) => {
@@ -228,7 +222,7 @@ export const setStorageAsync = ({ key, value }) => {
                 success: ({ errMsg }) => 'setStorage:ok' === errMsg && resolve() || reject(errMsg),
                 fail: error => reject(`setStorage: fail to get ${key}`)
             })
-        }) // end return
+        })
 }
 
 export const showModalAsync = ({ title, content, showCancel = false, cancelText = '', confirmText }) => {
@@ -241,8 +235,8 @@ export const showModalAsync = ({ title, content, showCancel = false, cancelText 
                     confirmText,
                     success: ({ confirm }) => confirm ? resolve() : reject(),
                     fail: error => reject(error)
-                }) // end showModal
-        }) // end promise
+                })
+        })
 }
 
 export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
@@ -267,8 +261,8 @@ export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
                         code,
                         encryptedData,
                         iv
-                    }) // end sendPhoneNumber
-            }) // end then
+                    })
+            })
             .then(({ phone }) => {
                 //console.log("succeed in sending phone", phone);
                 (phone &&
@@ -290,8 +284,8 @@ export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
                 }).then(() => {
                     throw new Error('fail in decrypting phone')
                 })
-            }) // end catch
-    } // end doDecrpytPhone
+            })
+    }
 
 export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isNewSence=false, isRedirectTo=false}) => {
     const { user: { platform } } = getStore().getState()

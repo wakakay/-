@@ -20,8 +20,7 @@
     import {setStore} from 'wepy-redux'
     import {setSceneID, setPath, setQuery} from './redux/models/entrance'
     import {registered as fetch} from './api'
-    import config from './api/config'
-    // import {shareDictionary} from './utils'
+    import envConfig from './api/config'
     import {ROUTERS} from './utils/router-dictionary'
     import ga from 'wxapp-ga/ga'
 
@@ -180,13 +179,13 @@
                 tracker = GoogleAnalytics.getInstance(self)
                     .setAppName('即能')
                     .setAppVersion('v1.0')
-                    .newTracker('UA-124925915-2') // 用你的 Tracking ID 代替 test：UA-124925915-2 product： UA-127840357-1
+                    .newTracker(envConfig.gaTracker)
                 tracker.setTrackerServer("https://wx-small.runwise.cn") // 使用自己的合法域名做跟踪数据转发
                 return tracker
             },
             getHuilder(category, action, label) {
                 let self = this
-                if (-1 !== self.staffList.indexOf(self.unionID)){
+                if ('UA-127840357-1' === envConfig.gaTracker && -1 !== self.staffList.indexOf(self.unionID)){
                     return
                 }
                 var trackerInfo = self.getTracker()
@@ -202,7 +201,7 @@
             },
             getLoadHuilder(options) {
                 let self = this
-                if (-1 !== self.staffList.indexOf(self.unionID)){
+                if ('UA-127840357-1' === envConfig.gaTracker && -1 !== self.staffList.indexOf(self.unionID)){
                     return
                 }
                 let params = options || {}
@@ -214,7 +213,7 @@
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
                     let builder = {}
-                    console.log('ga----', params.screenName || title.screenName, params.pageTheme)
+                    // console.log('ga----', params.screenName || title.screenName, params.pageTheme)
                     trackerInfo.setScreenName(params.screenName || title.screenName)
                     builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, params.pageTheme || '-').build()
                     trackerInfo.send(builder)
@@ -246,11 +245,7 @@
         onLaunch(option) {
             let self = this
             let {scene: sceneID, path, query} = option
-            /*const mDictionary = {
-                'pages/course-module/lesson-for-android': shareDictionary.SHARE_TEAM,
-                'pages/course-module/lesson': shareDictionary.SHARE_TEAM,
-                'pages/course-module/course-details?': shareDictionary.SHARE_COURSE,
-            }*/
+
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))

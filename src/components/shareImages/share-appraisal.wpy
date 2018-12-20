@@ -169,7 +169,7 @@
                 self.shareImage = res
                 self.cardShareInfo.width = self.systemInfo.windowWidth
                 self.cardShareInfo.prop = self.systemInfo.windowWidth / self.shareImage[0].width
-                self.cardShareInfo.height = Math.ceil(self.shareImage[0].height * 0.68 * self.cardShareInfo.prop)
+                self.cardShareInfo.height = Math.ceil(self.shareImage[0].height * 0.7 * self.cardShareInfo.prop)
                 self.$apply()
 
                 self.cardCanvas.clearRect(0, 0, self.systemInfo.windowWidth, self.cardShareInfo.height)
@@ -217,7 +217,7 @@
          */
         __clipBackground(x, y, width, height) {
             let self = this
-            let h = Math.ceil(height * 0.85)
+            let h = Math.ceil(height * 0.84)
             self.cardCanvas.setStrokeStyle('#fff')
             self.cardCanvas.beginPath()
             self.cardCanvas.moveTo(x, y)
@@ -242,10 +242,10 @@
             self.cardCanvas.setStrokeStyle('#fff')
             self.cardCanvas.setLineWidth(2)
 
-            self.cardCanvas.arc(40, 46, 22, 0, 2 * Math.PI, false)
+            self.cardCanvas.arc(40, 42, 22, 0, 2 * Math.PI, false)
             self.cardCanvas.fill()
             self.cardCanvas.clip()
-            self.cardCanvas.drawImage(shareImage[1].path, 40 - 22, 46 - 22, 44, 44)
+            self.cardCanvas.drawImage(shareImage[1].path, 40 - 22, 42 - 22, 44, 44)
 
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()

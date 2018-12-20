@@ -1,6 +1,7 @@
 import wepy from 'wepy'
 import { getStore, connect } from 'wepy-redux'
 import config from './config'
+import envConfig from './api/config'
 import {CancelAuthenticationError, InnerError, NetworkError, RejectAuthenticationError, CustomError, UnAuthenticationError} from '../errors'
 import ga from 'wxapp-ga/ga'
 
@@ -14,7 +15,7 @@ const getTracker = () => {
     tracker = GoogleAnalytics.getInstance(self)
         .setAppName('即能')
         .setAppVersion('v1.0')
-        .newTracker('UA-124925915-2') // 用你的 Tracking ID 代替
+        .newTracker(envConfig.gaTracker) // 用你的 Tracking ID 代替
     tracker.setTrackerServer("https://wx-small.runwise.cn") // 使用自己的合法域名做跟踪数据转发
     return tracker
 }
