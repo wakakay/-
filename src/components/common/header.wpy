@@ -3,7 +3,7 @@
 </style>
 
 <template>
-    <view class="module-header {{classNameSync}}" style="height:{{statusBarHeight+contentHeight}}px">
+    <view class="module-header {{classNameSync}}" style="{{isHeadHeight ? 'height:'+(statusBarHeight+contentHeight)+'px' : ''}}">
         <view class="ui-header-box" style="background:{{background}};color:{{textColor}};">
             <view class="ui-status-bar" style="height:{{statusBarHeight}}px"></view>
 
@@ -79,6 +79,10 @@
                 default: 'navigateBack'
             },
             fixed: {
+                type: Boolean,
+                default: true
+            },
+            isHeadHeight: {
                 type: Boolean,
                 default: true
             },

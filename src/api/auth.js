@@ -1,7 +1,7 @@
 import wepy from 'wepy'
 import { getStore, connect } from 'wepy-redux'
 import config from './config'
-import envConfig from './api/config'
+import envConfig from './config'
 import {CancelAuthenticationError, InnerError, NetworkError, RejectAuthenticationError, CustomError, UnAuthenticationError} from '../errors'
 import ga from 'wxapp-ga/ga'
 
