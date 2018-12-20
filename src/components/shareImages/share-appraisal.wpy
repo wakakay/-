@@ -15,13 +15,16 @@
 
 <template>
     <canvas class="cell-canvas" canvas-id="cardShare" style="width:{{cardShareInfo.width}}px;height:{{cardShareInfo.height}}px"></canvas>
-    <view class="ui-toast-box" :class="{'is-show': isShowToast}">
-        <view class="ui-toast-content dir-top main-justify">
+    <view class="ui-toast-box"
+          :class="{'is-show': isShowToast}"
+          @tap.stop="getClose">
+        <view class="ui-toast-content dir-top main-justify" @tap.stop="getBubbling">
             <view class="ui-content">
                 <view class="cell-title">温馨提示</view>
                 <view class="cell-content">你关闭了访问相册的权限，无法保存，请在设置中打开允许访问相册后再保存。</view>
             </view>
-            <button open-type="openSetting"
+            <button class="main-center cross-center"
+                    open-type="openSetting"
                     bindopensetting='getSetting'>确定</button>
         </view>
     </view>
@@ -60,7 +63,46 @@
             let self = this
         }
 
-        methods = {}
+        /**
+         * 获取微信设置信息
+         * @private
+         */
+        __wxSetting() {
+            let self = this
+            // 检测设置中是否允许保存到相册中去
+            wx.getSetting({
+                success(res) {
+                    // 第一次，系统会自动调取授权
+                    if (_.isUndefined(res.authSetting['scope.writePhotosAlbum'])) {
+                        self.__saveImage()
+                    } else if (!res.authSetting['scope.writePhotosAlbum']){ // 不授权
+                        self.isShowToast = true
+                    } else { // 授权
+                        self.__saveImage()
+                    }
+                    self.$apply()
+                }
+            })
+        }
+
+        methods = {
+            /**
+             * 关闭组件
+             * @private
+             */
+            getClose() {
+                let self = this
+                self.isShowToast = false
+                self.$apply()
+            },
+            /**
+             * 阻止冒泡
+             * @private
+             */
+            getBubbling() {
+                return
+            }
+        }
 
         events = {
             // 监听父组件的触发事件
@@ -74,13 +116,14 @@
                     }
                 })
 
-                wx.showLoading({
-                    title: '努力生成中...'
-                })
-
                 let self = this
-                self.cardCanvas = wx.createCanvasContext('cardShare')
+                if (self.shareThumb) {
+                    self.__wxSetting()
+                    return
+                }
 
+                wx.showLoading({title: '努力生成中...'})
+                self.cardCanvas = wx.createCanvasContext('cardShare')
                 // 如果还没绘画结束，则不继续绘画下一个
                 if (!self.isDrawOver) {
                     self.isDrawOver = false
@@ -174,7 +217,7 @@
          */
         __clipBackground(x, y, width, height) {
             let self = this
-            let h = Math.ceil(height * 0.84)
+            let h = Math.ceil(height * 0.85)
             self.cardCanvas.setStrokeStyle('#fff')
             self.cardCanvas.beginPath()
             self.cardCanvas.moveTo(x, y)
@@ -199,10 +242,10 @@
             self.cardCanvas.setStrokeStyle('#fff')
             self.cardCanvas.setLineWidth(2)
 
-            self.cardCanvas.arc(45, 46, 22, 0, 2 * Math.PI, false)
+            self.cardCanvas.arc(40, 46, 22, 0, 2 * Math.PI, false)
             self.cardCanvas.fill()
             self.cardCanvas.clip()
-            self.cardCanvas.drawImage(shareImage[1].path, 45 - 22, 46 - 22, 44, 44)
+            self.cardCanvas.drawImage(shareImage[1].path, 40 - 22, 46 - 22, 44, 44)
 
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
@@ -255,6 +298,7 @@
                         showCancel: false,
                         duration: 2500
                     })
+                    self.__wxSetting()
                 }
             })
         }

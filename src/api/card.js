@@ -46,7 +46,7 @@ export const getCardListWithPreview = ({ token = 'defaultToken', senceID = 'defa
 export const markCard = ({ token = 'defaultToken', courseID = 'defaultCourseID', senceID = 'defaultSenceID', cardID, requestFlag, teamID = 'defaultTeamID' }) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
-            url: `${config.baseUrl}courseV2/sendCard?token=${token}&senceID=${senceID}&cardID=${cardID}&requestFlag=${requestFlag}&teamID=${teamID}`,
+            url: `${config.baseUrl}courseV2/sendCard?token=${token}&courseID=${courseID}&senceID=${senceID}&cardID=${cardID}&requestFlag=${requestFlag}&teamID=${teamID}`,
             method: 'POST'
         })
         .then(({ data: { data, status, message } }) => {

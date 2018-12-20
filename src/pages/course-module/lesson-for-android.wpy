@@ -994,6 +994,7 @@
             cardApi.markCard({
                 token: this.token,
                 senceID: this.senceID,
+                courseID: this.courseID,
                 cardID: this.cards[cardSyncCurrent]['id'],
                 requestFlag
             }) // 请求后台记录卡片位置
