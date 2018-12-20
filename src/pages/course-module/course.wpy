@@ -118,9 +118,9 @@
                     margin-bottom:40rpx;width: 674rpx;overflow:hidden;height: 430rpx;border-radius: @border-radius-12;position: relative;background-position:center center;background-size:100% auto;
                     .ui-shadow{
                         position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);padding:26rpx 0 48rpx 32rpx;box-sizing:border-box;
-                        .cell-tip{font-size: 32rpx;color:@color-white;}
+                        .cell-tip{font-size: 30rpx;color:rgba(255,255,255,0.6);}
                         .cell-name{font-size: 48rpx;color:@color-white;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:180rpx 0 12rpx;}
-                        .cell-dec{font-size: 32rpx;color:rgba(255,255,255,0.60);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                        .cell-dec{font-size: 32rpx;color:rgba(255,255,255,0.6);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
                     }
                 }
                 .cell-margin{height:40rpx;border-top:1rpx solid @border-gray;width: 674rpx;}
