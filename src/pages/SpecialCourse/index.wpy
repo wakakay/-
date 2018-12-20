@@ -4,7 +4,7 @@
         <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
-                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}" style="height: calc(412px - {{headerHeigth}}px)">
+                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}" style="height: calc(476px - {{headerHeigth}}px)">
                     <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
