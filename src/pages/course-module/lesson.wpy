@@ -955,6 +955,7 @@
             cardApi.markCard({
                 token: this.token,
                 senceID: this.currentSenceID,
+                courseID: this.courseID,
                 cardID: this.cards[current]['id'],
                 requestFlag: this.requestFlag,
                 teamID: this.teamID
@@ -991,6 +992,7 @@
             cardApi.markCard({
                 token: this.token,
                 senceID: this.currentSenceID,
+                courseID: this.courseID,
                 cardID: this.cards[current]['id'],
                 requestFlag: this.requestFlag,
                 teamID: this.teamID

@@ -506,10 +506,12 @@
             let postData = {
                 token: self.systemInfo.token,
                 senceID: self.senceID,
+                courseID: self.courseID,
                 cardID: current.id,
                 requestFlag: self.requestFlag,
                 teamID: self.teamID
             }
+
             cardApi.markCard(postData).then(() => {
 
             }).catch(error => {
