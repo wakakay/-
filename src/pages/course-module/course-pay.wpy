@@ -38,7 +38,9 @@
                         font-size:34rpx;color:@color-black;line-height:44rpx;
                         image{width:32rpx;height:32rpx;}
                     }
-                    .cell-content{padding:14rpx 32rpx 14rpx 0;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;}
+                    .cell-content{
+                        padding:14rpx 32rpx 14rpx 0;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;
+                    }
                 }
             }
         }
@@ -90,7 +92,11 @@
                     <view class="ui-title main-justify">
                         <view class="cell-title">赠一得一</view>
                     </view>
-                    <view class="cell-content">免费将此课赠送给好友，对方领取后，你将免费获得此课程</view>
+                    <view class="cell-content" wx:if="{{paramsInfo.senceID}}">免费将此课赠送给好友，对方领取后，你将免费获得此课程</view>
+                    <view class="cell-content" wx:else>
+                        <view class="dir-left"><text>1.</text>点击分享免费领，赠出课程被领取后，你将免费获得此课程；</view>
+                        <view class="dir-left"><text>2.</text>好友最多可通过此途径获得1个课程。</view>
+                    </view>
                 </view>
             </button>
 

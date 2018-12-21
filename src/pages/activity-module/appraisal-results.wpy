@@ -18,9 +18,8 @@
             width:100%;height:auto;padding:24rpx;position:fixed;bottom:0;left:0;box-sizing:border-box;
             button{
                 height:100rpx;color:@color-white;background:@background-blue;border-radius:@border-radius-20;font-size:34rpx;line-height:100rpx;
-                text{font-size:44rpx;margin-right:12rpx;}
-                &:nth-of-type(1){width:256rpx;}
-                &:nth-of-type(2){width:430rpx;}
+                text{font-size:46rpx;}
+                &:nth-of-type(1){width:100rpx;margin-right:20rpx;}
             }
         }
     }
@@ -61,8 +60,9 @@
             <image mode="widthFix" src="{{resultObj.resultImageURL}}" />
         </view>
         <view class="ui-bottom-btn main-justify">
-            <button @tap.stop="getSaveImage"><text class="icon-down"></text>保存图片</button>
-            <button open-type="{{resultObj.buttonAttr === '分享' ? 'share' : ''}}"
+            <button class="flex-box-0 main-center" @tap.stop="getSaveImage"><text class="icon-down"></text></button>
+            <button class="flex-box-1 main-center"
+                    open-type="{{resultObj.buttonAttr === '分享' ? 'share' : ''}}"
                     data-status="{{resultObj.buttonAttr}}"
                     @tap.stop="getToShare">{{resultObj.buttonMsg}}</button>
         </view>

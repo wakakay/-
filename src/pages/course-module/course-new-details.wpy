@@ -38,8 +38,9 @@
         }
         .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
         .ui-introduction-content{
-            margin:0 32rpx;font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
-            image{width:100%;height:2250rpx;}
+            font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
+            >view{margin:0 32rpx;}
+            image{width: 100%;}
         }
         .cell-border{height:22rpx;}
 
@@ -133,12 +134,19 @@
                 }
             }
         }
+        .ui-rules-box{
+            .ui-text{
+                padding:10rpx 32rpx;font-size:30rpx;color:@color-black;line-height:48rpx;
+                text{padding-right:10rpx;}
+            }
+            button{background:none;font-size:34rpx;color:@color-blue;}
+        }
+        .ui-clear{width:100%;height:254rpx;}
 
         .ui-button-box{
-            width:100%;height:186rpx;
+            width:100%;
             &.is-phonex{
-                height:254rpx;
-                .ui-container{height:254rpx;}
+                .ui-container{padding-bottom:48rpx;}
             }
             .ui-container{
                 width:100%;height:auto;padding:0 32rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
@@ -166,7 +174,7 @@
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <view class="ui-course-details-box">
-        <jn-header :className.sync="headerBackground"></jn-header>
+        <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
 
         <view class="ui-board-box">
             <view class="ui-header-thumb" style="height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;background-image:url({{courseDetail.image}})">
@@ -200,8 +208,10 @@
 
         <view class="ui-title">课程概述</view>
         <view class="ui-introduction-content">
-            <text>{{courseDetail.textDescription}}</text>
-            <image mode="aspectFit" src="{{courseDetail.imageList}}" wx:if="{{courseDetail.imageList}}"></image>
+            <view>
+                <text>{{courseDetail.textDescription}}</text>
+            </view>
+            <image mode="widthFix" src="{{courseDetail.imageList}}" wx:if="{{courseDetail.imageList}}"></image>
         </view>
         <view class="cell-border"></view>
 
@@ -315,6 +325,19 @@
             </repeat>
         </view>
 
+        <view class="ui-rules-box" wx:if="{{courseDetail.isLimitedTimeGiftCourse && courseDetail.coursePayStatus!='hidden' && ((courseDetail.hasGiftState && courseDetail.roleType=='gifter' && courseDetail.price>0) || (courseDetail.hasGiftState && courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='赠一得一') || (courseDetail.roleType=='normal' && courseDetail.price>0))}}">
+            <view class="ui-title">赠一得一规则</view>
+            <view class="ui-text dir-left"><text>1.</text>点击分享免费领，赠出课程被领取后，你将免费获得此课程；</view>
+            <view class="ui-text dir-left"><text>2.</text>好友最多可通过此途径获得1个课程。</view>
+
+            <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                    bindgetuserinfo="getAuthorize"
+                    hover-stay-time="100"
+                    @tap.stop="getAllPay">{{courseDetail.price}} 即能币购买 <text class="icon-details"></text></button>
+        </view>
+
+        <view class="ui-clear"></view>
+
         <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!courseDetail.isLimitedTimeGiftCourse && courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-justify">
@@ -333,18 +356,12 @@
         <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
             <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.coursePayStatus!='hidden' && ((courseDetail.hasGiftState && courseDetail.roleType=='gifter' && courseDetail.price>0) || (courseDetail.hasGiftState && courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='赠一得一') || (courseDetail.roleType=='normal' && courseDetail.price>0))}}">
                 <view class="ui-container is-fixed">
-                    <view class="ui-text main-center">
-                        <text>好友成功领取后，你将获得此课程。好友只能通过此途径领取一个课程。</text>
-                    </view>
-                    <view class="ui-button-list main-justify">
-                        <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                bindgetuserinfo="getAuthorize"
-                                hover-stay-time="100"
-                                @tap.stop="getAllPay">{{courseDetail.price}} 即能币</button>
+                    <view class="ui-text main-center"></view>
+                    <view class="ui-button-list ui-column">
                         <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
                                 data-role="1"
                                 bindgetuserinfo="getAuthorize"
-                                hover-stay-time="100">{{courseDetail.giftButtonMsg}}</button>
+                                hover-stay-time="100">分享免费领</button>
                     </view>
                 </view>
             </view>
@@ -618,7 +635,10 @@
                     self.$navigate(`/pages/Review/index`, {courseID, senceID})
                     break
                 case 'needPay': // 付费
-                    self.$navigate(`/pages/course-module/course-pay`, {courseID})
+                    self.$navigate(`/pages/course-module/course-pay`, {
+                        courseID,
+                        isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                        giftID: self.giftID || self.paramsInfo.giftID})
                     break
                 default:
                     navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
@@ -794,8 +814,11 @@
                     return
                 }
 
-                wepy.$instance.globalData.getHuilder('新课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
-                return self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
+                wepy.$instance.globalData.getHuilder('课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
+                self.$navigate(`/pages/course-module/course-pay`, {
+                    courseID: self.paramsInfo.id,
+                    isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                    giftID: self.giftID || self.paramsInfo.giftID})
             },
             /**
              * 授权登录信息
@@ -825,7 +848,10 @@
                         self.initialize()
                         return
                     }
-                    item ? self.__goToCourseLearning(item) : self.$navigate('/pages/course-module/course-pay', {courseID: self.paramsInfo.id})
+                    item ? self.__goToCourseLearning(item) : self.$navigate(`/pages/course-module/course-pay`, {
+                        courseID: self.paramsInfo.id,
+                        isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
+                        giftID: self.giftID || self.paramsInfo.giftID})
                 }).catch(error => { // 拒接授权
 
                 })

@@ -6,7 +6,7 @@
                  scroll-y>
         <view class="ui-title" wx:if="{{cardItem && cardItem.title}}">{{cardItem.title}}</view>
         <view class="ui-thumb">
-            <image model="aspectFit" src="{{cardItem.bigimage}}" style="height:{{cardItem.imgHeight}}px"></image>
+            <image mode="widthFix" src="{{cardItem.bigimage}}"></image>
             <repeat for="{{cardItem.hotSpotPosition}}" key="index" index="index" item="item">
                 <view class="ui-hot-pointer"
                       style="left:{{item.left}}%;top:{{item.top}}%"
@@ -52,23 +52,6 @@
             let self = this
         }
 
-        __calculateImage(res) {
-            let self = this
-            let base = 0.85
-            let prop = self.systemInfo.windowWidth / res.width
-            let width = Math.ceil(res.width * prop * base)
-            let height = Math.ceil(res.height * prop * base)
-            let maxHeight = Math.ceil(self.systemInfo.windowHeight * 0.65)
-
-            if (height > maxHeight) {
-                height = maxHeight
-            }
-            return {
-                width: width,
-                height: height
-            }
-        }
-
         __emit(selectedItem) {
             let self = this
             let data = {
@@ -106,20 +89,7 @@
                     return !data.hidden && data.index + 1 === item.location
                 })
 
-                if (selectedItem.width || !selectedItem.icon) {
-                    self.__emit(selectedItem)
-                    return
-                }
-
-                selectedItem.icon = selectedItem.icon.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
-                wx.getImageInfo({
-                    src: selectedItem.icon,
-                    success(res) {
-                        let data = self.__calculateImage(res)
-                        _.extend(selectedItem, data)
-                        self.__emit(selectedItem)
-                    }
-                })
+                self.__emit(selectedItem)
             }
         }
 

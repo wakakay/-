@@ -141,8 +141,7 @@
         <view class="ui-result">
             <view class="ui-title">{{cardCurrentInfo[0].answerTitle}}</view>
             <view class="ui-thumb" wx:if="{{cardCurrentInfo[0].answerIcon}}">
-                <image mode="aspectFit" src="{{cardCurrentInfo[0].answerIcon}}"
-                       style="width:{{cardCurrentInfo[0].width}}px;height:{{cardCurrentInfo[0].height}}px;"></image>
+                <image mode="widthFix" src="{{cardCurrentInfo[0].answerIcon}}"></image>
             </view>
             <view class="ui-details">
                 {{cardCurrentInfo[0].answerDescription}}

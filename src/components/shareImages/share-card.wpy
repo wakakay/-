@@ -85,7 +85,8 @@
             cardCanvas: null, // 画布容器
             isShowToast: false,
             shareThumb: '', // 最后生成的分享图片
-            shareImage: [], // 加载的图片信息
+            imagesSrc: {},
+            shareImage: {}, // 加载的图片信息
             // 画布上元素参考的的信息，有设计稿定死的
             cardShareInfo: {
                 width: 343,
@@ -157,6 +158,15 @@
                 wx.showLoading({
                     title: '努力生成中...'
                 })
+                let self = this
+                if (self.shareThumb && _.isEqual(self.imagesSrc, images)) {
+                    self.__creatImage()
+                    return
+                }
+
+                self.imagesSrc = _.clone(images)
+                self.shareThumb = ''
+
 
                 _.mapObject(images, (val, key) => {
                     if (-1 !== val.toString().indexOf('http://image.runwise.cn/')) {
@@ -167,7 +177,6 @@
                     }
                 })
 
-                let self = this
                 self.cardShareInfo = {
                     width: 343,
                     height: 535,
@@ -206,13 +215,15 @@
          * 加载图片资源
          * @private image
          */
-        __loadingImages(image) {
+        __loadingImages(key, image) {
             let self = this
             return new Promise((resolve, reject) => {
                 wx.getImageInfo({
                     src: image,
                     success(res) {
-                        resolve(res)
+                        let info = {}
+                        info[key] = res
+                        resolve(info)
                     },
                     fail() {
                         self.isDrawStart = true
@@ -220,7 +231,7 @@
                         wx.hideLoading()
                         wx.showToast({
                             icon: 'none',
-                            title: ' 生成图片失败 '
+                            title: ` 生成${key}图片失败 `
                         })
                     }
                 })
@@ -232,13 +243,16 @@
          */
         __initShareCard(images) {
             let self = this
-            let senceThumb = self.__loadingImages(images.senceThumb) // 背景图片
-            let cardImage = self.__loadingImages(images.cardImage) // 卡片
-            let shareImage = self.__loadingImages(images.shareImage) // 二维码
-            let logoImage = self.__loadingImages('https://wx-small.runwise.cn/image/imageID33995ff201c444ae1a7e1c7366fd.png')
+            let senceThumb = self.__loadingImages('senceThumb', images.senceThumb) // 背景图片
+            let cardImage = self.__loadingImages('cardImage', images.cardImage) // 卡片
+            let shareImage = self.__loadingImages('shareImage', images.shareImage) // 二维码
+            let logoImage = self.__loadingImages('logoImage', 'https://wx-small.runwise.cn/image/imageID33995ff201c444ae1a7e1c7366fd.png')
 
-            Promise.all([senceThumb, cardImage, shareImage, logoImage]).then(res => {
-                self.shareImage = res
+            Promise.all([senceThumb, cardImage, shareImage, logoImage]).then(respone => {
+                self.shareImage = {}
+                _.each(respone, (item) => {
+                    _.extend(self.shareImage, item)
+                })
 
                 self.__drawStart() // 绘画开始
                 self.cardCanvas.draw(false, () => {
@@ -267,7 +281,7 @@
             self.cardCanvas.fillRect(x, y, w, h)
             self.__roundedRect(x, y, w, h, r)
             self.cardCanvas.clip() // 通过裁剪得到圆角矩形
-            self.cardCanvas.drawImage(shareImage[0].path, x, y, w, h)
+            self.cardCanvas.drawImage(shareImage.senceThumb.path, x, y, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
             self.cardCanvas.restore() // 恢复到之前的画板
@@ -378,22 +392,22 @@
             let shareImage = self.shareImage
             // 等比例压缩图片的width跟height，自适应矩形
             let h = Math.ceil(375 * self.cardShareInfo.prop)
-            let prop = h / shareImage[1].height
-            let w = Math.ceil(shareImage[1].width * prop)
+            let prop = h / shareImage.cardImage.height
+            let w = Math.ceil(shareImage.cardImage.width * prop)
 
             // width是否大于巨型的宽度
             let wMax = Math.ceil(295 * self.cardShareInfo.prop)
             if (w > wMax) {
                 w = wMax
-                prop = w / shareImage[1].width
-                h = Math.ceil(shareImage[1].height * prop)
+                prop = w / shareImage.cardImage.width
+                h = Math.ceil(shareImage.cardImage.height * prop)
             }
 
             // 使得卡片在这个矩形绝对居中
             let x = rectangularX + ((rectangularW - w) >> 1)
             let y = rectangularY + ((rectangularH - h) >> 1)
             self.cardCanvas.beginPath()
-            self.cardCanvas.drawImage(shareImage[1].path, x, y, w, h)
+            self.cardCanvas.drawImage(shareImage.cardImage.path, x, y, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
 
@@ -453,7 +467,7 @@
             self.cardCanvas.save()
             self.cardCanvas.beginPath()
 
-            self.cardCanvas.drawImage(shareImage[3].path, x, y, w, h)
+            self.cardCanvas.drawImage(shareImage.logoImage.path, x, y, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
 
@@ -476,7 +490,7 @@
             self.cardCanvas.save()
             self.cardCanvas.beginPath()
 
-            self.cardCanvas.drawImage(shareImage[2].path, x, y, w, h)
+            self.cardCanvas.drawImage(shareImage.shareImage.path, x, y, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
         }
