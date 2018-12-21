@@ -144,11 +144,11 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-    import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils";
-    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from "../../api";
-    import {CustomError} from "../../errors";
-    import {getStore, connect} from "wepy-redux";
-    import {renewWechatCode, login} from "../../redux/models/user";
+    import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
+    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from "../../api"
+    import {CustomError} from "../../errors"
+    import {getStore, connect} from "wepy-redux"
+    import {renewWechatCode, login} from "../../redux/models/user"
     import _ from 'underscore'
 
     const store = getStore();
@@ -203,8 +203,7 @@
             shareCoverTitle:'',
             shareCoverImageUrl:'',
             courseName:''
-
-        };
+        }
         components = {
             'jn-header': header,
             'mloading': Loading,
@@ -230,9 +229,8 @@
         }
         
         onShow() {
-            let self = this;
+            let self = this
             self.initialize()
-            
         }
 
         onUnload() {

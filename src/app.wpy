@@ -29,6 +29,7 @@
     export default class extends wepy.app {
         config = {
             pages: [
+
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情

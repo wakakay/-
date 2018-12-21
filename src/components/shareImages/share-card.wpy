@@ -13,8 +13,8 @@
         }
         .ui-button-box{
             width:100%;height:100rpx;margin-top:10rpx;
-            button{width:296rpx;margin:0 auto;font-size:34rpx;border-radius:@border-radius-20;}
-            text{margin-right:10rpx;font-size:52rpx;background-color:@background-white;color:@color-blue;}
+            button{margin:0 auto;font-size:34rpx;color:@color-blue;border-radius:@border-radius-20;}
+            text{margin-right:10rpx;font-size:52rpx;background-color:@background-white;}
         }
     }
 
@@ -166,8 +166,6 @@
 
                 self.imagesSrc = _.clone(images)
                 self.shareThumb = ''
-
-
                 _.mapObject(images, (val, key) => {
                     if (-1 !== val.toString().indexOf('http://image.runwise.cn/')) {
                         images[key] = val.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
@@ -246,9 +244,9 @@
             let senceThumb = self.__loadingImages('senceThumb', images.senceThumb) // 背景图片
             let cardImage = self.__loadingImages('cardImage', images.cardImage) // 卡片
             let shareImage = self.__loadingImages('shareImage', images.shareImage) // 二维码
-            let logoImage = self.__loadingImages('logoImage', 'https://wx-small.runwise.cn/image/imageID33995ff201c444ae1a7e1c7366fd.png')
+            //let logoImage = self.__loadingImages('logoImage', 'https://wx-small.runwise.cn/image/imageID33995ff201c444ae1a7e1c7366fd.png')
 
-            Promise.all([senceThumb, cardImage, shareImage, logoImage]).then(respone => {
+            Promise.all([senceThumb, cardImage, shareImage]).then(respone => {
                 self.shareImage = {}
                 _.each(respone, (item) => {
                     _.extend(self.shareImage, item)
@@ -273,7 +271,7 @@
             let h = Math.ceil(56 * cardShareInfo.prop)
             let x = Math.ceil(24 * cardShareInfo.prop)
             let y = Math.ceil(8 * cardShareInfo.prop)
-            let r = Math.ceil(10 * cardShareInfo.prop)
+            let r = Math.ceil(14 * cardShareInfo.prop)
 
             self.cardCanvas.save()
             self.cardCanvas.clearRect(x, y, w, h)
@@ -425,9 +423,8 @@
             let fontsize1 = Math.ceil(15 * cardShareInfo.prop)
             let fontsize2 = Math.ceil(12 * cardShareInfo.prop)
             let x = Math.ceil(28 * cardShareInfo.prop)
-            let y1 = Math.ceil(492 * cardShareInfo.prop)
+            let y1 = Math.ceil(495 * cardShareInfo.prop)
             let y2 = Math.ceil(516 * cardShareInfo.prop)
-
 
             self.cardCanvas.save()
             self.cardCanvas.beginPath()
@@ -445,10 +442,9 @@
             self.cardCanvas.fillText(text2, x, y2)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
-
             self.cardCanvas.restore()
 
-            self.__drawLogo()
+            self.__drawQrcode()
         }
         /**
          * logo

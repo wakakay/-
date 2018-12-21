@@ -53,8 +53,8 @@
             shareImage: [], // 加载的图片信息
             // 画布上元素参考的的信息，有设计稿定死的
             cardShareInfo: {
-                width: 375,
-                height: 650,
+                width: 360,
+                height: 586,
                 prop: 1
             }
         }
@@ -106,7 +106,7 @@
 
         events = {
             // 监听父组件的触发事件
-            'share-appraisal-images': (images, event) => {
+            'share-appraisal-images': (images) => {
                 _.mapObject(images, (val, key) => {
                     if (-1 !== val.toString().indexOf('http://image.runwise.cn/')) {
                         images[key] = val.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
@@ -167,12 +167,10 @@
 
             Promise.all([shareImage, portraitImage]).then(res => {
                 self.shareImage = res
-                self.cardShareInfo.width = self.systemInfo.windowWidth
                 self.cardShareInfo.prop = self.systemInfo.windowWidth / self.shareImage[0].width
-                self.cardShareInfo.height = Math.ceil(self.shareImage[0].height * 0.7 * self.cardShareInfo.prop)
                 self.$apply()
 
-                self.cardCanvas.clearRect(0, 0, self.systemInfo.windowWidth, self.cardShareInfo.height)
+                self.cardCanvas.clearRect(0, 0, self.cardShareInfo.width, self.cardShareInfo.height)
                 self.__drawStart() // 绘画开始
                 self.cardCanvas.draw(false, () => {
                     wx.hideLoading()
@@ -200,7 +198,7 @@
             self.cardCanvas.fillRect(x, y, w, h)
             self.__clipBackground(x, y, w, h)
             self.cardCanvas.clip() // 通过裁剪得到圆角矩形
-            self.cardCanvas.drawImage(shareImage[0].path, x, -100, w, h)
+            self.cardCanvas.drawImage(shareImage[0].path, x, y - 100, w, h)
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
             self.cardCanvas.restore() // 恢复到之前的画板
@@ -246,7 +244,6 @@
             self.cardCanvas.fill()
             self.cardCanvas.clip()
             self.cardCanvas.drawImage(shareImage[1].path, 40 - 22, 42 - 22, 44, 44)
-
             self.cardCanvas.closePath()
             self.cardCanvas.stroke()
             self.cardCanvas.restore() // 恢复到之前的画板
@@ -289,7 +286,6 @@
                     })
                     self.isDrawOver = false
                     self.$apply()
-                    self.$emit('on-share-card')
                 },
                 fail(res) {
                     wx.showToast({
