@@ -273,7 +273,7 @@
                         <view class="ui-detail">
                             <view class="cell-name">{{item.senceName}}</view>
                             <view class="cell-subtitle">
-                                <text class="icon-study-bar"></text>
+                                <text>#</text>
                                 <view class="cell-target">{{item.senceTarget}}</view>
                                 <text>{{item.mySenceScore || 0}}</text>
                             </view>
