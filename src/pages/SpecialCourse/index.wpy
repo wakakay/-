@@ -1,6 +1,6 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
-    <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
+    <view class="ui-special-course">
         <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
@@ -134,7 +134,7 @@
                 </view>
             </view>
         </view>
-    </scroll-view>
+    </view>
     <view></view>
 </template>
 
@@ -218,6 +218,17 @@
                 wx.showToast({title: '领取成功'})
             }
         }
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
+            let self = this
+            let scrollTop = res.scrollTop
+            self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            self.$apply()
+        }
+        
         onShow() {
             let self = this;
             self.initialize()
@@ -350,15 +361,6 @@
                 }
                 wepy.$instance.globalData.getHuilder(`课程专题页/${typeSrc}`,'click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
-            },
-             /**
-             * 监听滚动条事件
-             * @param event
-             */
-            getScroll(event) {
-                let self = this
-                let {detail: {scrollTop}} = event
-                self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
             },
             /**
              * 授权登录信息
