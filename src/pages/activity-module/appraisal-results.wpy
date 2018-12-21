@@ -296,11 +296,22 @@
 
             getSaveImage() {
                 let self = this
+
+                /* 
+                微信埋点事件
+                 */
+                wx.reportAnalytics('testresult_save_click', {
+                    examid: self.examID,
+                    username: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                });
+                
                 let shareImages = {
                     shareImage: self.resultObj.resultImageURL
                 }
                 // 通知组件，生成图片预览
                 self.$broadcast('share-appraisal-images', shareImages)
+
             }
         }
 
