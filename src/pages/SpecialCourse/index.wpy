@@ -1,11 +1,11 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
     <scroll-view scroll-y bindscroll="getScroll" enable-back-to-top class="ui-special-course">
-        <jn-header :className.sync="headerBackground" buttonAfter isHeadHeight="{{false}}"></jn-header>
+        <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
-                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}" style="height: calc(456px - {{headerHeigth  }}px)">
-                    <view class="ui-bg-img" id="ui-id" style="position: relative;height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth }}px;">
+                <view class="ui-first"  wx:if="{{item.type === 'image' && index === 0}}">
+                    <view class="ui-bg-img" id="ui-id">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
@@ -181,6 +181,7 @@
     export default class Alllessen extends wepy.page {
         data = {
             headerHeigth: 68,
+            isHeadHeight: false,
             headerBackground: 'background-transparent',
             backgroundHeight: 0,
             timestamp: new Date().getTime(),
