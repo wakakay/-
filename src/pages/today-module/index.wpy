@@ -177,8 +177,9 @@
                    url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
     </view>
     <view class="ui-special-subject" hover-stay-time="100"
-                @tap.stop="getItem" data-item="{{subject}}">
-            <image mode="aspectFit" src="{{subject.coverImageURL}}" />
+                wx:if="{{todaySkill.coverImageURL}}"
+                @tap.stop="getItem" data-item="{{todaySkill}}">
+            <image mode="aspectFit" src="{{todaySkill.coverImageURL}}" />
     </view>
     <view class="ui-studying">
         <view class="ui-top">
@@ -295,9 +296,9 @@
             </view>
         </view>
     </view>
-    <repeat for="{{subjectList}}" key="index" index="index" item="item">
+    <repeat for="{{historicalSkillList}}" key="index" index="index" item="item">
         <view class="ui-before-subject" @tap.stop="getItem" data-item="{{item}}">
-            <view class="cell-date">{{item.date}}</view>
+            <view class="cell-date">{{item.dateTips}}</view>
             <view class="ui-content">
                 <image mode="aspectFit" src="{{item.coverImageURL}}" />
             </view>
@@ -372,6 +373,8 @@
             isShowCourseStudying:false,
             courseStudyModalList:[],
             recommendCourseList:[],
+            historicalSkillList:[],
+            todaySkill:{},
             courseCount:'',
             todayText:'',
             todayTitle:'',
@@ -380,44 +383,6 @@
             courseID: null,
             senceID: null,
             sencePage: null,
-            subject:{
-                coverImageURL:"http://image.runwise.cn/image/imageIDb87578e52ec4bbbc1aec4d220869.png",
-                id:"courseIDc11cdeca7e74ee922f84e5cf77d7",
-                name:"今日技能（12月18日）",
-                sceneType:"",
-                subtitle:"工作时，我们是怎么浪费时间的？",
-                type:"editor"
-            },
-            subjectList:[
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageIDb87578e52ec4bbbc1aec4d220869.png",
-                    id:"courseIDc11cdeca7e74ee922f84e5cf77d7",
-                    name:"今日技能（12月18日）",
-                    sceneType:"",
-                    subtitle:"工作时，我们是怎么浪费时间的？",
-                    type:"editor",
-                    date:'12月23日星期四'
-                },
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageID3d01141a00549ba52bf9b726b54e.png",
-                    id:"courseIDf444fd4149441fab7f303757fcdc",
-                    name:"今日技能（12月19日）",
-                    sceneType:"",
-                    subtitle:"如何避免简历制作中的“雷区”？",
-                    type:"editor",
-                    date:'12月23日星期四'
-                },
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageIDa3fc0596551440bcf992947b6add.png",
-                    id:"courseID42ea9c168fb4b58aadd19423c1bb",
-                    name:"开发眼中产品经理的三宗罪",
-                    sceneType:"",
-                    subtitle:"有人中枪了嘛？",
-                    type:"editor",
-                    date:'12月17日星期二'
-                },
-
-            ],
             todayDate:'',
             isNewSenceMap:[],
             headerHeigth:''
@@ -470,6 +435,8 @@
                 self.isLoaded = true
                 self.todayDate = respone.todayDate;
                 self.recommendCourseList = respone.recommendCourseList;
+                self.historicalSkillList = respone.historicalSkillList;
+                self.todaySkill = respone.todaySkill;
                 self.todaySenceList = respone.todaySenceList;
                 self.courseCount = respone.courseCount;
                 self.isNewSenceMap = respone.isNewSenceMap;
