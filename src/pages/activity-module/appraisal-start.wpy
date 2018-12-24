@@ -216,7 +216,10 @@
             },
             handleBeginPractice() {
                 let self = this
-                self.__report()
+                // 服务通知进来的才上报
+                if (self.wxPushType) {
+                    self.__report()
+                }
 
                 /* 
                 微信埋点事件

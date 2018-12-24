@@ -104,7 +104,6 @@
             return state.user.name
         },
         token(state) {
-            return 'userID8c1967a7376d46b9b93e05d6d82ab330-1545129139028-8bbb959e654745196e580573ff2b7968'
             return state.user.token
         },
         isTokenSet(state) {
