@@ -471,6 +471,7 @@
         width:100%;height:100%;background-color: @background-white;display: flex;flex-direction: column;align-items: center;
         view{box-sizing: border-box}
         .ui-course-content{
+            width:100%;
             .ui-first{
                 height: 952rpx;
                 image{width: 100%;height: 952rpx;}
