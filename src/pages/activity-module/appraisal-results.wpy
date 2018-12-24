@@ -166,10 +166,11 @@
             let postData = {
                 token: self.token,
                 key: 'exam_result_buttonMsg',
-                kind: 'exam_result_buttonMsg'
+                kind: 'temp_config'
             }
             fetch.commonValue(postData).then((respone) => {
                 self.shareButtonMessage = respone.value
+                self.$apply()
             })
         }
 
