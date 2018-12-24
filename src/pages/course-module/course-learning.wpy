@@ -87,7 +87,7 @@
                         catchtouchmove="getCatchTouchMove">
                         <view class="ui-swiper-clear" style="height: {{headerHeigth}}px"></view>
                         <view style="height: calc(100% - {{!isIpad ? headerHeigth : 210}}px)">
-                            <jn-full-image :cardItem.sync="item" :cardIndex.sync="index"
+                            <jn-full-image :cardItem.sync="item" :cardIndex.sync="index" :current.sync="cardCurrent"
                                            wx:if="{{item.type==='fullimage'}}"></jn-full-image>
                             <jn-single-choice :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
                                            wx:if="{{item.type==='textSelectionVer2'}}"></jn-single-choice>
