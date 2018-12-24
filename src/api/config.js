@@ -1,4 +1,4 @@
-const NODE_ENV = 'release'
+const NODE_ENV = 'develop'
 export default {
     gaTracker: 'UA-124925915-2', // 用你的 Tracking ID 代替 test：UA-124925915-2 product： UA-127840357-1
     environment: NODE_ENV,
