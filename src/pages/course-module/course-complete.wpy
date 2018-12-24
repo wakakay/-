@@ -136,7 +136,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import ScoreModal from '../../components/ScoreModal/index'
-    import {registered as fetch} from '../../api'
+    import {fetch} from '../../api'
     import {navigateToLesson, redirectToLesson} from '../../utils'
     import _ from 'underscore'
 
