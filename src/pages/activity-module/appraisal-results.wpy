@@ -79,7 +79,7 @@
                     <image src="{{resultObj.buttonFebackImageURL}}" />
                 </view>
                 <view class="ui-btn">
-                    <view class="cell-item-btn" hover-class="cell-hover" @tap.stop="getImg">保存图片并学课</view>
+                    <view class="cell-item-btn" hover-class="cell-hover" @tap.stop="getImg">{{shareButtonMessage || '保存图片并学课'}}</view>
                 </view>
             </view>
         </view>
@@ -92,7 +92,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import shareAppraisal from '../../components/shareImages/share-appraisal'
-    import {practice as practiceApi} from '../../api'
+    import {practice as practiceApi, fetch} from '../../api'
     import {redirectToLesson} from '../../utils'
 
     const store = getStore()
@@ -136,6 +136,7 @@
             isShowShare: false,
             isShowShade: false,
             headerHeigth: 68,
+            shareButtonMessage: '', // 弹窗的分享按钮文案
             resultObj: {
                 buttonAttr: '',
                 buttonFebackImageURL: '',
@@ -156,13 +157,21 @@
         }
 
         onShow() {
-            this.initialize()
-                .catch(error => {
-                    this.showErrorPage = true
-                    this.$apply()
-                })
-        }
+            let self = this
+            this.initialize().catch(error => {
+                this.showErrorPage = true
+                this.$apply()
+            })
 
+            let postData = {
+                token: self.token,
+                key: 'exam_result_buttonMsg',
+                kind: 'exam_result_buttonMsg'
+            }
+            fetch.commonValue(postData).then((respone) => {
+                self.shareButtonMessage = respone.value
+            })
+        }
 
         onShareAppMessage(res) {
             let self = this
