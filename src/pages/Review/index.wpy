@@ -17,7 +17,7 @@
         }
         .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700}
     }
-    .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
+    .cell-poin-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
     .ui-swiper-box{
         margin-bottom: 20rpx;
         .ui-swiper-list{
@@ -32,7 +32,6 @@
                         text{font-size: 50rpx;}
                     }
                     .ui-share.ui-dack {color:@color-white;}
-
                 }
                 
             }
@@ -41,6 +40,46 @@
     .ui-empty-list{
         width: 670rpx;height: 894rpx;border-radius: @border-radius-32;border:2rpx solid @border-gray;margin: 0 auto 172rpx;color:@color-gray;display: flex;flex-direction: column;align-items: center;justify-content: center;font-size:34rpx;
         text{color: @color-gray-c7;font-size: 110rpx;margin-bottom: 50rpx;}
+    }
+    .ui-idea{
+        margin-top:66rpx;padding:0 30rpx 216rpx;
+        .cell-headline{font-size: 44rpx;font-weight: bold;border-top:2rpx solid @border-gray;padding: 36rpx 0 20rpx;}
+        .ui-item{
+            margin-top:36rpx;border-bottom:2rpx solid @border-gray;padding-bottom:36rpx;
+            .ui-user{
+                display: flex;height: 78rpx;align-items: center;margin-bottom:12rpx;
+                .ui-name{
+                    display: flex;flex:1;align-items: center;
+                    .ui-avatar image{height: 78rpx;width: 78rpx;border-radius: 50%;}
+                    .cell-name{font-size: 32rpx;color: @color-gray;margin-left: 16rpx;width: 100%;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                }
+                .cell-del{font-size: 28rpx;color: @color-blue;width: 80rpx;}
+            }
+            .ui-my-comment{
+                .ui-course image{width: 128rpx;height: 128rpx;}
+                .cell-title{display: flex;flex: 1;font-size: 34rpx;line-height: 50rpx;margin-right: 28rpx}
+            }
+            .ui-tips{
+                font-size: 24rpx;color: @color-gray;margin-top:44rpx;height: 40rpx;
+                .ui-num{
+                    display: flex;
+                    .ui-praise{margin-right: 48rpx;}
+                }
+            }
+            .ui-other-comment{margin-top: 12rpx;padding:20rpx 12rpx;background: @background-gray-F4;position: relative;
+                .ui-tri-box{position: absolute;width:0;height:0;border-width:0 20rpx 20rpx;border-style:solid;border-color:transparent transparent @background-gray-F4;top: -10rpx;left: 10rpx;}
+                .ui-praise{color: @color-gray;font-size: 32rpx;}
+                .ui-comment-box{
+                    margin-top:20rpx;
+                    .ui-comment-item{
+                        display: flex;font-size: 30rpx;margin-bottom:12rpx;
+                        .cell-content{display: flex;flex: 1;}
+                        .cell-name{color: @color-gray;max-width: 220rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                    }
+                }
+                
+            }
+        }
     }
 }
 
@@ -62,7 +101,7 @@
                 </view>
                 <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
-            <view class="ui-title">重点卡</view>
+            <view class="cell-poin-title">重点卡</view>
             <view class="ui-empty-list" wx:if="{{hasPointCard && hashBigImage}}">
                 <text class="icon-empty-list"></text>
                 <view>你还没有标为重点的卡片哦</view>
@@ -85,6 +124,62 @@
                     </repeat>
                 </swiper>
             </view>
+            <view class="ui-idea">
+                <view class="cell-headline">我的想法</view>
+                <repeat for="{{ideaList}}" key="index" index="index" item="item">
+                    <view class="ui-item">
+                        <view class="ui-user">
+                            <view class="ui-name">
+                                <view class="ui-avatar">
+                                    <image src="{{avatar}}"/>
+                                </view>
+                                <view class="cell-name">{{userName}}</view>
+                            </view>
+                            <view class="cell-del">删除</view>
+                        </view>
+                        <view class="ui-my-comment flex">
+                            <view class="cell-title">{{item.title}}</view>
+                            <view class="ui-course">
+                                <image src="{{item.courseImg}}"/>
+                            </view>
+                        </view>
+                        <view class="ui-tips main-justify">
+                            <view>{{item.date}}</view>
+                            <view class="ui-num">
+                                <view class="ui-praise">
+                                    <text class="icon-praise"></text>
+                                    {{item.supportNum}}
+                                </view>
+                                <view>
+                                    <text class="icon-comment1"></text>
+                                    {{item.commentNum}}
+                                </view>
+                            </view>
+                        </view>
+                        <view class="ui-other-comment">
+                            <view class="ui-tri-box">
+                                <view></view>
+                            </view>
+                            <view class="ui-praise">
+                                <text class="icon-praise"></text>
+                                <repeat for="{{item.supportList}}" key="indexSupport" index="indexSupport" item="itemSupport">
+                                    {{itemSupport}}<text wx:if="{{indexSupport != item.supportList.length-1}}">，</text>
+                                </repeat>
+                            </view>
+                            <view class="ui-comment-box" wx:if="{{item.commentList.length}}">
+                                <repeat for="{{item.commentList}}" key="indexComment" index="indexComment" item="itemComment">
+                                    <view class="ui-comment-item">
+                                        <view class="cell-name">{{itemComment.name}}</view>：
+                                        <view class="cell-content">{{itemComment.title}}</view>
+                                    </view>
+                                </repeat>
+                            </view>
+                            
+                        </view>
+                    </view>
+                    
+                </repeat>
+            </view>
         </view>
     </view>
     <jn-share-card></jn-share-card>
@@ -101,6 +196,9 @@
     import _ from 'underscore'
 
     @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
         token(state) {
             return state.user.token
         },
@@ -135,7 +233,49 @@
             hashBigImage: false,
             pointCardList: [],
             isNewSenceMap: {}, // 进入微课的新老界面判断
-            currentCard:0
+            currentCard:0,
+            ideaList:[
+                {
+                    date:'9-29 12:24',
+                    title:'什么叫想法前的未知因素？这个说法，有点陇统。',
+                    courseImg:'http://wx-small.runwise.cn/image/imageIDe148e6a3d074589517fbc6e64d84.png',
+                    supportNum:3,
+                    commentNum:4,
+                    supportList:['天下霸唱','山水','大宇'],
+                    commentList:[
+                        {
+                            name:'回锅肉',
+                            title:'这个问题问得好！',
+                            review:''
+                        },
+                        {
+                            name:'大宇',
+                            title:'天将降大任于斯人也，必先苦其心智，劳其筋骨，饿其肚子……',
+                            review:'yes'
+                        },
+                    ]
+                },
+                {
+                    date:'10-22 12:01',
+                    title:'未来变化过快，传统的商业计划周期太长，执行无法跟上时代变化。',
+                    courseImg:'http://wx-small.runwise.cn/image/imageIDa8fea0e04854f1978bc76defdbaf.png',
+                    supportNum:32,
+                    commentNum:41,
+                    supportList:['天下霸唱','山水','大宇'],
+                    commentList:[
+                        {
+                            name:'回锅肉',
+                            title:'如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？',
+                            review:''
+                        },
+                        {
+                            name:'大宇是有点陇统。是有点陇统。是有点陇统。',
+                            title:'是有点陇统。',
+                            review:'yes'
+                        },
+                    ]
+                },
+            ]
         }
 
         onLoad(data) {
@@ -279,5 +419,3 @@
 
     }
 </script>
-
-
