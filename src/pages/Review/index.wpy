@@ -92,7 +92,7 @@
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi, share as shareApi, registered as fetch} from "../../api";
+    import {course as courseApi, share as shareApi, fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
@@ -102,7 +102,6 @@
 
     @connect({
         token(state) {
-            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
             return state.user.token
         },
         userName(state) {

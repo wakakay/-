@@ -60,7 +60,7 @@
      */
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import {ROUTERS} from '../../utils/router-dictionary'
+    import {ROUTERS} from '../../utils/dictionary'
 
     const store = getStore()
     @connect({

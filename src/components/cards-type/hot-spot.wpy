@@ -2,8 +2,7 @@
 </style>
 
 <template>
-    <scroll-view class="module-hot-spot-box" :class="{'is-phonex': isIphonex}"
-                 scroll-y>
+    <view class="module-hot-spot-box" :class="{'is-phonex': isIphonex}">
         <view class="ui-title" wx:if="{{cardItem && cardItem.title}}">{{cardItem.title}}</view>
         <view class="ui-thumb">
             <image mode="widthFix" src="{{cardItem.bigimage}}"></image>
@@ -17,7 +16,7 @@
                 </view>
             </repeat>
         </view>
-    </scroll-view>
+    </view>
 </template>
 
 <script>

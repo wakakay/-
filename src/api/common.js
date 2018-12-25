@@ -17,12 +17,5 @@ export default {
     // 通用公共功能
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})
-    },
-    /**
-     * 渠道来源
-     * @param kind: 'user_source'
-     */
-    commonDic(params) {
-        return fetch({method: 'post', url: 'common/dic', params: params, isVisitor: true})
     }
 }

@@ -145,7 +145,7 @@
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
     import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
-    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from "../../api"
+    import {course as courseApi, auth as authApi, share as shareApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
     import {getStore, connect} from "wepy-redux"
     import {renewWechatCode, login} from "../../redux/models/user"

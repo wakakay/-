@@ -3,12 +3,12 @@
 </style>
 
 <template>
-    <scroll-view class="module-full-image-box"
+    <view class="module-full-image-box"
                  scroll-with-animation>
         <image mode="{{!isIpad ? 'widthFix' : 'aspectFit'}}"
                src="{{cardItem && cardItem.bigimage}}"
                lazy-load></image>
-    </scroll-view>
+    </view>
 </template>
 
 <script>
