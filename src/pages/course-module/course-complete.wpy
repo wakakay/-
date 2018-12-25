@@ -38,7 +38,7 @@
     .ui-giving{
         text-align:center;
         .cell-title{font-size:26rpx;color:@color-gray;line-height:36rpx;}
-        .cell-navigator{
+        button{
             width:100%;height:100rpx;margin-top:28rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;line-height:100rpx;border-radius:@border-radius-20;
         }
     }
@@ -105,10 +105,9 @@
                 </view>
 
                 <view class="ui-giving">
-                    <view class="cell-title">你可以将这节课免费赠送给好友，并获得即能币</view>
-                    <navigator class="cell-navigator"
-                               hover-class="cell-hover"
-                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}" @tap.stop="getGiving">赠送好友</navigator>
+                    <view class="cell-title">每成功邀请一位新好友学习，可得5即能币</view>
+                    <button hover-class="cell-hover"
+                            open-type="share">邀请好友</button>
                 </view>
             </view>
 
@@ -344,10 +343,6 @@
                     skillName: self.finishResultInfo.skillName
                 })
             },
-            getGiving() {
-                let self = this
-                wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
-            },
             /**
              * 继续下一课
              */
@@ -375,6 +370,18 @@
                 let self = this
                 self.headerHeigth = data.headerHeigth
                 self.$apply()
+            }
+        }
+
+        onShareAppMessage(event) {
+            let self = this
+            let path = `/pages/course-module/course-details?id=${self.paramsInfo.courseID}`
+            wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
+
+            return {
+                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                path: path,
+                imageUrl: self.finishResultInfo.shareCoverImageUrl || ''
             }
         }
     }

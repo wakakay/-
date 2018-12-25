@@ -7,8 +7,7 @@
                  scroll-with-animation>
         <image mode="{{!isIpad ? 'widthFix' : 'aspectFit'}}"
                src="{{cardItem && cardItem.bigimage}}"
-               lazy-load
-               wx:if="{{current == cardIndex}}"></image>
+               lazy-load></image>
     </scroll-view>
 </template>
 
@@ -27,12 +26,6 @@
             cardItem: {
                 type: Object,
                 default: {}
-            },
-            cardIndex: {
-                type: Number
-            },
-            current: {
-                type: Number
             }
         }
 
