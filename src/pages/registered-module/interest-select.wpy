@@ -160,7 +160,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import {registered as fetchRegistered, report as reportApi} from '../../api'
+    import {fetch, report as reportApi} from '../../api'
     import {initializationDeligate} from '../../utils'
     import _ from 'underscore'
 
@@ -228,7 +228,7 @@
             let postData = {
                 token: self.systemInfo.token
             }
-            fetchRegistered.profileList(postData).then((respone) => {
+            fetch.profileList(postData).then((respone) => {
                 self.interestList = respone.positionList
                 let number = _.filter(self.interestList, {isActive: true}).length
                 self.isInterest = number >-1 ? true : false
@@ -271,7 +271,7 @@
             let postData = {
                 token: self.systemInfo.token
             }
-            fetchRegistered.userInfo(postData).then((respone) => {
+            fetch.userInfo(postData).then((respone) => {
                 respone.hasGift ? wx.reLaunch({url: '/pages/course-module/course'}) : self.initialize()
                 self.$apply()
             }).catch(error => {
@@ -417,7 +417,7 @@
                 token: self.systemInfo.token,
                 positionList: list
             }
-            fetchRegistered.userProfile(postData).then((respone) => {
+            fetch.userProfile(postData).then((respone) => {
                 self.isFinish = true
                 wx.navigateTo({
                     url: '/pages/registered-module/recommend'
