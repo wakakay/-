@@ -39,7 +39,8 @@
         text-align:center;
         .cell-title{font-size:26rpx;color:@color-gray;line-height:36rpx;}
         button{
-            width:100%;height:100rpx;margin-top:28rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;line-height:100rpx;border-radius:@border-radius-20;
+            width:100%;height:100rpx;margin-top:28rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;
+            text{font-size:50rpx;font-weight:400;margin-right:16rpx;}
         }
     }
 
@@ -106,8 +107,8 @@
 
                 <view class="ui-giving">
                     <view class="cell-title">每成功邀请一位新好友学习，可得5即能币</view>
-                    <button hover-class="cell-hover"
-                            open-type="share">邀请好友</button>
+                    <button class="main-center cross-center" hover-class="cell-hover"
+                            open-type="share"><text class="icon-share"></text>邀请好友</button>
                 </view>
             </view>
 

@@ -71,23 +71,21 @@ export const getUserInfo = () => {
                 console.log(err)
                 throw new CustomError(err.toString())
             })
-
     })
 }
 
 export const checkAuthorizationOfUserInfo = () => {
-        return wepy.getUserInfo()
-            .then(({ errMsg }) => {
-                console.log('res 第一次微信自动校验', errMsg)
-                if (errMsg && 'getUserInfo:ok' === errMsg) return true
-                    // deny
-                throw new RejectAuthenticationError()
-            })
-            .catch(error => {
-                throw new RejectAuthenticationError(error.errMsg)
-            })
-
-    } // end checkUserAuthorization
+    return wepy.getUserInfo()
+        .then(({ errMsg }) => {
+            console.log('res 第一次微信自动校验', errMsg)
+            if (errMsg && 'getUserInfo:ok' === errMsg) return true
+                // deny
+            throw new RejectAuthenticationError()
+        })
+        .catch(error => {
+            throw new RejectAuthenticationError(error.errMsg)
+        })
+}
 
 export const doAuthorization = () => {
     return wepy.showModal({
