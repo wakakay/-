@@ -81,6 +81,18 @@
             }
         }
     }
+    .ui-textarea{
+        box-sizing:border-box;width:100%;height:10%;padding:0 36rpx;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
+        >text{margin:20rpx 28rpx 0 0;font-size:56rpx;color:@background-gray-cc;}
+        textarea{box-sizing:border-box;width:510rpx;height:96rpx;padding:24rpx 24rpx;background-color:@background-white;font-size:30rpx;;color:@color-black;border-radius:@border-radius-20;}
+        button{
+            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;position:relative;
+            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
+        }
+    }
+    
+   
 }
 
 </style>
@@ -126,7 +138,7 @@
             </view>
             <view class="ui-idea">
                 <view class="cell-headline">我的想法</view>
-                <repeat for="{{ideaList}}" key="index" index="index" item="item">
+                <repeat for="{{viewsList}}" key="index" index="index" item="item">
                     <view class="ui-item">
                         <view class="ui-user">
                             <view class="ui-name">
@@ -138,39 +150,39 @@
                             <view class="cell-del">删除</view>
                         </view>
                         <view class="ui-my-comment flex">
-                            <view class="cell-title">{{item.title}}</view>
+                            <view class="cell-title">{{item.content}}</view>
                             <view class="ui-course">
-                                <image src="{{item.courseImg}}"/>
+                                <image src="{{item.bigImage}}"/>
                             </view>
                         </view>
                         <view class="ui-tips main-justify">
-                            <view>{{item.date}}</view>
+                            <view>{{item.createTime}}</view>
                             <view class="ui-num">
                                 <view class="ui-praise">
                                     <text class="icon-praise"></text>
-                                    {{item.supportNum}}
+                                    {{item.likeCount}}
                                 </view>
                                 <view>
                                     <text class="icon-comment1"></text>
-                                    {{item.commentNum}}
+                                    {{item.replyCount}}
                                 </view>
                             </view>
                         </view>
-                        <view class="ui-other-comment">
+                        <view class="ui-other-comment" wx:if="{{item.likeList.length || item.replyList.length}}">
                             <view class="ui-tri-box">
                                 <view></view>
                             </view>
-                            <view class="ui-praise">
+                            <view class="ui-praise" wx:if="{{item.likeList.length}}">
                                 <text class="icon-praise"></text>
-                                <repeat for="{{item.supportList}}" key="indexSupport" index="indexSupport" item="itemSupport">
-                                    {{itemSupport}}<text wx:if="{{indexSupport != item.supportList.length-1}}">，</text>
+                                <repeat for="{{item.likeList}}" key="indexSupport" index="indexSupport" item="itemSupport">
+                                    {{itemSupport}}<text wx:if="{{indexSupport != item.likeList.length-1}}">，</text>
                                 </repeat>
                             </view>
-                            <view class="ui-comment-box" wx:if="{{item.commentList.length}}">
-                                <repeat for="{{item.commentList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item">
-                                        <view class="cell-name">{{itemComment.name}}</view>：
-                                        <view class="cell-content">{{itemComment.title}}</view>
+                            <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
+                                <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
+                                    <view class="ui-comment-item" @tap.stop="getReviewOther" data-item="{{itemComment}}">
+                                        <view class="cell-name">{{itemComment.nickName}}</view>：
+                                        <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
                                 </repeat>
                             </view>
@@ -180,7 +192,24 @@
                     
                 </repeat>
             </view>
+            <view class="ui-textarea flex"
+                wx:if="{{isShow}}">
+                <text class="icon-close flex-box-0"
+                    data-type="0"
+                    @tap.stop="getShowStatus"></text>
+                <textarea maxlength="200"
+                        placeholder="{{'回复'+reviewName+'：'}}"
+                        adjust-position="{{false}}"
+                        value="{{messageValue}}"
+                        focus="{{isFocus}}"
+                        bindfocus="getFocus"
+                        bindblur="getBlur"
+                        bindinput="getChange"
+                        bindconfirm="getConfirm"></textarea>
+                <button @tap.stop="getConfirm" wx:if="{{messageValue.length}}"><text class="icon-send"></text></button>
+            </view>
         </view>
+        
     </view>
     <jn-share-card></jn-share-card>
 </template>
@@ -200,7 +229,7 @@
             return state.user.avatar
         },
         token(state) {
-            return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
+            return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
             // return state.user.token
         },
         userName(state) {
@@ -235,24 +264,32 @@
             pointCardList: [],
             isNewSenceMap: {}, // 进入微课的新老界面判断
             currentCard:0,
+            isShow:false,
+            isFocus:false,
+            reviewName:'',
+            messageValue:'',
+            viewsList:[],
             ideaList:[
                 {
                     date:'9-29 12:24',
                     title:'什么叫想法前的未知因素？这个说法，有点陇统。',
                     courseImg:'http://wx-small.runwise.cn/image/imageIDe148e6a3d074589517fbc6e64d84.png',
                     supportNum:3,
+                    courseId:'',
+                    id:'',
+                    xuhao:'',
                     commentNum:4,
                     supportList:['天下霸唱','山水','大宇'],
                     commentList:[
                         {
                             name:'回锅肉',
                             title:'这个问题问得好！',
-                            review:''
+                            reviewList:['回复你啦！～～～～','回复你啦222222！～～～～']
                         },
                         {
                             name:'大宇',
                             title:'天将降大任于斯人也，必先苦其心智，劳其筋骨，饿其肚子……',
-                            review:'yes'
+                            reviewList:[]
                         },
                     ]
                 },
@@ -267,12 +304,12 @@
                         {
                             name:'回锅肉',
                             title:'如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？如何在执行你的想法前，找出未知因素？',
-                            review:''
+                            reviewList:['回复你啦！～～～～','回复你啦222222！～～～～']
                         },
                         {
                             name:'大宇是有点陇统。是有点陇统。是有点陇统。',
                             title:'是有点陇统。',
-                            review:'yes'
+                            reviewList:[]
                         },
                     ]
                 },
@@ -300,7 +337,7 @@
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
                 self.senceName = res.senceName
-
+                self.viewsList = res.viewsList
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
                     if(item.content){
@@ -314,6 +351,7 @@
                         }
                     }
                 });
+                console.log(self.viewsList,1)
                 self.pointCardList = tempList
 
                 // 取消最后一张收藏  bug
@@ -340,6 +378,23 @@
         }
 
         methods = {
+            getFocus(){
+
+            },
+            getBlur(){},
+            getChange(){},
+            getConfirm(){},
+            getShowStatus(){
+
+            },
+            getReviewOther(event){
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+                self.reviewName = item.name
+                self.isShow = true;
+                self.isFocus = true;
+                console.log(item)
+            },
             // swiper改变触发
             getChangCard(evt){
                 let self = this;
