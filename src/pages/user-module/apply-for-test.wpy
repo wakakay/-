@@ -59,35 +59,14 @@
 
 <script>
     import wepy from "wepy";
-    import loadingMixin from "../../mixins/loading";
+    import {getStore, connect} from "wepy-redux";
     import Loading from '../../components/common/loading';
-    import GoogleAnalyticsMixin from "../../mixins/googleAnalytics";
     import header from '../../components/common/header'
     import AskForPhoneModal from '../../components/AskForPhoneModal/index'
-    import FetchPhoneMixin from "../../mixins/fetchPhone";
-    import {
-        showErrorPage,
-        getStorageAsync,
-        doDecrpytPhone
-    } from "../../utils";
-    import {
-      refreshUserInformations,
-      login,
-      setPhone,
-      renewWechatCode
-    } from '../../redux/models/user'
+    import {showErrorPage} from "../../utils";
+    import {setPhone, renewWechatCode} from '../../redux/models/user'
     import Toast from "wepy-com-toast";
-    import {
-        course as courseApi,
-        auth as authApi
-    } from "../../api";
-    import {
-        NetworkError
-    } from "../../errors";
-    import {
-        getStore,
-        connect
-    } from "wepy-redux";
+    import {course as courseApi, auth as authApi} from "../../api";
 
     const store = getStore();
     const state = store.getState();

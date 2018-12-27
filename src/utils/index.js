@@ -1,14 +1,7 @@
 import wepy from 'wepy'
 import { getStore, connect } from "wepy-redux"
 import { auth as authApi, course as courseApi, practice as practiceApi } from '../api'
-import {
-    renewWechatCode,
-    setPhone,
-    login,
-    checkLoginStatus,
-    renewUserRole,
-    refreshUserInformations
-} from "../redux/models/user";
+import {renewWechatCode, setPhone, login, checkLoginStatus, renewUserRole, refreshUserInformations} from "../redux/models/user";
 import { refreshActivity } from '../redux/models/activity'
 import { refreshLearnings } from '../redux/models/learning'
 import { setCurrentPracticeOffset, setLastPracticeOffset, setSubmitSection } from "../redux/models/practice"

@@ -111,7 +111,7 @@
     import Loading from '../../components/common/loading'
     import fetchPhoneMixin from "../../mixins/fetchPhone";
     import PushMixin from '../../mixins/push'
-    import {auth as authApi, registered as fetchRegistered} from '../../api'
+    import {auth as authApi, fetch} from '../../api'
     import {setPhone, renewWechatCode} from '../../redux/models/user'
     import _ from 'underscore'
 
@@ -159,7 +159,7 @@
                 token: self.systemInfo.token
             }
             self.isLoaded = false
-            fetchRegistered.recommendCourse(postData).then((respone) => {
+            fetch.recommendCourse(postData).then((respone) => {
                 self.recommendList = respone.recommendCourseList
                 self.$apply()
                 setTimeout(()=>{
@@ -184,7 +184,7 @@
                 courseID: item.id
             }
 
-            fetchRegistered.savePhone(postData).then((respone) => {
+            fetch.savePhone(postData).then((respone) => {
                 switch (respone.success) {
                     case 1: // 领取成功
                         self.receiveInfo = item

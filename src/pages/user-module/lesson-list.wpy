@@ -57,22 +57,9 @@
 	import loadingMixin from '../../mixins/loading'
 	import header from '../../components/common/header'
     import {navigateToLesson} from '../../utils'
-	import {
-		redirectToPractice,
-		sleep
-	} from '../../utils'
-	import {
-		refreshUserInformations
-	} from '../../redux/models/user'
-	import {
-        sence as senceApi
-    } from '../../api'
-	import {
-		showErrorPage,
-		initializationDeligate
-	} from '../../utils'
-	import AuthorizationModal from '../../components/AuthorizationModal/index'
-	const store = getStore();
+	import {sence as senceApi} from '../../api'
+
+	const store = getStore()
 	@connect({
 		userName(state) {
 			return state.user.name;
@@ -84,8 +71,6 @@
 			return state.user.token.startsWith('userID')
 		},
 		token(state) {
-			//return 'userIDbed758d838074dc0b64ae02b6bb550b1-1536054990594-f8ab9cdf5c3bf9cf3a8c1b5b60c9a11e'
-			//return 'userID67eaa3af1eca4c5e99d90ef07c8b0353-1529720295951-b23293df24eaba829149a6f71c294839'
 			return state.user.token;
 		},
 		code(state) {

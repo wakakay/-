@@ -30,28 +30,14 @@
 
 <script>
 	import wepy from 'wepy'
-	import {
-		getStore,
-		connect
-	} from "wepy-redux"
+	import {getStore, connect} from "wepy-redux"
 	import Loading from '../../components/common/loading'
 	import loadingMixin from '../../mixins/loading'
 	import header from '../../components/common/header'
 	import TeamLearningCourse from '../../components/TeamLearningCourse/index'
-	import {
-		redirectToPractice,
-		sleep
-	} from '../../utils'
-	import {
-		refreshUserInformations
-	} from '../../redux/models/user'
 	import {practice as practiceApi } from '../../api'
-	import {
-		showErrorPage,
-		initializationDeligate
-	} from '../../utils'
-	import AuthorizationModal from '../../components/AuthorizationModal/index'
-	const store = getStore();
+
+	const store = getStore()
 	@connect({
 		userName(state) {
 			return state.user.name;
