@@ -997,9 +997,9 @@
             })
 
             return {
-                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                title: self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,
                 path: path,
-                imageUrl: self.courseDetail.shareCoverImageUrl || ''
+                imageUrl: self.courseDetail.shareCoverImageUrl || self.courseDetail.image || ''
             }
         }
     }

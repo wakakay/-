@@ -380,9 +380,9 @@
             wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
 
             return {
-                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,
                 path: path,
-                imageUrl: self.finishResultInfo.shareCoverImageUrl || ''
+                imageUrl: self.finishResultInfo.shareCoverImageUrl || self.finishResultInfo.image || ''
             }
         }
     }
