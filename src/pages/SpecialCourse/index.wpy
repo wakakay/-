@@ -5,11 +5,11 @@
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
                 <view class="ui-first"  wx:if="{{item.type == 'image' && index == 0}}">
-                    <view id="ui-id">
+                    <view id="ui-id" class="flex">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
-                    <view class="ui-img-type" wx:if="{{item.type == 'image' && index !== 0}}" >
+                <view class="ui-img-type flex" wx:if="{{item.type == 'image' && index !== 0}}" >
                     <image mode="widthFix" src="{{item.img}}" />
                 </view>
                 <view class="ui-doc" wx:if="{{item.type == 'text'}}">

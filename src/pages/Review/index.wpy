@@ -63,7 +63,10 @@
                 font-size: 24rpx;color: @color-gray;margin-top:44rpx;height: 40rpx;
                 .ui-num{
                     display: flex;
-                    .ui-praise{margin-right: 48rpx;}
+                    view{
+                        margin-left:48rpx;height:40rpx;display:flex;align-items:center;
+                        text{margin-right: 12rpx;}
+                    }
                 }
             }
             .ui-other-comment{margin-top: 12rpx;padding:20rpx 12rpx;background: @background-gray-F4;position: relative;
@@ -163,27 +166,25 @@
                         </view>
                         <view class="ui-my-comment flex">
                             <view class="cell-title">{{item.content}}</view>
-                            <view class="ui-course">
+                            <view class="ui-course" @tap.stop="getStudyLesson" data-item="{{item}}">
                                 <image src="{{item.bigImage}}"/>
                             </view>
                         </view>
                         <view class="ui-tips main-justify">
                             <view>{{item.createTime}}</view>
                             <view class="ui-num">
-                                <view class="ui-praise">
+                                <view @tap.stop="getLikeReview" data-id="{{item.viewID}}">
                                     <text class="icon-praise"></text>
-                                    {{item.likeCount}}
+                                    {{item.likeCount != 0 ? item.likeCount : ''}}
                                 </view>
                                 <view>
                                     <text class="icon-comment1"></text>
-                                    {{item.replyCount}}
+                                    {{item.replyCount != 0 ? item.replyCount : ''}}
                                 </view>
                             </view>
                         </view>
                         <view class="ui-other-comment" wx:if="{{item.likeList.length || item.replyList.length}}">
-                            <view class="ui-tri-box">
-                                <view></view>
-                            </view>
+                            <view class="ui-tri-box"><view></view></view>
                             <view class="ui-praise" wx:if="{{item.likeList.length}}">
                                 <text class="icon-praise"></text>
                                 <repeat for="{{item.likeList}}" key="indexSupport" index="indexSupport" item="itemSupport">
@@ -192,7 +193,7 @@
                             </view>
                             <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
                                 <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item" data-item="{{itemComment}}">
+                                    <view class="ui-comment-item" @tap.stop="getReviewOther" data-item="{{itemComment}}">
                                         <view class="cell-name">{{itemComment.nickName}}</view>：
                                         <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
@@ -250,8 +251,8 @@
             return state.user.avatar
         },
         token(state) {
-            return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
-            // return state.user.token
+            // return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
+            return state.user.token
         },
         userName(state) {
             return state.user.name
@@ -404,6 +405,20 @@
         }
 
         methods = {
+            getLikeReview(event){
+                let self = this;
+                let {currentTarget: {dataset: {id}}} = event
+                let postData = {
+                    token: self.token,
+                    viewID : self.viewID
+                }
+                fetch.likeSenceViews(postData).then((respone) => {
+                    self.$apply()
+                    self.__getReview()
+                }).catch(error => {
+                    throw error
+                })
+            },
             getShowDel(event) {
                 let self = this;
                 let {currentTarget: {dataset: {id}}} = event
@@ -445,7 +460,6 @@
                 self.reviewName = item.name
                 self.isShow = true;
                 self.isFocus = true;
-                console.log(item)
             },
             // swiper改变触发
             getChangCard(evt){
@@ -461,10 +475,12 @@
             getStudyLesson(event) {
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
-                let senceName = item.name
+
+                if(item.viewID && item.xuhao>0) {
+                    item.xuhao = item.xuhao + 1
+                }
                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
                 let isNewSence = self.isNewSenceMap[self.senceID]
-
                 navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
             },
             /**

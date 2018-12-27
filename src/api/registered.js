@@ -181,7 +181,10 @@ export default {
     replySenceViews(params) {
         return fetch({method: 'post', url: 'senceViews/replySenceViews', params: params})
     },
-    // 给一个想法点赞
+    /**
+     * 微课想法→对一个想法的点赞
+     * @param viewID String 想法ID
+     */
     likeSenceViews(params) {
         return fetch({method: 'post', url: 'senceViews/likeSenceViews', params: params, isUnFilter: true})
     },
