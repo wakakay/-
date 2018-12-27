@@ -126,17 +126,32 @@ export default {
     courseDetail(params) {
         return fetch({method: 'post', url: 'MVP5/getCourseDetail', params: params, isVisitor: true})
     },
-    // 生成赠一得一
+    // 赠送者→生成赠一得一
     createGiftID(params) {
         return fetch({method: 'post', url: 'gift/getGiftID', params: params})
     },
-    // 接受赠一得一
+    // 受赠者→接受赠一得一
     receiveCourseGift(params) {
         return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params, isUnFilter: true})
     },
-    // 保存giftID的接口
-    saveGiftId(params) {
+    // 受赠者→保存giftID的接口
+    saveGiftID(params) {
         return fetch({method: 'post', url: 'gift/saveGiftId', params: params, isUnFilter: true})
+    },
+    /**
+     * 赠送者→创建一个普通分享的id
+     * @param courseID String 课程ID
+     * @param shareID String 分享ID
+     */
+    createShareID(params) {
+        return fetch({method: 'post', url: 'gift/getShareID', params: params})
+    },
+    /**
+     * 受赠者→接受一个普通分享
+     * @param courseID String 课程ID
+     */
+    saveShareID(params) {
+        return fetch({method: 'post', url: 'gift/saveShareID', params: params, isUnFilter: true})
     },
     // 课程详情
     courseShareCount(params) {

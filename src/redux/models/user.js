@@ -132,6 +132,8 @@ export const login = () => (dispatch, getState) => {
             dispatch(setScreenHeight({ status: 'success', response }))
             dispatch(setStatusBarHeight(response.statusHeight))
 
+            console.log(1221, getState())
+
             return getState()['user']
         })
         .catch(error => {
@@ -149,7 +151,7 @@ export const login = () => (dispatch, getState) => {
             dispatch(setWindowWidth({ status: 'failure', error }))
             dispatch(setWindowHeight({ status: 'failure', error }))
             dispatch(setScreenHeight({ status: 'failure', error }))
-                // dispatch(setStatusBarHeight(response.statusHeight))
+            dispatch(setStatusBarHeight(response.statusHeight))
         })
 
 }

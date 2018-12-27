@@ -476,7 +476,7 @@
         }
 
         onLoad(params) {
-            let self = this
+            /*let self = this
             console.log('课程详情', params)
             self.paramsInfo = params
             self.paramsInfo.source = self.paramsInfo.source
@@ -494,11 +494,11 @@
             } else {
                 console.log(22, self.systemInfo.token)
                 initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
-            }
+            }*/
         }
         onShow() {
             let self = this
-            self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
+            //self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
         }
         onReady() {
             let self = this
@@ -545,6 +545,9 @@
             if (self.paramsInfo.giftID) {
                 postData.giftID = self.paramsInfo.giftID
                 self.isGifter = true
+            }
+            if (self.paramsInfo.shareID) {
+                postData.shareID = self.paramsInfo.shareID
             }
 
             fetch.courseDetail(postData).then((respone) => {
@@ -598,11 +601,17 @@
                     self.__receiveCourse()
                     return
                 }
-                // 获取赠送的giftID
-                if (self.isTokenSet
+                // 赠送者→获取赠送的giftID
+                if ('defaultToken' !== postData.token
                     && self.courseDetail.isLimitedTimeGiftCourse
                     && 'receiver' != self.courseDetail.roleType) {
-                    self.__getGiftID()
+                    self.__createGiftID()
+                }
+
+                // 赠送者→获取普通分享的shareID
+                if ('defaultToken' !== postData.token
+                    && !self.courseDetail.isLimitedTimeGiftCourse) {
+                    self.__createShareID()
                 }
 
                 self.$apply()
@@ -658,7 +667,7 @@
         /**
          * 获取赠一得一ID
          */
-        __getGiftID() {
+        __createGiftID() {
             let self = this
             let postData = {
                 token: self.systemInfo.token,
@@ -669,6 +678,21 @@
                 self.giftID = respone
             })
         }
+        /**
+         * 获取普通分享ID
+         */
+        __createShareID() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id
+            }
+
+            fetch.createShareID(postData).then((respone) => {
+                self.shareID = respone.shareID
+            })
+        }
+
         /**
          * 受赠者确定领取课程
          */
@@ -761,6 +785,10 @@
                 token: self.systemInfo.token,
                 courseID: self.paramsInfo.id,
                 pageTime: time
+            }
+
+            if ('defaultToken' === self.systemInfo.token) {
+                return
             }
             courseApi.sendCoursePageTime(postData).then(response => {})
         }
@@ -914,13 +942,13 @@
                         courseID: self.paramsInfo.id,
                         giftID: self.giftID
                     }
-
-                    fetch.saveGiftId(postData).then((respone) => {}).catch((error) => {})
+                    // 保存giftID的信息
+                    fetch.saveGiftID(postData).then((respone) => {}).catch((error) => {})
                 }
                 reportType = shareDictionary.RECEIVE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
             } else {
-                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}`
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&shareID=${self.shareID}`
                 reportType = shareDictionary.SHARE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
                 wx.reportAnalytics('share_event', {
@@ -931,6 +959,15 @@
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     type: shareDictionary.SHARE_COURSE.type
                 })
+                if (self.shareID) {
+                    let postData = {
+                        token: self.systemInfo.token,
+                        courseID: self.paramsInfo.id,
+                        shareID: self.shareID
+                    }
+                    // 保存shareID的信息
+                    fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
+                }
             }
 
             shareApi.reportSharing({
