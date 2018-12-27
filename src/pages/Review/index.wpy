@@ -66,6 +66,7 @@
                     view{
                         margin-left:48rpx;height:40rpx;display:flex;align-items:center;
                         text{margin-right: 12rpx;}
+                        .cell-selected{color: @color-blue}
                     }
                 }
             }
@@ -82,6 +83,11 @@
                 }
                 
             }
+        }
+        .ui-empty-view{
+            padding-top:160rpx;box-sizing: border-box;text-align:center;
+            text{color: @background-gray-cc;font-size: 120rpx;}
+            view{margin-top: 50rpx;font-size:34rpx;color:@color-gray;}
         }
     }
     .ui-textarea{
@@ -153,7 +159,7 @@
             </view>
             <view class="ui-idea">
                 <view class="cell-headline">我的想法</view>
-                <repeat for="{{viewsList}}" key="index" index="index" item="item">
+                <repeat wx:if="{{viewsList.length}}" for="{{viewsList}}" key="index" index="index" item="item">
                     <view class="ui-item">
                         <view class="ui-user">
                             <view class="ui-name">
@@ -173,12 +179,12 @@
                         <view class="ui-tips main-justify">
                             <view>{{item.createTime}}</view>
                             <view class="ui-num">
-                                <view @tap.stop="getLikeReview" data-id="{{item.viewID}}">
-                                    <text class="icon-praise"></text>
+                                <view @tap.stop="getLikeReview" data-item="{{item}}">
+                                    <text class="icon-praise {{item.isLiked ? 'cell-selected' : ''}}"></text>
                                     {{item.likeCount != 0 ? item.likeCount : ''}}
                                 </view>
                                 <view>
-                                    <text class="icon-comment1"></text>
+                                    <text class="icon-comment1 {{item.isReplied ? 'cell-selected' : ''}}"></text>
                                     {{item.replyCount != 0 ? item.replyCount : ''}}
                                 </view>
                             </view>
@@ -193,7 +199,7 @@
                             </view>
                             <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
                                 <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item" @tap.stop="getReviewOther" data-item="{{itemComment}}">
+                                    <view class="ui-comment-item" data-item="{{itemComment}}">
                                         <view class="cell-name">{{itemComment.nickName}}</view>：
                                         <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
@@ -204,6 +210,10 @@
                     </view>
                     
                 </repeat>
+                <view  wx:if="{{!viewsList.length}}" class="ui-empty-view">
+                    <text class="icon-empty-list"></text>
+                    <view>你还没有发表过想法哦</view>
+                </view>
             </view>
             <view class="ui-textarea flex"
                 wx:if="{{isShow}}">
@@ -407,17 +417,25 @@
         methods = {
             getLikeReview(event){
                 let self = this;
-                let {currentTarget: {dataset: {id}}} = event
+                let {currentTarget: {dataset: {item}}} = event
+                let isLiked = item.isLiked
                 let postData = {
                     token: self.token,
-                    viewID : self.viewID
+                    viewID : item.viewID
                 }
-                fetch.likeSenceViews(postData).then((respone) => {
-                    self.$apply()
-                    self.__getReview()
-                }).catch(error => {
-                    throw error
-                })
+                if(isLiked) {
+                   fetch.dislikeSenceViews(postData).then((respone) => {
+                        self.__getReview()
+                    }).catch(error => {
+                        throw error
+                    }) 
+                }else{
+                    fetch.likeSenceViews(postData).then((respone) => {
+                        self.__getReview()
+                    }).catch(error => {
+                        throw error
+                    })
+                }
             },
             getShowDel(event) {
                 let self = this;

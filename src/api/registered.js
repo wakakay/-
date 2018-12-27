@@ -188,7 +188,10 @@ export default {
     likeSenceViews(params) {
         return fetch({method: 'post', url: 'senceViews/likeSenceViews', params: params, isUnFilter: true})
     },
-    // 取消对一个想法的点赞
+    /**
+     * 微课想法→取消对一个想法的点赞
+     * @param viewID String 想法ID
+     */
     dislikeSenceViews(params) {
         return fetch({method: 'post', url: 'senceViews/dislikeSenceViews', params: params, isUnFilter: true})
     },
