@@ -103,6 +103,8 @@
                   placeholder="{{keyboardHeight>0 ? '回复'+discussDetails.nickName+'：' : ''}}"
                   adjust-position="{{false}}"
                   value="{{messageValue}}"
+                  selection-start="{{messageValue.length}}"
+                  selection-end="{{messageValue.length}}"
                   bindfocus="getFocus"
                   bindblur="getBlur"
                   bindinput="getChange"

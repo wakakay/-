@@ -934,6 +934,7 @@
 
             let path = ''
             let reportType = ''
+            console.log('role:', dataset.role, self.shareID)
             if (dataset && dataset.role) {
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
                 if (self.giftID) {
@@ -966,6 +967,7 @@
                         shareID: self.shareID
                     }
                     // 保存shareID的信息
+                    console.log('shareID', postData)
                     fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
                 }
             }

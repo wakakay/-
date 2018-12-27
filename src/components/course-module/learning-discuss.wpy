@@ -61,15 +61,21 @@
             <text class="icon-close flex-box-0"
                   data-type="0"
                   @tap.stop="getShowStatus"></text>
-            <textarea maxlength="200"
-                      placeholder="{{!viewID ? '写下这一刻的想法……' : '回复'+viewName+'：'}}"
-                      adjust-position="{{false}}"
-                      value="{{messageValue}}"
-                      focus="{{isFocus}}"
-                      bindfocus="getFocus"
-                      bindblur="getBlur"
-                      bindinput="getChange"
-                      bindconfirm="getConfirm"></textarea>
+            <view class="cell-textarea">
+                <textarea auto-height
+                          maxlength="200"
+                          placeholder="{{!viewID ? '写下这一刻的想法……' : '回复'+viewName+'：'}}"
+                          adjust-position="{{false}}"
+                          show-confirm-bar="{{false}}"
+                          value="{{messageValue}}"
+                          selection-start="{{messageValue.length}}"
+                          selection-end="{{messageValue.length}}"
+                          focus="{{isFocus}}"
+                          bindfocus="getFocus"
+                          bindblur="getBlur"
+                          bindinput="getChange"
+                          bindconfirm="getConfirm"></textarea>
+            </view>
             <button @tap.stop="getConfirm" wx:if="{{messageValue.length}}"><text class="icon-send"></text></button>
         </view>
     </view>
