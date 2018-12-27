@@ -199,7 +199,7 @@
                             </view>
                             <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
                                 <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item" data-item="{{itemComment}}">
+                                    <view class="ui-comment-item" @tap.stop="getReviewOther" data-item="{{itemComment}}">
                                         <view class="cell-name">{{itemComment.nickName}}</view>：
                                         <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
@@ -211,7 +211,7 @@
                     
                 </repeat>
                 <view  wx:if="{{!viewsList.length}}" class="ui-empty-view">
-                    <text class="icon-empty-list"></text>
+                    <text class="icon-empty-review-list"></text>
                     <view>你还没有发表过想法哦</view>
                 </view>
             </view>
@@ -261,8 +261,8 @@
             return state.user.avatar
         },
         token(state) {
-            // return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
-            return state.user.token
+            return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
+            // return state.user.token
         },
         userName(state) {
             return state.user.name
@@ -415,6 +415,7 @@
         }
 
         methods = {
+            //点赞 / 取消点赞
             getLikeReview(event){
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
@@ -437,6 +438,7 @@
                     })
                 }
             },
+            // 弹出 confirm 删除想法
             getShowDel(event) {
                 let self = this;
                 let {currentTarget: {dataset: {id}}} = event
@@ -444,11 +446,13 @@
                 self.isShowDel = true; 
                 self.$apply()
             },
+            // 取消弹出 confirm 删除想法
             getCancelDel(){
                 let self = this;
                 self.isShowDel = false;
                 self.$apply()
             },
+            // 确认删除想法
             getDelReview(){
                 let self = this;
                 let postData = {
