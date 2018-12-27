@@ -10,15 +10,15 @@
  */
 export const ROUTERS = {
     /*-------------------今日-----------------------*/
-    'pages/today-module/index': {screenName: '今日页', isLevel: true},
-    'pages/today-module/all-course': {screenName: '今日页-全部在学课程'},
+    'pages/today-module/index': {screenName: '今日页', isLevel: true, isVisitor: true},
+    'pages/today-module/all-course': {screenName: '今日页-全部在学课程', isVisitor: true},
     /*-------------------发现页-----------------------*/
-    'pages/FindList/index': {screenName: '发现页', isLevel: true},
+    'pages/FindList/index': {screenName: '发现页', isLevel: true, isVisitor: true},
     /*-------------------课程-----------------------*/
-    'pages/course-module/course': {screenName: '课程页', isLevel: true},
-    'pages/course-module/course-new-details': {screenName: '课程详情页', sence: 'CourseShare'}, // 需要记录哪门子课程详情
-    'pages/course-module/course-details': {screenName: '课程详情页', sence: 'CourseShare'}, // 需要记录哪门子课程详情
-    'pages/course-module/assortment': {screenName: '系列详情页', sence: 'seriesShare'}, // 需要记录哪门子的系列课程
+    'pages/course-module/course': {screenName: '课程页', isLevel: true, isVisitor: true},
+    'pages/course-module/course-new-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
+    'pages/course-module/course-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
+    'pages/course-module/assortment': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare'}, // 需要记录哪门子的微课
     'pages/course-module/course-learning-discuss': {screenName: '微课学习想法详情'}, // 需要记录哪门子的微课
     'pages/course-module/lesson': {screenName: '微课学习', sence: 'CardsShare'},
@@ -33,11 +33,11 @@ export const ROUTERS = {
     'pages/SingleSelection/index': {screenName: '微课即练'}, // 需要记录哪门子的微课
     'pages/Sorting/index': {screenName: '微课即练'}, // 需要记录哪门子的微课?
     /*-------------------其他模版-----------------------*/
-    'pages/other-module/work-template':  {screenName: '精练工作模板'},
-    'pages/other-module/job-skills':  {screenName: '核心工作技能'},
-    'pages/other-module/community':  {screenName: '专属社群'},
+    'pages/other-module/work-template':  {screenName: '精练工作模板', isVisitor: true},
+    'pages/other-module/job-skills':  {screenName: '核心工作技能', isVisitor: true},
+    'pages/other-module/community':  {screenName: '专属社群', isVisitor: true},
     /*-------------------训练营-----------------------*/
-    'pages/training-camp-module/index': {screenName: '训练营', isLevel: true},
+    'pages/training-camp-module/index': {screenName: '训练营', isLevel: true, isVisitor: true},
     'pages/training-camp-module/all-training': {screenName: '训练营-查看全部训练营'},
     'pages/training-camp-module/introduce': {screenName: '训练营-训练营介绍'},
     'pages/training-camp-module/registration': {screenName: '训练营-报名'},
@@ -63,12 +63,12 @@ export const ROUTERS = {
     'pages/training-camp-module/my/learning-goals': {screenName: '我管理-学习目标'},
 
     /*-------------------活动-----------------------*/
-    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare'},  // 需要记录哪个专题
-    'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare'},
+    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare', isVisitor: true},  // 需要记录哪个专题
+    'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
     'pages/activity-module/appraisal-results': {screenName: '测评结果'},
     /*-------------------注册-----------------------*/
-    'pages/registered-module/weclome': {enName: 'welcome_page', screenName: 'user onboarding-欢迎页'},
+    'pages/registered-module/weclome': {enName: 'welcome_page', screenName: 'user onboarding-欢迎页', isVisitor: true},
     'pages/registered-module/interest-select': {enName: 'interest_select', screenName: 'user onboarding-职能选择页'},
     'pages/registered-module/recommend': {enName: 'course_recommend', screenName: 'user onboarding-课程推荐页'},
     /*-------------------我的-----------------------*/

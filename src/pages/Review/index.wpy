@@ -248,7 +248,7 @@
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi, share as shareApi, fetch} from "../../api";
+    import {share as shareApi, fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
@@ -363,7 +363,7 @@
 
         __getReview() {
             let self = this;
-            courseApi.getReview({
+            fetch.getReview({
                 token: self.token, 
                 courseID:self.courseID, 
                 senceID:self.senceID})

@@ -88,10 +88,8 @@
     import AskForPhoneModal from '../../components/AskForPhoneModal/index'
     import SkillsBoardShareImage from '../../components/shareImages/skills-board' // 分享图片
     import FetchPhoneMixin from "../../mixins/fetchPhone";
-    import {showErrorPage, getStorageAsync} from "../../utils";
     import Toast from "wepy-com-toast";
-    import {course as courseApi} from "../../api";
-    import {NetworkError} from "../../errors";
+    import {fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import SkillSet from '../../components/SkillSet/index'
 
@@ -166,7 +164,7 @@
         }
 
         initialize() {
-            return courseApi.getMyLearningPageBySkillgetDetail({token: this.token})
+            return fetch.getMyLearningPageBySkillgetDetail({token: this.token})
                 .then(({avgSkillScore, myLearnTime, scoreBase, skillAbilityList, shareBackgroundImage, shareCodeImage,allFinishSenceCount ,skillCount}) => {
                     this.avgSkillScore = avgSkillScore
                     this.myLearnTime = myLearnTime

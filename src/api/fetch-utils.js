@@ -12,6 +12,7 @@ import wepy from 'wepy'
 import config from './config'
 import { UnAuthenticationError } from '../errors'
 import _ from 'underscore'
+import {ROUTERS} from "../utils/dictionary"
 
 /**
  * 参数分割
@@ -39,8 +40,10 @@ export const paramsData = ((data) => {
 })
 
 export const fetch = ((actionObj) => {
-    // 没有token的直接抛错
-    if (!actionObj.isVisitor && ('defaultToken' === actionObj.params.token || !actionObj.params.token)) {
+    let rounter = getCurrentPages()
+    let page = rounter[rounter.length - 1]
+    if (('defaultToken' === actionObj.params.token || !actionObj.params.token)
+        && !(ROUTERS[page.route] && ROUTERS[page.route].isVisitor)) {
         throw new UnAuthenticationError()
     }
 

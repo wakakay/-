@@ -960,14 +960,7 @@
                 requestFlag: this.requestFlag,
                 teamID: this.teamID
             }) // 请求后台记录卡片位置
-            // .then(() => console.log(`第${current}张卡片记录成功`))
                 .catch(error => console.log(`第${current}张卡片记录失败`))
-                // this.checkIfTheLastCard(current) && courseApi.sendFinish({
-                //     token: this.token,
-                //     senceID: this.senceID,
-                //     courseID: this.courseID,
-                //     requestFlag: this.requestFlag
-                //   })
                 .catch(error => console.log('记录finish状态失败', error))
             this.$apply()
         } // end setCurrentCard

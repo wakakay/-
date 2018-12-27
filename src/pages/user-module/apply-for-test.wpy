@@ -66,7 +66,7 @@
     import {showErrorPage} from "../../utils";
     import {setPhone, renewWechatCode} from '../../redux/models/user'
     import Toast from "wepy-com-toast";
-    import {course as courseApi, auth as authApi} from "../../api";
+    import {course as courseApi, auth as authApi, fetch} from "../../api";
 
     const store = getStore();
     const state = store.getState();
@@ -132,10 +132,9 @@
         } // end onShow
         initialize() {
             // return this.isLoaded = true
-            return courseApi.getTestUserDetail({
+            return fetch.getTestUserDetail({
                 token: this.token
-            })
-                .then(({buttonStatus}) => {
+            }).then(({buttonStatus}) => {
                     console.log('--------------->>>>>>>>>>>>>>>', buttonStatus)
                     this.isLoaded = true
                     this.buttonStatus = buttonStatus
@@ -184,23 +183,11 @@
                         })
                     }
                 });
-                // authApi.doPermitTester({token:this.token})
-                // .then(data=>{
-                //   this.initialize()
-                // })
 
-                courseApi
-                .addTestUser({
+                fetch.addTestUser({
                     token: this.token,
                     otherLink: this.inputValue
-                })
-                .then(data => {
-                    // wx.showToast({
-                    //     title: '提交成功',
-                    //     icon: 'success',
-                    //     mask: true
-                    // })
-                    
+                }).then(data => {
                     this.initialize()
                     this.tblShow = false
                 })
