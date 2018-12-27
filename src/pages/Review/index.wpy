@@ -91,7 +91,19 @@
             text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
         }
     }
-    
+    .ui-del-confirm{
+        display:flex;align-items:center;justify-content:center;position: fixed;left: 0;right: 0;top: 0;bottom: 0;background: @background-mask-slightly;
+        .ui-del{
+            width: 560rpx;height: 290rpx;border-radius: @border-radius-32;background: @background-white;font-size: 34rpx;font-weight: bold;
+            .cell-content{height: 190rpx;text-align: center;line-height: 190rpx;}
+            .ui-btn{display: flex;color:@color-blue;
+                view{
+                    width: 50%;box-sizing: border-box;text-align: center;line-height: 100rpx;height: 100rpx;border-top: 2rpx solid #E5E5E5;
+                    &:first-of-type{border-right: 2rpx solid #E5E5E5;font-weight: normal;}
+                }
+            }
+        }
+    }
    
 }
 
@@ -147,7 +159,7 @@
                                 </view>
                                 <view class="cell-name">{{userName}}</view>
                             </view>
-                            <view class="cell-del">删除</view>
+                            <view class="cell-del"  @tap.stop="getShowDel" data-id="{{item.viewID}}">删除</view>
                         </view>
                         <view class="ui-my-comment flex">
                             <view class="cell-title">{{item.content}}</view>
@@ -180,7 +192,7 @@
                             </view>
                             <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
                                 <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item" @tap.stop="getReviewOther" data-item="{{itemComment}}">
+                                    <view class="ui-comment-item" data-item="{{itemComment}}">
                                         <view class="cell-name">{{itemComment.nickName}}</view>：
                                         <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
@@ -207,6 +219,15 @@
                         bindinput="getChange"
                         bindconfirm="getConfirm"></textarea>
                 <button @tap.stop="getConfirm" wx:if="{{messageValue.length}}"><text class="icon-send"></text></button>
+            </view>
+            <view class="ui-del-confirm" wx:if="{{isShowDel}}" @tap.stop="getCancelDel">
+                <view class="ui-del">
+                    <view class="cell-content">确认删除想法吗？</view>
+                    <view class="ui-btn">
+                        <view @tap.stop="getCancelDel">取消</view>
+                        <view @tap.stop="getDelReview">确定</view>
+                    </view>
+                </view>
             </view>
         </view>
         
@@ -266,9 +287,11 @@
             currentCard:0,
             isShow:false,
             isFocus:false,
+            isShowDel:false,
             reviewName:'',
             messageValue:'',
             viewsList:[],
+            viewID:'',
             ideaList:[
                 {
                     date:'9-29 12:24',
@@ -327,7 +350,7 @@
             self.initialize()
         }
 
-        initialize() {
+        __getReview() {
             let self = this;
             courseApi.getReview({
                 token: self.token, 
@@ -351,7 +374,6 @@
                         }
                     }
                 });
-                console.log(self.viewsList,1)
                 self.pointCardList = tempList
 
                 // 取消最后一张收藏  bug
@@ -362,22 +384,52 @@
                 self.imageUrl = res.imageUrl
                 self.description = res.description
                 self.$apply()
-
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
-                wx.reportAnalytics('review', {
-                    role: self.role,
-                    nickname: self.userName,
-                    coursename: self.senceName,
-                    sencename: self.title,
-                    channel: self.entrance.mappers[self.entrance.scenceID]
-                })
             })
             .catch(error => {
                 console.log('get review error', error)
             })
         }
 
+        initialize() {
+            let self = this;
+            self.__getReview();
+            wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
+            wx.reportAnalytics('review', {
+                role: self.role,
+                nickname: self.userName,
+                coursename: self.senceName,
+                sencename: self.title,
+                channel: self.entrance.mappers[self.entrance.scenceID]
+            })
+        }
+
         methods = {
+            getShowDel(event) {
+                let self = this;
+                let {currentTarget: {dataset: {id}}} = event
+                self.viewID = id;
+                self.isShowDel = true; 
+                self.$apply()
+            },
+            getCancelDel(){
+                let self = this;
+                self.isShowDel = false;
+                self.$apply()
+            },
+            getDelReview(){
+                let self = this;
+                let postData = {
+                    token: self.token,
+                    viewID : self.viewID
+                }
+                fetch.deleteSenceViews(postData).then((respone) => {
+                    self.isShowDel = false; 
+                    self.$apply()
+                    self.__getReview()
+                }).catch(error => {
+                    throw error
+                })
+            },
             getFocus(){
 
             },
