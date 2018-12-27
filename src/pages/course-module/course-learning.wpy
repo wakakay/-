@@ -34,7 +34,7 @@
                     .cell-text{font-size:26rpx;color:@color-gray;bottom:-10rpx;}
                 }
                 .ui-tips{
-                    height:56rpx;padding:0 20rpx;background-color:@background-blue;font-size:28rpx;color:@color-white;text-align:center;line-height:56rpx;border-radius:@border-radius-20;position:fixed;left:62rpx;bottom:156rpx;display:none;transition:all .25s;
+                    height:56rpx;padding:0 20rpx;background-color:@background-blue;font-size:28rpx;color:@color-white;text-align:center;line-height:56rpx;border-radius:@border-radius-20;position:fixed;left:62rpx;bottom:156rpx;transition:all .25s;
                     text{display:block;margin-left:-17rpx;font-size:34rpx;color:@color-blue;position:absolute;left:110rpx;top:34rpx;transform:rotatex(180deg);transition:all .25s;}
                 }
             }
@@ -119,8 +119,12 @@
                     <text class="icon-collection cell-icon collectionAnimation" wx:if="{{cardCurrentInfo[0].userIsSelected}}"></text>
                     <text class="cell-text">{{cardCurrentInfo[0].cardCollectionCount || 0}}</text>
                 </button>
-                <view class="ui-tips {{isShowFirstCollection || isShowCollection || cardCurrentInfo[0].cardLable ? 'is-show' : ''}}">
-                    {{cardCurrentInfo[0].cardLable ? (cardCurrentInfo[0].keyTips || '这张卡是本课重点哦，赶紧收藏起来~') : '点击按钮可将卡片标注为重点'}}<text class="icon-arrow"></text>
+                <view class="ui-tips" wx:if="{{cardCurrentInfo[0].cardLable=='重点卡'}}">
+                    {{cardCurrentInfo[0].keyTips || '这张卡是本课重点哦，赶紧收藏起来~'}}<text class="icon-arrow"></text>
+                </view>
+
+                <view class="ui-tips" wx:if="{{isShowFirstCollection || isShowCollection}}">
+                    点击按钮可将卡片标注为重点<text class="icon-arrow"></text>
                 </view>
             </view>
 
