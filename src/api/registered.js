@@ -233,5 +233,12 @@ export default {
     //获取全部未学课程
     todayToLearnCourses(params) {
         return fetch({method: 'post', url: 'todayTask/toLearnCourses', params: params, isVisitor: true})
-    }
+    },
+    /**
+     * 微课想法→课程回顾页删除想法
+     * @param viewID String 想法ID
+     */
+    deleteSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/deleteSenceViews', params: params})
+    },
 }
