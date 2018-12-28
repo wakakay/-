@@ -201,7 +201,7 @@
                             </view>
                             <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
                                 <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
-                                    <view class="ui-comment-item"  @tap.stop="getReply" data-item="{{itemComment}}">
+                                    <view class="ui-comment-item">
                                         <view class="cell-name">{{itemComment.nickName}}</view>：
                                         <view class="cell-content">{{itemComment.content}}</view>
                                     </view>
@@ -228,7 +228,7 @@
                 <view class="cell-textarea">
                     <textarea auto-height
                             maxlength="200"
-                            placeholder="{{!reviewName ? '写下这一刻的想法……' : '回复'+reviewName+'：'}}"
+                            placeholder="{{'回复'+ userName}}"
                             adjust-position="{{false}}"
                             show-confirm-bar="{{false}}"
                             value="{{messageValue}}"
@@ -506,9 +506,7 @@
             getHideStatus(event) {
                 let self = this
                 let {currentTarget: {dataset: {type}}} = event
-                if (self.keyboardHeight) {
-                    return
-                }
+                self.isFocus = false
                 self.isShow  = false
                 self.$apply()
             },
