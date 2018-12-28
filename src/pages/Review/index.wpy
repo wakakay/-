@@ -175,7 +175,7 @@
                         <view class="ui-my-comment flex">
                             <view class="cell-title">{{item.content}}</view>
                             <view class="ui-course" @tap.stop="getStudyLesson" data-item="{{item}}">
-                                <image src="{{item.bigImage}}"/>
+                                <image mode="widthFix" src="{{item.bigImage}}"/>
                             </view>
                         </view>
                         <view class="ui-tips main-justify">
