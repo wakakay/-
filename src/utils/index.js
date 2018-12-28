@@ -340,54 +340,6 @@ export const redirectToPractice = practiceOffset => {
     return wepy.redirectTo({ url: mRoute })
 }
 
-export const refreshPreviousPracticeSubmit = (offset, submitItem) => {
-    let { practices: { submitSections } } = getStore().getState()
-    submitSections[offset] = submitItem
-    getStore().dispatch(setSubmitSection({
-        status: 'success',
-        response: submitSections
-    }))
-}
-
-export const finishPreviousPractice = () => {
-    let { practices: { senceID, submitSections }, user: { token } } = getStore().getState()
-    wx.showLoading({
-        title: '正在提交',
-        mask: true
-    })
-    return practiceApi.sendUserDoExam({ token, json: { examID: senceID, practiceList: submitSections } })
-        .then(() => {
-            wx.hideLoading()
-            wepy.redirectTo({ url: `/pages/activity-module/appraisal-results?examID=${senceID}` })
-        })
-        .then(() => getStore().dispatch(setCurrentPracticeOffset(0)))
-        .then(() => getStore().dispatch(setLastPracticeOffset(-1)))
-        .catch(err => {
-            wx.hideLoading()
-        })
-}
-
-export const redirectToPreviousPractice = practiceOffset => {
-    let { practices: { sections } } = getStore().getState()
-    if (!sections[practiceOffset]) {
-        practiceOffset--
-
-        wx.showModal({
-            title: '测评完成，是否现在提交？',
-            success: function(res) {
-                if (res.confirm) {
-                    finishPreviousPractice()
-                } else if (res.cancel) {
-
-                }
-            }
-        })
-    }
-   
-    getStore().dispatch(setCurrentPracticeOffset(practiceOffset))
-    getStore().dispatch(setLastPracticeOffset(practiceOffset))
-    return //wepy.redirectTo({ url: mRoute })
-}
 
 export const formatTimestamp = timestamp => {
     let day = Math.floor(timestamp / 86400000)
