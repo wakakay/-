@@ -90,7 +90,6 @@
             view{margin-top: 50rpx;font-size:34rpx;color:@color-gray;}
         }
     }
-    .ui-mask{display:flex;align-items:center;justify-content:center;position: fixed;left: 0;right: 0;top: 0;bottom: 0;background: @background-mask-slightly;}
     .ui-textarea{
         box-sizing:border-box;width:100%;padding:0 36rpx 5%;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
         >text{margin:20rpx 28rpx 0 0;font-size:56rpx;color:@background-gray-cc;}
@@ -217,9 +216,6 @@
                     <view>你还没有发表过想法哦</view>
                 </view>
             </view>
-            <view class="ui-mask"
-              wx:if="{{isShow}}"
-              @tap.stop="getHideStatus"></view>
              <view class="ui-textarea flex"
                 style="background:{{keyboardHeight>0 ? '#fff' : ''}};bottom:{{keyboardHeight}}px;"
                 wx:if="{{isShow}}">
@@ -314,7 +310,7 @@
             messageValue:'',
             viewsList:[],
             viewID:null,
-            keyboardHeight: 0,
+            keyboardHeight: -240,
         }
 
         onLoad(data) {
@@ -475,7 +471,7 @@
              */
             getBlur(event) {
                 let self = this
-                self.keyboardHeight = 0
+                self.keyboardHeight = -240
                 self.isFocus = false
                 self.viewID = null
                 self.$apply()
