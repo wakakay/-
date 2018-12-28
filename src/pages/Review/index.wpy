@@ -260,8 +260,9 @@
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
     import shareCard from '../../components/shareImages/share-card'
-    import {navigateToLesson} from "../../utils";
+    import {navigateToLesson,trim} from "../../utils";
     import _ from 'underscore'
+
 
     @connect({
         avatar(state) {
@@ -369,7 +370,8 @@
          */
         __replyDiscuss() {
             let self = this
-            if ('' === self.messageValue) {
+            let messageVlaue = trim(self.messageValue)
+            if ('' === messageVlaue) {
                 return
             }
 
