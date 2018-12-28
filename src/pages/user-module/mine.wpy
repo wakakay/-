@@ -115,7 +115,7 @@
     import wepy from "wepy";
     import {NetworkError} from "../../errors";
     import {getStore, connect} from "wepy-redux";
-    import {course as courseApi, fetch} from "../../api";
+    import {fetch} from "../../api";
     import {showErrorPage} from "../../utils";
     import PushMixin from '../../mixins/push'
     import loadingMixin from "../../mixins/loading";
@@ -284,8 +284,7 @@
 
         onShow() {
             // 通知组件，生成图片预览
-            this.$broadcast('studying-bar')
-            courseApi.getMyCenterNew({token: this.token}).then(data => {
+            fetch.getMyCenterNew({token: this.token}).then(data => {
                     this.testUserCount = data.testUserCount
                     this.payCount = data.payCount
                     this.couponCount = data.couponCount

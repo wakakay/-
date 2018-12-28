@@ -257,13 +257,6 @@
                     self.globalData.token = res.data
                 }
             })
-            wx.getStorage({
-                key: 'unionID',
-                success (res) {
-                    self.globalData.unionID = res.data
-                    res.data && self.globalData.allOpenIDHash()
-                }
-            })
 
             // 强制更新
             const updateManager = wx.getUpdateManager()

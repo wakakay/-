@@ -144,8 +144,8 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-    import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
-    import {course as courseApi, auth as authApi, share as shareApi, fetch} from "../../api"
+    import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
+    import {auth as authApi, share as shareApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
     import {getStore, connect} from "wepy-redux"
     import {renewWechatCode, login} from "../../redux/models/user"
@@ -230,7 +230,7 @@
         
         onShow() {
             let self = this
-            self.initialize()
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
         onUnload() {
@@ -251,7 +251,7 @@
                 pageTime: time,
                 courseID: self.courseID
             }
-            courseApi.sendCoursePageTime(postData).then(response => {
+            fetch.sendCoursePageTime(postData).then(response => {
                 console.log('sendCoursePageTime report success! ' + time)
             })
         }

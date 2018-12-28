@@ -701,7 +701,10 @@ const initialState = {
 }
 
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
-    if (!initializeFunc instanceof Promise) throw 'initializeFunc must be Promise'
+    if (!initializeFunc instanceof Promise) {
+        console.log(42332)
+        throw 'initializeFunc must be Promise'
+    }
     const store = getStore()
     return synchronize(initialState).then(() => {
             if (callWhatever) return initializeFunc() // 如果callWhatever，那么不校验登录状态，直接initialize初始化页面

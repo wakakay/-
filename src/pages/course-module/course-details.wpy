@@ -486,15 +486,15 @@
             if (-1 !== isCode && params.senceID) {
                 self.shareSenceID = params.senceID
             }
-
-            if ('defaultToken' === self.systemInfo.token) {
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            /*if ('defaultToken' === self.systemInfo.token) {
                 console.log(11, self.systemInfo.token)
                 let storageToken = wx.getStorageSync("token") || 'defaultToken'
                 self.initialize({token: storageToken})
             } else {
                 console.log(22, self.systemInfo.token)
                 initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
-            }
+            }*/
         }
         onShow() {
             let self = this
@@ -692,6 +692,23 @@
                 self.shareID = respone.shareID
             })
         }
+        /**
+         * 受赠者→发起送即能币
+         */
+        __receiveCourseShare() {
+            let self = this
+            if (!self.paramsInfo.shareID) {
+                return
+            }
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.id,
+                shareID: self.paramsInfo.shareID
+            }
+            fetch.receiveCourseShare(postData).then((respone) => {
+                console.log('受赠者→发起送即能币', respone)
+            })
+        }
 
         /**
          * 受赠者确定领取课程
@@ -790,7 +807,7 @@
             if ('defaultToken' === self.systemInfo.token) {
                 return
             }
-            courseApi.sendCoursePageTime(postData).then(response => {})
+            fetch.sendCoursePageTime(postData).then(response => {})
         }
         methods = {
             /**
@@ -879,6 +896,7 @@
                 }).then(userInfo => { // 确定授权
                     return store.dispatch(login())
                 }).then((respone) => { // 授权成功
+                    self.__receiveCourseShare()
                     if (1 == role) { // 赠送者：赠一得一
                         self.initialize()
                         return
@@ -979,9 +997,9 @@
             })
 
             return {
-                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                title: self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,
                 path: path,
-                imageUrl: self.courseDetail.shareCoverImageUrl || ''
+                imageUrl: self.courseDetail.shareCoverImageUrl || self.courseDetail.image || ''
             }
         }
     }

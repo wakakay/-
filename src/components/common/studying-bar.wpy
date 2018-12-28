@@ -152,7 +152,7 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import {course as courseApi} from '../../api'
+    import {fetch} from '../../api'
     import {initializationDeligate, navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -215,7 +215,7 @@
          */
         __learningSenceList() {
             let self = this
-            courseApi.getMyLearningSenceList({token: self.systemInfo.token}).then(response => {
+            fetch.getMyLearningSenceList({token: self.systemInfo.token}).then(response => {
                 self.isNewSenceMap = response.isNewSenceMap
                 self.isRefresh = !response.learningSenceList.length
                 // 是否没有待学习课
