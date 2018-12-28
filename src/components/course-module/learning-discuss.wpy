@@ -55,10 +55,10 @@
                 </repeat>
             </scroll-view>
         </view>
-        <view class="ui-textarea flex"
-              style="background:{{keyboardHeight>0 ? '#fff' : ''}};bottom:{{keyboardHeight}}px;"
+        <view class="ui-textarea flex cross-end"
+              style="bottom:{{keyboardHeight}}px;"
               wx:if="{{isShow}}">
-            <text class="icon-close flex-box-0"
+            <text class="icon-close"
                   data-type="0"
                   @tap.stop="getShowStatus"></text>
             <view class="cell-textarea">
@@ -85,6 +85,7 @@
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import {fetch} from '../../api'
+    import {trim} from '../../utils'
     import _ from 'underscore'
 
     const store = getStore()
@@ -139,7 +140,6 @@
             }
 
             fetch.senceViewList(postData).then(respone => {
-                console.log('12', respone)
                 if (respone.length < 10) {
                     self.isMore = false
                 }
@@ -158,7 +158,8 @@
          */
         __publishDiscuss() {
             let self = this
-            if ('' === self.messageValue) {
+            let messageVlaue = trim(self.messageValue)
+            if ('' === messageVlaue) {
                 return
             }
             let postData = {
@@ -184,7 +185,8 @@
          */
         __replyDiscuss() {
             let self = this
-            if ('' === self.messageValue) {
+            let messageVlaue = trim(self.messageValue)
+            if ('' === messageVlaue) {
                 return
             }
 

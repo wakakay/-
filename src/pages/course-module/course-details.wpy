@@ -192,7 +192,7 @@
                     <button class="main-center cross-center" open-type="share">
                         <text class="icon-share"></text>
                     </button>
-                    <view class="ui-tips">分享赚5即能币<text class="icon-arrow"></text></view>
+                    <view class="ui-tips" wx:if="{{isTips}}">分享赚5即能币<text class="icon-arrow"></text></view>
                 </view>
                 <view class="ui-introduction-board">
                     <view class="cell-text main-justify">
@@ -471,6 +471,7 @@
             shareID: '', // 分享获取即能币奖励的id
             isGifter: false,
             courseDetail: {}, // 课程详情
+            isTips: true,
             countDown: '', // 倒计时事件
             timer: null, // 定时器
             isReceived: false, // 已经领取过了
@@ -492,14 +493,6 @@
                 self.shareSenceID = params.senceID
             }
             initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
-            /*if ('defaultToken' === self.systemInfo.token) {
-                console.log(11, self.systemInfo.token)
-                let storageToken = wx.getStorageSync("token") || 'defaultToken'
-                self.initialize({token: storageToken})
-            } else {
-                console.log(22, self.systemInfo.token)
-                initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
-            }*/
         }
         onShow() {
             let self = this
@@ -583,6 +576,10 @@
                     }
                 }
                 self.isLoaded = true
+                setTimeout(() => {
+                    self.isTips = false
+                    self.$apply()
+                }, 2000)
 
                 if ('receiver' === self.courseDetail.roleType && self.courseDetail.giftCountdown) {
                     self.isReceive = true
@@ -614,8 +611,7 @@
                 }
 
                 // 赠送者→获取普通分享的shareID
-                if ('defaultToken' !== postData.token
-                    && !self.courseDetail.isLimitedTimeGiftCourse) {
+                if ('defaultToken' !== postData.token) {
                     self.__createShareID()
                 }
 
@@ -702,6 +698,7 @@
          */
         __receiveCourseShare() {
             let self = this
+            debugger
             if (!self.paramsInfo.shareID) {
                 return
             }
@@ -955,10 +952,12 @@
             let self = this
             let dataset = event.target && event.target.dataset
 
+            let title = ''
             let path = ''
             let reportType = ''
             //console.log('role:', dataset.role, self.shareID)
             if (dataset && dataset.role) {
+                title = `${self.systemInfo.name} 赠送你一个好课，立即领取`
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
                 if (self.giftID) {
                     let postData = {
@@ -972,6 +971,7 @@
                 reportType = shareDictionary.RECEIVE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
             } else {
+                title = self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&shareID=${self.shareID}`
                 reportType = shareDictionary.SHARE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
@@ -990,7 +990,6 @@
                         shareID: self.shareID
                     }
                     // 保存shareID的信息
-                    console.log('shareID', postData)
                     fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
                 }
             }
@@ -1001,8 +1000,9 @@
                 courseID: self.paramsInfo.id
             })
 
+            console.log('shareCoverTitle', self.courseDetail.shareCoverTitle)
             return {
-                title: self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,
+                title: title,
                 path: path,
                 imageUrl: self.courseDetail.shareCoverImageUrl || self.courseDetail.image || ''
             }

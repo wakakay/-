@@ -141,13 +141,13 @@
         }
     }
     .ui-textarea{
-        box-sizing:border-box;width:100%;padding:0 36rpx 5%;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
-        >text{margin:20rpx 28rpx 0 0;font-size:56rpx;color:@background-gray-cc;}
-        .cell-textarea{width:510rpx;height:auto;padding:24rpx 24rpx;background-color:@background-white;border-radius:@border-radius-20;}
+        box-sizing:border-box;width:100%;height:auto;padding:0 36rpx 5%;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
+        >text{display:block;width:56rpx;margin:20rpx 28rpx 16rpx 0;font-size:56rpx;color:@background-gray-cc;}
+        .cell-textarea{box-sizing:border-box;width:510rpx;padding:18rpx 24rpx;background-color:@background-white;border-radius:@border-radius-20;}
         textarea{width:100%;font-size:30rpx;;color:@color-black;}
         button{
-            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;position:relative;
-            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            width:96rpx;height:96rpx;margin-bottom:16rpx;background:none;text-align:center;position:relative;
+            &::before{content:' ';width:40rpx;height:40rpx;margin-left:-20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;bottom:4rpx;}
             text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
         }
     }

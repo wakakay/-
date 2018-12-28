@@ -171,6 +171,7 @@
             isLoaded: false,
             isEvaluation: false,
             routerDelta: 1,
+            shareID: '',
             paramsInfo: {},
             finishResultInfo: {},
             starList: [1, 2, 3, 4, 5],
@@ -199,6 +200,7 @@
             self.__originalRouter()
             self.__sendFinish()
             self.__sendFinishResults()
+            self.__createShareID()
         }
 
         onShow() {
@@ -207,7 +209,20 @@
                 self.__EvaluationFinish()
             }
         }
+        /**
+         * 获取普通分享ID
+         */
+        __createShareID() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.courseID
+            }
 
+            fetch.createShareID(postData).then((respone) => {
+                self.shareID = respone.shareID
+            })
+        }
         /**
          * 如果是第一次完成微课的，奖励即能币
          * @private
@@ -376,8 +391,18 @@
 
         onShareAppMessage(event) {
             let self = this
-            let path = `/pages/course-module/course-details?id=${self.paramsInfo.courseID}`
+            let path = `/pages/course-module/course-details?id=${self.paramsInfo.courseID}&shareID=${self.shareID}`
             wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
+
+            if (self.shareID) {
+                let postData = {
+                    token: self.systemInfo.token,
+                    courseID: self.paramsInfo.id,
+                    shareID: self.shareID
+                }
+                // 保存shareID的信息
+                fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
+            }
 
             return {
                 title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,

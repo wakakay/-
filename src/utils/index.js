@@ -24,6 +24,14 @@ const PREVIOUS_PRACTICES_ROUTER_MAPPER = {
     textSelectionVer2: '/pages/PreviousPracticeSingleSelection/index'
 }
 
+/**
+ * 清除左右空格
+ * @type {function(*=)}
+ */
+export const trim = ((string) => {
+    return (string || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
+})
+
 export const showErrorPage = () => {
     return wepy.navigateTo({
         url: '/pages/Mistake/index'
@@ -339,7 +347,6 @@ export const redirectToPractice = practiceOffset => {
     getStore().dispatch(setCurrentPracticeOffset(practiceOffset))
     return wepy.redirectTo({ url: mRoute })
 }
-
 
 export const formatTimestamp = timestamp => {
     let day = Math.floor(timestamp / 86400000)

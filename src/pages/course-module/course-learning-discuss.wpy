@@ -120,6 +120,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import {fetch} from '../../api'
+    import {trim} from '../../utils'
     import _ from 'underscore'
 
     const store = getStore()
@@ -174,7 +175,8 @@
 
         __replyDiscuss() {
             let self = this
-            if ('' === self.messageValue) {
+            let messageVlaue = trim(self.messageValue)
+            if ('' === messageVlaue) {
                 return
             }
 
