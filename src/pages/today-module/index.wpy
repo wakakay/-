@@ -1,6 +1,6 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
-    .ui-clear{width:100%;height:70rpx;}
+    .ui-clear{width:100%;height:220rpx;}
     .module-header.ui-today-header{
         .ui-button{width: 200rpx;}
     }
