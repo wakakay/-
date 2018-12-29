@@ -371,10 +371,6 @@
         __replyDiscuss() {
             let self = this
             let messageVlaue = trim(self.messageValue)
-            if ('' === messageVlaue) {
-                return
-            }
-
             let postData = {
                 token: self.token,
                 viewID: self.viewID,
@@ -424,7 +420,10 @@
                     fetch.likeSenceViews(postData).then((respone) => {
                         self.__getReview()
                     }).catch(error => {
-                        throw error
+                        wx.showToast({
+                            icon: 'none',
+                            title: ' 网络错误 '
+                        })
                     })
                 }
             },
@@ -454,7 +453,10 @@
                     self.$apply()
                     self.__getReview()
                 }).catch(error => {
-                    throw error
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 网络错误 '
+                    })
                 })
             },
             /**
@@ -493,6 +495,16 @@
              */
             getConfirm(event) {
                 let self = this
+                let messageVlaue = trim(self.messageValue)
+                if ('' === messageVlaue) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 想法不能为空'
+                    })
+                    self.messageValue = ''
+                    self.$apply()
+                    return
+                }
                 self.isShow = false
                 self.$apply()
                 self.__replyDiscuss()
@@ -596,7 +608,10 @@
                 fetch.courseShareCount(postData).then((respone) => {
                     self.currentCardID = null
                 }).catch(error => {
-
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 网络错误 '
+                    })
                 })
             }
         }
