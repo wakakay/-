@@ -158,10 +158,6 @@
          */
         __publishDiscuss() {
             let self = this
-            let messageVlaue = trim(self.messageValue)
-            if ('' === messageVlaue) {
-                return
-            }
             let postData = {
                 token: self.systemInfo.token,
                 courseID: self.$parent.courseID,
@@ -172,11 +168,18 @@
             fetch.publishSenceViews(postData).then(respone => {
                 self.messageValue = ''
                 self.currentPage = 1
+                self.isMore = true
+                self.discussList = []
                 self.$apply()
                 self.__discussList()
                 self.$emit('on-learning-discuss') // 通知卡片的想法要+1
             }).catch(error => {
-
+                wx.showToast({
+                    icon: 'none',
+                    title: ' 网络错误 '
+                })
+                self.isMore = true
+                self.$apply()
             })
         }
         /**
@@ -185,11 +188,6 @@
          */
         __replyDiscuss() {
             let self = this
-            let messageVlaue = trim(self.messageValue)
-            if ('' === messageVlaue) {
-                return
-            }
-
             let postData = {
                 token: self.systemInfo.token,
                 viewID: self.viewID,
@@ -198,11 +196,19 @@
             fetch.replySenceViews(postData).then(respone => {
                 self.messageValue = ''
                 self.viewID = null
+                self.currentPage = 1
                 self.viewName = ''
+                self.isMore = true
+                self.discussList = []
                 self.$apply()
                 self.__discussList()
             }).catch(error => {
-
+                wx.showToast({
+                    icon: 'none',
+                    title: ' 网络错误 '
+                })
+                self.isMore = true
+                self.$apply()
             })
         }
         methods = {
@@ -269,10 +275,16 @@
              */
             getConfirm(event) {
                 let self = this
-                self.isMore = true
-                self.currentPage = 1
-                self.discussList = []
-                self.$apply()
+                let messageVlaue = trim(self.messageValue)
+                if ('' === messageVlaue) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 写下这一刻的想法…… '
+                    })
+                    self.messageValue = ''
+                    self.$apply()
+                    return
+                }
                 !self.viewID ? self.__publishDiscuss() : self.__replyDiscuss()
             },
             /**

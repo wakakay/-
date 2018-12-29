@@ -175,11 +175,6 @@
 
         __replyDiscuss() {
             let self = this
-            let messageVlaue = trim(self.messageValue)
-            if ('' === messageVlaue) {
-                return
-            }
-
             let postData = {
                 token: self.systemInfo.token,
                 viewID: self.viewID,
@@ -248,6 +243,16 @@
              */
             getConfirm(event) {
                 let self = this
+                let messageVlaue = trim(self.messageValue)
+                if ('' === messageVlaue) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 写下回复的想法…… '
+                    })
+                    self.messageValue = ''
+                    self.$apply()
+                    return
+                }
                 self.__replyDiscuss()
             }
         }
