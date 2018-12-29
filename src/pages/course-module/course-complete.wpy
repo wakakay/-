@@ -405,7 +405,7 @@
             }
 
             return {
-                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习`,
+                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.finishResultInfo.name}》`,
                 path: path,
                 imageUrl: self.finishResultInfo.shareCoverImageUrl || self.finishResultInfo.image || ''
             }
