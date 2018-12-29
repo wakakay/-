@@ -405,10 +405,11 @@
             }
 
             return {
-                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.finishResultInfo.name}》`,
+                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.finishResultInfo.courseName}》`,
                 path: path,
                 imageUrl: self.finishResultInfo.shareCoverImageUrl || self.finishResultInfo.image || ''
             }
         }
     }
 </script>
+/**
