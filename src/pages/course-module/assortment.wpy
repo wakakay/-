@@ -173,11 +173,11 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import {course as courseApi} from '../../api'
+    import {fetch} from '../../api'
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import couseList from '../../components/course-module/course-list'
-    import {navigateToLesson, shareDictionary} from '../../utils'
+    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
     import {share as shareApi} from "../../api";
     import _ from 'underscore'
 
@@ -235,14 +235,14 @@
 
         onShow() {
             let self = this
-            self.init()
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
-        init(AuthorizeData) {
+        initialize(AuthorizeData) {
             let self = this
             let postData = _.extend(self.routeParams, {token: self.systemInfo.token})
 
-            courseApi.getDiscoverPageByCourseSeriesByLinkByDetailNew(postData).then(response => {
+            fetch.getDiscoverPageByCourseSeriesByLinkByDetailNew(postData).then(response => {
                 self.isNewSenceMap = response.isNewSenceMap
                 !_.isEmpty(self.courseInfo) ? self.updateInfo(response, AuthorizeData) :  self.initData(response)
 
@@ -446,7 +446,7 @@
                 let self = this
 
                 if (data.isAuthorize) {
-                    self.init(data)
+                    self.initialize(data)
                     return
                 }
 

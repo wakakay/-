@@ -15,21 +15,20 @@
 
 <script>
     import wepy from 'wepy'
-    import 'wepy-async-function'
     import {store} from './redux/store'
     import {setStore} from 'wepy-redux'
     import {setSceneID, setPath, setQuery} from './redux/models/entrance'
-    import {registered as fetch} from './api'
+    import {fetch} from './api'
     import envConfig from './api/config'
-    import {ROUTERS} from './utils/router-dictionary'
+    import {ROUTERS} from './utils/dictionary'
     import ga from 'wxapp-ga/ga'
 
     const GoogleAnalytics = ga.GoogleAnalytics
     const HitBuilders = ga.HitBuilders
+    const CampaignParams = ga.CampaignParams
     export default class extends wepy.app {
         config = {
             pages: [
-
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -57,13 +56,11 @@
                 'pages/activity-module/appraisal-start', // 测评开始页面
                 'pages/activity-module/appraisal-questions', // 测评试题页面
                 'pages/activity-module/appraisal-results', // 测评结果页面
-                'pages/Largess/index',
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
                 'pages/Review/index',
                 'pages/Sorting/index',
                 'pages/SingleSelection/index',
-                'pages/GiftDetail/index',
                 /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营
@@ -184,6 +181,22 @@
                 tracker.setTrackerServer("https://wx-small.runwise.cn") // 使用自己的合法域名做跟踪数据转发
                 return tracker
             },
+            getShareHuilder(entr, code) {
+                let self = this
+                if (!entr || !code) {
+                    return
+                }
+
+                let data = {
+                    "utm_source" : code,
+                    "utm_medium" : entr
+                }
+                console.log('渠道', data)
+                let campaignUrl = CampaignParams.parseFromPageOptions(data).toUrl()
+                let trackerInfo = self.getTracker()
+                trackerInfo.setCampaignParamsOnNextHit(campaignUrl)
+                trackerInfo.send(new HitBuilders.ScreenViewBuilder().build())
+            },
             getHuilder(category, action, label) {
                 let self = this
                 if ('UA-127840357-1' === envConfig.gaTracker && -1 !== self.staffList.indexOf(self.unionID)){
@@ -231,38 +244,17 @@
             this.use('promisify')
         }
 
-        sleep(s) {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve('promise resolved')
-                }, s * 1000)
-            })
-        }
-
-        async testAsync() {
-            const data = await this.sleep(3)
-        }
-
         onLaunch(option) {
             let self = this
             let {scene: sceneID, path, query} = option
-
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
-
             //
             wx.getStorage({
                 key: 'token',
                 success (res) {
                     self.globalData.token = res.data
-                }
-            })
-            wx.getStorage({
-                key: 'unionID',
-                success (res) {
-                    self.globalData.unionID = res.data
-                    res.data && self.globalData.allOpenIDHash()
                 }
             })
 
@@ -279,8 +271,7 @@
                     content: '新版本已经准备好，是否重启应用？',
                     success(res) {
                         if (res.confirm) {
-                            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-                            updateManager.applyUpdate()
+                            updateManager.applyUpdate() // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
                         }
                     }
                 })

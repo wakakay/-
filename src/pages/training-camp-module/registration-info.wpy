@@ -37,17 +37,9 @@
 <script>
 	import wepy from 'wepy'
     import {getStore,connect} from "wepy-redux"
-    import { doDecrpytPhone, showErrorPage, initializationDeligate } from "../../utils"
-	import {
-		team as teamApi,
-		auth as authApi} from '../../api'
+	import {team as teamApi, auth as authApi} from '../../api'
 	import fetchPhoneMixin from "../../mixins/fetchPhone";
-	import {
-		refreshUserInformations,
-		login,
-		setPhone,
-		renewWechatCode
-	} from '../../redux/models/user'
+	import {setPhone, renewWechatCode} from '../../redux/models/user'
     import header from '../../components/common/header'
 	import AuthorizationModal from '../../components/AuthorizationModal/index'
 	import Loading from "../../components/common/loading"
@@ -61,7 +53,6 @@
 			return state.user.role;
 		},
 		token(state) {
-			// return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
 			return state.user.token;
 		},
 		code(state) {
@@ -79,7 +70,7 @@
             mloading: Loading,
             AuthorizationModal,
             'jn-header': header
-		} // end components
+		}
 
 	 	mixins = [fetchPhoneMixin] // end mixins
 
@@ -94,7 +85,7 @@
 			headerHeigth:0,
 			isClose:false
 
-		} // end data
+		}
 		computed = {
 			// 头部提示语
 			computedTip() {

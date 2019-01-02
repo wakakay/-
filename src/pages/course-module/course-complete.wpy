@@ -38,8 +38,9 @@
     .ui-giving{
         text-align:center;
         .cell-title{font-size:26rpx;color:@color-gray;line-height:36rpx;}
-        .cell-navigator{
-            width:100%;height:100rpx;margin-top:28rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;line-height:100rpx;border-radius:@border-radius-20;
+        button{
+            width:100%;height:100rpx;margin-top:28rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;border-radius:@border-radius-20;
+            text{font-size:50rpx;font-weight:400;margin-right:16rpx;}
         }
     }
 
@@ -105,10 +106,9 @@
                 </view>
 
                 <view class="ui-giving">
-                    <view class="cell-title">你可以将这节课免费赠送给好友，并获得即能币</view>
-                    <navigator class="cell-navigator"
-                               hover-class="cell-hover"
-                               url="/pages/Largess/index?senceID={{paramsInfo.senceID}}" @tap.stop="getGiving">赠送好友</navigator>
+                    <view class="cell-title">每成功邀请一位新好友学习，可得5即能币</view>
+                    <button class="main-center cross-center" hover-class="cell-hover"
+                            open-type="share"><text class="icon-share"></text>邀请好友</button>
                 </view>
             </view>
 
@@ -136,7 +136,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import ScoreModal from '../../components/ScoreModal/index'
-    import {registered as fetch} from '../../api'
+    import {fetch} from '../../api'
     import {navigateToLesson, redirectToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -171,6 +171,7 @@
             isLoaded: false,
             isEvaluation: false,
             routerDelta: 1,
+            shareID: '',
             paramsInfo: {},
             finishResultInfo: {},
             starList: [1, 2, 3, 4, 5],
@@ -199,6 +200,7 @@
             self.__originalRouter()
             self.__sendFinish()
             self.__sendFinishResults()
+            self.__createShareID()
         }
 
         onShow() {
@@ -207,7 +209,20 @@
                 self.__EvaluationFinish()
             }
         }
+        /**
+         * 获取普通分享ID
+         */
+        __createShareID() {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                courseID: self.paramsInfo.courseID
+            }
 
+            fetch.createShareID(postData).then((respone) => {
+                self.shareID = respone.shareID
+            })
+        }
         /**
          * 如果是第一次完成微课的，奖励即能币
          * @private
@@ -344,10 +359,6 @@
                     skillName: self.finishResultInfo.skillName
                 })
             },
-            getGiving() {
-                let self = this
-                wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
-            },
             /**
              * 继续下一课
              */
@@ -377,5 +388,28 @@
                 self.$apply()
             }
         }
+
+        onShareAppMessage(event) {
+            let self = this
+            let path = `/pages/course-module/course-details?id=${self.paramsInfo.courseID}&shareID=${self.shareID}`
+            wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
+
+            if (self.shareID) {
+                let postData = {
+                    token: self.systemInfo.token,
+                    courseID: self.paramsInfo.id,
+                    shareID: self.shareID
+                }
+                // 保存shareID的信息
+                fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
+            }
+
+            return {
+                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.finishResultInfo.courseName}》`,
+                path: path,
+                imageUrl: self.finishResultInfo.shareCoverImageUrl || self.finishResultInfo.image || ''
+            }
+        }
     }
 </script>
+/**

@@ -3,13 +3,11 @@
 </style>
 
 <template>
-    <scroll-view class="module-full-image-box"
-                 scroll-with-animation>
+    <view class="module-full-image-box">
         <image mode="{{!isIpad ? 'widthFix' : 'aspectFit'}}"
                src="{{cardItem && cardItem.bigimage}}"
-               lazy-load
-               wx:if="{{current == cardIndex}}"></image>
-    </scroll-view>
+               lazy-load></image>
+    </view>
 </template>
 
 <script>

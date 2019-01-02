@@ -33,7 +33,7 @@
     import Loading from '../../components/common/loading'
     import {CustomError} from '../../errors'
     import {login} from '../../redux/models/user'
-    import {registered as fetch} from '../../api'
+    import {fetch} from '../../api'
 
     const store = getStore()
     @connect({

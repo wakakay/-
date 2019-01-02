@@ -36,7 +36,6 @@
             return state.entrance
         },
         phone(state) {
-            return '13636641408'
             return state.user.phone
         }
     })

@@ -1,14 +1,7 @@
 import wepy from 'wepy'
 import { getStore, connect } from "wepy-redux"
 import { auth as authApi, course as courseApi, practice as practiceApi } from '../api'
-import {
-    renewWechatCode,
-    setPhone,
-    login,
-    checkLoginStatus,
-    renewUserRole,
-    refreshUserInformations
-} from "../redux/models/user";
+import {renewWechatCode, setPhone, login, checkLoginStatus, renewUserRole, refreshUserInformations} from "../redux/models/user";
 import { refreshActivity } from '../redux/models/activity'
 import { refreshLearnings } from '../redux/models/learning'
 import { setCurrentPracticeOffset, setLastPracticeOffset, setSubmitSection } from "../redux/models/practice"
@@ -30,6 +23,14 @@ const PRACTICES_ROUTER_MAPPER = {
 const PREVIOUS_PRACTICES_ROUTER_MAPPER = {
     textSelectionVer2: '/pages/PreviousPracticeSingleSelection/index'
 }
+
+/**
+ * 清除左右空格
+ * @type {function(*=)}
+ */
+export const trim = ((string) => {
+    return (string || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
+})
 
 export const showErrorPage = () => {
     return wepy.navigateTo({
@@ -347,55 +348,6 @@ export const redirectToPractice = practiceOffset => {
     return wepy.redirectTo({ url: mRoute })
 }
 
-export const refreshPreviousPracticeSubmit = (offset, submitItem) => {
-    let { practices: { submitSections } } = getStore().getState()
-    submitSections[offset] = submitItem
-    getStore().dispatch(setSubmitSection({
-        status: 'success',
-        response: submitSections
-    }))
-}
-
-export const finishPreviousPractice = () => {
-    let { practices: { senceID, submitSections }, user: { token } } = getStore().getState()
-    wx.showLoading({
-        title: '正在提交',
-        mask: true
-    })
-    return practiceApi.sendUserDoExam({ token, json: { examID: senceID, practiceList: submitSections } })
-        .then(() => {
-            wx.hideLoading()
-            wepy.redirectTo({ url: `/pages/activity-module/appraisal-results?examID=${senceID}` })
-        })
-        .then(() => getStore().dispatch(setCurrentPracticeOffset(0)))
-        .then(() => getStore().dispatch(setLastPracticeOffset(-1)))
-        .catch(err => {
-            wx.hideLoading()
-        })
-}
-
-export const redirectToPreviousPractice = practiceOffset => {
-    let { practices: { sections } } = getStore().getState()
-    if (!sections[practiceOffset]) {
-        practiceOffset--
-
-        wx.showModal({
-            title: '测评完成，是否现在提交？',
-            success: function(res) {
-                if (res.confirm) {
-                    finishPreviousPractice()
-                } else if (res.cancel) {
-
-                }
-            }
-        })
-    }
-   
-    getStore().dispatch(setCurrentPracticeOffset(practiceOffset))
-    getStore().dispatch(setLastPracticeOffset(practiceOffset))
-    return //wepy.redirectTo({ url: mRoute })
-}
-
 export const formatTimestamp = timestamp => {
     let day = Math.floor(timestamp / 86400000)
     let hour = Math.floor(timestamp % 86400000 / (3600 * 1000))
@@ -708,7 +660,10 @@ const initialState = {
 }
 
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
-    if (!initializeFunc instanceof Promise) throw 'initializeFunc must be Promise'
+    if (!initializeFunc instanceof Promise) {
+        console.log(42332)
+        throw 'initializeFunc must be Promise'
+    }
     const store = getStore()
     return synchronize(initialState).then(() => {
             if (callWhatever) return initializeFunc() // 如果callWhatever，那么不校验登录状态，直接initialize初始化页面

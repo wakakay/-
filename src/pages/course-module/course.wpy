@@ -330,7 +330,7 @@
     import CourseSeries from '../../components/course-module/course-series'
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {auth as authApi, share as shareApi, registered as fetch} from '../../api'
+    import {auth as authApi, share as shareApi, fetch} from '../../api'
     import {shareDictionary, getStorageAsync} from '../../utils'
     import _ from 'underscore'
 
@@ -659,7 +659,7 @@
         onShareAppMessage(options) {
             return {
                 title: '即能，互联网微学习',
-                path: '/pages/course-module/course',
+                path: '/pages/course-module/course&source=TopAppShare',
                 success(res) {
                     console.log('转发成功')
                     getStorageAsync({key: 'name'}).then(name => {

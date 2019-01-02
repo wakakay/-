@@ -103,6 +103,8 @@
                   placeholder="{{keyboardHeight>0 ? '回复'+discussDetails.nickName+'：' : ''}}"
                   adjust-position="{{false}}"
                   value="{{messageValue}}"
+                  selection-start="{{messageValue.length}}"
+                  selection-end="{{messageValue.length}}"
                   bindfocus="getFocus"
                   bindblur="getBlur"
                   bindinput="getChange"
@@ -117,7 +119,8 @@
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
-    import {registered as fetch} from '../../api'
+    import {fetch} from '../../api'
+    import {trim} from '../../utils'
     import _ from 'underscore'
 
     const store = getStore()
@@ -172,10 +175,6 @@
 
         __replyDiscuss() {
             let self = this
-            if ('' === self.messageValue) {
-                return
-            }
-
             let postData = {
                 token: self.systemInfo.token,
                 viewID: self.viewID,
@@ -244,6 +243,16 @@
              */
             getConfirm(event) {
                 let self = this
+                let messageVlaue = trim(self.messageValue)
+                if ('' === messageVlaue) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 写下回复的想法…… '
+                    })
+                    self.messageValue = ''
+                    self.$apply()
+                    return
+                }
                 self.__replyDiscuss()
             }
         }

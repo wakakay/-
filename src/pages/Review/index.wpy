@@ -17,7 +17,7 @@
         }
         .cell-btn{width: 220rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;color:@color-blue;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700}
     }
-    .ui-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
+    .cell-poin-title{font-size: 44rpx;color:@color-black;margin: 36rpx 30rpx;font-weight: 700;}
     .ui-swiper-box{
         margin-bottom: 20rpx;
         .ui-swiper-list{
@@ -32,7 +32,6 @@
                         text{font-size: 50rpx;}
                     }
                     .ui-share.ui-dack {color:@color-white;}
-
                 }
                 
             }
@@ -42,6 +41,80 @@
         width: 670rpx;height: 894rpx;border-radius: @border-radius-32;border:2rpx solid @border-gray;margin: 0 auto 172rpx;color:@color-gray;display: flex;flex-direction: column;align-items: center;justify-content: center;font-size:34rpx;
         text{color: @color-gray-c7;font-size: 110rpx;margin-bottom: 50rpx;}
     }
+    .ui-idea{
+        margin-top:66rpx;padding:0 30rpx 216rpx;
+        .cell-headline{font-size: 44rpx;font-weight: bold;border-top:2rpx solid @border-gray;padding: 36rpx 0 20rpx;}
+        .ui-item{
+            margin-top:36rpx;border-bottom:2rpx solid @border-gray;padding-bottom:36rpx;
+            .ui-user{
+                display: flex;height: 78rpx;align-items: center;margin-bottom:12rpx;
+                .ui-name{
+                    display: flex;flex:1;align-items: center;
+                    .ui-avatar image{height: 78rpx;width: 78rpx;border-radius: 50%;}
+                    .cell-name{font-size: 32rpx;color: @color-gray;margin-left: 16rpx;width: 100%;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                }
+                .cell-del{font-size: 28rpx;color: @color-blue;width: 80rpx;}
+            }
+            .ui-my-comment{
+                .ui-course image{width: 128rpx;height: 128rpx;}
+                .cell-title{display: flex;flex: 1;font-size: 34rpx;line-height: 50rpx;margin-right: 28rpx}
+            }
+            .ui-tips{
+                font-size: 24rpx;color: @color-gray;margin-top:44rpx;height: 40rpx;
+                .ui-num{
+                    display: flex;
+                    view{
+                        margin-left:48rpx;height:40rpx;display:flex;align-items:center;
+                        text{margin-right: 12rpx;}
+                        .cell-selected{color: @color-blue}
+                    }
+                }
+            }
+            .ui-other-comment{margin-top: 12rpx;padding:20rpx 12rpx;background: @background-gray-F4;position: relative;
+                .ui-tri-box{position: absolute;width:0;height:0;border-width:0 20rpx 20rpx;border-style:solid;border-color:transparent transparent @background-gray-F4;top: -10rpx;left: 10rpx;}
+                .ui-praise{color: @color-gray;font-size: 32rpx;}
+                .ui-comment-box{
+                    margin-top:20rpx;
+                    .ui-comment-item{
+                        display: flex;font-size: 30rpx;margin-bottom:12rpx;
+                        .cell-content{display: flex;flex: 1;}
+                        .cell-name{color: @color-gray;max-width: 220rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                    }
+                }
+                
+            }
+        }
+        .ui-empty-view{
+            padding-top:160rpx;box-sizing: border-box;text-align:center;
+            text{color: @background-gray-cc;font-size: 120rpx;}
+            view{margin-top: 50rpx;font-size:34rpx;color:@color-gray;}
+        }
+    }
+    .ui-textarea{
+        box-sizing:border-box;width:100%;padding:0 36rpx 5%;position:fixed;left:0;bottom:0;z-index:@z-index-highest;transition:all .5;
+        >text{margin:20rpx 28rpx 0 0;font-size:56rpx;color:@background-gray-cc;}
+        .cell-textarea{width:510rpx;height:auto;padding:24rpx 24rpx;background-color:@background-white;border-radius:@border-radius-20;}
+        textarea{width:100%;font-size:30rpx;;color:@color-black;}
+        button{
+            width:96rpx;height:96rpx;background:none;text-align:center;line-height:96rpx;position:relative;
+            &::before{content:' ';width:40rpx;height:40rpx;margin:-20rpx 0 0 -20rpx;background-color:@background-white;border-radius:50%;position:absolute;left:50%;top:50%;}
+            text{font-size:56rpx;color:@color-blue;position:relative;z-index:@z-index-normal;}
+        }
+    }
+    .ui-del-confirm{
+        display:flex;align-items:center;justify-content:center;position: fixed;left: 0;right: 0;top: 0;bottom: 0;background: @background-mask-slightly;
+        .ui-del{
+            width: 560rpx;height: 290rpx;border-radius: @border-radius-32;background: @background-white;font-size: 34rpx;font-weight: bold;
+            .cell-content{height: 190rpx;text-align: center;line-height: 190rpx;}
+            .ui-btn{display: flex;color:@color-blue;
+                view{
+                    width: 50%;box-sizing: border-box;text-align: center;line-height: 100rpx;height: 100rpx;border-top: 2rpx solid #E5E5E5;
+                    &:first-of-type{border-right: 2rpx solid #E5E5E5;font-weight: normal;}
+                }
+            }
+        }
+    }
+   
 }
 
 </style>
@@ -62,7 +135,7 @@
                 </view>
                 <view class="cell-btn" @tap.stop="handleStudyAgain">再学一次</view>
             </view>
-            <view class="ui-title">重点卡</view>
+            <view class="cell-poin-title">重点卡</view>
             <view class="ui-empty-list" wx:if="{{hasPointCard && hashBigImage}}">
                 <text class="icon-empty-list"></text>
                 <view>你还没有标为重点的卡片哦</view>
@@ -85,24 +158,118 @@
                     </repeat>
                 </swiper>
             </view>
+            <view class="ui-idea">
+                <view class="cell-headline">我的想法</view>
+                <repeat wx:if="{{viewsList.length}}" for="{{viewsList}}" key="index" index="index" item="item">
+                    <view class="ui-item">
+                        <view class="ui-user">
+                            <view class="ui-name">
+                                <view class="ui-avatar">
+                                    <image src="{{avatar}}"/>
+                                </view>
+                                <view class="cell-name">{{userName}}</view>
+                            </view>
+                            <view class="cell-del"  @tap.stop="getShowDel" data-id="{{item.viewID}}">删除</view>
+                        </view>
+                        <view class="ui-my-comment flex">
+                            <view class="cell-title">{{item.content}}</view>
+                            <view class="ui-course" @tap.stop="getStudyLesson" data-item="{{item}}">
+                                <image mode="widthFix" src="{{item.bigImage}}"/>
+                            </view>
+                        </view>
+                        <view class="ui-tips main-justify">
+                            <view>{{item.createTime}}</view>
+                            <view class="ui-num">
+                                <view @tap.stop="getLikeReview" data-item="{{item}}">
+                                    <text class="icon-praise {{item.isLiked ? 'cell-selected' : ''}}"></text>
+                                    {{item.likeCount != 0 ? item.likeCount : ''}}
+                                </view>
+                                <view  @tap.stop="getReply" data-item="{{item}}">
+                                    <text class="icon-comment1 {{item.isReplied ? 'cell-selected' : ''}}"></text>
+                                    {{item.replyCount != 0 ? item.replyCount : ''}}
+                                </view>
+                            </view>
+                        </view>
+                        <view class="ui-other-comment" wx:if="{{item.likeList.length || item.replyList.length}}">
+                            <view class="ui-tri-box"><view></view></view>
+                            <view class="ui-praise" wx:if="{{item.likeList.length}}">
+                                <text class="icon-praise"></text>
+                                <repeat for="{{item.likeList}}" key="indexSupport" index="indexSupport" item="itemSupport">
+                                    {{itemSupport}}<text wx:if="{{indexSupport != item.likeList.length-1}}">，</text>
+                                </repeat>
+                            </view>
+                            <view class="ui-comment-box" wx:if="{{item.replyList.length}}">
+                                <repeat for="{{item.replyList}}" key="indexComment" index="indexComment" item="itemComment">
+                                    <view class="ui-comment-item">
+                                        <view class="cell-name">{{itemComment.nickName}}</view>：
+                                        <view class="cell-content">{{itemComment.content}}</view>
+                                    </view>
+                                </repeat>
+                            </view>
+                            
+                        </view>
+                    </view>
+                    
+                </repeat>
+                <view  wx:if="{{!viewsList.length}}" class="ui-empty-view">
+                    <text class="icon-empty-review-list"></text>
+                    <view>你还没有发表过想法哦</view>
+                </view>
+            </view>
+             <view class="ui-textarea flex"
+                style="background:{{keyboardHeight>0 ? '#fff' : ''}};bottom:{{keyboardHeight}}px;"
+                wx:if="{{isShow}}">
+                <text class="icon-close flex-box-0"
+                    @tap.stop="getHideStatus"></text>
+                <view class="cell-textarea">
+                    <textarea auto-height
+                            maxlength="200"
+                            placeholder="{{'回复'+ userName}}"
+                            adjust-position="{{false}}"
+                            show-confirm-bar="{{false}}"
+                            value="{{messageValue}}"
+                            selection-start="{{messageValue.length}}"
+                            selection-end="{{messageValue.length}}"
+                            focus="{{isFocus}}"
+                            bindfocus="getFocus"
+                            bindblur="getBlur"
+                            bindinput="getChange"
+                            bindconfirm="getConfirm"></textarea>
+                </view>
+                <button @tap.stop="getConfirm" wx:if="{{messageValue.length}}"><text class="icon-send"></text></button>
+            </view>
+            <view class="ui-del-confirm" wx:if="{{isShowDel}}" @tap.stop="getCancelDel">
+                <view class="ui-del">
+                    <view class="cell-content">确认删除想法吗？</view>
+                    <view class="ui-btn">
+                        <view @tap.stop="getCancelDel">取消</view>
+                        <view @tap.stop="getDelReview">确定</view>
+                    </view>
+                </view>
+            </view>
         </view>
+        
     </view>
     <jn-share-card></jn-share-card>
 </template>
 
 <script>
     import wepy from "wepy";
-    import {course as courseApi, share as shareApi, registered as fetch} from "../../api";
+    import {share as shareApi, fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
     import shareCard from '../../components/shareImages/share-card'
-    import {navigateToLesson} from "../../utils";
+    import {navigateToLesson,trim} from "../../utils";
     import _ from 'underscore'
 
+
     @connect({
+        avatar(state) {
+            return state.user.avatar
+        },
         token(state) {
-            // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1543389834116-48b370fe62417e2fae437c0e5453b45c'
+            // return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
             return state.user.token
         },
         userName(state) {
@@ -136,7 +303,15 @@
             hashBigImage: false,
             pointCardList: [],
             isNewSenceMap: {}, // 进入微课的新老界面判断
-            currentCard:0
+            currentCard:0,
+            isShow:false,
+            isFocus:false,
+            isShowDel:false,
+            reviewName:'',
+            messageValue:'',
+            viewsList:[],
+            viewID:null,
+            keyboardHeight: -240,
         }
 
         onLoad(data) {
@@ -150,9 +325,9 @@
             self.initialize()
         }
 
-        initialize() {
+        __getReview() {
             let self = this;
-            courseApi.getReview({
+            fetch.getReview({
                 token: self.token, 
                 courseID:self.courseID, 
                 senceID:self.senceID})
@@ -160,7 +335,7 @@
                 self.isLoaded = true
                 self.isNewSenceMap = res.isNewSenceMap
                 self.senceName = res.senceName
-
+                self.viewsList = res.viewsList
                 let tempList = res.pointCardList
                 tempList = _.each(tempList, (item)=>{
                     if(item.content){
@@ -184,22 +359,180 @@
                 self.imageUrl = res.imageUrl
                 self.description = res.description
                 self.$apply()
-
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
-                wx.reportAnalytics('review', {
-                    role: self.role,
-                    nickname: self.userName,
-                    coursename: self.senceName,
-                    sencename: self.title,
-                    channel: self.entrance.mappers[self.entrance.scenceID]
-                })
             })
             .catch(error => {
                 console.log('get review error', error)
             })
         }
+        /**
+         * 回复想法
+         * @private
+         */
+        __replyDiscuss() {
+            let self = this
+            let messageVlaue = trim(self.messageValue)
+            let postData = {
+                token: self.token,
+                viewID: self.viewID,
+                content: self.messageValue
+            }
+            fetch.replySenceViews(postData).then(respone => {
+                self.messageValue = ''
+                self.viewID = null
+                self.viewName = ''
+                self.$apply()
+                self.__getReview();
+            }).catch(error => {
+
+            })
+        }
+
+        initialize() {
+            let self = this;
+            self.__getReview();
+            wepy.$instance.globalData.getLoadHuilder({pageTheme: self.senceName}) // ga统计
+            wx.reportAnalytics('review', {
+                role: self.role,
+                nickname: self.userName,
+                coursename: self.senceName,
+                sencename: self.title,
+                channel: self.entrance.mappers[self.entrance.scenceID]
+            })
+        }
 
         methods = {
+            //点赞 / 取消点赞
+            getLikeReview(event){
+                let self = this;
+                let {currentTarget: {dataset: {item}}} = event
+                let isLiked = item.isLiked
+                let postData = {
+                    token: self.token,
+                    viewID : item.viewID
+                }
+                if(isLiked) {
+                   fetch.dislikeSenceViews(postData).then((respone) => {
+                        self.__getReview()
+                    }).catch(error => {
+                        throw error
+                    }) 
+                }else{
+                    fetch.likeSenceViews(postData).then((respone) => {
+                        self.__getReview()
+                    }).catch(error => {
+                        wx.showToast({
+                            icon: 'none',
+                            title: ' 网络错误 '
+                        })
+                    })
+                }
+            },
+            // 弹出 confirm 删除想法
+            getShowDel(event) {
+                let self = this;
+                let {currentTarget: {dataset: {id}}} = event
+                self.viewID = id;
+                self.isShowDel = true; 
+                self.$apply()
+            },
+            // 取消弹出 confirm 删除想法
+            getCancelDel(){
+                let self = this;
+                self.isShowDel = false;
+                self.$apply()
+            },
+            // 确认删除想法
+            getDelReview(){
+                let self = this;
+                let postData = {
+                    token: self.token,
+                    viewID : self.viewID
+                }
+                fetch.deleteSenceViews(postData).then((respone) => {
+                    self.isShowDel = false; 
+                    self.$apply()
+                    self.__getReview()
+                }).catch(error => {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 网络错误 '
+                    })
+                })
+            },
+            /**
+             * testarea聚焦，定位键盘位置
+             * @param event
+             */
+            getFocus(event) {
+                let self = this
+                let {detail: {value, height}} = event
+                self.keyboardHeight = height - 15
+                self.$apply()
+            },
+            /**
+             * 失去焦点，还原高度
+             * @param event
+             */
+            getBlur(event) {
+                let self = this
+                self.keyboardHeight = -240
+                self.isFocus = false
+                self.viewID = null
+                self.$apply()
+            },
+            /**
+             * testarea文本内容改变
+             * @param event
+             */
+            getChange(event) {
+                let self = this
+                let {detail: {value}} = event
+                self.messageValue = value
+            },
+            /**
+             * 提交想法
+             * @param event
+             */
+            getConfirm(event) {
+                let self = this
+                let messageVlaue = trim(self.messageValue)
+                if ('' === messageVlaue) {
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 想法不能为空'
+                    })
+                    self.messageValue = ''
+                    self.$apply()
+                    return
+                }
+                self.isShow = false
+                self.$apply()
+                self.__replyDiscuss()
+            },
+             /**
+             * 是否展示想法模板
+             * @param event
+             */
+            getHideStatus(event) {
+                let self = this
+                let {currentTarget: {dataset: {type}}} = event
+                self.isFocus = false
+                self.isShow  = false
+                self.$apply()
+            },
+            /**
+             * 回复一个想法
+             * @param event
+             */
+            getReply(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                self.viewID = item.viewID
+                self.reviewName = item.nickName
+                self.isShow  = true
+                self.isFocus = true
+                self.$apply()
+            },
             // swiper改变触发
             getChangCard(evt){
                 let self = this;
@@ -214,10 +547,12 @@
             getStudyLesson(event) {
                 let self = this;
                 let {currentTarget: {dataset: {item}}} = event
-                let senceName = item.name
+
+                if(item.viewID && item.xuhao>0) {
+                    item.xuhao = item.xuhao + 1
+                }
                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
                 let isNewSence = self.isNewSenceMap[self.senceID]
-
                 navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
             },
             /**
@@ -273,12 +608,13 @@
                 fetch.courseShareCount(postData).then((respone) => {
                     self.currentCardID = null
                 }).catch(error => {
-
+                    wx.showToast({
+                        icon: 'none',
+                        title: ' 网络错误 '
+                    })
                 })
             }
         }
 
     }
 </script>
-
-

@@ -30,7 +30,7 @@
 <script>
     import wepy from "wepy";
     import {getStore, connect} from "wepy-redux";
-    import {auth as authApi, registered as fetchRegistered,report as reportApi} from "../../api";
+    import {auth as authApi, fetch, report as reportApi} from "../../api";
     import fetchPhoneMixin from "../../mixins/fetchPhone";
     import {setPhone, renewWechatCode} from '../../redux/models/user'
     import header from '../../components/common/header'
@@ -183,7 +183,7 @@
                 token: self.token,
                 mobile: self.phoneNumber
             }
-            fetchRegistered.setVerCode(postData).then((respone) => {
+            fetch.setVerCode(postData).then((respone) => {
                 let message = respone.data.message || '验证码已发送'
                 wx.showToast({
                     icon: 'none',

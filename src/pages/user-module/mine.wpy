@@ -113,22 +113,10 @@
 
 <script>
     import wepy from "wepy";
-    import {
-        NetworkError
-    } from "../../errors";
-    import {
-        getStore,
-        connect
-    } from "wepy-redux";
-    import {
-        course as courseApi,
-        payment as paymentApi,
-        contact as contactApi,
-        registered as fetchRegistered
-    } from "../../api";
-    import {
-        showErrorPage
-    } from "../../utils";
+    import {NetworkError} from "../../errors";
+    import {getStore, connect} from "wepy-redux";
+    import {fetch} from "../../api";
+    import {showErrorPage} from "../../utils";
     import PushMixin from '../../mixins/push'
     import loadingMixin from "../../mixins/loading";
     import Loading from '../../components/common/loading';
@@ -228,23 +216,6 @@
                     url: "/pages/user-module/score-detail"
                 });
             },
-            handleClearStorage(event) {
-                wx.clearStorage()
-            },
-            handleMyTeamLearn() {
-                wepy.navigateTo({
-                    url: "/pages/MyTeamLearning/index"
-                });
-            },
-            handleTapGiftRecord() {
-                return this.$navigate('/pages/GiftDetail/index', {type: 'mine'})
-                this.$navigate('/pages/GiftRecord/index')
-            }, // handleTapGiftRecord
-            handleTapHasBuy() {
-                wepy.navigateTo({
-                    url: "/pages/BuyRecord/index"
-                });
-            },
             handleApply() {
                 wepy.navigateTo({
                     url: "/pages/user-module/apply-for-test"
@@ -313,17 +284,7 @@
 
         onShow() {
             // 通知组件，生成图片预览
-            this.$broadcast('studying-bar')
-            courseApi
-                .getMyCenterNew({
-                    token: this.token
-                })
-                .then(data => {
-                    // this.mySkillGroup = data.myLabel.filter(item => null!==item&&''!==item);
-                    // this.giftCount = data.giftCount;
-                    // this.isShowClearButton = data.isShowClearButton
-                    // this.skillSet = data.skillSet
-                    // this.skillGroupList = data.skillGroupList
+            fetch.getMyCenterNew({token: this.token}).then(data => {
                     this.testUserCount = data.testUserCount
                     this.payCount = data.payCount
                     this.couponCount = data.couponCount
@@ -360,7 +321,7 @@
             let postData = {
                 token: self.token
             }
-            fetchRegistered.userInfo(postData).then((respone) => {
+            fetch.userInfo(postData).then((respone) => {
                 self.isShowGift = !respone.hasGift
                 self.$apply()
             }).catch(error => {

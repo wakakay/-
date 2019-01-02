@@ -1,371 +1,159 @@
 import wepy from 'wepy'
 import config from './config'
-import { InnerError, NetworkError, UnAuthenticationError } from '../errors'
+import {NetworkError, UnAuthenticationError} from '../errors'
+import {fetch} from './fetch-utils'
 
-export const getCourseList = ({ token }) => {
-        if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-        return wepy.request({
-                url: `${config.baseUrl}courseV2/getMyCourseList?token=${token}`,
-                method: 'POST'
-            })
-            .then(({ data: { data, status, message } }) => {
-                if (200 !== status) throw new NetworkError(message)
-                return data
-            })
-    } // end getCourseList
+export default {
+    /*--------------------课后练习-----------------------*/
+    /**
+     * 评论列表数据
+     * @param  senceID: String 微课id
+     * @param  practiceCardID: String 卡片id
+     */
+    discussList(params) {
+        return fetch({method: 'post', url: 'reviewTestPost/v1/postList', params: params})
+    },
+    /**
+     * 评论列表点赞
+     * @param postID: String 想法id,
+     * @param clickType: String {'cancelLike': 取消, 'like': 点赞}
+     */
+    discussLink(params) {
+        return fetch({method: 'post', url: 'reviewTestPost/v1/postLike', params: params})
+    },
+    /**
+     * 发送评论
+     * @param senceID: Sting 微课id
+     * @param practiceCardID: String 卡片id
+     * @param content: String 留言的内容，最多200字符
+     */
+    discussLeaveMessage(params) {
+        return fetch({method: 'post', url: 'reviewTestPost/v1/post', params: params})
+    },
+    /*--------------------微课完成-----------------------*/
+    /**
+     * 第一次完成微课的，奖励即能币
+     * @param courseID: String 课程id
+     * @param senceID: String 微课id
+     * @param requestFlag: Number
+     * @param teamID: String 训练营id
+     */
+    sendFinish(params) {
+        return fetch({method: 'post', url: 'course/sendFinish', params: params})
+    },
+    /**
+     * 完成微课的信息
+     * @param courseID: String 课程id
+     * @param senceID: String 微课id
+     * @param requestFlag: Number
+     * @param teamID: String 训练营id
+     */
+    sendFinishResults(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceFinishInitPage', params: params})
+    },
 
-export const getMVP5Courses = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            // url: `${config.baseUrl}MVP5/homePage2?token=${token}`,
-            url: `${config.baseUrl}MVP5/homePageByEditor?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
-            return data
-        })
-}
-
-export const getDisvoeryCourses = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}discover/getDiscoverPage?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
-            return data
-        })
-}
-
-export const getMyCardList = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}course/getMyCourseList?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const getReview = ({ token, courseID, senceID, teamID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}MVP3/getReview?token=${token}&courseID=${courseID}&senceID=${senceID}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, message, success } }) => {
-            if (1 !== success) throw new NetworkError(message)
-            return data
-        })
-        
-}
-
-export const sendFinish = ({ token, senceID, courseID, requestFlag, teamID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}course/sendFinish?token=${token}&courseID=${courseID}&senceID=${senceID}&requestFlag=${requestFlag}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
-            return data
-        })
-}
-
-export const sendFeedback = ({ token, senceID: senceid, star, teamID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}course/sendFeedback?token=${token}`,
-            data: { senceid, star, teamID },
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
-            return true
-        })
-}
-
-export const getMyCenter = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP3/getMyCenter?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getMyCenterNew = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}userCenter/userCenterInitPage?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getMyPayCourse = ({ token }) => {
-        if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-        return wepy.request({
-            url: `${config.baseUrl}MVP3/getMyPayCourse?token=${token}`,
-            method: 'POST'
-        }).then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new NetworkError(message)
-            return data
-        })
-    } ///api/MVP3/getMyLearnCourse
-
-
-export const getMyLearnCourse = ({ token, skill }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP3/getMyLearnCourse?token=${token}&skill=${skill}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const addTestUser = ({ token, otherLink: otherLink }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP3/addTester?token=${token}&otherLink=${otherLink}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return true
-    })
-}
-
-export const getTestUserDetail = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}userCenter/initSendTestPage?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const exchangeCourse = ({ token, courseID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP3/payByCoupon?token=${token}&courseID=${courseID}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return true
-    })
-}
-
-export const getAllLesson = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP5/getAllLessonByPay?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getMyLesson = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP5/myLearning?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getCourseDetail = ({ token, courseID, source, wxPushType }) => {
-    // if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP5/getCourseDetail?token=${token}&courseID=${courseID}&source=${source || wxPushType}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getSelectCourseByID = ({ token, courseID, wxPushType }) => {
-    // if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}MVP5/getSelectCourseByID2?token=${token}&courseID=${courseID}&source=${wxPushType}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-
-
-export const getGiftDetail = ({ token, courseID }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}gift/getGiftDetailByOnlyBonus?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-
-export const sendCourseUserEvent = ({ token, courseID, senceID }) => {
-    let mUrl = `${config.baseUrl}report/sendCourseUserEvent?token=${token}&courseID=${courseID}`
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    if (senceID) mUrl += `&senceID=${senceID}`
-    return wepy.request({
-        url: mUrl,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const sendCoursePageTime = ({ token, courseID, pageTime }) => {
-    // if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}report/sendCoursePageTime?token=${token}&courseID=${courseID}&pageTime=${pageTime}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-export const getDiscoverSeries = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}discover/getDiscoverPageByCourseSeries?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-//为你推荐  /api/discover/v1/getAnotherRecommendCourse
-export const getAnotherRecommendCourse = ({ token }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}discover/v1/getAnotherRecommendCourse?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getCourseIndex = ({ token }) => {
-    //if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}discover/getDiscoverPageByCourseSeriesByLink?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new NetworkError(message)
-        return data
-    })
-}
-
-export const getDiscoverPageByCourseSeriesByLinkByDetail = ({ token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}discover/getDiscoverPageByCourseSeriesByLinkByDetail?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const getDiscoverPageByCourseSeriesByLinkByDetailNew = ({ courseSeriesID, token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}discover/v1/getDiscoverPageByCourseSeriesByLinkByDetailNew?token=${token}&courseSeriesID=${courseSeriesID}`,
-        method: 'POST'
-    })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const getMyLearningPage = ({ token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}myLearning/getMyLearningPage?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-
-export const getSeriesTabByCourseListBySeriesID = ({ token, seriesID }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}myLearning/getSeriesTabByCourseListBySeriesID?token=${token}&seriesID=${seriesID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const getMyLearningPageBySkill = ({ token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}/myLearning/getMyLearningPageBySkill?token=${token}`,
-            method: 'POST'
-        }).then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const getMyLearningSenceList = ({ token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}/myLearning/v1/getMyLearningSenceList?token=${token}`,
-        method: 'POST'
-    }).then(({ data: { data, status, message } }) => {
-        if (200 !== status) throw new Error(message)
-        return data
-    })
-}
-
-export const getMyLearningPageBySkillgetDetail = ({ token }) => {
-    if (null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}/myLearning/getMyLearningPageBySkillgetDetail?token=${token}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
+    /*--------------------微课-----------------------*/
+    // 课程页
+    coursePageList(parmas) {
+        return fetch({method: 'post', url: 'discover/v1/getDiscoverPageByCourseSeriesByLink', params: parmas})
+    },
+    // 课程详情
+    courseDetail(params) {
+        return fetch({method: 'post', url: 'MVP5/getCourseDetail', params: params})
+    },
+    // 赠送者→生成赠一得一
+    createGiftID(params) {
+        return fetch({method: 'post', url: 'gift/getGiftID', params: params})
+    },
+    // 受赠者→接受赠一得一
+    receiveCourseGift(params) {
+        return fetch({method: 'post', url: 'gift/receiveCourseGift', params: params, isUnFilter: true})
+    },
+    // 受赠者→保存giftID的接口
+    saveGiftID(params) {
+        return fetch({method: 'post', url: 'gift/saveGiftId', params: params, isUnFilter: true})
+    },
+    /**
+     * 赠送者→创建一个普通分享的id
+     * @param courseID String 课程ID
+     * @param shareID String 分享ID
+     */
+    createShareID(params) {
+        return fetch({method: 'post', url: 'gift/getShareID', params: params})
+    },
+    /**
+     * 受赠者→接受一个普通分享
+     * @param courseID String 课程ID
+     */
+    saveShareID(params) {
+        return fetch({method: 'post', url: 'gift/saveShareID', params: params, isUnFilter: true})
+    },
+    /**
+     * 受赠者→发起送即能币
+     * @param courseID String 课程ID
+     * @param shareID String 分享ID
+     */
+    receiveCourseShare(params) {
+        return fetch({method: 'post', url: 'gift/receiveCourseShare', params: params, isUnFilter: true})
+    },
+    // 课程详情
+    courseShareCount(params) {
+        return fetch({method: 'post', url: 'sence/senceShareRecord', params: params, isVisitor: true})
+    },
+    // 微课信息
+    courseLearning(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceCardListByGoPracticeLinkByNeedPayToTry', params: params})
+    },
+    // 重点卡
+    collectionRecord(params) {
+        return fetch({method: 'post', url: 'sence/cardCollectionRecord', params: params})
+    },
+    // 想法详情
+    viewsDetails(params) {
+        return fetch({method: 'post', url: 'senceViews/viewsDetails', params: params})
+    },
+    // 想法列表
+    senceViewList(params) {
+        return fetch({method: 'post', url: 'senceViews/senceViews', params: params})
+    },
+    // 发表一个想法
+    publishSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/saveSenceViews', params: params})
+    },
+    // 回复一个想法
+    replySenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/replySenceViews', params: params})
+    },
+    /**
+     * 微课想法→对一个想法的点赞
+     * @param viewID String 想法ID
+     */
+    likeSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/likeSenceViews', params: params, isUnFilter: true})
+    },
+    /**
+     * 微课想法→取消对一个想法的点赞
+     * @param viewID String 想法ID
+     */
+    dislikeSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/dislikeSenceViews', params: params, isUnFilter: true})
+    },
+    // 删除一个想法
+    deleteSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/deleteSenceViews', params: params})
+    },
+    /**
+     * 微课想法→课程回顾页删除想法
+     * @param viewID String 想法ID
+     */
+    deleteSenceViews(params) {
+        return fetch({method: 'post', url: 'senceViews/deleteSenceViews', params: params})
+    },
+    /**
+     * 课程回顾页
+     * @param params
+     */
+    getReview(params) {
+        return fetch({method: 'post', url: 'MVP3/getReview', params: params})
+    }
 }

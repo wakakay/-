@@ -5,18 +5,18 @@
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
                 <view class="ui-first"  wx:if="{{item.type == 'image' && index == 0}}">
-                    <view id="ui-id">
+                    <view class="flex">
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
-                    <view class="ui-img-type" wx:if="{{item.type == 'image' && index !== 0}}" >
+                <view class="ui-img-type flex" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'image' && index !== 0}}" >
                     <image mode="widthFix" src="{{item.img}}" />
                 </view>
-                <view class="ui-doc" wx:if="{{item.type == 'text'}}">
+                <view class="ui-doc" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'text'}}">
                     <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
                     <text class="cell-content" wx:if="{{item.content}}">{{item.content}}</text>
                 </view>
-                <view class="ui-lesson" wx:if="{{item.type == 'sence'}}">
+                <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'sence'}}">
                     <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <button class="ui-item"  
                                 open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
@@ -37,7 +37,7 @@
                     </repeat>
                     
                 </view>
-                <view class="ui-course" wx:if="{{item.type == 'course'}}">
+                <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'course'}}">
                     <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <button class="ui-item"  
                                 @tap.stop="getCourseDetail"  
@@ -60,7 +60,7 @@
                     </repeat>
                     
                 </view>
-                <view class="ui-poll" wx:if="{{item.type === 'poll'}}">
+                <view class="ui-poll" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
 
                     <button class="cell-poll-btn"
@@ -71,7 +71,7 @@
                             bindgetuserinfo="getAuthorize"
                             @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
                 </view>
-                <view class="cell-border" wx:if="{{item.type === 'border'}}"></view>
+                <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'border'}}"></view>
             </repeat>
             <view class="ui-bottom">
                 <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
@@ -144,8 +144,8 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-    import {showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
-    import {course as courseApi, auth as authApi, share as shareApi, registered as fetch} from "../../api"
+    import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
+    import {auth as authApi, share as shareApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
     import {getStore, connect} from "wepy-redux"
     import {renewWechatCode, login} from "../../redux/models/user"
@@ -224,13 +224,17 @@
         onPageScroll(res) {
             let self = this
             let scrollTop = res.scrollTop
-            self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            var query = wx.createSelectorQuery()
+            query.select('#ui-id').boundingClientRect(function (response) {
+                self.backgroundHeight = response.top
+            }).exec()
+            self.headerBackground =  self.backgroundHeight < 0 ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
         }
         
         onShow() {
             let self = this
-            self.initialize()
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
         onUnload() {
@@ -251,7 +255,7 @@
                 pageTime: time,
                 courseID: self.courseID
             }
-            courseApi.sendCoursePageTime(postData).then(response => {
+            fetch.sendCoursePageTime(postData).then(response => {
                 console.log('sendCoursePageTime report success! ' + time)
             })
         }
@@ -265,13 +269,7 @@
             }
 
             fetch.getNewSpecialCourse(postData).then((res) => {
-                wx.createSelectorQuery().select('#ui-id').boundingClientRect((rect) => {
-                    if (rect) {
-                        self.backgroundHeight = rect.height - 50
-                    } else {
-                        self.backgroundHeight = 430
-                    }
-                }).exec()
+                
                 self.isNewSenceMap = res.isNewSenceMap;
                 self.isNewCourseMap = res.isNewCourseMap;
                 self.floatBox = res.floatBox
@@ -473,8 +471,7 @@
         .ui-course-content{
             width:100%;
             .ui-first{
-                height: 952rpx;
-                image{width: 100%;height: 952rpx;}
+                image{width: 100%;}
             }
             .ui-img-type{
                 image{width: 100%;}

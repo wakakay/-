@@ -104,7 +104,7 @@
 
 <script>
     import wepy from "wepy";
-    import {registered as fetch, report as reportApi} from "../../api"
+    import {fetch, report as reportApi} from "../../api"
     import {getStore, connect} from "wepy-redux"
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'

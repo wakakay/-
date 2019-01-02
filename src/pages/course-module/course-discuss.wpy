@@ -105,7 +105,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import {registered as fetch} from '../../api'
+    import {fetch} from '../../api'
 
     const store = getStore()
     @connect({

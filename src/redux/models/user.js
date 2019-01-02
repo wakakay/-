@@ -1,5 +1,7 @@
 import {auth as authApi} from '../../api'
 import wepy from 'wepy'
+import {UnAuthenticationError} from "../../errors";
+import {ROUTERS} from "../../utils/dictionary";
 
 // Contents
 export const SET_USER_INFO = 'SET_USER_INFO'
@@ -131,7 +133,6 @@ export const login = () => (dispatch, getState) => {
             dispatch(setWindowWidth({ status: 'success', response }))
             dispatch(setScreenHeight({ status: 'success', response }))
             dispatch(setStatusBarHeight(response.statusHeight))
-
             return getState()['user']
         })
         .catch(error => {
@@ -149,7 +150,7 @@ export const login = () => (dispatch, getState) => {
             dispatch(setWindowWidth({ status: 'failure', error }))
             dispatch(setWindowHeight({ status: 'failure', error }))
             dispatch(setScreenHeight({ status: 'failure', error }))
-                // dispatch(setStatusBarHeight(response.statusHeight))
+            dispatch(setStatusBarHeight(response.statusHeight))
         })
 
 }
@@ -202,8 +203,12 @@ export const checkLoginStatus = () => (dispatch, getState) => {
                 })
         }).then(flag => {
             if ('GUEST' === name || '../../assets/img/icon-info.svg' === avatar || 'xxx' === code || 'deadNumber' === phone || 'defaultToken' === token || 0 === windowWidth || 0 === windowHeight || 0 === screenHeight) {
-                //console.log('confirm that it\'s the initial user state, figure out not syncing storage to state')
-                throw 'login:no' // cb通知外层没有登陆
+                // 当前这个页面是否是访客页面
+                let rounter = getCurrentPages()
+                let page = rounter[rounter.length - 1]
+                if (!(ROUTERS[page.route] && ROUTERS[page.route].isVisitor)) {
+                    throw 'login:no' // cb通知外层没有登陆
+                }
             }
             //console.log('Already login, it\'s not necessary to login once again')
             return 'login:online' // cb通知外层已经登陆
