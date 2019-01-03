@@ -577,7 +577,7 @@
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     seriesname: dataset.item.seriesName,
                 })
-                self.$navigate('/pages/course-module/assortment', data)
+                self.$navigate('/pages/course-module/course-series', data)
             },
             /**
              * 关闭新人礼包

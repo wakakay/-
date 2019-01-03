@@ -459,7 +459,7 @@
             wepy.$instance.globalData.getHuilder('课程微信分享','click',`${self.courseInfo.seriesName}`)
             return {
                 title: `我在即能学习【${self.courseInfo.seriesName}】`,
-                path: `/pages/course-module/assortment?courseSeriesID=${self.courseInfo.courseSeriesID}`,
+                path: `/pages/course-module/course-series?courseSeriesID=${self.courseInfo.courseSeriesID}`,
                 success(res) {
                     let token = self.systemInfo.token
                     let courseID = self.courseInfo.courseSeriesID

@@ -18,7 +18,7 @@ export const ROUTERS = {
     'pages/course-module/course': {screenName: '课程页', isLevel: true, isVisitor: true},
     'pages/course-module/course-new-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
     'pages/course-module/course-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
-    'pages/course-module/assortment': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
+    'pages/course-module/course-series': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare'}, // 需要记录哪门子的微课
     'pages/course-module/course-learning-discuss': {screenName: '微课学习想法详情'}, // 需要记录哪门子的微课
     'pages/course-module/lesson': {screenName: '微课学习', sence: 'CardsShare'},
