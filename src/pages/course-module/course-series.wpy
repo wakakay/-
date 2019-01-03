@@ -1,0 +1,387 @@
+<style lang="less" scoped>
+@import "../../assets/style/theme";
+    .ui-header-bg{
+        width: 750rpx;height: 600rpx;display: flex;background-size: 750rpx 600rpx;
+        .ui-box{
+            width: 100%;height: 100%;background:rgba(0,0,0,0.4);box-sizing:border-box;
+            .ui-top{
+                display: flex;justify-content:space-between;padding:282rpx 32rpx 0;box-sizing:border-box;
+                .cell-name{font-size:48rpx;color:#FFF;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                .cell-sub-title{font-size:32rpx;color:rgba(255,255,255,0.6);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:20rpx;}
+                .cell-share{
+                    background: none;color:@color-white;
+                    text{font-size: 42rpx;}
+                }
+            }
+            .ui-tips{
+                display: flex;font-size: 26rpx;justify-content: space-between;box-sizing: border-box;padding:0 32rpx;margin-top:96rpx;
+                .cell-course-detail{background: rgba(255,255,255,0.2);color:white;border-radius: @border-radius-8;padding: 2rpx 12rpx;}
+                .cell-user{color: rgba(255,255,255,0.70);}
+            }
+        }
+    }
+    .ui-hot-course{
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .ui-course-list{
+            display:flex;white-space:nowrap;box-sizing:border-box;
+            .ui-item{
+                display:inline-block;box-sizing:border-box;width:486rpx;height:276rpx;background-size: cover;margin-right:12rpx;border-radius:@border-radius-20;overflow: hidden;
+                .ui-shadow{
+                    width: 100%;height: 100%;background:rgba(0,0,0,0.4);padding:34rpx 24rpx 40rpx;box-sizing: border-box;color:@color-white;
+                    .cell-name{font-size: 34rpx;font-weight: bold;}
+                    .cell-dec{font-size: 26rpx;opacity: 0.7;}
+                    .cell-tip{font-size: 26rpx;opacity: 0.7;margin-top: 82rpx;}
+                }
+                &:first-of-type{margin-left:32rpx;}
+                &:last-of-type{margin-right:32rpx;}
+            }
+        }
+    }
+    .ui-all-course{
+        margin-top:20rpx;
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .ui-item{
+            margin:0 32rpx;border-bottom:2rpx solid @border-gray;height: 240rpx;display: flex;justify-content: space-between;align-items: center;box-sizing:border-box;
+            .ui-msg{
+                display: flex;flex:1;
+                image{width: 176rpx;height: 176rpx;border-radius:@border-radius-44;margin-right: 36rpx;}
+                .cell-name{font-size: 32rpx;font-weight: bold;color:@color-black;width:400rpx;}
+                .cell-dec{font-size: 26rpx;color: @color-gray;width:400rpx;}
+                .cell-btn{font-size: 30rpx;font-weight: bold;color:@color-blue;margin-top: 28rpx;width: 148rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;text-align: center;line-height: 60rpx;}
+                
+            }
+            .ui-status{
+                width: 72rpx;
+                .cell-progress-number{line-height: 72rpx;text-align: center;}
+                .cell-circle-right,.cell-circle-left{box-sizing:border-box;}
+            }
+        }
+    }
+    .ui-comment{
+        margin-top:20rpx;
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .ui-comments-box{
+            background-color:@background-white;padding-bottom:20rpx;
+            .ui-comments-list{height:400rpx}
+            .ui-swiper{
+                background-color:@background-white;padding-right:12rpx;box-sizing:border-box;
+                .ui-item{background-color:rgba(142,143,148,.1);border-radius:@border-radius-20;height:400rpx;padding:24rpx 32rpx 46rpx;box-sizing:border-box;}
+                .ui-top{
+                    display:flex;justify-content: space-between;height: 80rpx;line-height: 80rpx;
+                    .ui-user{
+                        font-size:30rpx;color:@color-gray;display: flex;align-items: center;
+                        .cell-name{width: 294rpx;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+                        image{width:80rpx;height:80rpx;border-radius:50%;margin-right:12rpx;}
+                    }
+                    .ui-star text{margin-left:10rpx;font-size:34rpx;color:@color-blue;line-height:80rpx;}
+                }
+                .ui-title-box{
+                    display: flex;justify-content: space-between;margin:38rpx 0 26rpx;height:44rpx;width: 100%;box-sizing:border-box;
+                    .cell-comment-title{font-size:30rpx;color:@color-black;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width: 472rpx;}
+                    .cell-date{font-size:28rpx;color:@color-gray;width: 190rpx;line-height:44rpx;}
+                }
+                .ui-message{height:140rpx;font-size:30rpx;color:@color-black;line-height:48rpx;white-space:pre-wrap;word-break:break-all;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;}
+            }
+        }
+
+    }
+    .cell-clear{height: 240rpx;width: 100%;}
+    .ui-learn-bar{
+        position:fixed;width:100%;bottom:0;left:0;right:0;background:none;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
+        .ui-share-box{
+           width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
+            .ui-left{
+                display: flex;
+                .ui-img {
+                    display: flex;align-items: center;
+                    image{width: 112rpx;height: 112rpx;border-radius: 28rpx;}
+                }
+                .ui-content{
+                    margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;text-align:left;line-height:1.5;
+                    .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;font-weight: 700;}
+                    .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                }
+            }
+            .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700;}
+        }
+    }
+    .ui-learn-bar.is-phonex{margin: 68rpx auto;}
+</style>
+<template>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
+    <view class="ui-header-bg" id="bgTop" style="background-image:url({{courseInfo.coverImageURL}})">
+        <view class="ui-box">
+            <view class="ui-top">
+                <view>
+                    <view class="cell-name ">{{courseInfo.seriesName}}</view>
+                    <view class="cell-sub-title">{{courseInfo.subTitle}}</view>
+                </view>
+                <button class="cell-share" formType="submit" open-type="share">
+                    <text class="icon-share"></text>
+                </button>
+            </view>
+            <view class="ui-tips">
+                <view class="cell-course-detail">{{courseInfo.courseCount}}课程 · {{courseInfo.skillCount}}技能</view>
+                <view class="cell-user">在学：{{courseInfo.seseriesUserCount}}人</view>
+            </view>
+        </view>
+    </view>
+    <view class="ui-hot-course" wx:if="{{hotCourse.length}}" >
+        <view class="cell-title">热门课程</view>
+        <scroll-view class="ui-course-list" scroll-x scroll-with-animation>
+            <repeat for="{{hotCourse}}" key="index" index="index" item="item">
+                <view class="ui-item" style="background-image:url('{{item.image}}')"
+                    @tap.stop="getCourseDetail" 
+                    data-item="{{item}}" data-type="1" >
+                    <view class="ui-shadow">
+                        <view class="cell-name text-overflow">{{item.name}}</view>
+                        <view class="cell-dec text-overflow">{{item.showPoint}}</view>
+                        <view class="cell-tip">在学：{{item.userCount}}</view>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+    </view>
+    <view class="ui-all-course" wx:if="{{allCourse.length}}">
+        <view class="cell-title">全部课程</view>
+        <repeat for="{{allCourse}}" key="index" index="index" item="item">
+            <view class="ui-item" @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2" >
+                <view class="ui-msg">
+                    <view>
+                        <image src="{{item.bgImg}}" />
+                    </view>
+                    <view>
+                        <view class="cell-name text-overflow">{{item.courseName}}</view>
+                        <view class="cell-dec text-overflow">{{item.courseDec}}</view>
+                        <view class="cell-btn">即学</view>
+                    </view>
+                </view>
+                <view class="ui-status">
+                    <view class="ui-circular-progress">
+                        <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                        <view class="ui-wrapper ui-right">
+                            <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                        </view>
+                        <view class="ui-wrapper ui-left">
+                            <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </repeat>
+    </view>
+    <view class="ui-comment" wx:if="{{courseInfo.feedbackList.length}}">
+        <view class="cell-title">精选评价</view>
+        <view class="ui-comments-box">
+            <swiper class="ui-comments-list"
+                next-margin="28rpx" previous-margin="38rpx">
+                <block wx:for="{{courseInfo.feedbackList}}"
+                    wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item">
+                    <swiper-item class="ui-swiper">
+                        <view class="ui-item">
+                            <view class="ui-top">
+                                <view class="ui-user">
+                                    <image mode="scaleToFill" src="{{item.avatarUrl}}"/>
+                                    <view class="cell-name">{{item.nickName}}</view>
+                                </view>
+                                <view class="ui-star">
+                                    <text class="{{item.star>=1 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                                    <text class="{{item.star>=2 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                                    <text class="{{item.star>=3 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                                    <text class="{{item.star>=4 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                                    <text class="{{item.star>=5 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
+                                </view>
+                            </view>
+                            <view class="ui-title-box">
+                                <view class="cell-comment-title">[{{item.name}}]</view>
+                                <view class="cell-date">{{item.feedbackTime}}</view>
+                            </view>
+                            <view class="ui-message wrap-nowrap">{{item.showMessage}}</view>
+                        </view>
+                    </swiper-item>
+                </block>
+            </swiper>
+        </view>
+    </view>
+    <view class="ui-learn-bar" :class="{'is-phonex': isIphonex}">
+        <view class="ui-share-box">
+            <view class="ui-left">
+                <view class="ui-img">
+                    <image src="{{floatBox.coverImageURL}}" />
+                </view>
+                <view class="ui-content">
+                    <view class="cell-title">{{floatBox.courseName}}</view>
+                    <view class="cell-dec">{{floatBox.senceName}}</view>
+                </view>
+            </view>
+            <view class="cell-btn">{{floatBox.buttonStatusMsg}}</view>
+        </view>
+    </view>
+    <view class="cell-clear"></view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import {fetch} from '../../api'
+    import Loading from '../../components/common/loading'
+    import header from '../../components/common/header'
+    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
+    import {share as shareApi} from "../../api";
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        },
+        userName(state) {
+            return state.user.name
+        },
+        role(state) {
+            return state.user.role
+        },
+        entrance(state) {
+            return state.entrance
+        },
+    })
+
+    export default class courseSeries extends wepy.page {
+        components = {
+            'jn-header': header,
+            'mloading': Loading,
+        }
+        data = {
+            isHeadHeight: false,
+            headerBackground: 'background-transparent',
+            hotCourse:[
+                {
+                    courseID:"courseID20cb63aea4b4848a74b9516f8d81",
+                    courseType:"normal",
+                    image:"http://image.runwise.cn/image/imageIDaec85498f2648eaf954ed13e2ccb.png",
+                    name:"时间管理：我的时间，我做主",
+                    showPoint:"5 个时间管理小工具，告别碌碌无为",
+                    userCount:2337
+                }
+            ],
+            allCourse:[
+                {
+                    allLesson:3,
+                    bgImg:"http://image.runwise.cn/image/imageID9a2229037d54d896007727c00228.png",
+                    courseDec:"增长黑客”的落地实现",
+                    courseID:"courseIDfa81859d90645eab98ec3801fa03",
+                    courseName:"如何实现规模化扩张？",
+                    finishLesson:0,
+                    percent:0,
+                    buttonStatusMsg:'即学',
+                }
+            ],
+            floatBox:{
+                buttonStatus:"needPay",
+                buttonStatusMsg:"继续学",
+                coverImageURL:"http://image.runwise.cn/image/imageID04e4b510d7f4f287837dee0071f1.png",
+                senceName:"用这几步，波澜不惊地应对压力面试",
+                id:"senceID5d05d9a30224628a2dc6fefdc778",
+                courseID:"courseIDfa81859d90645eab98ec3801fa03",
+                courseName:"如何应对压力面试？",
+                resume:0
+            },
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            headerTitle: '',
+            routeParams: {},
+            isLoaded: false,
+            courseInfo: {},
+            isNewSenceMap: {}
+        }
+
+        onLoad(params) {
+            let self = this
+            self.routeParams = params
+            self.isLoaded = false
+        }
+
+        onShow() {
+            let self = this
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
+        }
+        /**
+         * 监听滚动条的位置
+         * @param
+         */
+        onPageScroll(res) {
+            let self = this
+            let scrollTop = res.scrollTop
+            var query = wx.createSelectorQuery()
+            self.headerBackground =  scrollTop > 298 ? 'background-transparent-opacity' : 'background-transparent'
+            self.$apply()
+        }
+
+        initialize(AuthorizeData) {
+            let self = this
+            let postData = {
+                courseSeriesID:self.routeParams.courseSeriesID,
+                seriesName:self.routeParams.seriesName,
+                token:self.systemInfo.token
+            }
+           
+            fetch.getDiscoverPageByCourseSeriesByLinkByDetailNew(postData).then(response => {
+                self.courseInfo = response
+                self.isNewSenceMap = self.courseInfo.isNewSenceMap
+                self.headerTitle = self.courseInfo.seriesName
+                self.isLoaded = true
+                self.$apply()
+
+                // 数据统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: "系列页详情页：" + response.seriesName})
+                wx.reportAnalytics('course_series', {
+                    role: self.role,
+                    nickname: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    seriesname: response.seriesName
+                })
+
+            }).catch(error => {
+                self.isLoaded = true
+            })
+        }
+        methods = {
+            /**
+             * 课程详情页
+             * @param
+             */
+            getCourseDetail({currentTarget: {dataset: {item, type}}}) {
+                let self = this
+                let courseID = item.courseID;
+                let courseName = item.courseName ? item.courseName : item.name
+                if(type === 1) {
+                    wepy.$instance.globalData.getHuilder(`系列页详情页/热门课程`,'click',`${courseName}`)
+                }else{
+                    wepy.$instance.globalData.getHuilder(`系列页详情页/全部课程`,'click',`${courseName}`)
+                }
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
+            },
+            
+        }
+
+        onShareAppMessage() {
+            let self = this
+            return {
+                title: `我在即能学习【${self.courseInfo.seriesName}】`,
+                path: `/pages/course-module/assortment?courseSeriesID=${self.courseInfo.courseSeriesID}`,
+                success(res) {
+                    let token = self.systemInfo.token
+                    let courseID = self.courseInfo.courseSeriesID
+
+                    wepy.$instance.globalData.getHuilder('系列详情页/分享', 'click', `${self.courseInfo.seriesName}`)
+                    shareApi.reportSharing({
+                        token,
+                        type: shareDictionary.SHARE_ASSORTMENT.type,
+                        courseID
+                    })
+                },
+                fail(res) {
+                    console.log("转发失败");
+                }
+            }
+        }
+    }
+</script>

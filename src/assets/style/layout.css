@@ -79,6 +79,7 @@ button::after{border:0;}
 .btn-wraning-hover{background-color:#cd6653;}
 
 .text-left{text-align:left;}
+.text-overflow{overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
 .text-right{text-align:right;}
 .font-icon{font-size:32rpx;line-height:56rpx;color:#778d9a;display:inline-block;width:56rpx;height:56rpx;margin-right:4rpx;}
 
