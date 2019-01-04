@@ -156,7 +156,7 @@
                     <view class="ui-msg">
                         <view class="cell-name text-overflow">{{item.courseName}}</view>
                         <view class="cell-dec text-overflow">{{item.courseDec}}</view>
-                        <view class="cell-btn">即学</view>
+                        <view class="cell-btn">{{item.buttonStatusMsg}}</view>
                     </view>
                     <view class="ui-status">
                         <view class="ui-circular-progress">

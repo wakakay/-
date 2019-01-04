@@ -55,6 +55,7 @@
                     width:80rpx;height:80rpx;margin:0 24rpx 0 32rpx;position:relative;
                     text:nth-of-type(1){font-size:40rpx;color:@color-black;position:relative;z-index:@z-index-normal;}
                     text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:-6rpx;}
+                    .cell-dot{position: absolute;top: -6rpx;right: -6rpx;width: 28rpx;height: 28rpx;background: @background-red;border:4rpx solid @border-white;border-radius: 50%;}
                 }
                 .ui-content{
                     width:100%;border-bottom:1rpx solid @border-gray;position:relative;
@@ -232,6 +233,7 @@
                     <view class="ui-icon flex-box-0 main-center cross-center">
                         <text class="{{index==0 ? 'icon-job-skills' : index==1 ? 'icon-work-template' : 'icon-community'}}"></text>
                         <text class="icon-app-icon"></text>
+                        <view wx:if="{{2 == index}}" class="cell-dot"></view>
                     </view>
                     <view class="ui-content">
                         <view class="cell-title">{{item.title}}</view>
@@ -834,6 +836,9 @@
                     case 2:
                         url = '/pages/other-module/community'
                         break
+                }
+                if(parseInt(type) == 2) {
+                    return wx.navigateTo({url: `${url}?groupImage=${self.courseDetail.receive[2].group_image}`})
                 }
                 wx.navigateTo({url: url})
             },
