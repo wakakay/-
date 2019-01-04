@@ -822,7 +822,8 @@
                 let url = ''
 
                 wepy.$instance.globalData.newCourseDetailTempele = item
-                wepy.$instance.globalData.getHuilder('新课程详情页/你将获得', 'click', `${self.courseDetail.name}/${item.title}`)
+                wepy.$instance.globalData.getHuilder('课程详情页/你将获得', 'click', `${self.courseDetail.name}/${item.title}`)
+                
                 switch (parseInt(type)){
                     case 0:
                         url = '/pages/other-module/job-skills'
@@ -844,7 +845,7 @@
                 let self = this
                 let {currentTarget: {dataset:{item}}} = event
 
-                wepy.$instance.globalData.getHuilder('新版课程详情页/为你推荐','click',`${self.courseDetail.name}/${item.courseName}`) // ga点击统计
+                wepy.$instance.globalData.getHuilder('课程详情页/为你推荐','click',`${self.courseDetail.name}/${item.courseName}`) // ga点击统计
                 wx.redirectTo({url: `/pages/course-module/course-details?id=${item.courseID}&source=recommend`})
             },
             /**
@@ -858,7 +859,7 @@
                 }
 
                 let {currentTarget: {dataset:{item}}} = event
-                wepy.$instance.globalData.getHuilder('新版课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
+                wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
                 self.reportButtonTap(item.senceID, item.buttonStatus)
                 self.__goToCourseLearning(item)
             },

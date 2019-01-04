@@ -355,7 +355,7 @@
             let self = this
             return {
                 title: `我在即能学习【${self.routeParams.seriesName}】`,
-                path: `/pages/course-module/course_series?courseSeriesID=${self.routeParams.courseSeriesID}`,
+                path: `/pages/course-module/course-series?courseSeriesID=${self.routeParams.courseSeriesID}`,
                 success(res) {
                     let token = self.systemInfo.token
                     let courseID = self.courseInfo.courseSeriesID
