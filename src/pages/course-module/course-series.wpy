@@ -264,7 +264,6 @@
         onLoad(params) {
             let self = this
             self.routeParams = params
-            console.log(self.routeParams,1)
             self.isLoaded = false
         }
 

@@ -360,9 +360,13 @@
                 case 'pages/training-camp-module/index':
                     name = '训练营/学习bar'
                     break
+                case 'pages/today-module/index':
+                    name = '今日页/学习bar'
+                    break
             }
-
+            
             name && wepy.$instance.globalData.getHuilder(name, 'click', `${senceName}`)
+            
         }
 
         methods = {

@@ -107,7 +107,7 @@
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('全部在学/进入课程','click',`${name}`)
+                wepy.$instance.globalData.getHuilder('今日页/全部在学课程/进入课程','click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
 
             }

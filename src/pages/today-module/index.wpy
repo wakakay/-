@@ -491,11 +491,11 @@
                 let courseID = item.id;
                 let name = item.name
 
-                wepy.$instance.globalData.getHuilder('今日tab/专题','click', `${name}`)
+                wepy.$instance.globalData.getHuilder('今日页/专题','click', `${name}`)
                 return self.$navigate('/pages/SpecialCourse/index', {courseID})
             },
             getCoursePage(){
-                wepy.$instance.globalData.getHuilder('在学课程/去看看', 'click', '')
+                wepy.$instance.globalData.getHuilder('今日页/在学课程/去看看', 'click', '')
                 wepy.switchTab({ url: '/pages/course-module/course'})
             },
             getCourseDetail(event){
@@ -504,18 +504,18 @@
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('在学课程/进入课程','click',`${name}`)
+                wepy.$instance.globalData.getHuilder('今日页/在学课程','click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
             // 点击查看全部 触发组件
             getAllStudyingCourse(){
                 let self = this
-                wepy.$instance.globalData.getHuilder('在学课程/查看全部', 'click', '')
+                wepy.$instance.globalData.getHuilder('今日页/在学课程/查看全部', 'click', '')
                 self.$navigate('/pages/today-module/all-course');
             },
             getAvatar() {
                 let self = this
-                wepy.$instance.globalData.getHuilder('今日/头像', 'click', '我的页面')
+                wepy.$instance.globalData.getHuilder('今日页/头像', 'click', '我的页面')
             },
             handleStartLesson(event) {
                 let self = this
@@ -530,9 +530,13 @@
                 let resume = item.resume ? item.resume : ''
 
                 if(clickSource === 'course') {
-                    wepy.$instance.globalData.getHuilder('在学课程/微课学习','click',`${senceName}`)
+                    if('needPay' === buttonStatus) {
+                        wepy.$instance.globalData.getHuilder('今日页/在学课程/获取','click',`${senceName}`)
+                    }else{
+                        wepy.$instance.globalData.getHuilder('今日页/在学课程/微课学习','click',`${senceName}`)
+                    }
                 }else {
-                    wepy.$instance.globalData.getHuilder('今日任务/微课学习','click',`${senceName}`)
+                    wepy.$instance.globalData.getHuilder('今日页/今日任务','click',`${senceName}`)
                 }
 
                 self.courseID = item.courseID
