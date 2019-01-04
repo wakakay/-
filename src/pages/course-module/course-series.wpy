@@ -211,7 +211,7 @@
         <view class="ui-share-box" :class="{'is-phonex': isIphonex}" >
             <view class="ui-left">
                 <view class="ui-img">
-                    <image src="{{courseInfo.floatBox.coverImageURL}}" />
+                    <image src="{{courseInfo.floatBox.imageUrl}}" />
                 </view>
                 <view class="ui-content">
                     <view class="cell-title text-overflow">课程：{{courseInfo.floatBox.courseName}}</view>
