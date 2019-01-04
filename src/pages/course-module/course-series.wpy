@@ -123,14 +123,14 @@
             </view>
             <view class="ui-tips">
                 <view class="cell-course-detail">{{courseInfo.courseCount}}课程 · {{courseInfo.skillCount}}技能</view>
-                <view class="cell-user">在学：{{courseInfo.seseriesUserCount}}人</view>
+                <view class="cell-user">在学：{{courseInfo.seriesUserCount}}人</view>
             </view>
         </view>
     </view>
-    <view class="ui-hot-course" wx:if="{{hotCourse.length}}" >
+    <view class="ui-hot-course" wx:if="{{courseInfo.hotCourse.length}}" >
         <view class="cell-title">热门课程</view>
         <scroll-view class="ui-course-list" scroll-x scroll-with-animation>
-            <repeat for="{{hotCourse}}" key="index" index="index" item="item">
+            <repeat for="{{courseInfo.hotCourse}}" key="index" index="index" item="item">
                 <view class="ui-item" style="background-image:url('{{item.image}}')"
                     @tap.stop="getCourseDetail" 
                     data-item="{{item}}" data-type="1" >
@@ -143,9 +143,9 @@
             </repeat>
         </scroll-view>
     </view>
-    <view class="ui-all-course" wx:if="{{allCourse.length}}">
+    <view class="ui-all-course" wx:if="{{courseInfo.allCourse.length}}">
         <view class="cell-title">全部课程</view>
-        <repeat for="{{allCourse}}" key="index" index="index" item="item">
+        <repeat for="{{courseInfo.allCourse}}" key="index" index="index" item="item">
             <view class="ui-item" @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2" >
                 <view class="ui-msg">
                     <view>
@@ -204,18 +204,18 @@
             </swiper>
         </view>
     </view>
-    <view class="ui-learn-bar" :class="{'is-phonex': isIphonex}">
+    <view class="ui-learn-bar" :class="{'is-phonex': isIphonex}"  @tap.stop="getFloatBox" data-item="{{courseInfo.floatBox}}">
         <view class="ui-share-box">
             <view class="ui-left">
                 <view class="ui-img">
-                    <image src="{{floatBox.coverImageURL}}" />
+                    <image src="{{courseInfo.floatBox.coverImageURL}}" />
                 </view>
                 <view class="ui-content">
-                    <view class="cell-title">{{floatBox.courseName}}</view>
-                    <view class="cell-dec">{{floatBox.senceName}}</view>
+                    <view class="cell-title">{{courseInfo.floatBox.courseName}}</view>
+                    <view class="cell-dec">{{courseInfo.floatBox.senceName}}</view>
                 </view>
             </view>
-            <view class="cell-btn">{{floatBox.buttonStatusMsg}}</view>
+            <view class="cell-btn">{{courseInfo.floatBox.buttonStatusMsg}}</view>
         </view>
     </view>
     <view class="cell-clear"></view>
@@ -253,38 +253,6 @@
         data = {
             isHeadHeight: false,
             headerBackground: 'background-transparent',
-            hotCourse:[
-                {
-                    courseID:"courseID20cb63aea4b4848a74b9516f8d81",
-                    courseType:"normal",
-                    image:"http://image.runwise.cn/image/imageIDaec85498f2648eaf954ed13e2ccb.png",
-                    name:"时间管理：我的时间，我做主",
-                    showPoint:"5 个时间管理小工具，告别碌碌无为",
-                    userCount:2337
-                }
-            ],
-            allCourse:[
-                {
-                    allLesson:3,
-                    bgImg:"http://image.runwise.cn/image/imageID9a2229037d54d896007727c00228.png",
-                    courseDec:"增长黑客”的落地实现",
-                    courseID:"courseIDfa81859d90645eab98ec3801fa03",
-                    courseName:"如何实现规模化扩张？",
-                    finishLesson:0,
-                    percent:0,
-                    buttonStatusMsg:'即学',
-                }
-            ],
-            floatBox:{
-                buttonStatus:"needPay",
-                buttonStatusMsg:"继续学",
-                coverImageURL:"http://image.runwise.cn/image/imageID04e4b510d7f4f287837dee0071f1.png",
-                senceName:"用这几步，波澜不惊地应对压力面试",
-                id:"senceID5d05d9a30224628a2dc6fefdc778",
-                courseID:"courseIDfa81859d90645eab98ec3801fa03",
-                courseName:"如何应对压力面试？",
-                resume:0
-            },
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerTitle: '',
             routeParams: {},
@@ -296,6 +264,7 @@
         onLoad(params) {
             let self = this
             self.routeParams = params
+            console.log(self.routeParams,1)
             self.isLoaded = false
         }
 
@@ -314,22 +283,18 @@
             self.headerBackground =  scrollTop > 298 ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
         }
-
         initialize(AuthorizeData) {
             let self = this
             let postData = {
-                courseSeriesID:self.routeParams.courseSeriesID,
-                seriesName:self.routeParams.seriesName,
+                seriesID:self.routeParams.courseSeriesID,
                 token:self.systemInfo.token
             }
-           
-            fetch.getDiscoverPageByCourseSeriesByLinkByDetailNew(postData).then(response => {
+            fetch.getSeriesPage(postData).then(response => {
                 self.courseInfo = response
                 self.isNewSenceMap = self.courseInfo.isNewSenceMap
                 self.headerTitle = self.courseInfo.seriesName
                 self.isLoaded = true
                 self.$apply()
-
                 // 数据统计
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: "系列页详情页：" + response.seriesName})
                 wx.reportAnalytics('course_series', {
@@ -338,7 +303,6 @@
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     seriesname: response.seriesName
                 })
-
             }).catch(error => {
                 self.isLoaded = true
             })
@@ -348,30 +312,56 @@
              * 课程详情页
              * @param
              */
-            getCourseDetail({currentTarget: {dataset: {item, type}}}) {
+            getCourseDetail(event) {
                 let self = this
+                let {currentTarget:{dataset: {item,type}}} = event
                 let courseID = item.courseID;
                 let courseName = item.courseName ? item.courseName : item.name
+
                 if(type === 1) {
                     wepy.$instance.globalData.getHuilder(`系列页详情页/热门课程`,'click',`${courseName}`)
                 }else{
                     wepy.$instance.globalData.getHuilder(`系列页详情页/全部课程`,'click',`${courseName}`)
                 }
+
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
-            
-        }
+            getFloatBox(event) {
+                let self = this;
+                let {currentTarget:{dataset: {item}}} = event
+                let buttonStatus = item.buttonStatus
+                let courseID = item.courseID;
+                let senceID = item.id;
+                let resume = item.resume ? item.resume : "NO" 
+                let isNewSence = self.isNewSenceMap[senceID]
+                let senceName = item.senceName
 
+                wepy.$instance.globalData.getHuilder(`系列详情页/继续学bar`,'click',`${senceName}`)
+
+
+                switch (buttonStatus) {
+                    case 'finish': // 回顾
+                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                        break
+                    case 'needPay': // 付费
+                        wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
+                        break
+                    default:
+                        navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
+                }
+                
+            }
+        }
         onShareAppMessage() {
             let self = this
             return {
-                title: `我在即能学习【${self.courseInfo.seriesName}】`,
-                path: `/pages/course-module/course_series?courseSeriesID=${self.courseInfo.courseSeriesID}`,
+                title: `我在即能学习【${self.routeParams.seriesName}】`,
+                path: `/pages/course-module/course_series?courseSeriesID=${self.routeParams.courseSeriesID}`,
                 success(res) {
                     let token = self.systemInfo.token
                     let courseID = self.courseInfo.courseSeriesID
 
-                    wepy.$instance.globalData.getHuilder('系列详情页/分享', 'click', `${self.courseInfo.seriesName}`)
+                    wepy.$instance.globalData.getHuilder('系列详情页/分享', 'click', `${self.routeParams.seriesName}`)
                     shareApi.reportSharing({
                         token,
                         type: shareDictionary.SHARE_ASSORTMENT.type,

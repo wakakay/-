@@ -165,5 +165,12 @@ export default {
      */
     getMyLearningPageBySkillgetDetail(params) {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
+    },
+    /**
+     * 系列页
+     * @param  seriesID: 系列ID
+     */
+    getSeriesPage(params) {
+        return fetch({method: 'post', url: 'discover/v1/getSeriesPage', params: params})
     }
 }
