@@ -6,11 +6,11 @@
             width: 100%;height: 100%;background:rgba(0,0,0,0.4);box-sizing:border-box;
             .ui-top{
                 display: flex;justify-content:space-between;padding:282rpx 32rpx 0;box-sizing:border-box;
-                .cell-name{font-size:48rpx;color:#FFF;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
-                .cell-sub-title{font-size:32rpx;color:rgba(255,255,255,0.6);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:20rpx;}
+                .cell-name{font-size:68rpx;color:#FFF;font-weight:bold;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                .cell-sub-title{font-size:32rpx;color:rgba(255,255,255,0.6);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:10rpx;}
                 .cell-share{
-                    background: none;color:@color-white;
-                    text{font-size: 42rpx;}
+                    background: none;color:@color-white;line-height: 1;
+                    text{font-size: 60rpx;}
                 }
             }
             .ui-tips{
@@ -21,7 +21,7 @@
         }
     }
     .ui-hot-course{
-        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;font-size: 44rpx;}
         .ui-course-list{
             display:flex;white-space:nowrap;box-sizing:border-box;
             .ui-item{
@@ -39,27 +39,28 @@
     }
     .ui-all-course{
         margin-top:20rpx;
-        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;font-size: 44rpx;}
         .ui-item{
-            margin:0 32rpx;border-bottom:2rpx solid @border-gray;height: 240rpx;display: flex;justify-content: space-between;align-items: center;box-sizing:border-box;
-            .ui-msg{
-                display: flex;flex:1;
-                image{width: 176rpx;height: 176rpx;border-radius:@border-radius-44;margin-right: 36rpx;}
-                .cell-name{font-size: 32rpx;font-weight: bold;color:@color-black;width:400rpx;}
-                .cell-dec{font-size: 26rpx;color: @color-gray;width:400rpx;}
-                .cell-btn{font-size: 30rpx;font-weight: bold;color:@color-blue;margin-top: 28rpx;width: 148rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;text-align: center;line-height: 60rpx;}
-                
-            }
-            .ui-status{
-                width: 72rpx;
-                .cell-progress-number{line-height: 72rpx;text-align: center;}
-                .cell-circle-right,.cell-circle-left{box-sizing:border-box;}
+            margin:0 32rpx;height: 240rpx;display: flex;justify-content: space-between;align-items: center;box-sizing:border-box;
+            image{width: 176rpx;height: 176rpx;border-radius:@border-radius-44;margin-right: 36rpx;}
+            .ui-detail{
+                display: flex;flex:1;border-bottom:2rpx solid @border-gray;height: 240rpx;align-items: center;
+                .ui-status{
+                    width: 72rpx;display:flex;align-items: center;
+                    .cell-progress-number{line-height: 72rpx;text-align: center;}
+                    .cell-circle-right,.cell-circle-left{box-sizing:border-box;}
+                }
+                .ui-msg{
+                    .cell-name{font-size: 32rpx;font-weight: bold;color:@color-black;width:400rpx;}
+                    .cell-dec{font-size: 26rpx;color: @color-gray;width:400rpx;}
+                    .cell-btn{font-size: 30rpx;font-weight: bold;color:@color-blue;margin-top: 28rpx;width: 148rpx;height: 60rpx;border-radius: 200rpx;background: @background-gray-F4;text-align: center;line-height: 60rpx;}
+                }
             }
         }
     }
     .ui-comment{
         margin-top:20rpx;
-        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;}
+        .cell-title{height: 112rpx;padding-left: 30rpx;font-weight: bold;line-height: 112rpx;font-size: 44rpx;}
         .ui-comments-box{
             background-color:@background-white;padding-bottom:20rpx;
             .ui-comments-list{height:400rpx}
@@ -89,7 +90,7 @@
     .ui-learn-bar{
         position:fixed;width:100%;bottom:0;left:0;right:0;background:none;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
         .ui-share-box{
-           width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
+           width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;box-sizing:border-box;
             .ui-left{
                 display: flex;
                 .ui-img {
@@ -98,14 +99,15 @@
                 }
                 .ui-content{
                     margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;text-align:left;line-height:1.5;
-                    .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;font-weight: 700;}
-                    .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                    .cell-title{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;}
+                    .cell-dec{font-size: 32rpx;color: @color-black;width: 396rpx;font-weight: 700;}
                 }
             }
             .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700;}
         }
+        .ui-share-box.is-phonex{margin-bottom: 68rpx;}
+
     }
-    .ui-learn-bar.is-phonex{margin: 68rpx auto;}
 </style>
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
@@ -147,27 +149,28 @@
         <view class="cell-title">全部课程</view>
         <repeat for="{{courseInfo.allCourse}}" key="index" index="index" item="item">
             <view class="ui-item" @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2" >
-                <view class="ui-msg">
-                    <view>
-                        <image src="{{item.bgImg}}" />
-                    </view>
-                    <view>
+                <view>
+                    <image src="{{item.bgImg}}" />
+                </view>
+                <view class="ui-detail">
+                    <view class="ui-msg">
                         <view class="cell-name text-overflow">{{item.courseName}}</view>
                         <view class="cell-dec text-overflow">{{item.courseDec}}</view>
                         <view class="cell-btn">即学</view>
                     </view>
-                </view>
-                <view class="ui-status">
-                    <view class="ui-circular-progress">
-                        <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
-                        <view class="ui-wrapper ui-right">
-                            <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
-                        </view>
-                        <view class="ui-wrapper ui-left">
-                            <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                    <view class="ui-status">
+                        <view class="ui-circular-progress">
+                            <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                            <view class="ui-wrapper ui-right">
+                                <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                            </view>
+                            <view class="ui-wrapper ui-left">
+                                <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                            </view>
                         </view>
                     </view>
                 </view>
+                
             </view>
         </repeat>
     </view>
@@ -204,15 +207,15 @@
             </swiper>
         </view>
     </view>
-    <view class="ui-learn-bar" :class="{'is-phonex': isIphonex}"  @tap.stop="getFloatBox" data-item="{{courseInfo.floatBox}}">
-        <view class="ui-share-box">
+    <view class="ui-learn-bar" @tap.stop="getFloatBox" data-item="{{courseInfo.floatBox}}">
+        <view class="ui-share-box" :class="{'is-phonex': isIphonex}" >
             <view class="ui-left">
                 <view class="ui-img">
                     <image src="{{courseInfo.floatBox.coverImageURL}}" />
                 </view>
                 <view class="ui-content">
-                    <view class="cell-title">{{courseInfo.floatBox.courseName}}</view>
-                    <view class="cell-dec">{{courseInfo.floatBox.senceName}}</view>
+                    <view class="cell-title text-overflow">课程：{{courseInfo.floatBox.courseName}}</view>
+                    <view class="cell-dec text-overflow">{{courseInfo.floatBox.senceName}}</view>
                 </view>
             </view>
             <view class="cell-btn">{{courseInfo.floatBox.buttonStatusMsg}}</view>
