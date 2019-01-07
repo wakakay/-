@@ -476,13 +476,13 @@
     border-radius:131.2rpx;
     background-color: @background-blue;
     padding: 0 32rpx;
-    box-shadow: 0 4rpx 12rpx rgba(38, 155, 154, .5);
+    box-shadow: 0 4rpx 12rpx rgba(38,155,154,.5);
     min-width: 144rpx;
   }
 
   .favourite-course-copy-article__footer__price-free::active {
     background-color: @background-blue;
-    box-shadow: 0 4rpx 12rpx rgba(38, 155, 154, .5);
+    box-shadow: 0 4rpx 12rpx rgba(38,155,154,.5);
   }
 
   .favourite-course-copy-article__footer__price.temporary {
