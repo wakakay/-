@@ -1,0 +1,107 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-appraisal-box{
+        view{box-sizing:border-box;}
+        .ui-divider{height:2rpx;margin:20rpx 32rpx;clear:both;background-color:@border-gray;}
+        .ui-thumb-box{
+            width:100%;height:auto;overflow:hidden;clear:both;
+            image{width:100%;height:auto;overflow:hidden;}
+        }
+        .ui-text-box{
+            padding:24rpx 32rpx;line-height:54rpx;
+            .cell-title{padding-bottom:24rpx;font-size:40rpx;font-weight:700;color:@color-black;}
+            .cell-details{font-size:34rpx;color:@color-gray;text-align:justify;}
+        }
+
+        .ui-button-box{
+            width:100%;height:128rpx;
+            &.is-iphonex{
+                height:196rpx;
+                .cell-button{height:196rpx;}
+            }
+            .cell-button{width:100%;height:128rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;}
+            button{width:700rpx;height:100rpx;margin:0 auto;background-color:@background-blue;font-size:34rpx;color:@color-white;text-align:center;line-height:100rpx;border-radius:@border-radius-20;}
+        }
+    }
+
+</style>
+
+<template>
+    <view class="ui-appraisal-box">
+        <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
+        <view class="ui-thumb-box flex">
+            <image mode="widthFix" src="http://image.runwise.cn/image/imageIDa7ec7a877ed44780781bfff14169.png"></image>
+        </view>
+
+        <view class="ui-text-box">
+            <div class="cell-details">
+                <text>你是否学习了很多内容营销的技巧，却还在原地打转？你是否费尽心思制作了内容，读者却寥寥无几？你是否分发了内容，却不知道怎样去统计内容营销的效果？
+                所有这些问题都是初级内容小编的硬伤，要做好一篇推文，决定的因素很多。而且也不是好文就自带流量。想要看看你是否有足够的水平来的打造一款爆文，先来一个小调查：
+                </text>
+            </div>
+        </view>
+
+        <view class="ui-divider"></view>
+
+       <!-- <view class="ui-poll-box">
+            <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
+
+            <button class="cell-poll-btn"
+                    :class="{'cell-seleted' : item.isDone}"
+                    data-index="{{index}}"
+                    data-item="{{item}}"
+                    open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                    bindgetuserinfo="getAuthorize"
+                    @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
+        </view>-->
+
+        <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
+            <view class="cell-button">
+                <button>开始测试</button>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+    import poll from '../../components/cards-type/poll'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class courseLearning extends wepy.page {
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading,
+            'jn-poll': poll
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            isHeadHeight: false
+        }
+
+        onLoad() {
+
+        }
+
+        onShow() {
+
+        }
+
+        onReady() {
+
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>

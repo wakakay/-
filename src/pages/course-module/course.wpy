@@ -28,7 +28,7 @@
                 }
                 .cell-name{
                     font-size: 40rpx;color: @color-black;display: flex;flex: 1;height: 100rpx;align-items: center;
-                    
+
                 }
             }
             .ui-item-hover{background: @background-mask-normal-2;}
@@ -44,67 +44,21 @@
         }
         .ui-swiper-list{
             height: 476rpx;
-            .ui-swiper-box{
-                .ui-item{
-                    display: flex;margin-bottom:12rpx;margin-right:10rpx;
-                    .ui-img{
-                        margin-right: 20rpx;width: 128rpx;
-                        image{width: 128rpx;height: 128rpx;border-radius: @border-radius-32;}
-                    }
-                    &:first-child .ui-right{border-top: 0}
-                    .ui-right{
-                        display: flex;border-top:2rpx solid @border-gray;align-items:center;
-                        .ui-content{
-                            display: flex;flex-direction: column;justify-content: space-between;width: 330rpx;text-align:left;height:88rpx;
-                            .cell-name{font-size: 32rpx;color: @color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-                            .cell-dec{font-size: 26rpx;color: @color-gray;text-align: left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-                        }
-                        .ui-btn{
-                            display: flex;align-items:center;margin-left:43rpx;
-                            .cell-item{
-                                width: 148rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-gray-F4;color: @color-blue;font-size: 30rpx;display: flex;align-items: center;justify-content: center;font-weight: bold;
-                            }
-                            
-                        }
-                    }
-                }
-                .cell-border{position:absolute;bottom:0;left: 0;height: 14rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
+            .ui-item{
+                &::before{width:460rpx;}
             }
-            
+            .cell-border{position:absolute;bottom:0;left: 0;height: 14rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
         }
     }
     .ui-hot-course{
-        padding-top: 36rpx;
+        padding-top:36rpx;
         .cell-tip{font-size:44rpx;color:@color-black;text-align:left;font-weight: bold;padding-left: 30rpx;}
         .ui-swiper-list{
-            height: 496rpx;
-            .ui-swiper-box{
-                border-bottom:2rpx solid @border-gray;
-                .ui-item{
-                    display: flex;height: 240rpx;
-                    .ui-img{
-                        margin-right: 28rpx;width: 176rpx;height: 240rpx;display: flex;align-items: center;
-                        image{width: 176rpx;height: 176rpx;border-radius: @border-radius-44;}
-                    }
-                    &:first-child .ui-right{border-top: none}
-                    .ui-right{
-                        display: flex;border-top:2rpx solid @border-gray;height:240rpx;box-sizing:border-box;padding-bottom:10rpx;
-                        .ui-content{
-                            display: flex;flex-direction: column;justify-content: space-between;padding:32rpx 0 20rpx;width: 464rpx;text-align:left;
-                            .cell-name{font-size: 32rpx;color: @color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-                            .cell-dec{font-size: 26rpx;color: @color-gray;text-align: left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-                            .ui-btn{
-                                display: flex;align-items:center;margin-top:4rpx;justify-content: flex-start;
-                                .cell-item{
-                                    width: 148rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-gray-F4;color: @color-blue;font-size: 30rpx;display: flex;align-items: center;justify-content: center;font-weight: bold;
-                                }
-                                .cell-dec{margin-left: 20rpx;}
-                            }
-                        }
-                    }
-                }
-                .cell-border{position:absolute;bottom:0;left: 0;height: 48rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
+            height:496rpx;
+            .ui-item{
+                padding:32rpx 10rpx 32rpx 0;
             }
+            .cell-border{position:absolute;bottom:0;left: 0;height: 14rpx;width: 674rpx;border-bottom:2rpx solid @border-gray;}
         }
     }
     /* 最新推荐 */
@@ -161,7 +115,7 @@
         bindscroll="getScroll">
         <!-- <image class="activity__banner" wx:if="{{ activityBundle.imageTop}}" src="{{ activityBundle.imageTop }}"
                mode="scaleToFill"></image> -->
-        <jn-header hiddenButton className="background-transparent"></jn-header>
+        <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
 
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-course-header">
@@ -194,30 +148,32 @@
 
             <view class="ui-new-course">
                 <view class="cell-tip"><text>限时</text>赠一得一</view>
+
                 <swiper class="ui-swiper-list"
-                        previous-margin="40rpx"
+                        previous-margin="30rpx"
                         next-margin="20rpx">
                     <repeat for="{{limitedTimeGiftCourseList}}" key="index" index="index" item="data">
-                        <swiper-item class="ui-swiper-box">
-                            <repeat for="{{data}}" key="index" index="index" item="item">
-                                <view class="ui-item"
-                                      hover-stay-time="100"
-                                      @tap.stop="getCourseDetail" data-item="{{item}}" data-type="4">
-                                    <view class="ui-img">
-                                        <image src="{{item.image}}"></image>
+                        <swiper-item class="module-course-box size-small">
+                            <repeat for="{{data}}" key="number" index="number" item="item">
+                                <view class="ui-item flex" hover-stay-time="100"
+                                      data-item="{{item}}"
+                                      data-type="4"
+                                      @tap.stop="getCourseDetail">
+                                    <view class="cell-thumb flex-box-0">
+                                        <image mode="aspectFit" src="{{item.image}}"></image>
                                     </view>
-                                    <view class="ui-right">
-                                        <view class="ui-content">
-                                            <view class="cell-name">{{item.name}}</view>
-                                            <view class="cell-dec">{{item.showPoint}}</view>
+                                    <view class="ui-content flex cross-center">
+                                        <view class="ui-info">
+                                            <view class="cell-title">{{item.name}}</view>
+                                            <view class="cell-description">{{item.showPoint}}…</view>
                                         </view>
-                                        <view class="ui-btn">
-                                            <view class="cell-item">免费领</view>
+                                        <view class="cell-button flex-box-0">
+                                            <button>免费领</button>
                                         </view>
                                     </view>
                                 </view>
-                                <view class="cell-border"></view>
                             </repeat>
+                            <view class="cell-border"></view>
                         </swiper-item>
                     </repeat>
                 </swiper>
@@ -226,31 +182,30 @@
             <view class="ui-hot-course">
                 <view class="cell-tip">热门课程</view>
                 <swiper class="ui-swiper-list"
-                        previous-margin="40rpx"
+                        previous-margin="30rpx"
                         next-margin="20rpx">
-                    <block wx:for="{{hotCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="itemArr">
-                        <swiper-item class="ui-swiper-box">
-                            <view class="ui-item" hover-stay-time="100"
-                                  wx:for="{{itemArr}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item"
-                                  @tap.stop="getCourseDetail" data-item="{{item}}" data-type="3">
-                                <view class="ui-img">
-                                    <image src="{{item.image}}"></image>
-                                </view>
-                                <view class="ui-right">
-                                    <view class="ui-content">
-                                        <view class="cell-name">{{item.name}}</view>
-                                        <view class="cell-dec">{{item.showPoint}}</view>
-                                        <view class="ui-btn">
-                                            <view class="cell-item">获取</view>
-                                            <view class="cell-dec">{{item.userCount}}人已学</view>
+                    <repeat for="{{hotCourseList}}" key="index" index="index" item="data">
+                        <swiper-item class="module-course-box">
+                            <repeat for="{{data}}" key="number" index="number" item="item">
+                                <view class="ui-item flex" hover-stay-time="100"
+                                      data-item="{{item}}"
+                                      data-type="3"
+                                      @tap.stop="getCourseDetail">
+                                    <view class="cell-thumb flex-box-0">
+                                        <image mode="aspectFit" src="{{item.image}}"></image>
+                                    </view>
+                                    <view class="ui-content dir-top main-justify">
+                                        <view class="cell-title">{{item.name}}</view>
+                                        <view class="cell-description">{{item.showPoint}}…</view>
+                                        <view class="cell-button flex">
+                                            <button>免费领</button><text>{{item.userCount}}人已学</text>
                                         </view>
                                     </view>
-
                                 </view>
-                            </view>
+                            </repeat>
                             <view class="cell-border"></view>
                         </swiper-item>
-                    </block>
+                    </repeat>
                 </swiper>
             </view>
 
@@ -278,30 +233,32 @@
                 <swiper class="ui-swiper-list"
                         previous-margin="40rpx"
                         next-margin="20rpx">
-                    <block wx:for="{{newCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="itemArr">
-                        <swiper-item class="ui-swiper-box">
-                            <view class="ui-item"
-                                  wx:for="{{itemArr}}" wx:index="{{ index }}" wx:key="{{ index }}" wx:for-item="item"
-                                  hover-stay-time="100"
-                                  @tap.stop="getCourseDetail" data-item="{{item}}" data-type="2">
-                                <view class="ui-img">
-                                    <image src="{{item.image}}"></image>
-                                </view>
-                                <view class="ui-right">
-                                    <view class="ui-content">
-                                        <view class="cell-name">{{item.name}}</view>
-                                        <view class="cell-dec">{{item.showPoint}}</view>
+
+                    <repeat for="{{newCourseList}}" key="index" index="index" item="data">
+                        <swiper-item class="module-course-box size-small">
+                            <repeat for="{{data}}" key="number" index="number" item="item">
+                                <view class="ui-item flex" hover-stay-time="100"
+                                      data-item="{{item}}"
+                                      data-type="2"
+                                      @tap.stop="getCourseDetail">
+                                    <view class="cell-thumb flex-box-0">
+                                        <image mode="aspectFit" src="{{item.image}}"></image>
                                     </view>
-                                    <view class="ui-btn">
-                                        <view class="cell-item">获取</view>
+                                    <view class="ui-content flex cross-center">
+                                        <view class="ui-info">
+                                            <view class="cell-title">{{item.name}}</view>
+                                            <view class="cell-description">{{item.showPoint}}…</view>
+                                        </view>
+                                        <view class="cell-button flex-box-0">
+                                            <button>获取</button>
+                                        </view>
                                     </view>
                                 </view>
-                            </view>
+                            </repeat>
                         </swiper-item>
-                    </block>
+                    </repeat>
                 </swiper>
             </view>
-
         </form>
         <view class="ui-clear"></view>
 

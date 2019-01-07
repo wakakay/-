@@ -1,6 +1,6 @@
 <template>
 	<mloading wx:if="{{ !isLoaded  }}"/>
-	<jn-header title="训练营" hiddenButton></jn-header>
+	<jn-header title="训练营" hiddenButton statusBackground="#fff"></jn-header>
 	<view class="ui-training-camp" style="height: calc(100% - {{headerHeigth}}px)" wx:if="{{isLoaded}}">
 		<scroll-view class="ui-bar" scroll-x="{{ true }}"
 					 scroll-into-view="item-{{ activedAssortmentPage }}"
@@ -312,7 +312,7 @@
                 })
             },
             //跳往详情页
-			handleTendToAttendTeamLearning({currentTarget: {dataset: {teamID}}}) 
+			handleTendToAttendTeamLearning({currentTarget: {dataset: {teamID}}})
 			{
                 this.$navigate('/pages/training-camp-module/coursr-list', {
                     teamID
@@ -365,7 +365,7 @@
 			})
         }
 
-		switchSeries({current,seriesPerPage}) 
+		switchSeries({current,seriesPerPage})
 		{
             this.activedAssortmentIndex = current
             this.activedAssortmentPage = `${current < seriesPerPage ? 0 : (current - seriesPerPage)}`

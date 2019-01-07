@@ -39,7 +39,7 @@
                     .ui-cri{
                         width: 180rpx;height: 120rpx;position: relative;font-size:30rpx;color:@color-white;text-align: center;
                         .cell-item{font-weight: bold;font-size: 56rpx;height: 56rpx;line-height: 64rpx}
-                    }   
+                    }
                 }
                 .ui-main{
                     background: @background-white;font-size: 32rpx;text-align:left;padding:18rpx 40rpx 40rpx 40rpx;width: 100%;border-bottom-right-radius: @border-radius-20;border-bottom-left-radius: @border-radius-20;
@@ -78,7 +78,7 @@
                                 .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -100,7 +100,7 @@
                 scroll-y="{{isScroll}}"
                 bindscrolltoupper="getScrollRefresh"
                 bindscrolltolower="getScrollMore">
-            <jn-header hiddenButton className="background-transparent"></jn-header>
+            <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
 
             <form bindsubmit="handleSavePushCode" report-submit>
                 <view class="ui-course-header">
@@ -436,8 +436,8 @@
                 //
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
-                        courseID:self.courseID, 
-                        senceID:self.senceID, 
+                        courseID:self.courseID,
+                        senceID:self.senceID,
                         source})
                 }
 
@@ -451,10 +451,10 @@
                 }
                 let isNewSence = item.isNewSenceMap[self.senceID]
                 navigateToLesson({
-                    courseID:self.courseID, 
-                    senceID:self.senceID, 
+                    courseID:self.courseID,
+                    senceID:self.senceID,
                     resumeLastRead: resume,
-                    source, 
+                    source,
                     isNewSence
                 })
             },

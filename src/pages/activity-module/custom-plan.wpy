@@ -1,0 +1,135 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-custom-plan{
+        box-sizing:border-box;padding:54rpx 32rpx 0;
+        view{box-sizing:border-box;}
+        .ui-custom-title{
+            .cell-title{
+                padding-bottom:32rpx;
+                image{width:72rpx;height:72rpx;margin-right:16rpx;border-radius:50%;}
+                text{font-size:52rpx;font-weight:700;color:@color-black;line-height:72rpx;}
+            }
+            .cell-subtitle{font-size:34rpx;color:@color-gray;line-height:60rpx;}
+        }
+        .ui-title{padding:36rpx 0 20rpx;margin-top:14rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
+    }
+
+    .ui-button-box{
+        box-sizing:border-box;width:100%;padding:58rpx 24rpx 28rpx;
+        &.is-iphonex{padding-bottom:96rpx;}
+        button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;color:@color-white;text-align:center;line-height:100rpx;border-radius:@border-radius-20;}
+    }
+</style>
+
+<template>
+    <jn-header className="background-transparent" statusBackground="#fff"></jn-header>
+    <view class="ui-custom-plan">
+        <view class="ui-custom-title">
+            <view class="cell-title dir-left">
+                <image mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIk5E5pbRm4P9V8Zahpbxbvg/132"></image>
+                <text>你的专属学习计划</text>
+            </view>
+            <view class="cell-subtitle">根据你的测评结果为你生成专属的学习计划</view>
+        </view>
+
+        <view class="ui-title">最优先学习技能：#团队领导力</view>
+        <view class="module-course-box">
+            <view class="ui-item flex">
+                <view class="cell-thumb flex-box-0">
+                    <image mode="aspectFit" src="http://image.runwise.cn/image/imageIDec5549087724ee8ef8f66655c4eb.png"></image>
+                </view>
+                <view class="ui-content dir-top main-justify">
+                    <view class="cell-title">新任leader的团队管理指南</view>
+                    <view class="cell-description">史上最成功设计团队IEDO…</view>
+                    <view class="cell-button flex">
+                        <button>加入学习计划</button><text>222人在学</text>
+                    </view>
+                </view>
+            </view>
+            <view class="ui-item flex">
+                <view class="cell-thumb flex-box-0">
+                    <image mode="aspectFit" src="http://image.runwise.cn/image/imageIDec5549087724ee8ef8f66655c4eb.png"></image>
+                </view>
+                <view class="ui-content dir-top main-justify">
+                    <view class="cell-title">新任leader的团队管理指南</view>
+                    <view class="cell-description">史上最成功设计团队IEDO…</view>
+                    <view class="cell-button flex">
+                        <button>加入学习计划</button><text>222人在学</text>
+                    </view>
+                </view>
+            </view>
+            <view class="ui-item flex">
+                <view class="cell-thumb flex-box-0">
+                    <image mode="aspectFit" src="http://image.runwise.cn/image/imageIDec5549087724ee8ef8f66655c4eb.png"></image>
+                </view>
+                <view class="ui-content dir-top main-justify">
+                    <view class="cell-title">新任leader的团队管理指南</view>
+                    <view class="cell-description">史上最成功设计团队IEDO…</view>
+                    <view class="cell-button flex">
+                        <button>加入学习计划</button><text>222人在学</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <view class="ui-title">最热门技能：#内容营销</view>
+        <view class="module-course-box">
+            <view class="ui-item flex">
+                <view class="cell-thumb flex-box-0">
+                    <image mode="aspectFit" src="http://image.runwise.cn/image/imageIDec5549087724ee8ef8f66655c4eb.png"></image>
+                </view>
+                <view class="ui-content dir-top main-justify">
+                    <view class="cell-title">新任leader的团队管理指南</view>
+                    <view class="cell-description">史上最成功设计团队IEDO…</view>
+                    <view class="cell-button flex">
+                        <button>加入学习计划</button><text>222人在学</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
+        <button>一键加入学习计划</button>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class courseLearning extends wepy.page {
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading
+        }
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+        }
+
+        onLoad() {
+
+        }
+
+        onShow() {
+
+        }
+
+        onReady() {
+
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>

@@ -22,6 +22,8 @@
         }
     }
     .ui-header-box{width:100%;background-color:rgba(255,255,255,.95);position:fixed;left:0;top:0;z-index:20;}
+    .ui-status-bar{background:@background-white !important;}
+    .ui-status-bar-black{background:@background-black;}
     .ui-content{height:100%;position:relative;}
     .ui-button{
         width:96rpx;height:100%;position:absolute;
@@ -36,6 +38,7 @@
         text{display:block;width:100%;font-size:36rpx;text-align:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
     }
 }
+
 /* 加载框 */
 .module-loading{
     width:100%;height:100%;background:@background-white;position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;z-index:@z-index-mask;
@@ -394,6 +397,41 @@
     .ui-description{padding-top:32rpx;font-size:34rpx;color:@color-black;line-height:48rpx;text-align:justify;}
 }
 /* 微课组件样式集合END */
+
+/* 课程列表样式 */
+.module-course-box{
+    .ui-item{
+        box-sizing:border-box;width:100%;height:240rpx;padding:32rpx 0;position:relative;
+        &::before{content:' ';width:460rpx;border-top:1px solid @border-gray;position:absolute;left:204rpx;top:0;}
+        &:first-child::before{border-top:0;}
+        .cell-thumb{
+            width:176rpx;height:176rpx;margin-right:28rpx;border-radius:@border-radius-44;overflow:hidden;
+            image{width:100%;height:100%;}
+        }
+
+        .ui-content{
+            height:172rpx;
+            .cell-title{padding-bottom:4rpx;width:420rpx;font-size:32rpx;font-weight:700;color:@color-black;text-align:left;line-height:44rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+            .cell-description{width:420rpx;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+            .cell-button{
+                height:88rpx;padding-top:28rpx;
+                button{height:60rpx;padding:0 32rpx;margin-right:20rpx;background-color:@background-gray-F4;font-size:30rpx;font-weight:700;color:@color-blue;text-align:center;line-height:60rpx;border-radius:60rpx;}
+                text{font-size:26rpx;color:@color-gray;line-height:60rpx;}
+            }
+        }
+    }
+    &.size-small{
+        .ui-item{
+            height:156rpx;padding:14rpx 0;
+            .cell-thumb{width:128rpx;height:128rpx;margin-right:22rpx;border-radius:@border-radius-32;}
+            .ui-content{
+                height:128rpx;
+                .cell-title, .cell-description{width:350rpx;}
+            }
+        }
+    }
+}
+
 
 /* 圆形进度条 */
 .ui-circular-progress{

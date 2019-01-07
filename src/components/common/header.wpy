@@ -3,18 +3,18 @@
 </style>
 
 <template>
-    <view class="module-header {{classNameSync}}" style="{{isHeadHeight ? 'height:'+(statusBarHeight+contentHeight)+'px' : ''}}">
-        <view class="ui-header-box" style="background:{{background}};color:{{textColor}};">
-            <view class="ui-status-bar" style="height:{{statusBarHeight}}px"></view>
+    <view class="module-header {{classNameSync}}" style="{{(isHeadHeight ? 'height:'+(statusBarHeight+contentHeight)+'px;' : '')}}">
+        <view class="ui-header-box" style="{{((background ? 'background:'+background+';' : '')+''+(textColor ? 'color:'+textColor+';' : ''))}}">
+            <view class="ui-status-bar" style="{{'height:'+statusBarHeight+'px;'+(statusBackground ? 'background:'+statusBackground+';' : '')}}"></view>
 
-            <view class="ui-content" style="height:{{contentHeight}}px">
+            <view class="ui-content" style="{{(contentHeight ? 'height:'+contentHeight+'px;' : '')}}">
                 <view class="ui-button" :class="{'is-after': buttonAfter}">
                     <button wx:if="{{!isHiddenButton && !isSrcShare}}"
                             class="cell-back main-center cross-center"
                             @tap.stop="getBack">
                         <view class="cell-after main-center cross-center">
                             <text class="icon-{{buttonIcon}}"
-                                  style="color:{{buttonColor}}"></text>
+                                  style="{{(buttonColor ? 'color:'+buttonColor+';' : '')}}"></text>
                         </view>
                     </button>
 
@@ -24,7 +24,7 @@
                                url="/pages/course-module/course">
                         <view class="cell-after main-center cross-center">
                             <text class="icon-home"
-                                  style="color:{{buttonColor}}"></text>
+                                  style="{{(buttonColor ? 'color:'+buttonColor+';' : '')}}"></text>
                         </view>
                     </navigator>
                     <slot name="cursor-button"></slot>
@@ -56,6 +56,7 @@
      * @param {title} [String] - 标题文字----【即能】
      * @param {buttonColor} [String] - 左侧的按钮的字体图标颜色，权限高于className，建议使用className- ----【】
      * @param {background} [String] - 头部背景颜色，权限高于className，建议使用className ----【】
+     * @param {statusBackground} [String] - 头部状态栏背景颜色，权限高于className，建议使用className ----【】
      * @param {textColor} [String] - 头部字体颜色，权限高于className，建议使用className ----【】
      */
     import wepy from 'wepy'
@@ -117,6 +118,9 @@
                 default: 1
             },
             background: {
+                type: String
+            },
+            statusBackground: {
                 type: String
             },
             textColor: {

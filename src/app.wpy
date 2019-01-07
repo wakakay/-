@@ -29,6 +29,8 @@
     export default class extends wepy.app {
         config = {
             pages: [
+                'pages/activity-module/new-appraisal-cover',
+
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -54,6 +56,7 @@
                 'pages/FindList/index',
                 'pages/SpecialCourse/index',
                 /* 活动 */
+                'pages/activity-module/custom-plan',
                 'pages/activity-module/appraisal-start', // 测评开始页面
                 'pages/activity-module/appraisal-questions', // 测评试题页面
                 'pages/activity-module/appraisal-results', // 测评结果页面
