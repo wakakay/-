@@ -5,18 +5,18 @@
 		<form>
 			<view class="ui-item">
 				<text class="iconfont icon-name"></text>
-				<input value="{{name}}" 
-					bindinput="getName" 
-					placeholder-style="color:#A1A9AB"  
-					placeholder="姓名" 
+				<input value="{{name}}"
+					bindinput="getName"
+					placeholder-style="color:#A1A9AB"
+					placeholder="姓名"
 				/>
 			</view>
 			<view class="ui-item" wx:if="{{isClose}}">
 				<text class="iconfont icon-department"></text>
-				<input value="{{companyName}}" 
-					bindinput="getCompanyName" 
-					placeholder-style="color:#A1A9AB"  
-					placeholder="请输入部门" 
+				<input value="{{companyName}}"
+					bindinput="getCompanyName"
+					placeholder-style="color:#A1A9AB"
+					placeholder="请输入部门"
 				/>
 			</view>
 			<view class="ui-item">
@@ -41,7 +41,6 @@
 	import fetchPhoneMixin from "../../mixins/fetchPhone";
 	import {setPhone, renewWechatCode} from '../../redux/models/user'
     import header from '../../components/common/header'
-	import AuthorizationModal from '../../components/AuthorizationModal/index'
 	import Loading from "../../components/common/loading"
 
   	const store = getStore();
@@ -68,7 +67,6 @@
   	export default class TeamLearningApply extends wepy.page {
 		components = {
             mloading: Loading,
-            AuthorizationModal,
             'jn-header': header
 		}
 
@@ -99,7 +97,7 @@
 
 		methods = {
 			// 自动填写 获取手机号码
-			handleSendPhone({detail: {encryptedData,errMsg: phoneErrMsg,iv}}) 
+			handleSendPhone({detail: {encryptedData,errMsg: phoneErrMsg,iv}})
 			{
 				return authApi.sendPhoneNumber({
 					token: this.token,
@@ -151,7 +149,7 @@
 						})
 					}
 				}
-				
+
 
 				if(this.phoneNum) {
 					if(this.phoneNum.length !== 11){

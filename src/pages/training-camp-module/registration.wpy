@@ -1,7 +1,7 @@
 <template>
 	<jn-header title="训练营报名" openType="reLaunch"></jn-header>
-	<mloading wx:if="{{ !isLoaded }}"/>
-	
+	<jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+
 	<view wx:else class="ui-team-introduction">
 		<image class="cell-banner" src="{{ imageUrl }}" mode="aspectFill"></image>
 		<view class="cell-name">{{ name }}</view>
@@ -41,7 +41,7 @@
 			</button> -->
 			<button
 				class="ui-item {{ 'allowSignUp'===buttonStatus? 'cell-column': '' }}"
-				plain="{{ true }}"  data-role="{{ role }}"  
+				plain="{{ true }}"  data-role="{{ role }}"
 				open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
                 bindgetuserinfo="getAuthorize"
                 hover-stay-time="100"
@@ -61,7 +61,6 @@
 	import {team as teamApi } from '../../api'
 	import {login} from '../../redux/models/user'
     import {CustomError} from '../../errors'
-	import AuthorizationModal from '../../components/AuthorizationModal/index'
 	import Loading from "../../components/common/loading";
 	import header from '../../components/common/header'
 	const store = getStore()
@@ -98,8 +97,7 @@
 
 		components = {
 			'jn-header': header,
-			mloading: Loading,
-			AuthorizationModal
+			'jn-loading': Loading,
 		}
 
 		data = {
@@ -138,7 +136,7 @@
                 role: self.role,
                 teamname: self.name,
 			})
-			
+
 			// 已经报名了 直接跳转详情页
 			if (self.isGotoTeamDetailPage) {
 				let teamID = self.teamID;
@@ -184,7 +182,7 @@
 				let self =this
 				self.getCommit()
 			}
-			
+
 		}
 
 		onLoad(params) {
@@ -194,7 +192,7 @@
             } else {
                 this.teamID = 'defaultTeamID'
             }
-			
+
 			let [ realTeamID, shareFlag='defaultShareFlag', shareTarget=0 ] = this.teamID.split('-')
 			this.teamID = realTeamID
 			this.shareFlag = shareFlag
@@ -213,11 +211,11 @@
                 roleType: this.shareTarget,
                 teamID
 			}
-			
+
             if (this.wxPushType) {
                 postData.wxPushType = this.wxPushType
 			}
-			
+
             teamApi.getMyTeamIntroduction(postData).then(({ name, buttonStatus, buttonTip, isGotoTeamDetailPage, courseImageList, teacherImage, imageUrl, signUpUserCount, time, targetList,isClose }) => {
 				// 已经报名了 直接跳转详情页
 				if (isGotoTeamDetailPage) {
@@ -245,7 +243,7 @@
 </script>
 
 <style lang="less">
-	@import "../../assets/style/theme"; 
+	@import "../../assets/style/theme";
 	.ui-team-introduction{
 		width: 100%;height: 100%;box-sizing: border-box;padding: 30rpx;
 		.cell-banner{width: 750rpx;height: 400rpx;margin-left: -36rpx;}

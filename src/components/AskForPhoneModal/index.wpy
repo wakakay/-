@@ -22,7 +22,7 @@
       return state.activity.poster
     }
   })
-  export default class ActivityModal extends wepy.component {
+  export default class AskForPhoneModal extends wepy.component {
     props = {
       tips: {
         type: String,
