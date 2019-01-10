@@ -38,8 +38,6 @@ export const ROUTERS = {
     'pages/course-module/course-exercises': {screenName: '微课练习'}, // 需要记录哪门子的微课
     'pages/course-module/course-evaluation': {screenName: '微课评价'}, // 需要记录哪门子的微课
     'pages/course-module/course-pay': {screenName: '微课支付'}, // 需要记录哪门子的微课
-    'pages/SingleSelection/index': {screenName: '微课即练'}, // 需要记录哪门子的微课
-    'pages/Sorting/index': {screenName: '微课即练'}, // 需要记录哪门子的微课?
     /*-------------------其他模版-----------------------*/
     'pages/other-module/work-template':  {screenName: '精练工作模板', isVisitor: true},
     'pages/other-module/job-skills':  {screenName: '核心工作技能', isVisitor: true},
@@ -75,6 +73,11 @@ export const ROUTERS = {
     'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
     'pages/activity-module/appraisal-results': {screenName: '测评结果'},
+    'pages/activity-module/new-appraisal-cover': {screenName: '新版测评封面', isVisitor: true},
+    'pages/activity-module/new-appraisal-subject': {screenName: '新版测评答题'},
+    'pages/activity-module/new-appraisal-results': {screenName: '新版测评结果'},
+    'pages/activity-module/custom-plan': {screenName: '专属学习计划'},
+
     /*-------------------注册-----------------------*/
     'pages/registered-module/weclome': {enName: 'welcome_page', screenName: 'user onboarding-欢迎页', isVisitor: true},
     'pages/registered-module/interest-select': {enName: 'interest_select', screenName: 'user onboarding-职能选择页'},

@@ -179,9 +179,7 @@
                 'pages/course-module/course-learning',
                 'pages/course-module/course-exercises',
                 'pages/course-module/lesson',
-                'pages/course-module/lesson-for-android',
-                'pages/Sorting/index',
-                'pages/SingleSelection/index']
+                'pages/course-module/lesson-for-android']
         }
 
         onLoad(params) {

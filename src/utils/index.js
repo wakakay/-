@@ -15,15 +15,6 @@ const PHONE_ERRORS_MAPPER = {
     paramsLost: '必须授权手机号才能即学哦'
 }
 
-const PRACTICES_ROUTER_MAPPER = {
-    textSelectionVer2: '/pages/SingleSelection/index',
-    order: '/pages/Sorting/index'
-}
-
-const PREVIOUS_PRACTICES_ROUTER_MAPPER = {
-    textSelectionVer2: '/pages/PreviousPracticeSingleSelection/index'
-}
-
 /**
  * 清除左右空格
  * @type {function(*=)}
@@ -226,20 +217,6 @@ export const setStorageAsync = ({ key, value }) => {
         })
 }
 
-export const showModalAsync = ({ title, content, showCancel = false, cancelText = '', confirmText }) => {
-    return new Promise((resolve, reject) => {
-            wx.showModal({
-                    title,
-                    content,
-                    showCancel,
-                    cancelText,
-                    confirmText,
-                    success: ({ confirm }) => confirm ? resolve() : reject(),
-                    fail: error => reject(error)
-                })
-        })
-}
-
 export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
         const store = getStore()
         return new Promise((resolve, reject) => {
@@ -290,14 +267,7 @@ export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
 
 export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isNewSence=false, isRedirectTo=false}) => {
     const { user: { platform } } = getStore().getState()
-    let url = '/pages/course-module/lesson-for-android'
-    // 是否是ppt卡片进去
-    if (isNewSence) {
-        url = '/pages/course-module/course-learning'
-    } else {
-        url = 'android' === platform ? '/pages/course-module/lesson-for-android' : '/pages/course-module/lesson'
-    }
-    url += `?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&source=${source}&isNewSence=${isNewSence}`
+    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&source=${source}&isNewSence=${isNewSence}`
     //console.log('confirm navigation', mUrl)
     if (!isRedirectTo) {
         return wepy.navigateTo({ url: url })
@@ -308,44 +278,8 @@ export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', re
 
 export const redirectToLesson = ({ courseID, senceID, teamID = 'defaultTeamID', resumeLastRead = 'NO' , isNewSence=false }) => {
     const { user: { platform } } = getStore().getState()
-    let url = '/pages/course-module/lesson-for-android'
-    // 是否是ppt卡片进去
-    if (isNewSence) {
-        url = '/pages/course-module/course-learning'
-    } else {
-        url = 'android' === platform ? '/pages/course-module/lesson-for-android' : '/pages/course-module/lesson'
-    }
-    url += `?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&isNewSence=${isNewSence}`
+    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&isNewSence=${isNewSence}`
     return wepy.redirectTo({ url: url })
-}
-
-export const navigateToPractice = practiceOffset => {
-    let { practices: { sections } } = getStore().getState()
-    let mRoute = PRACTICES_ROUTER_MAPPER[sections[practiceOffset]['type']]
-    if (null == mRoute) throw new CustomError('route not found, the type of cards must be "order" or "textSelectionVer2"')
-    getStore().dispatch(setCurrentPracticeOffset(practiceOffset))
-        // return wepy.navigateTo({ url: mRoute })
-    return wepy.redirectTo({ url: mRoute })
-}
-
-export const redirectToPractice = practiceOffset => {
-    let { practices: { sections, courseID, senceID, teamID }, cards: { requestFlag: lessonRequestFlag }, user: { token } } = getStore().getState()
-    sections[practiceOffset - 1] && practiceApi.sendDoneAPractice({
-            token,
-            senceID,
-            cardID: sections[practiceOffset - 1]['id'],
-            requestFlag: lessonRequestFlag
-        })
-        .catch(error => console.log('fail to send a done information of practice', error))
-    if (!sections[practiceOffset]) {
-        return wepy.redirectTo({ url: `/pages/course-module/course-complete?courseID=${courseID}&senceID=${senceID}&teamID=${teamID}` })
-            .then(() => getStore().dispatch(setCurrentPracticeOffset(0)))
-
-    }
-    let mRoute = PRACTICES_ROUTER_MAPPER[sections[practiceOffset]['type']]
-    if (null == mRoute) throw new CustomError('route not found, the type of cards must be "order" or "textSelectionVer2"')
-    getStore().dispatch(setCurrentPracticeOffset(practiceOffset))
-    return wepy.redirectTo({ url: mRoute })
 }
 
 export const formatTimestamp = timestamp => {
@@ -407,36 +341,6 @@ export const shareDictionary = {
         type: '点击课程系列课表tab'
     }
 }
-
-export const serialize = (obj, name) => {
-    var result = "";
-
-    function serializeInternal(o, path) {
-        for (let p in o) {
-            var value = o[p];
-            if (typeof value != "object") {
-                if (typeof value == "string") {
-                    result += "\n" + path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "] = " + "\"" + value.replace(/\"/g, "\\\"") + "\"" + ";";
-                } else {
-                    result += "\n" + path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "] = " + value + ";";
-                }
-            } else {
-                if (value instanceof Array) {
-                    result += "\n" + path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "]" + "=" + "new Array();";
-                    serializeInternal(value, path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "]");
-                } else {
-                    result += "\n" + path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "]" + "=" + "new Object();";
-                    serializeInternal(value, path + "[" + (isNaN(p) ? "\"" + p + "\"" : p) + "]");
-                }
-            }
-        }
-    }
-
-    serializeInternal(obj, name);
-    return result;
-}
-
-export const preFixNumber = (num, n) => (Array(n).join('0') + num).slice(-n) // preFixNumber
 
 export const parsePercentageForPoll = (current, total) => delta => Math.round(parseInt(current / (total + delta) * 100))
 
@@ -612,7 +516,14 @@ const initialState = {
             1078: '连Wi-Fi成功页',
             1089: '微信聊天主界面下拉',
             1090: '长按小程序右上角菜单唤出最近使用历史',
-            1092: '城市服务入口'
+            1092: '城市服务入口',
+            1095: '小程序广告组件',
+            1096: '聊天记录',
+            1097: '微信支付签约页',
+            1099: '页面内嵌插件',
+            1102: '公众号 profile 页服务预览',
+            1103: '发现栏小程序主入口，「我的小程序」列表（基础库2.2.4版本起废弃）',
+            1104: '微信聊天主界面下拉，「我的小程序」栏（基础库2.2.4版本起废弃）'
         }
     },
     courses: {

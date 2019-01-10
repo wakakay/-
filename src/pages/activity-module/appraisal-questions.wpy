@@ -58,10 +58,10 @@
                 <view class="cell-number">{{currentIndex}}/{{prePracticeObj.practiceList.length}}</view>
             </view>
         </jn-header>
-        <swiper class="ui-practice-block" 
+        <swiper class="ui-practice-block"
                 style="height: calc(100% - {{headerHeigth}}px)"
-                current="{{activedIndex}}" 
-                bindchange="getSwiperItem" 
+                current="{{activedIndex}}"
+                bindchange="getSwiperItem"
                 duration="{{300}}"
                 bindanimationfinish="getFinish">
             <block wx:for="{{tempList}}" wx:index="{{index}}" wx:key="{{index}}">
@@ -304,8 +304,6 @@
 
             self.__getExamPracticeList()
         }
-
-      
 
         events = {
             'header-info': (data) => {

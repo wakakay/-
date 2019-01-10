@@ -29,8 +29,6 @@
     export default class extends wepy.app {
         config = {
             pages: [
-
-
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -56,18 +54,16 @@
                 'pages/FindList/index',
                 'pages/SpecialCourse/index',
                 /* 活动 */
-                'pages/activity-module/new-appraisal-subject',
-                'pages/activity-module/new-appraisal-results',
-                'pages/activity-module/new-appraisal-cover',
-                'pages/activity-module/custom-plan',
+                'pages/activity-module/new-appraisal-subject', // 新版测评答题
+                'pages/activity-module/new-appraisal-results', // 新版测评结果
+                'pages/activity-module/new-appraisal-cover', // 新版测评封面
+                'pages/activity-module/custom-plan', // 专属学习计划
                 'pages/activity-module/appraisal-start', // 测评开始页面
                 'pages/activity-module/appraisal-questions', // 测评试题页面
                 'pages/activity-module/appraisal-results', // 测评结果页面
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
                 'pages/Review/index',
-                'pages/Sorting/index',
-                'pages/SingleSelection/index',
                 /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营
