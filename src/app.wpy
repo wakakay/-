@@ -36,8 +36,6 @@
                 'pages/course-module/course-new-details', // 课程详情
                 'pages/course-module/course-learning', // 新微课学习
                 'pages/course-module/course-learning-discuss', // 新微课学习想法详情
-                'pages/course-module/lesson', // 旧ios微课学习
-                'pages/course-module/lesson-for-android', // 旧android微课学习
                 'pages/course-module/course-exercises', // 微课课后练习题
                 'pages/course-module/course-discuss', // 微课课后练习题→讨论区
                 'pages/course-module/course-complete', // 微课完成
@@ -45,7 +43,7 @@
                 'pages/course-module/course-evaluation', // 微课评价
                 'pages/course-module/course-pay', // 微课支付
                 'pages/course-module/course-series', // 课程系列页
-
+                'pages/course-module/course-review', // 微课回顾回顾页
                 /* 今日模板 */
                 'pages/today-module/index',
                 'pages/today-module/all-course',
@@ -63,7 +61,6 @@
                 'pages/activity-module/appraisal-results', // 测评结果页面
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
-                'pages/Review/index',
                 /* 训练营 */
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营

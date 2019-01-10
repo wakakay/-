@@ -20,13 +20,13 @@
 						</view>
 					</view>
 					<view class="ui-sence-list">
-						<view class="ui-sence-list-item" 
-							wx:for="{{item.senceList}}" 
-							wx:for-item="senceitem" 
+						<view class="ui-sence-list-item"
+							wx:for="{{item.senceList}}"
+							wx:for-item="senceitem"
 							wx:key="unique"
 							hover-class="ui-sence-list-item-down"
-							data-course-i-d="{{senceitem.courseID}}" 
-							data-sence-i-d="{{senceitem.senceID}}" 
+							data-course-i-d="{{senceitem.courseID}}"
+							data-sence-i-d="{{senceitem.senceID}}"
 							@tap.stop="handleSencePage">
 							<view class="ui-sence-list-img">
 								<image class="cell-sence-list-item-img" mode="aspectFill" src="{{senceitem.imageUrl}}"></image>
@@ -96,11 +96,9 @@
 		data = {
 			isLoaded: true,
 			lessonList:[],
-			isFinish:1,
-            isNewSenceMap: {} // 进入微课的新老界面判断
+			isFinish:1
 		}
 		onLoad() {
-            this.isNewSenceMap = []
             wepy.$instance.globalData.getLoadHuilder() // ga统计
 			wx.reportAnalytics('lesson_list_num', {
 				username: this.userName,
@@ -127,22 +125,16 @@
 			},
 			//跳去微课详情页
 			handleSencePage({currentTarget:{dataset:{courseID, senceID}}}){
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, isNewSence})
+                navigateToLesson({courseID, senceID})
 			}
 		}
 
 		gainAllList() {
-			senceApi.myFinishSenceList({
-				token: this.token
-			})
-			.then(res => {
+			senceApi.myFinishSenceList({token: this.token}).then(res => {
 				this.lessonList = res.courseList
-                this.isNewSenceMap = res.isNewSenceMap
 				this.isFinish = res.hasFinish
 				this.$apply()
-			})
-			.catch(error => {
+			}).catch(error => {
 				console.log('fail to get all list')
 			})
 		}
@@ -174,7 +166,7 @@
 					}
 					.ui-lesson-list-arrow{
 						image{width:32rpx;height:32rpx}
-					} 
+					}
 				}
 				.ui-sence-list{
 					.ui-sence-list-item{
@@ -205,5 +197,5 @@
 
 		}
 	}
-	
+
 </style>

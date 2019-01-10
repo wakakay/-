@@ -194,7 +194,6 @@
             screenName: '课程专题页', // 来源，是今日还是发现页面过来的
             courseID: '',
             operateLabel: '',
-            isNewSenceMap: {},
             wxPushType:'',
             shareImg:'',
             isNewCourseMap:[],
@@ -274,7 +273,6 @@
             }
 
             fetch.getNewSpecialCourse(postData).then((res) => {
-                self.isNewSenceMap = res.isNewSenceMap
                 self.isNewCourseMap = res.isNewCourseMap
                 self.floatBox = res.floatBox
                 self.shareCoverTitle = res.shareCoverTitle
@@ -318,7 +316,6 @@
                 let resume = item.resume
                 self.senceID = item.id
 
-                let isNewSence = self.isNewSenceMap[self.senceID]
                 self.reportButtonTap()
 
                 wepy.$instance.globalData.getHuilder(`${self.screenName}/${self.courseName}`,'click',`${senceName}`)
@@ -327,7 +324,7 @@
                     return
                 }
                 if ('finish' === buttonStatus) {
-                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
 
@@ -335,8 +332,7 @@
                     courseID:self.courseID,
                     senceID:self.senceID,
                     resumeLastRead: resume,
-                    source,
-                    isNewSence
+                    source
                 })
             },
             // 跳去 课程详情页

@@ -8,7 +8,7 @@
             .ui-img{
                 display: flex;align-items: center;
                 image{width: 112rpx;height: 112rpx;border-radius:28rpx;}
-            } 
+            }
             .ui-content{
                 margin-left: 24rpx;height: 96rpx;
                 .cell-name{width: 368rpx;font-size: 34rpx;color:@color-black;font-weight: 700;overflow: hidden;white-space: nowrap;text-overflow:ellipsis}
@@ -33,7 +33,7 @@
                     }
                     .ui-share.ui-dack {color:@color-white;}
                 }
-                
+
             }
         }
     }
@@ -81,7 +81,7 @@
                         .cell-name{color: @color-gray;max-width: 220rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
                     }
                 }
-                
+
             }
         }
         .ui-empty-view{
@@ -114,7 +114,7 @@
             }
         }
     }
-   
+
 }
 
 </style>
@@ -141,7 +141,7 @@
                 <view>你还没有标为重点的卡片哦</view>
             </view>
             <view class="ui-swiper-box" wx:else>
-                <swiper class="ui-swiper-list" 
+                <swiper class="ui-swiper-list"
                         previous-margin="40rpx"
                         current="{{currentCard}}"
                         bindchange="getChangCard"
@@ -206,10 +206,10 @@
                                     </view>
                                 </repeat>
                             </view>
-                            
+
                         </view>
                     </view>
-                    
+
                 </repeat>
                 <view  wx:if="{{!viewsList.length}}" class="ui-empty-view">
                     <text class="icon-empty-review-list"></text>
@@ -248,19 +248,19 @@
                 </view>
             </view>
         </view>
-        
+
     </view>
     <jn-share-card></jn-share-card>
 </template>
 
 <script>
     import wepy from "wepy";
-    import {share as shareApi, fetch} from "../../api";
+    import {share as shareApi, fetch} from "../../api/index";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
     import shareCard from '../../components/shareImages/share-card'
-    import {navigateToLesson,trim} from "../../utils";
+    import {navigateToLesson,trim} from "../../utils/index";
     import _ from 'underscore'
 
 
@@ -281,7 +281,7 @@
         entrance(state) {
             return state.entrance
         },
-       
+
     })
     export default class Review extends wepy.page {
         components = {
@@ -302,7 +302,6 @@
             hasPointCard: false,
             hashBigImage: false,
             pointCardList: [],
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             currentCard:0,
             isShow:false,
             isFocus:false,
@@ -328,12 +327,11 @@
         __getReview() {
             let self = this;
             fetch.getReview({
-                token: self.token, 
-                courseID:self.courseID, 
+                token: self.token,
+                courseID:self.courseID,
                 senceID:self.senceID})
             .then(res => {
                 self.isLoaded = true
-                self.isNewSenceMap = res.isNewSenceMap
                 self.senceName = res.senceName
                 self.viewsList = res.viewsList
                 let tempList = res.pointCardList
@@ -355,7 +353,7 @@
                 if(self.pointCardList.length === self.currentCard) {
                     self.currentCard = self.pointCardList.length - 1
                 }
-                
+
                 self.imageUrl = res.imageUrl
                 self.description = res.description
                 self.$apply()
@@ -415,7 +413,7 @@
                         self.__getReview()
                     }).catch(error => {
                         throw error
-                    }) 
+                    })
                 }else{
                     fetch.likeSenceViews(postData).then((respone) => {
                         self.__getReview()
@@ -432,7 +430,7 @@
                 let self = this;
                 let {currentTarget: {dataset: {id}}} = event
                 self.viewID = id;
-                self.isShowDel = true; 
+                self.isShowDel = true;
                 self.$apply()
             },
             // 取消弹出 confirm 删除想法
@@ -449,7 +447,7 @@
                     viewID : self.viewID
                 }
                 fetch.deleteSenceViews(postData).then((respone) => {
-                    self.isShowDel = false; 
+                    self.isShowDel = false;
                     self.$apply()
                     self.__getReview()
                 }).catch(error => {
@@ -541,8 +539,7 @@
             // 再学一次
             handleStudyAgain(event) {
                 let self = this;
-                let isNewSence = self.isNewSenceMap && self.isNewSenceMap[self.senceID]
-                navigateToLesson({courseID:self.courseID, senceID:self.senceID, isNewSence})
+                navigateToLesson({courseID:self.courseID, senceID:self.senceID})
             },
             getStudyLesson(event) {
                 let self = this;
@@ -552,8 +549,7 @@
                     item.xuhao = item.xuhao + 1
                 }
                 let resumeLastRead = item.xuhao ? item.xuhao : 'NO'
-                let isNewSence = self.isNewSenceMap[self.senceID]
-                navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead,isNewSence})
+                navigateToLesson({courseID:self.courseID, senceID:self.senceID, resumeLastRead: resumeLastRead})
             },
             /**
              * 全图卡热点卡生成分享图片

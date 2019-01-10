@@ -446,16 +446,14 @@
                     return
                 }
                 if ('finish' === buttonStatus) {
-                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
-                let isNewSence = item.isNewSenceMap[self.senceID]
                 navigateToLesson({
                     courseID:self.courseID,
                     senceID:self.senceID,
                     resumeLastRead: resume,
-                    source,
-                    isNewSence
+                    source
                 })
             },
             /**

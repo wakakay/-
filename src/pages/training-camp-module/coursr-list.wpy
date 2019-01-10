@@ -466,7 +466,7 @@
 						</view>
 						<view class="ui-item" wx:if="{{taskList.TaskContentList}}" wx:for="{{ taskList.TaskContentList }}" wx:key="{{ index }}" wx:for-index="index"
 							  @tap.stop="handleTapSence" data-item="{{item}}"  data-task-tips="{{false}}"
-							  data-phone="{{ phone }}" 
+							  data-phone="{{ phone }}"
 							  open-type="{{('deadNumber'===phone || null===phone)? 'getPhoneNumber': 'nil'}}"
 							  data-task-offset="{{index}}" data-button="{{false}}">
 							<view wx:if="{{ 'online' === item.taskType }}" class="ui-on-line">
@@ -948,7 +948,6 @@
             isShowManagerButton: false, // 是否显示底栏按钮
             managerButtonStatus: 'defaultManagerButtonStatus', // 底栏按钮状态 showManager 营长
             targetList: [], // 任务头 昨日，今日，明日
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             taskList: {}, // 今日任务
             reviewTask:{},//课后任务
 
@@ -1106,8 +1105,7 @@
                 this.isOperationShow = false
             },
             handleStartSence({currentTarget: {dataset: {courseID, senceID, resume, teamID, lessonType}}}) {//打开小节
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID: this.teamID, isNewSence})
+                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID: this.teamID})
             },
             // 评论
             handleCommentSence({currentTarget: {dataset: {active, postID, nickName}}}) {//评论
@@ -1167,7 +1165,7 @@
 				let tmp = self.extraList[voteOffset]
 				/* 若为单选 */
 				if(type === 'single') {
-					
+
 					let isSelect = _.keys(_.find(tmp.optionList,(item)=>{
 						return item.selected == true
 					}))
@@ -1188,7 +1186,7 @@
 									item.selected = true
 								}
 							})
-							
+
 						}
 					}else{
 						self.extraList[voteOffset].optionList = _.each(tmp.optionList,(item)=> {
@@ -1310,7 +1308,7 @@
                 if (!item.senceID) {
                     return
 				}
-				
+
                 if(taskTips && taskTips!== '继续学习') return
                 if ('deadNumber' === phone || !phone) return wepy.showToast({
                     title: '未授权手机号',
@@ -1346,9 +1344,8 @@
                     courseID,
                     senceID
                 })
-                if ('review' === buttonStatus) return this.$navigate('/pages/Review/index', {courseID, senceID, teamID}) // 回顾
-				let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID, isNewSence}) // 其他进入课程
+                if ('review' === buttonStatus) return this.$navigate('/pages/course-module/course-review', {courseID, senceID, teamID}) // 回顾
+                navigateToLesson({courseID, senceID, resumeLastRead: 'NO', teamID}) // 其他进入课程
             },
             // 管理训练营
             handleSubmit() {
@@ -1433,7 +1430,7 @@
 			}).catch(error => console.log('fail to load vote data du to', error))
 
             teamApi.getTeamDetail({token: this.token,teamID})
-                .then(({teamDetail, role, buttonTip, courseImageList, imageUrl, isShowShareTip, name, signUpUserCount, targetList, isNewSenceMap, taskList, teacherImage, time, isShowManagerButton, managerButtonStatus,reviewTask}) => {
+                .then(({teamDetail, role, buttonTip, courseImageList, imageUrl, isShowShareTip, name, signUpUserCount, targetList, taskList, teacherImage, time, isShowManagerButton, managerButtonStatus,reviewTask}) => {
                     this.accessTimes = this.accessTimes + 1
                     this.isLoaded = true
                     this.teamDetail = teamDetail //
@@ -1445,7 +1442,6 @@
                     this.isShowShareTip = isShowShareTip
                     this.name = name
                     this.signUpUserCount = signUpUserCount
-                    this.isNewSenceMap = isNewSenceMap
                     this.taskList = taskList
                     this.reviewTask = reviewTask
                     this.teacherImage = teacherImage

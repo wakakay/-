@@ -200,14 +200,12 @@
             learningSenceList: [],
             newContinueSenceInfo: {},
             newLearningSenceList: [],
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             source:'continueList',
             courseType:['button','list'],
         }
 
         onLoad() {
             let self = this
-            self.isNewSenceMap = {}
         }
 
         /**
@@ -216,7 +214,6 @@
         __learningSenceList() {
             let self = this
             fetch.getMyLearningSenceList({token: self.systemInfo.token}).then(response => {
-                self.isNewSenceMap = response.isNewSenceMap
                 self.isRefresh = !response.learningSenceList.length
                 // 是否没有待学习课
                 if (!response.learningSenceList.length) {
@@ -364,9 +361,9 @@
                     name = '今日页/学习bar'
                     break
             }
-            
+
             name && wepy.$instance.globalData.getHuilder(name, 'click', `${senceName}`)
-            
+
         }
 
         methods = {
@@ -414,8 +411,7 @@
                 let {currentTarget: {dataset: {item = continueSenceInfo}}} = event
                 item.source = event.currentTarget.dataset.source
                 let {courseID, senceID,source} = item
-                let isNewSence = self.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, isNewSence})
+                navigateToLesson({courseID, senceID})
                 self.__refreshData()
             },
             /**
@@ -444,13 +440,12 @@
                 } else {
                     wepy.$instance.globalData.getHuilder('待学习页/微课', 'click', `${courseName}`)
                 }
-                
+
                 let {currentTarget: {dataset: {item = continueSenceInfo}}} = event
                 item.source = event.currentTarget.dataset.source
                 let {courseID, senceID,source} = item
                 self.__refreshData()
-                let isNewSence = self.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, isNewSence})
+                navigateToLesson({courseID, senceID})
             },
             /**
              * 课程详情

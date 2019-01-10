@@ -593,7 +593,7 @@
                 })
                 try {
                     wepy.navigateTo({
-                        url: `/pages/Review/index?senceID=${senceID}`
+                        url: `/pages/course-module/course-review?senceID=${senceID}`
                     })
                 } catch (err) {
                     console.log('err', err)

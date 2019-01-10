@@ -216,7 +216,6 @@
             ],
             courseInfo: {},
             courseList: [],
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             isStatisticalCourse: false,
             isFirstLoad: 1 // 是否第一次加载
         }
@@ -230,7 +229,6 @@
             self.currentSwiperTitle = {}
             self.courseInfo = {}
             self.courseList = []
-            self.isNewSenceMap = {}
         }
 
         onShow() {
@@ -243,7 +241,6 @@
             let postData = _.extend(self.routeParams, {token: self.systemInfo.token})
 
             fetch.getDiscoverPageByCourseSeriesByLinkByDetailNew(postData).then(response => {
-                self.isNewSenceMap = response.isNewSenceMap
                 !_.isEmpty(self.courseInfo) ? self.updateInfo(response, AuthorizeData) :  self.initData(response)
 
                 setTimeout(() => {
@@ -371,16 +368,15 @@
 
             let resume = 'continue' === buttonStatus ? 'YES' : 'NO'
             if (data.type == 'sence') {
-                let isNewSence = self.isNewSenceMap[senceID]
                 switch (buttonStatus) {
                     case 'finish': // 回顾
-                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                        self.$navigate(`/pages/course-module/course-review`, {courseID, senceID})
                         break
                     case 'needPay': // 付费
                         self.$navigate(`/pages/course-module/course-pay`, {senceID})
                         break
                     default:
-                        navigateToLesson({courseID, senceID, isNewSence})
+                        navigateToLesson({courseID, senceID})
                 }
                 return
             }
@@ -388,7 +384,7 @@
             if ('needPay' === buttonStatus) {
                 return this.$navigate(`/pages/course-module/course-pay`, {senceID})
             }
-            navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
+            navigateToLesson({courseID, senceID, resumeLastRead: resume})
         }
 
         methods = {

@@ -134,7 +134,7 @@
         <scroll-view class="ui-course-list" scroll-x scroll-with-animation>
             <repeat for="{{courseInfo.hotCourse}}" key="index" index="index" item="item">
                 <view class="ui-item" style="background-image:url('{{item.image}}')"
-                    @tap.stop="getCourseDetail" 
+                    @tap.stop="getCourseDetail"
                     data-item="{{item}}" data-type="1" >
                     <view class="ui-shadow">
                         <view class="cell-name text-overflow">{{item.name}}</view>
@@ -170,7 +170,7 @@
                         </view>
                     </view>
                 </view>
-                
+
             </view>
         </repeat>
     </view>
@@ -260,8 +260,7 @@
             headerTitle: '',
             routeParams: {},
             isLoaded: false,
-            courseInfo: {},
-            isNewSenceMap: {}
+            courseInfo: {}
         }
 
         onLoad(params) {
@@ -293,7 +292,6 @@
             }
             fetch.getSeriesPage(postData).then(response => {
                 self.courseInfo = response
-                self.isNewSenceMap = self.courseInfo.isNewSenceMap
                 self.headerTitle = self.courseInfo.seriesName
                 self.isLoaded = true
                 self.$apply()
@@ -334,8 +332,7 @@
                 let buttonStatus = item.buttonStatus
                 let courseID = item.courseID;
                 let senceID = item.id;
-                let resume = item.resume ? item.resume : "NO" 
-                let isNewSence = self.isNewSenceMap[senceID]
+                let resume = item.resume ? item.resume : "NO"
                 let senceName = item.senceName
 
                 wepy.$instance.globalData.getHuilder(`系列详情页/继续学bar`,'click',`${senceName}`)
@@ -343,15 +340,15 @@
 
                 switch (buttonStatus) {
                     case 'finish': // 回顾
-                        self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                        self.$navigate(`/pages/course-module/course-review`, {courseID, senceID})
                         break
                     case 'needPay': // 付费
                         wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
                         break
                     default:
-                        navigateToLesson({courseID, senceID, resumeLastRead: resume, isNewSence})
+                        navigateToLesson({courseID, senceID, resumeLastRead: resume})
                 }
-                
+
             }
         }
         onShareAppMessage() {

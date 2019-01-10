@@ -29,9 +29,7 @@ export const ROUTERS = {
     'pages/course-module/course-series': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare', pageType: 'Lesson'}, // 需要记录哪门子的微课
     'pages/course-module/course-learning-discuss': {screenName: '微课学习想法详情'}, // 需要记录哪门子的微课
-    'pages/course-module/lesson': {screenName: '微课学习', sence: 'CardsShare'},
-    'pages/course-module/lesson-for-android': {screenName: '微课学习', sence: 'CardsShare'},
-    'pages/Review/index': {screenName: '微课回顾'},
+    'pages/course-module/course-review': {screenName: '微课回顾'},
     'pages/course-module/course-discuss': {screenName: '微课即练评论'}, // 需要记录哪门子的微课
     'pages/course-module/course-complete': {screenName: '微课学习成果'}, // 需要记录哪门子的微课
     'pages/course-module/course-level-instructions': {screenName: '技能等级说明'},

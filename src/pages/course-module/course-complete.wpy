@@ -177,9 +177,7 @@
             starList: [1, 2, 3, 4, 5],
             skipRoutes: [
                 'pages/course-module/course-learning',
-                'pages/course-module/course-exercises',
-                'pages/course-module/lesson',
-                'pages/course-module/lesson-for-android']
+                'pages/course-module/course-exercises']
         }
 
         onLoad(params) {
@@ -367,12 +365,10 @@
                     return
                 }
 
-                let isNewSence = finishResultInfo.isNewSenceMap && finishResultInfo.isNewSenceMap[finishResultInfo.nextSenceID]
                 let params = {
                     courseID: finishResultInfo.nextCourseID,
                     senceID: finishResultInfo.nextSenceID,
-                    teamID: self.paramsInfo.teamID,
-                    isNewSence
+                    teamID: self.paramsInfo.teamID
                 }
                 wepy.$instance.globalData.getHuilder('微课完成页/继续学习', 'click', self.finishResultInfo.nextSenceName)
                 redirectToLesson(params)

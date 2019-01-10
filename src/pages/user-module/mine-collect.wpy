@@ -78,7 +78,7 @@
 	import loadingMixin from '../../mixins/loading'
 	import header from '../../components/common/header'
     import {navigateToLesson} from '../../utils'
-	
+
 	const store = getStore();
 	@connect({
 		userName(state) {
@@ -101,7 +101,6 @@
 
 		data = {
 			isLoaded: true,
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             collectList:[
                 {
                     title:'内容生产方法论',
@@ -128,7 +127,7 @@
             ]
 		}
 		onLoad() {
-            this.isNewSenceMap = []
+
 		}
 		onShow() {
 
@@ -137,8 +136,7 @@
 		methods = {
 			//跳去微课详情页
 			handleSencePage({currentTarget:{dataset:{courseID, senceID}}}){
-                let isNewSence = this.isNewSenceMap[senceID]
-                navigateToLesson({courseID, senceID, isNewSence})
+                navigateToLesson({courseID, senceID})
 			},
             // 跳去课程详情页
             getCourseDetail({currentTarget: {dataset: {item}}}) {
@@ -158,7 +156,7 @@
 
             }
         }
-		
+
 
 	}
 </script>

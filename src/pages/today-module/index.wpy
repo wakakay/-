@@ -384,7 +384,6 @@
             senceID: null,
             sencePage: null,
             todayDate:'',
-            isNewSenceMap:[],
             headerHeigth:''
         }
 
@@ -439,7 +438,6 @@
                 self.todaySkill = respone.todaySkill;
                 self.todaySenceList = respone.todaySenceList;
                 self.courseCount = respone.courseCount;
-                self.isNewSenceMap = respone.isNewSenceMap;
                 self.todayText = respone.todayText;
                 self.todayTitle = respone.todayTitle;
                 self.$apply()
@@ -553,17 +551,15 @@
                 }
 
                 if ('finish' === buttonStatus) {
-                    self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
+                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
 
-                let isNewSence = self.isNewSenceMap[self.senceID]
                 navigateToLesson({
                     courseID:self.courseID,
                     senceID:self.senceID,
                     resumeLastRead: resume,
-                    source,
-                    isNewSence
+                    source
                 })
             },
 

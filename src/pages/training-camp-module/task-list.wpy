@@ -88,7 +88,6 @@
         } // end components
         data = {
             taskSenceList: [],
-            isNewSenceMap: {}, // 进入微课的新老界面判断
             teamID: '',
             status: {
                 'notBegin': '未完成',
@@ -116,7 +115,6 @@
                 let readable = item.isActive;
                 let buttonStatus = item.buttonStatus;
                 let lessonType = item.lessonType;
-                let isNewSence = this.isNewSenceMap[senceID]
                 if (!readable){
                     return wepy.showToast({
                         title: '任务尚未开始,请耐心等待',
@@ -124,42 +122,23 @@
                         duration: 1000,
                         mask: true
                     })
-                } 
+                }
 
                 if ('previewTest' === lessonType){
-                    return this.$navigate(`/pages/activity-module/appraisal-start`, {
-                        courseID,
-                        senceID,
-                        isNewSence
-                    })
-                } 
+                    return this.$navigate(`/pages/activity-module/appraisal-start`, {courseID, senceID})
+                }
                 if ('review' === buttonStatus) {
-                    return this.$navigate('/pages/Review/index', {
-                        courseID,
-                        senceID,
-                        teamID,
-                        isNewSence
-                    })
-                } 
-                navigateToLesson({
-                    courseID,
-                    senceID,
-                    teamID,
-                    isNewSence
-                })
-            },
+                    return this.$navigate('/pages/course-module/course-review', {courseID, senceID, teamID})
+                }
+                navigateToLesson({courseID, senceID, teamID})
+            }
         }
         initialize() {
-            teamApi.getTeamTaskAll({
-                    token: this.token,
-                    teamID: this.teamID
-                })
-                .then(data => {
-                    this.isNewSenceMap = data.isNewSenceMap
-                    this.taskSenceList = data.taskContentList
-                    this.$apply()
-                })
-        } // end initialize
+            teamApi.getTeamTaskAll({token: this.token, teamID: this.teamID}).then(data => {
+                this.taskSenceList = data.taskContentList
+                this.$apply()
+            })
+        }
     }
 </script>
 
@@ -168,7 +147,7 @@
     .ui-off-line{
         padding:0 32rpx;
         .cell-image{ border-radius: @border-radius-20;display: block;width:100%;background-color: @background-white;margin-top: 48rpx;box-sizing: border-box;}
-        .ui-detail{ 
+        .ui-detail{
             display:flex;width: 100%;position: relative;background-color: @background-white;border-radius: @border-radius-20;margin-top: 48rpx;box-sizing: border-box;padding: 27rpx 18rpx 27rpx 20rpx;
             .cell-img{width: 160rpx;height: 198rpx;display: block;margin-right: 24rpx;}
             .ui-content{

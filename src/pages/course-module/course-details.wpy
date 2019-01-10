@@ -644,18 +644,17 @@
             let buttonStatus = item.buttonStatus
             let resumeLastRead = item.resume ? item.resume : 'NO'
 
-            let isNewSence = self.courseDetail.isNewSenceMap[senceID]
             let isRedirectTo = false
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
-                navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isNewSence, isRedirectTo})
+                navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isRedirectTo})
                 return
             }
 
             switch (buttonStatus) {
                 case 'finish': // 回顾
-                    self.$navigate(`/pages/Review/index`, {courseID, senceID})
+                    self.$navigate(`/pages/course-module/course-review`, {courseID, senceID})
                     break
                 case 'needPay': // 付费
                     self.$navigate(`/pages/course-module/course-pay`, {
@@ -664,7 +663,7 @@
                         giftID: self.giftID || self.paramsInfo.giftID})
                     break
                 default:
-                    navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead,  isNewSence, isRedirectTo})
+                    navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isRedirectTo})
             }
         }
         /**

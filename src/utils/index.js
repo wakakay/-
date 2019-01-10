@@ -265,9 +265,9 @@ export const doDecrpytPhone = ({ encryptedData, iv, errMsg: phoneErrMsg }) => {
             })
     }
 
-export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isNewSence=false, isRedirectTo=false}) => {
+export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', resumeLastRead='NO' ,source='' , isRedirectTo=false}) => {
     const { user: { platform } } = getStore().getState()
-    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&source=${source}&isNewSence=${isNewSence}`
+    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&source=${source}`
     //console.log('confirm navigation', mUrl)
     if (!isRedirectTo) {
         return wepy.navigateTo({ url: url })
@@ -276,9 +276,9 @@ export const navigateToLesson = ({ courseID, senceID, teamID='defaultTeamID', re
     }
 }
 
-export const redirectToLesson = ({ courseID, senceID, teamID = 'defaultTeamID', resumeLastRead = 'NO' , isNewSence=false }) => {
+export const redirectToLesson = ({ courseID, senceID, teamID = 'defaultTeamID', resumeLastRead = 'NO'}) => {
     const { user: { platform } } = getStore().getState()
-    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}&isNewSence=${isNewSence}`
+    let url = `/pages/course-module/course-learning?courseID=${courseID}&senceID=${senceID}&platform=${platform}&teamID=${teamID}&resumeLastRead=${resumeLastRead}`
     return wepy.redirectTo({ url: url })
 }
 
