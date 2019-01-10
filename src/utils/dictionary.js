@@ -8,6 +8,14 @@
  * 2018/9/25      1.0     First version
  *
  */
+/**
+ * 路由字典
+ * @private screenName 路由名称
+ * @private pageType 落地页名称
+ * @private isLevel 是否是一级路由，底部的4个tab
+ * @private isVisitor 是否是游客接口
+ * @private sence 渠道来源的默认值
+ */
 export const ROUTERS = {
     /*-------------------今日-----------------------*/
     'pages/today-module/index': {screenName: '今日页', isLevel: true, isVisitor: true},
@@ -19,7 +27,7 @@ export const ROUTERS = {
     'pages/course-module/course-new-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
     'pages/course-module/course-details': {screenName: '课程详情页', sence: 'CourseShare', isVisitor: true}, // 需要记录哪门子课程详情
     'pages/course-module/course-series': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
-    'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare'}, // 需要记录哪门子的微课
+    'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare', pageType: 'Lesson'}, // 需要记录哪门子的微课
     'pages/course-module/course-learning-discuss': {screenName: '微课学习想法详情'}, // 需要记录哪门子的微课
     'pages/course-module/lesson': {screenName: '微课学习', sence: 'CardsShare'},
     'pages/course-module/lesson-for-android': {screenName: '微课学习', sence: 'CardsShare'},
@@ -63,7 +71,7 @@ export const ROUTERS = {
     'pages/training-camp-module/my/learning-goals': {screenName: '我管理-学习目标'},
 
     /*-------------------活动-----------------------*/
-    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare', isVisitor: true},  // 需要记录哪个专题
+    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare', pageType: 'DailySkill', isVisitor: true},  // 需要记录哪个专题
     'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
     'pages/activity-module/appraisal-results': {screenName: '测评结果'},

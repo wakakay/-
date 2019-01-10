@@ -8,16 +8,18 @@
                  scroll-top="{{scrollTop}}"
                  scroll-with-animation="{{isScrollAnimation}}">
         <view class="ui-content">
-            <view class="ui-thumb" wx:if="{{cardItem.bigimage}}">
-                <image mode="aspectFit" src="{{cardItem.bigimage}}"></image>
+            <view class="ui-skill" wx:if="{{cardsList[cardIndex].abilitySkill}}">{{cardsList[cardIndex].abilitySkill}}</view>
+            <view class="ui-title">{{cardsList[cardIndex].title}}</view>
+            <view class="ui-subtitle" wx:if="{{!isExercises && cardsList[cardIndex].singleChoiceDescribe}}">{{cardsList[cardIndex].singleChoiceDescribe}}</view>
+            <view class="ui-thumb" wx:if="{{cardsList[cardIndex].bigimage}}">
+                <image mode="widthFix" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>
-            <view class="ui-title">{{cardItem.title}}</view>
-            <view class="ui-subtitle" wx:if="{{!isExercises}}">{{cardItem.singleChoiceDescribe}}</view>
+
             <view class="ui-answer-list">
-                <repeat for="{{cardItem.select}}" key="index" index="index" item="item">
+                <repeat for="{{cardsList[cardIndex].select}}" key="index" index="index" item="item">
                     <view class="ui-item main-justify cross-center"
-                          :class="{'is-selected': selectedId==item.id || cardsList[cardIndex].selectedId == item.id,'is-success': (cardsList[cardIndex].allowToNext && item.isanswer) || (cardItem.allowToNext && item.isanswer),'is-error': (cardsList[cardIndex].allowToNext && cardsList[cardIndex].selectedId == item.id && !cardsList[cardIndex].selectedItem.isanswer) || (cardItem.allowToNext && !item.isanswer && item.selected)}"
-                          hover-class="{{!isAnswerOver && !cardItem.allowToNext ? 'ui-item-hover' : ''}}"
+                          :class="{'is-selected': item.selected, 'is-success': cardsList[cardIndex].allowToNext && item.isanswer, 'is-error': cardsList[cardIndex].allowToNext && !item.isanswer && item.selected}"
+                          hover-class="{{!isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
                           data-item="{{ item }}"
                           data-index="{{ index }}"
                           @tap.stop="getSelected">
@@ -59,10 +61,6 @@
             cardIndex: {
                 type: Number
             },
-            cardItem: {
-                type: Object,
-                default: {}
-            },
             cardsList: {
                 type: Array,
                 default: []
@@ -103,20 +101,24 @@
              */
             getSelected(event) {
                 let self = this
+                let cardData = self.cardsList[self.cardIndex]
                 if (self.isAnswerOver
                     && self.oldIndex === self.cardIndex
-                    || self.cardItem.allowToNext) {
+                    || cardData.allowToNext) {
                     return false
                 }
 
                 let {currentTarget: {dataset: {item, index}}} = event
+                _.each(cardData.select, (option) => {
+                    option.selected = option.id == item.id ? true : false
+                })
                 self.selectedId = item.id
                 self.$apply()
 
                 let data = {
                     isFinish: true,
                     isAnswerOver: false,
-                    id: self.cardItem.id,
+                    id: cardData.id,
                     selectedId: item.id,
                     selectedItem: item,
                     fullImageBottomtText: '我已选好',
@@ -134,7 +136,8 @@
              */
             getToDiscuss() {
                 let self = this
-                wx.navigateTo({url: `/pages/course-module/course-discuss?practiceCardID=${self.cardItem.id}&senceID=${self.senceID}`})
+                let cardData = self.cardsList[self.cardIndex]
+                wx.navigateTo({url: `/pages/course-module/course-discuss?practiceCardID=${cardData.id}&senceID=${self.senceID}`})
             }
         }
 
@@ -145,9 +148,10 @@
              */
             'broadcast-single-choive': (data) => {
                 let self = this
+                let cardData = self.cardsList[self.cardIndex]
                 let item = !self.isExercises
-                        ? _.find(self.cardItem.select, {isanswer: true})
-                        : _.find(self.cardItem.select, {id: data.selectedId})
+                        ? _.find(cardData.select, {isanswer: true})
+                        : _.find(cardData.select, {id: data.selectedId})
                 self.resultId = item.id
 
                 self.isAnswerOver = true

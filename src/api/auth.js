@@ -6,24 +6,21 @@ import {CancelAuthenticationError, RejectAuthenticationError, CustomError, UnAut
 import _ from 'underscore'
 
 export const getUserInfo = () => {
-    let utm_source = ''
+    let sourceName = ''
     let entr = getStore().getState().entrance.scenceID
     let path = getStore().getState().entrance.path
     let query = getStore().getState().entrance.query // 二维码进来的参数
 
     if (SCENE[entr]) { // 是否又在场景值中
-        utm_source = SCENE[entr]
+        sourceName = SCENE[entr]
     } else if (query.source) { // 地址栏的source有带直接给
-        utm_source = query.source
+        sourceName = query.source
     } else if (ROUTERS[path]) { // 匹配路由中的sence
-        utm_source = ROUTERS[path].sence
+        sourceName = ROUTERS[path].sence
     }
 
-    if (!utm_source) {
-        utm_source = 'other'
-    }
-
-    let urlEnd = '&source=' + utm_source
+    sourceName = sourceName || 'other'
+    let urlEnd = '&source=' + sourceName
     let scope = {}
     return new Promise((resolve, reject) => {
         return wepy.login()
@@ -36,7 +33,7 @@ export const getUserInfo = () => {
                 if ('getSystemInfo:ok' !== errMsg) throw new CustomError('获取用户设备失败')
                 Object.assign(scope, { equipmentSystem, equipmentModel, equipmentVersion, windowWidth, windowHeight, screenHeight, platform, statusHeight })
 
-                wepy.$instance.globalData.getShareHuilder(entr, utm_source) // ga统计
+                wepy.$instance.globalData.getShareHuilder(entr, sourceName) // ga统计
                 console.log('scope.code', scope.code)
                 return wepy.request({
                     url: `${config.baseUrl}user/login?code=${scope.code}${urlEnd}`,

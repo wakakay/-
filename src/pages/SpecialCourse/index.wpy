@@ -18,10 +18,10 @@
                 </view>
                 <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'sence'}}">
                     <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
-                        <button class="ui-item"  
+                        <button class="ui-item"
                                 open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
                                 bindgetuserinfo="getAuthorize"
-                                @tap.stop="handleStartLesson" 
+                                @tap.stop="handleStartLesson"
                                 data-item="{{lessonItem}}" >
                             <view class="ui-img">
                                 <image src="{{lessonItem.imageUrl}}" />
@@ -35,15 +35,15 @@
                             </view>
                         </button>
                     </repeat>
-                    
+
                 </view>
                 <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'course'}}">
                     <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
-                        <button class="ui-item"  
-                                @tap.stop="getCourseDetail"  
+                        <button class="ui-item"
+                                @tap.stop="getCourseDetail"
                                 open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
                                 bindgetuserinfo="getAuthorize"
-                                data-item="{{courseItem}}" 
+                                data-item="{{courseItem}}"
                                 data-type="4">
                             <view class="ui-img">
                                 <image src="{{courseItem.image}}"/>
@@ -58,7 +58,7 @@
                             </view>
                         </button>
                     </repeat>
-                    
+
                 </view>
                 <view class="ui-poll" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
@@ -84,7 +84,7 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <button class="ui-share-box" 
+                <button class="ui-share-box"
                         wx:if="{{floatBox.type === 'sence'}}"
                         open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                         bindgetuserinfo="getAuthorize"
@@ -103,13 +103,13 @@
                         <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
                 </button>
-                <button class="ui-share-box" 
-                        :class="{'is-phonex': isIphonex}" 
-                        wx:if="{{floatBox.type === 'course'}}" 
-                        @tap.stop="getCourseDetail"  
+                <button class="ui-share-box"
+                        :class="{'is-phonex': isIphonex}"
+                        wx:if="{{floatBox.type === 'course'}}"
+                        @tap.stop="getCourseDetail"
                         open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                         bindgetuserinfo="getAuthorize"
-                        data-item="{{floatBox.course}}" 
+                        data-item="{{floatBox.course}}"
                         data-type="4">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
@@ -180,6 +180,7 @@
     })
     export default class Alllessen extends wepy.page {
         data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerHeigth: 68,
             isHeadHeight: false,
             headerBackground: 'background-transparent',
@@ -190,12 +191,12 @@
             specialCourseName: '',
             dataSet: {},
             sences: [],
+            screenName: '课程专题页', // 来源，是今日还是发现页面过来的
             courseID: '',
             operateLabel: '',
             isNewSenceMap: {},
             wxPushType:'',
             shareImg:'',
-            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isNewCourseMap:[],
             senceID:'',
             moduleList:[],
@@ -209,10 +210,14 @@
             'mloading': Loading,
             'jn-poll': poll
         };
-        onLoad({courseID = '', gift = '', wxPushType= 'newCoursePush'}) {
+        onLoad({courseID='', gift='', source='', wxPushType='newCoursePush'}) {
             let self = this
             self.courseID = courseID
             self.wxPushType = wxPushType
+
+            if ('todayPage' === source) {
+                self.screenName = '今日技能'
+            }
             if ('show' === gift) {
                 wx.showToast({title: '领取成功'})
             }
@@ -231,7 +236,7 @@
             self.headerBackground =  self.backgroundHeight < 0 ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
         }
-        
+
         onShow() {
             let self = this
             initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
@@ -269,11 +274,10 @@
             }
 
             fetch.getNewSpecialCourse(postData).then((res) => {
-                
-                self.isNewSenceMap = res.isNewSenceMap;
-                self.isNewCourseMap = res.isNewCourseMap;
+                self.isNewSenceMap = res.isNewSenceMap
+                self.isNewCourseMap = res.isNewCourseMap
                 self.floatBox = res.floatBox
-                self.shareCoverTitle = res.shareCoverTitle;
+                self.shareCoverTitle = res.shareCoverTitle
                 self.shareCoverImageUrl = res.shareCoverImageUrl
                 self.courseName = res.name
                 self.isLoaded = true
@@ -293,11 +297,11 @@
                     }
                 })
 
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseName}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({screenName: self.screenName, pageTheme: self.courseName}) // ga统计
                 self.$apply()
             })
         }
-       
+
         methods = {
             // 跳去微课
             handleStartLesson(event) {
@@ -317,7 +321,7 @@
                 let isNewSence = self.isNewSenceMap[self.senceID]
                 self.reportButtonTap()
 
-                wepy.$instance.globalData.getHuilder(`课程专题页/${self.courseName}`,'click',`${senceName}`)
+                wepy.$instance.globalData.getHuilder(`${self.screenName}/${self.courseName}`,'click',`${senceName}`)
                 if ('needPay' === buttonStatus) {
                     self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
                     return
@@ -326,18 +330,19 @@
                     self.$navigate(`/pages/Review/index`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
+
                 navigateToLesson({
-                    courseID:self.courseID, 
-                    senceID:self.senceID, 
+                    courseID:self.courseID,
+                    senceID:self.senceID,
                     resumeLastRead: resume,
-                    source, 
+                    source,
                     isNewSence
                 })
             },
             // 跳去 课程详情页
             getCourseDetail({currentTarget: {dataset: {item, type}}}) {
                 let self = this
-               
+
                 // 没有登录
                 if (!self.isTokenSet){
                     return ;
@@ -355,7 +360,8 @@
                     case '3':typeSrc = '热门课程';  break
                     case '4':typeSrc = '专题';  break
                 }
-                wepy.$instance.globalData.getHuilder(`课程专题页/${typeSrc}`,'click',`${name}`)
+
+                wepy.$instance.globalData.getHuilder(`${self.screenName}/${typeSrc}`,'click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
             },
             /**
@@ -395,13 +401,14 @@
                     return
                 }
 
+                wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
                 let postData = {
                     token: self.token,
                     pollID: item.pollID,
                     courseID: self.courseID,
                     optionList:item.selectedItem.id
                 }
-                
+
                 fetch.sendUserPoll(postData).then((respone) => {
                     item.isDone = true
                     self.$broadcast('broadcast-poll', item)
@@ -439,7 +446,7 @@
 
         onShareAppMessage(res) {
             let self = this
-            wepy.$instance.globalData.getHuilder('课程专题页/分享', 'click', `${self.courseName}`)
+            wepy.$instance.globalData.getHuilder(`${self.screenName}分享`, 'click', `${self.courseName}`)
             shareApi.reportSharing({
                 token:self.token,
                 type: shareDictionary.SHARE_SPECIAL_COURSE.type,
@@ -475,7 +482,7 @@
             }
             .ui-img-type{
                 image{width: 100%;}
-            } 
+            }
             .ui-doc{
                 padding:4rpx 0 24rpx;box-sizing:border-box;
                 .cell-title{font-size: 40rpx;color: @color-black;padding-top:20rpx;margin-bottom: 24rpx;font-weight: 700;margin:0 32rpx;box-sizing:border-box;}
@@ -488,7 +495,7 @@
                     .ui-img{
                         display:flex;align-items: center;
                         image{width: 112rpx;height: 112rpx;border-radius:28rpx;}
-                    } 
+                    }
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
                         height: 100%;display: flex;flex:1;justify-content: space-between;border-top:2rpx solid @border-gray;align-items:center;
@@ -537,7 +544,7 @@
                     .cell-btn {
                         position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
                     }
-                    
+
                 }
                 .ui-share-course{
                     width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;

@@ -68,7 +68,7 @@
 
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
-    <view class="course-learning-box">
+    <view class="course-learning-box"                             >
         <jn-header className="background-transparent" :delta.sync="routerDelta">
             <view slot="content" class="ui-progress-box main-center cross-center {{cardCurrentInfo[0].fullImageColorIsDark ? 'is-dark' : ''}}">
                 <view class="ui-progress">
@@ -93,7 +93,7 @@
                         <view style="height: calc(100% - {{!isIpad ? headerHeigth : 210}}px)">
                             <jn-full-image :cardItem.sync="item"
                                            wx:if="{{index+2>=cardCurrent && item.type==='fullimage'}}"></jn-full-image>
-                            <jn-single-choice :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
+                            <jn-single-choice :cardIndex.sync="index" :cardsList.sync="cardsList"
                                               wx:if="{{index+2>=cardCurrent && item.type==='textSelectionVer2'}}"></jn-single-choice>
                             <jn-sort :cardItem.sync="item" :cardIndex.sync="index" :cardsList.sync="cardsList"
                                      wx:if="{{index+2>=cardCurrent && item.type==='order'}}"></jn-sort>
@@ -855,6 +855,7 @@
                 }
 
                 self.cardCurrentInfo.splice(0, 1, item)
+                console.log(self.cardCurrentInfo)
                 self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 self.$apply()
             },

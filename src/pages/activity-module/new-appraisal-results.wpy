@@ -1,0 +1,215 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-appraisal-result-box{
+        width:100%;position:relative;
+        view{box-sizing:border-box;}
+        .ui-background {
+            width:100%;
+            image{width:100%;}
+        }
+        .ui-canvas-box{
+            width:100%;padding:40rpx 32rpx 0;position:absolute;left:0;top:0;z-index:@z-index-normal;
+            .cell-subtitle{padding:0 46rpx;font-size:30rpx;color:@color-white-opacity;line-height:42rpx;}
+            .cell-title{
+                padding:24rpx 46rpx 8rpx;
+                image{width:72rpx;height:72rpx;margin-right:12rpx;border:1rpx solid @border-white;border-radius:50%;}
+                text{font-size:48rpx;font-weight:700;color:@color-white;line-height:72rpx;}
+            }
+            .ui-thumb{
+                width:100%;height:200rpx;
+                image{height:100%;}
+            }
+            .ui-cylindrical-list{
+                height:240rpx;padding:0 46rpx;margin-top:52rpx;
+                .cell-item{
+                    width:112rpx;height:100%;margin-left:12rpx;background:#FFC102;
+                    text{font-size:24rpx;color:@color-black;line-height:48rpx;}
+                }
+            }
+            .ui-level{
+                padding:22rpx 46rpx 0;
+                .cell-line{width:100%;height:12rpx;margin-bottom:12rpx;background-image:linear-gradient(90deg, rgba(248,248,250,0.24) 0%, #007AFF 100%);border-radius:12rpx;}
+                .ui-text{font-size:24rpx;color:@color-white;line-height:48rpx;}
+            }
+            .ui-analyze{
+                padding:0 46rpx;color:@color-white;line-height:48rpx;
+                text:nth-of-type(1){display:block;font-size:26rpx;text-align:center;}
+                text:nth-of-type(2){display:block;padding-top:32rpx;font-size:32rpx;text-align:justify;}
+            }
+            .ui-button-box{
+                width:100%;padding-top:88rpx;
+                button{
+                    width:100%;height:96rpx;background-color:@background-mask-white;font-size:34rpx;font-weight:700;color:@color-white;text-align:center;line-height:96rpx;border-radius:@border-radius-20;
+                    text{font-size:44rpx;font-weight:400;margin-right:20rpx;}
+                }
+                .cell-text{padding-top:30rpx;font-size:22rpx;color:@color-white-opacity;text-align:center;line-height:48rpx;}
+            }
+        }
+
+        .ui-ability-analysis-box{
+            width:100%;padding:36rpx 30rpx;background-color:@background-white;
+            .ui-title{padding-bottom:20rpx;font-size:44rpx;font-weight:700;color:@color-black;line-hehight:56rpx;}
+            .ui-item{
+                padding:0 42rpx 52rpx;
+                .cell-title{
+                    padding:18rpx 0;line-height:36rpx;
+                    text:nth-of-type(1){font-size:32rpx;color:@color-black;}
+                    text:nth-of-type(2){font-size:36rpx;font-weight:700;color:@color-blue;}
+                }
+                .ui-progress{
+                    width:100%;height:12rpx;background-color:@background-gray-F4;border-radius:@border-radius-16;position:relative;overflow:hidden;
+                    >view{position:absolute;left:0;top:0;}
+                    .cell-line{
+                        width:100%;height:100%;z-index:3;
+                        view{width:20%;height:100%;border-left:4rpx solid @border-gray;}
+                        view:first-child{border-left:0;}
+                    }
+                    .cell-percent{width:50%;height:100%;background-color:@background-blue;z-index:2;transition:width .2s;}
+                }
+                .ui-details{padding-top:34rpx;font-size:30rpx;color:@color-black;text-align:justify;line-height:48rpx;}
+            }
+            .ui-button-box{
+                padding:36rpx 0 60rpx;
+                button{width:100%;height:100rpx;margin-bottom:40rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;line-height:100rpx;text-align:center;border-radius:@border-radius-20;}
+                .cell-text{padding:18rpx;font-size:34rpx;font-weight:700;color:@color-blue;text-align:center;line-height:44rpx;}
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="ui-appraisal-result-box">
+        <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
+        <view class="ui-background flex">
+            <image mode="widthFix" src="http://wakakay.com/wx-images/11.png"></image>
+        </view>
+        <view class="ui-canvas-box" style="{{'top:'+headerHeigth+'px;'}}">
+            <view class="cell-subtitle">内容营销水平能力测试</view>
+            <view class="cell-title flex">
+                <image class="flex-box-0" mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIk5E5pbRm4P9V8Zahpbxbvg/132"></image>
+                <text>你的内容营销水平是</text>
+            </view>
+            <view class="ui-thumb main-center">
+                <image mode="aspectFill" src="http://wakakay.com/wx-images/22.png"></image>
+            </view>
+            <view class="ui-cylindrical-list cross-end">
+                <view class="cell-item main-center cross-start" style="height:25%;"><text>11%</text></view>
+                <view class="cell-item main-center cross-start" style="height:53%;"><text>23%</text></view>
+                <view class="cell-item main-center cross-start" style="height:100%;"><text>43%</text></view>
+                <view class="cell-item main-center cross-start" style="height:37%;"><text>16%</text></view>
+                <view class="cell-item main-center cross-start" style="height:18%;"><text>8%</text></view>
+            </view>
+            <view class="ui-level">
+                <view class="cell-line"></view>
+                <view class="ui-text main-justify">
+                    <text>入门</text><text>精通</text>
+                </view>
+            </view>
+            <view class="ui-analyze">
+                <text>你的得分高于80%的产品经理</text>
+                <text>您有足够的技能来管理产品的特定模块/功能。您的重点是应用和增强PM技能。</text>
+            </view>
+            <view class="ui-button-box">
+                <button open-type="share"><text class="icon-share"></text>分享给好友</button>
+                <view class="cell-text">提示：分享给好友，一起来测试~</view>
+            </view>
+        </view>
+
+        <view class="ui-ability-analysis-box">
+            <view class="ui-title">能力分析</view>
+
+            <view class="ui-item">
+                <view class="cell-title main-justify">
+                    <text># 产品战略规划</text><text>6</text>
+                </view>
+                <view class="ui-progress">
+                    <view class="cell-line box-mean">
+                        <view></view><view></view><view></view><view></view><view></view>
+                    </view>
+                    <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                </view>
+                <view class="ui-details">
+                    <text>你通晓市场运作规律，有着敏锐的眼光，往往能对产品制定一个十分不错的战略规划，让整个团队看起来就像明日的独角兽。</text>
+                </view>
+            </view>
+            <view class="ui-item">
+                <view class="cell-title main-justify">
+                    <text># 产品战略规划</text><text>6</text>
+                </view>
+                <view class="ui-progress">
+                    <view class="cell-line box-mean">
+                        <view></view><view></view><view></view><view></view><view></view>
+                    </view>
+                    <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                </view>
+                <view class="ui-details">
+                    <text>你通晓市场运作规律，有着敏锐的眼光，往往能对产品制定一个十分不错的战略规划，让整个团队看起来就像明日的独角兽。</text>
+                </view>
+            </view>
+
+            <view class="ui-button-box">
+                <button>生成我的学习计划</button>
+                <view class="cell-text">
+                    <text class="icon-back"></text> 再做一次
+                </view>
+            </view>
+        </view>
+
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import Loading from '../../components/common/loading'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class courseLearning extends wepy.page {
+        components = {
+            'jn-header': header,
+            'jn-loading': Loading
+        }
+
+        data = {
+            isHeadHeight: false,
+            headerHeigth: 68,
+        }
+
+        onLoad() {
+
+        }
+
+        onShow() {
+
+        }
+
+        onReady() {
+
+        }
+
+        methods = {}
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+
+        onShareAppMessage(event) {
+            let self = this
+            return {
+                title: '',
+                path: `/pages/activity-module/new-appraisal-cover?examID=12`,
+                imageUrl: ''
+            }
+        }
+    }
+</script>

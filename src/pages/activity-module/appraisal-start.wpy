@@ -154,13 +154,14 @@
                     }
                 }
             }
+
             reportApi.doUserBehaviourLog(postData)
         }
 
         methods = {
             handleAuthorize({detail: {errMsg}}) {
                 let self = this;
-                /* 
+                /*
                 微信埋点事件
                  */
                 wx.reportAnalytics('nicknamegive_show', {
@@ -179,9 +180,9 @@
                             routeurl: '',
                         });
                         throw new CustomError('用户拒绝授权')
-                    } 
+                    }
                     if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-                    
+
                     resolve(errMsg)
                 }).then(userInfo => {
                     this.isLoaded = false
@@ -221,7 +222,7 @@
                     self.__report()
                 }
 
-                /* 
+                /*
                 微信埋点事件
                  */
                 wx.reportAnalytics('examstart_click', {

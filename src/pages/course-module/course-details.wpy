@@ -700,7 +700,6 @@
          */
         __receiveCourseShare() {
             let self = this
-            debugger
             if (!self.paramsInfo.shareID) {
                 return
             }
@@ -825,7 +824,7 @@
 
                 wepy.$instance.globalData.newCourseDetailTempele = item
                 wepy.$instance.globalData.getHuilder('课程详情页/你将获得', 'click', `${self.courseDetail.name}/${item.title}`)
-                
+
                 switch (parseInt(type)){
                     case 0:
                         url = '/pages/other-module/job-skills'
@@ -1006,7 +1005,6 @@
                 courseID: self.paramsInfo.id
             })
 
-            console.log('shareCoverTitle', self.courseDetail.shareCoverTitle)
             return {
                 title: title,
                 path: path,

@@ -170,6 +170,7 @@
             }
 
             let rounter = getCurrentPages()
+            console.log(33, rounter)
             // 如果==1，说明是分享出来的
             if (1 === rounter.length) {
                 self.isSrcShare = true
