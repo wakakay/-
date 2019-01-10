@@ -98,7 +98,7 @@
                     <view class="cell-title main-center">{{finishResultInfo.senceStarIsCanTick ? '点评微课，领3个即能币' : '你已评价'}}</view>
                     <view class="ui-star">
                         <repeat for="{{starList}}" key="index" index="index" item="item">
-                            <text class="{{ finishResultInfo.senceStar>=item ? 'icon-selete-star' : 'icon-not-star' }}"
+                            <text class="{{senceStar>=item ? 'icon-selete-star' : 'icon-not-star'}}"
                                   data-star="{{item}}"
                                   @tap.stop="getEvaluation"></text>
                         </repeat>
@@ -170,6 +170,8 @@
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isLoaded: false,
             isEvaluation: false,
+            senceStarIsCanTick: false,
+            senceStar: 0,
             routerDelta: 1,
             shareID: '',
             paramsInfo: {},
@@ -267,6 +269,8 @@
                 }
                 respone.upPercent = respone.skillUpScore * 10 // 创新高的技能比
                 self.finishResultInfo = respone
+                self.senceStarIsCanTick = respone.senceStarIsCanTick
+                self.senceStar = respone.senceStar
                 self.$apply()
 
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.finishResultInfo.skillName}) // ga统计
@@ -296,7 +300,7 @@
             }
 
             fetch.sendFinishResults(postData).then((respone) => {
-                self.finishResultInfo.senceStarIsCanTick = respone.senceStarIsCanTick
+                self.senceStarIsCanTick = respone.senceStarIsCanTick
                 self.$apply()
             }).catch(error => {
                 self.isLoaded = true
@@ -331,7 +335,7 @@
                 let self = this
                 let {currentTarget: {dataset: {star}}} = event
 
-                if (self.finishResultInfo.senceStar > 0) {
+                if (self.senceStar > 0) {
                     wepy.$instance.globalData.getHuilder('微课完成页/点评', 'click', self.finishResultInfo.name)
                     wx.reportAnalytics('lessonfinish_evaluate_click', {
                         username: self.systemInfo.name,
@@ -340,10 +344,9 @@
                     })
                 }
 
-
-                if (self.finishResultInfo.senceStarIsCanTick) {
+                if (self.senceStarIsCanTick) {
                     self.isEvaluation = true
-                    self.finishResultInfo.senceStar = star
+                    self.senceStar = star
                     self.$apply()
                 }
 
@@ -351,7 +354,7 @@
                     courseID: self.paramsInfo.courseID,
                     senceID: self.paramsInfo.senceID,
                     teamID: self.paramsInfo.teamID,
-                    score: self.finishResultInfo.senceStarIsCanTick ? star : 0,
+                    score: self.senceStar ? star : 0,
                     skillName: self.finishResultInfo.skillName
                 })
             },
