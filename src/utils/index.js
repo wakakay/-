@@ -572,7 +572,6 @@ const initialState = {
 
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
     if (!initializeFunc instanceof Promise) {
-        console.log(42332)
         throw 'initializeFunc must be Promise'
     }
     const store = getStore()

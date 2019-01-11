@@ -172,5 +172,15 @@ export default {
      */
     getSeriesPage(params) {
         return fetch({method: 'post', url: 'discover/v1/getSeriesPage', params: params})
-    }
+    },
+
+
+
+    /**
+     * 新版测评封面页
+     * @param  seriesID: 系列ID
+     */
+    getExamFront(params) {
+        return fetch({method: 'post', url: 'userExam/getExamFront', params: params})
+    },
 }

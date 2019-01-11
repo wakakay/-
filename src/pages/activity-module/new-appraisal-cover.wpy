@@ -83,6 +83,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import poll from '../../components/cards-type/poll'
+    import {fetch} from '../../api'
 
     const store = getStore()
     @connect({
@@ -110,8 +111,13 @@
 
         }
 
-        onReady() {
-
+        initialize() {
+            let self = this
+            let postData = {
+                token: '',
+                examID: ''
+            }
+            fetch.getExamFront()
         }
 
         methods = {}
