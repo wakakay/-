@@ -8,7 +8,7 @@
  * 2018/12/24      1.0     First version
  *
  */
-import {paramsData, fetch} from './fetch-utils'
+import {fetch} from './fetch-utils'
 
 /**
  * 公共接口

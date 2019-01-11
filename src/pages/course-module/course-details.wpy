@@ -836,7 +836,7 @@
                         break
                 }
                 if(parseInt(type) == 2) {
-                    return wx.navigateTo({url: `${url}?groupImage=${self.courseDetail.receive[2].group_image}`})
+                    return wx.navigateTo({url: `${url}?courseName=${self.courseDetail.name}&groupImage=${self.courseDetail.receive[2].group_image}`})
                 }
                 wx.navigateTo({url: url})
             },

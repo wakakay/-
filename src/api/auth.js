@@ -11,10 +11,10 @@ export const getUserInfo = () => {
     let path = getStore().getState().entrance.path
     let query = getStore().getState().entrance.query // 二维码进来的参数
 
-    if (SCENE[entr]) { // 是否又在场景值中
-        sourceName = SCENE[entr]
-    } else if (query.source) { // 地址栏的source有带直接给
+    if (query.source) { // 地址栏的source有带直接给
         sourceName = query.source
+    } else if (SCENE[entr]) { // 是否又在场景值中
+        sourceName = SCENE[entr]
     } else if (ROUTERS[path]) { // 匹配路由中的sence
         sourceName = ROUTERS[path].sence
     }

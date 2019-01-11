@@ -23,8 +23,9 @@
  *
  */
 import wepy from 'wepy'
+import {getStore, connect} from "wepy-redux"
 import config from './config'
-import { UnAuthenticationError } from '../errors'
+import {UnAuthenticationError} from '../errors'
 import _ from 'underscore'
 import {ROUTERS} from "../utils/dictionary"
 
@@ -53,12 +54,28 @@ export const paramsData = ((data) => {
     return result
 })
 
+/**
+ * 更新登录的用户信息，暂时后台今日tab list缓存使用
+ * @param params mPlatform
+ */
+const updateUserLogin = ((token) => {
+    let platform = getStore().getState().user.platform
+    fetch({method: 'post', url: 'user/updateUserLogin', params: {token: token, platform: platform}})
+})
+
 export const fetch = ((actionObj) => {
     let rounter = getCurrentPages()
     let page = rounter[rounter.length - 1]
+
     if (('defaultToken' === actionObj.params.token || !actionObj.params.token)
         && !(ROUTERS[page.route] && ROUTERS[page.route].isVisitor)) {
         throw new UnAuthenticationError()
+    }
+
+    if ('defaultToken' !== actionObj.params.token
+        && wepy.$instance.globalData.oldRounter !== page.route) {
+        wepy.$instance.globalData.oldRounter = page.route
+        updateUserLogin(actionObj.params.token )
     }
 
     let params = paramsData(actionObj.params)

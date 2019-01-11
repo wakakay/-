@@ -3,10 +3,10 @@
 </style>
 
 <template>
-    <view class="module-learning-discuss" wx:if="{{cardItem.type=='fullimage' || cardItem.type=='hotSpot'}}">
+    <view class="module-learning-discuss">
         <view class="ui-message main-center cross-center"
               :class="{'is-dark': cardItem.fullImageColorIsDark}"
-              style="top:{{headerHeigth}}px"
+              style="{{'top:'+headerHeigth+'px;'}}"
               data-type="1"
               @tap.stop="getShowStatus">
             <text class="icon-comment1"></text>{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
@@ -19,7 +19,7 @@
 
         <view class="ui-list-box"
               :class="{'is-iphonex': isIphonex}"
-              style="top:-{{keyboardHeight}}px"
+              style="{{'top:'+ (-keyboardHeight)+'px;'}}"
               @tap.stop="getShowStatus" wx:if="{{isShow}}">
             <scroll-view class="ui-discuss-list"
                          scroll-y="{{discussList.length>5 ? true : false}}"
