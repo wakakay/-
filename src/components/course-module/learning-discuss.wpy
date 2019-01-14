@@ -3,7 +3,7 @@
 </style>
 
 <template>
-    <view class="module-learning-discuss">
+    <view class="module-learning-discuss" wx:if="{{cardItem.type=='fullimage' || cardItem.type=='hotSpot'}}">
         <view class="ui-message main-center cross-center"
               :class="{'is-dark': cardItem.fullImageColorIsDark}"
               style="{{'top:'+headerHeigth+'px;'}}"

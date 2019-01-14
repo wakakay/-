@@ -177,7 +177,7 @@
     import {getStore, connect} from 'wepy-redux'
     import {fetchCardsWithPreview} from '../../redux/models/cards'
     import {initializationDeligate, deepCopy, parsePercentageForPoll} from '../../utils'
-    import {card as cardApi, fetch, share as shareApi, push as pushApi} from '../../api'
+    import {card as cardApi, fetch, share as shareApi} from '../../api'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import shareCard from '../../components/shareImages/share-card'
@@ -608,7 +608,7 @@
             }
 
             // 投票
-            pushApi.sendPollSelection({
+            fetch.sendPollSelection({
                 token: self.systemInfo.token,
                 cardID: current.id,
                 optionList: current.selectedItem.id
@@ -628,7 +628,7 @@
                 cardID: current.id,
                 type: current.type
             }
-            pushApi.sendFeedBack(postData).catch(error => {
+            fetch.sendFeedBackSelect(postData).catch(error => {
                 console.log('fail to sendFeedBack to backend', error)
             })
         }

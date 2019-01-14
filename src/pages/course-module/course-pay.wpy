@@ -156,7 +156,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import {payment as paymentApi} from "../../api"
+    import {fetch, payment as paymentApi} from "../../api"
     import {initializationDeligate} from '../../utils'
 
     const store = getStore()
@@ -192,22 +192,22 @@
 
         initialize() {
             let self = this
-            let fetch = null
+            let http = null
             let postData = {
                 token: self.systemInfo.token
             }
             // 是微课呢还是课程呢
             if (self.paramsInfo.senceID) {
                 postData.senceID = self.paramsInfo.senceID
-                fetch = paymentApi.sencePayInitPageByJiNengBin(postData)
+                http = fetch.sencePayInitPageByJiNengBin(postData)
             } else if (self.paramsInfo.courseID) {
                 postData.courseID = self.paramsInfo.courseID
-                fetch = paymentApi.coursePayInitPage(postData)
+                http = fetch.coursePayInitPage(postData)
             } else {
                 return
             }
 
-            fetch.then(respone => {
+            http.then(respone => {
                 self.payInfo = respone
                 if (postData.courseID) {
                     if (self.paramsInfo.isLimitedTimeGiftCourse) {
@@ -267,6 +267,8 @@
             let self = this
             let postData = {
                 token: self.systemInfo.token,
+                senceID: '',
+                courseID: '',
                 paySign: self.payInfo.paySign,
                 payMoney: self.payInfo.price,
                 code: 'defaultCode'
@@ -281,7 +283,7 @@
                 postData.payMoney = 0.01
             }
 
-            paymentApi.payByJinengBin(postData).then((respone) => {
+            fetch.payByJinengBin(postData).then((respone) => {
                 self.isPay = true
                 self.$apply()
                 wx.showToast({title: respone ? '购买成功' : '你已经购买了'})
@@ -329,7 +331,7 @@
                 postData.payMoney = 0.01
             }
 
-            paymentApi.payByPaySignByJinengBin(postData).then(response => {
+            fetch.payByPaySignByJinengBin(postData).then(response => {
                 wx.requestPayment({
                     timeStamp: response.timeStamp,
                     nonceStr: response.nonceStr,
