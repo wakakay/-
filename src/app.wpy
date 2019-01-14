@@ -276,11 +276,13 @@
                         pageType: routerItem.pageType,
                         eventType: `${sourceName || 'other'}'/'${sceneID}`,
                         componentName: routerItem.screenName,
+                        cpnPresentName: query.pageName,
                         courseID: query.courseID || query.id || query.courseSeriesID || null,
                         senceID: query.senceID || null
                     }
                 }
             }
+
             reportApi.doUserBehaviourLog(postData)
         }
 

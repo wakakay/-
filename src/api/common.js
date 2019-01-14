@@ -17,5 +17,20 @@ export default {
     // 通用公共功能
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})
+    },
+    /**
+     * study bar
+     * @param params
+     */
+    getMyLearningSenceList(params) {
+        return fetch({method: 'post', url: 'myLearning/v1/getMyLearningSenceList', params: params})
+    },
+    /**
+     * 上报中台埋点
+     * @param  courseID: 课程ID
+     * @param  pageTime: 开始到结束的时间戳
+     */
+    sendCoursePageTime(params) {
+        return fetch({method: 'post', url: 'report/sendCoursePageTime', params: params})
     }
 }

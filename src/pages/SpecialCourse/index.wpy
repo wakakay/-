@@ -459,7 +459,7 @@
             })
             return {
                 title: self.shareCoverTitle,
-                path: `/pages/SpecialCourse/index?courseID=${self.courseID}`,
+                path: `/pages/SpecialCourse/index?courseID=${self.courseID}&pageName=${self.courseName}`,
                 imageUrl:self.shareCoverImageUrl
             };
         }

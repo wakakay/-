@@ -155,5 +155,20 @@ export default {
      */
     getReview(params) {
         return fetch({method: 'post', url: 'MVP3/getReview', params: params})
+    },
+    /**
+     * 系列页
+     * @param  seriesID: 系列ID
+     */
+    getSeriesPage(params) {
+        return fetch({method: 'post', url: 'discover/v1/getSeriesPage', params: params})
+    },
+    /**
+     * 系列详情
+     * @param  courseSeriesID: 系列ID
+     * @param  seriesName: 系列的名称
+     */
+    getDiscoverPageByCourseSeriesByLinkByDetailNew(params) {
+        return fetch({method: 'post', url: 'discover/v1/getDiscoverPageByCourseSeriesByLinkByDetailNew', params: params})
     }
 }

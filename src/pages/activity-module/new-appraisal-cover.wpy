@@ -71,7 +71,7 @@
 
         <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
             <view class="cell-button">
-                <button>开始测试</button>
+                <button @tap.stop="getStartAppraisal">开始测试</button>
             </view>
         </view>
     </view>
@@ -84,6 +84,7 @@
     import Loading from '../../components/common/loading'
     import poll from '../../components/cards-type/poll'
     import {fetch} from '../../api'
+    import {initializationDeligate} from "../../utils"
 
     const store = getStore()
     @connect({
@@ -100,11 +101,15 @@
 
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
-            isHeadHeight: false
+            isHeadHeight: false,
+            parmasInfo: {}
         }
 
-        onLoad() {
+        onLoad(parmas) {
+            let self = this
+            self.parmasInfo = parmas
 
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
         onShow() {
@@ -114,13 +119,21 @@
         initialize() {
             let self = this
             let postData = {
-                token: '',
+                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
                 examID: ''
             }
-            fetch.getExamFront()
+            fetch.getExamFront(postData).then(respone => {
+                console.log(12, respone)
+            }).catch(error => {
+
+            })
         }
 
-        methods = {}
+        methods = {
+            getStartAppraisal() {
+                let self = this
+            }
+        }
 
         events = {}
 
@@ -128,7 +141,7 @@
             let self = this
             return {
                 title: '',
-                path: `/pages/activity-module/new-appraisal-cover?examID=12`,
+                path: `/pages/activity-module/new-appraisal-cover?examID=${self.parmasInfo}`,
                 imageUrl: ''
             }
         }

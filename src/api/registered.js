@@ -111,7 +111,6 @@ export default {
     todayToLearnCourses(params) {
         return fetch({method: 'post', url: 'todayTask/toLearnCourses', params: params, isVisitor: true})
     },
-
     /**
      * 我的列表
      * @param params
@@ -119,15 +118,6 @@ export default {
     getMyCenterNew(params) {
         return fetch({method: 'post', url: 'userCenter/userCenterInitPage', params: params})
     },
-
-    /**
-     * study bar
-     * @param params
-     */
-    getMyLearningSenceList(params) {
-        return fetch({method: 'post', url: 'myLearning/v1/getMyLearningSenceList', params: params})
-    },
-
     /**
      * 测试用户
      * @param otherLink
@@ -143,22 +133,6 @@ export default {
         return fetch({method: 'post', url: 'userCenter/initSendTestPage', params: params})
     },
     /**
-     * 上报中台埋点
-     * @param  courseID: 课程ID
-     * @param  pageTime: 开始到结束的时间戳
-     */
-    sendCoursePageTime(params) {
-        return fetch({method: 'post', url: 'report/sendCoursePageTime', params: params})
-    },
-    /**
-     * 系列详情
-     * @param  courseSeriesID: 系列ID
-     * @param  seriesName: 系列的名称
-     */
-    getDiscoverPageByCourseSeriesByLinkByDetailNew(params) {
-        return fetch({method: 'post', url: 'discover/v1/getDiscoverPageByCourseSeriesByLinkByDetailNew', params: params})
-    },
-    /**
      * 即能看板
      * @param  courseSeriesID: 系列ID
      * @param  seriesName: 系列的名称
@@ -167,18 +141,8 @@ export default {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
     },
     /**
-     * 系列页
-     * @param  seriesID: 系列ID
-     */
-    getSeriesPage(params) {
-        return fetch({method: 'post', url: 'discover/v1/getSeriesPage', params: params})
-    },
-
-
-
-    /**
      * 新版测评封面页
-     * @param  seriesID: 系列ID
+     * @param  examID: 测评ID
      */
     getExamFront(params) {
         return fetch({method: 'post', url: 'userExam/getExamFront', params: params})

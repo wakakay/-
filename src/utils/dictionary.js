@@ -67,7 +67,7 @@ export const ROUTERS = {
     'pages/training-camp-module/my/learning-goals': {screenName: '我管理-学习目标'},
 
     /*-------------------活动-----------------------*/
-    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare', pageType: 'DailySkill', isVisitor: true},  // 需要记录哪个专题
+    'pages/SpecialCourse/index': {screenName: '课程专题页', sence: 'SpecialCourseShare', pageType: 'SpecialCourse', isVisitor: true},  // 需要记录哪个专题
     'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
     'pages/activity-module/appraisal-results': {screenName: '测评结果'},
