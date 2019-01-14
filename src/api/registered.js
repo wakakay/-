@@ -85,6 +85,7 @@ export default {
     sendUserDoExam(params) {
         return fetch({method: 'post', url: 'userExam/sendUserDoExam', params: params, isVisitor: true})
     },
+    
     // 获得专题详情
     getNewSpecialCourse(params) {
         return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params, isVisitor: true})
@@ -93,7 +94,13 @@ export default {
     sendUserPoll(params) {
         return fetch({method: 'post', url: 'course/sendUserPoll', params: params})
     },
-
+    /**
+     * 获取测评卷封面信息
+     * @param  examID: 测评ID
+     */
+    getExamFront(params) {
+        return fetch({method: 'post', url: 'userExam/getExamFront', params: params, isVisitor: true})
+    },
     /*--------------------其他公共-----------------------*/
     // 获取staff的openid
     allOpenIDHash(params) {

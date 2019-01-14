@@ -202,10 +202,6 @@
                         senceID: this.senceID,
                         examID: this.examID
                     })).then(data => {
-                        if (data === 'done') {
-                            this.$navigate('/pages/activity-module/appraisal-results', {examID: this.examID})
-                            return
-                        }
                         let params = {
                             examID: this.examID,
                         }

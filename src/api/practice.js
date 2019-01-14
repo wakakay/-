@@ -59,7 +59,6 @@ export const sendDoneAPractice = ({ token = 'defaultToken', senceID = 'defaultSe
 }
 
 export const getExamFront = ({ token = 'defaultToken', examID, wxPushType }) => {
-    // if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
             url: `${config.baseUrl}userExam/getExamFront?token=${token}&examID=${examID}&wxPushType=${wxPushType}`,
             method: 'POST'

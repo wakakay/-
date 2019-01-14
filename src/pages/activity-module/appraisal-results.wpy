@@ -51,7 +51,7 @@
 </style>
 
 <template>
-
+    <mloading wx:if="{{ !isLoaded }}"/>
     <view class="ui-practice-end">
         <jn-header className="background-transparent" buttonAfter></jn-header>
         <view class="ui-user">
@@ -95,6 +95,7 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
+    import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import shareAppraisal from '../../components/shareImages/share-appraisal'
     import {practice as practiceApi, fetch} from '../../api'
@@ -130,7 +131,8 @@
     export default class appraisalResults extends wepy.page {
         components = {
             'jn-header': header,
-            'jn-shareAppraisal': shareAppraisal
+            'jn-shareAppraisal': shareAppraisal,
+            'mloading': Loading,
         }
 
         data = {

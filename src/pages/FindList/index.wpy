@@ -518,11 +518,24 @@
 
                 if (type && type === 'noSkill') {
                     wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
-                    return self.$navigate('/pages/activity-module/appraisal-start', {examID})
+                    let postData ={
+                        token: self.token,
+                        examID : examID
+                    }
+
+                    fetch.getExamFront(postData).then((res) => {
+                        if(res.buttonStatus === 'done') {
+                            return self.$navigate('/pages/activity-module/appraisal-results', {examID})
+                        }else {
+                            return self.$navigate('/pages/activity-module/appraisal-start', {examID})
+                        }
+                    })
                 }
 
-                wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
-                return self.$navigate('/pages/SpecialCourse/index', {courseID})
+                if(type && type === 'editor') {
+                    wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
+                    return self.$navigate('/pages/SpecialCourse/index', {courseID})
+                }
             }
         }
 
