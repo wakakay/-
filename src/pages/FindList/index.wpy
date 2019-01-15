@@ -117,7 +117,9 @@
                               @tap.stop="getItem" data-item="{{item}}">
                             <image mode="aspectFit" src="{{item.coverImageURL}}" />
                         </view>
-                        <view wx:if="{{item.type == 'noSkill'}}" class="ui-evaluation" style="background-image:url({{item.coverImageURL}})" @tap.stop="getItem" data-item="{{item}}">
+                        <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}"
+                              class="ui-evaluation" style="background-image:url({{item.coverImageURL}})"
+                              @tap.stop="getItem" data-item="{{item}}">
                             <view class="ui-num">
                                 <view class="ui-cri">
                                     <view class="cell-item">{{item.userCount}}</view>
@@ -516,25 +518,28 @@
                     id: courseID ? courseID : examID
                 })
 
-                if (type && type === 'noSkill') {
-                    wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
-                    let postData ={
-                        token: self.token,
-                        examID : examID
-                    }
 
-                    fetch.getExamFront(postData).then((res) => {
-                        if(res.buttonStatus === 'done') {
-                            return self.$navigate('/pages/activity-module/appraisal-results', {examID})
-                        }else {
-                            return self.$navigate('/pages/activity-module/appraisal-start', {examID})
+                switch (type) {
+                    case 'skill':
+                    case 'noSkill':
+                        wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
+                        let postData ={
+                            token: self.token,
+                            examID : examID
                         }
-                    })
-                }
 
-                if(type && type === 'editor') {
-                    wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
-                    return self.$navigate('/pages/SpecialCourse/index', {courseID})
+                        fetch.getExamFront(postData).then((res) => {
+                            if(res.buttonStatus === 'done') {
+                                self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-results' : 'new-appraisal-results'}`, {examID})
+                            }else {
+                                self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
+                            }
+                        })
+                        break
+                    case 'editor':
+                        wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
+                        self.$navigate('/pages/SpecialCourse/index', {courseID})
+                        break
                 }
             }
         }

@@ -57,7 +57,8 @@
         </view>
 
         <view class="ui-button-box">
-            <button disabled="{{!cardCurrentInfo[0].isFinish}}" @tap.stop="getNextCard">下一题</button>
+            <button disabled="{{!cardCurrentInfo[0].isFinish}}" @tap.stop="getNextCard">
+                {{cardCurrent !== originList.length -1 ? '下一题' : '马上查看测评结果'}}</button>
         </view>
     </view>
 </template>
@@ -68,6 +69,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import singleChoice from '../../components/cards-type/single-choice'
+    import {fetch} from '../../api'
     import _ from 'underscore'
 
     const store = getStore()
@@ -86,454 +88,60 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerHeigth: 68,
+            isLoaded: false,
+            parmasInfo: {},
             startTouches: {},
             cardCurrent: 0,
             cardCurrentInfo: [],
-            questionsList: [
-                {
-                    "abilitySkill": "哇咔咔",
-                    "timetag": "",
-                    "select": [
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "亚马逊选择了由多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣并愿意尝试的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "是这样的",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 100,
-                            "isanswer": true,
-                            "id": "optionID06794a40695c11e891c64d3451de4e47",
-                            "option": "西雅图 - 多个互联网公司总部所在地",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionID06794a41695c11e891c64d3451de4e47",
-                            "option": "纽约 - 美国的商业中心",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionIDa50b9eb0695c11e891c64d3451de4e47",
-                            "option": "萨拉门托 - 人口较少的小城市",
-                            "pullDownFlag": false
-                        }],
-                    "bigimage": "http://www.wakakay.com/wx-images/22.png",
-                    singleChoiceDescribe: '单选题，请选择一个正确选项',
-                    "descriptionList": ["", "", "", ""],
-                    "feedbackType3": {
-                        "right": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "right",
-                            "title": "",
-                            "point": {"text": ""}
-                        },
-                        "wrong": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "wrong",
-                            "title": "",
-                            "point": {"text": ""}
-                        }
-                    },
-                    "isView": "notView",
-                    "description": "",
-                    "type": "textSelectionVer2",
-                    "title": "你认为亚马逊最开始选择了哪个城市进行实验？",
-                    "matching": [],
-                    "feedback": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "sliderFeedback": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "score": 5,
-                    "navigation": {"button": {"text": ""}, "link": {"text": ""}, "point": {"icon": "", "text": ""}},
-                    "abilityGroup": "",
-                    "hotSpotFlag": [],
-                    "layoutStatus": {
-                        "titleIconUrl": "",
-                        "tagIconType": "",
-                        "titleAlignLeft": false,
-                        "titleIconShow": false,
-                        "imageTop": "text",
-                        "extraDescShow": false,
-                        "extraDesc": ""
-                    },
-                    "id": "cardIDe876b08e5724c9a0d818d3cc19ff",
-                    "feedbackNeutral": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "cardStatus": "iscorrectVer2",
-                    "operatetip": "",
-                    "pullDownFlag": false,
-                    "templeSortName": "习题类",
-                    "allowToNext": false,
-                    "subtitle": "",
-                    "chineseName": "单选卡—长选项",
-                    "step": "",
-                    "stepNumber": 1
-                }
-            ],
-            originList: [
-                {
-                    "abilitySkill": "",
-                    "timetag": "",
-                    "select": [
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "亚马逊选择了由多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣并愿意尝试的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "是这样的",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 100,
-                            "isanswer": true,
-                            "id": "optionID06794a40695c11e891c64d3451de4e47",
-                            "option": "西雅图 - 多个互联网公司总部所在地",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionID06794a41695c11e891c64d3451de4e47",
-                            "option": "纽约 - 美国的商业中心",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionIDa50b9eb0695c11e891c64d3451de4e47",
-                            "option": "萨拉门托 - 人口较少的小城市",
-                            "pullDownFlag": false
-                        }],
-                    "bigimage": "",
-                    "descriptionList": ["", "", "", ""],
-                    "feedbackType3": {
-                        "right": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "right",
-                            "title": "",
-                            "point": {"text": ""}
-                        },
-                        "wrong": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "wrong",
-                            "title": "",
-                            "point": {"text": ""}
-                        }
-                    },
-                    "isView": "notView",
-                    "description": "",
-                    "type": "textSelectionVer2",
-                    "title": "你认为亚马逊最开始选择了哪个城市进行实验？",
-                    "matching": [],
-                    "feedback": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "sliderFeedback": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "score": 5,
-                    "navigation": {"button": {"text": ""}, "link": {"text": ""}, "point": {"icon": "", "text": ""}},
-                    "abilityGroup": "",
-                    "hotSpotFlag": [],
-                    "layoutStatus": {
-                        "titleIconUrl": "",
-                        "tagIconType": "",
-                        "titleAlignLeft": false,
-                        "titleIconShow": false,
-                        "imageTop": "text",
-                        "extraDescShow": false,
-                        "extraDesc": ""
-                    },
-                    "id": "cardIDe876b08e5724c9a0d818d3cc19ff",
-                    "feedbackNeutral": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "cardStatus": "iscorrectVer2",
-                    "operatetip": "",
-                    "pullDownFlag": false,
-                    "templeSortName": "习题类",
-                    "allowToNext": false,
-                    "subtitle": "",
-                    "chineseName": "单选卡—长选项",
-                    "step": "",
-                    "stepNumber": 1
-                },
-                {
-                    "abilitySkill": "",
-                    "timetag": "",
-                    "select": [
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "亚马逊选择了由多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣并愿意尝试的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "是这样的",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 100,
-                            "isanswer": true,
-                            "id": "optionID06794a40695c11e891c64d3451de4e47",
-                            "option": "西雅图 - 多个互联网公司总部所在地",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionID06794a41695c11e891c64d3451de4e47",
-                            "option": "纽约 - 美国的商业中心",
-                            "pullDownFlag": false
-                        },
-                        {
-                            "feedback": {
-                                "bigimage": "",
-                                "descriptionList": [],
-                                "chineseName": "",
-                                "description": "事实上，亚马逊选择了有多个互联网总部驻扎的西雅图，这里聚集了很多对新事物感兴趣的用户，是最有可能的目标用户聚集地",
-                                "descrListType": "",
-                                "type": "",
-                                "title": "不是这里",
-                                "point": {"text": ""}
-                            },
-                            "abilitySkill": "",
-                            "hidden": "",
-                            "abilityGroup": "",
-                            "icon": "",
-                            "index": "",
-                            "description": "",
-                            "weight": 0,
-                            "isanswer": false,
-                            "id": "optionIDa50b9eb0695c11e891c64d3451de4e47",
-                            "option": "萨拉门托 - 人口较少的小城市",
-                            "pullDownFlag": false
-                        }],
-                    "bigimage": "",
-                    "descriptionList": ["", "", "", ""],
-                    "feedbackType3": {
-                        "right": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "right",
-                            "title": "",
-                            "point": {"text": ""}
-                        },
-                        "wrong": {
-                            "bigimage": "",
-                            "descriptionList": [],
-                            "description": "",
-                            "descrListType": "",
-                            "type": "wrong",
-                            "title": "",
-                            "point": {"text": ""}
-                        }
-                    },
-                    "isView": "notView",
-                    "description": "",
-                    "type": "textSelectionVer2",
-                    "title": "哪个城市进行实验？",
-                    "matching": [],
-                    "feedback": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "sliderFeedback": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "score": 5,
-                    "navigation": {"button": {"text": ""}, "link": {"text": ""}, "point": {"icon": "", "text": ""}},
-                    "abilityGroup": "",
-                    "hotSpotFlag": [],
-                    "layoutStatus": {
-                        "titleIconUrl": "",
-                        "tagIconType": "",
-                        "titleAlignLeft": false,
-                        "titleIconShow": false,
-                        "imageTop": "text",
-                        "extraDescShow": false,
-                        "extraDesc": ""
-                    },
-                    "id": "cardIDe876b08e5724c9a0d818d3cc19ee",
-                    "feedbackNeutral": {
-                        "bigimage": "",
-                        "descriptionList": [],
-                        "description": "",
-                        "descrListType": "",
-                        "type": "",
-                        "title": "",
-                        "point": {"button": "", "text": ""}
-                    },
-                    "cardStatus": "iscorrectVer2",
-                    "operatetip": "",
-                    "pullDownFlag": false,
-                    "templeSortName": "习题类",
-                    "allowToNext": false,
-                    "subtitle": "",
-                    "chineseName": "单选卡—长选项",
-                    "step": "",
-                    "stepNumber": 1
-                }
-            ]
+            questionsList: [],
+            originList: []
         }
 
-        onLoad() {
-
-        }
-
-        onShow() {
+        onLoad(parmas) {
             let self = this
-            self.cardCurrentInfo.push(self.originList[0])
+            self.parmasInfo = parmas
+            self.initialize()
         }
 
+        initialize() {
+            let self = this
+            let postData = {
+                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
+                examID: 'E1547451334457'
+            }
+            fetch.getExamPracticeList(postData).then((respone) => {
+                self.isLoaded = true
+                 _.each(respone.practiceList, (data) => {
+                     data.id = data.practiceID
+                     data.select = []
+                     _.each(data.optionList, (item) => {
+                         data.select.push({
+                             sId: _.clone(item.optionID),
+                             id: data.practiceID + item.optionID,
+                             option: item.optionContent
+                         })
+                     })
+                })
+
+                self.cardCurrent = 0
+                self.originList = respone.practiceList
+                self.questionsList.push(self.originList[0])
+                self.cardCurrentInfo.push(self.originList[0])
+                self.$apply()
+
+                // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.prePracticeObj.examTitle})
+                // 微信统计
+                wx.reportAnalytics('pre_test_ing', {
+                    username: self.userName,
+                    examid: self.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                })
+            }).catch(error => {
+                self.isLoaded = true
+                self.$apply()
+            })
+        }
         /**
          * 当前题未满足答题，切换下一张提示先作答
          * @param flag
@@ -549,6 +157,43 @@
                 return false
             }
             return true
+        }
+        /**
+         * 提交答案
+         * @param
+         */
+        __confirmAnswer() {
+            let self = this
+            // 筛选出答题答案
+            let answerList = _.map(self.originList, (data) => {
+                return{
+                    practiceID: data.practiceID,
+                    optionID: data.selectedItem && data.selectedItem.sId
+                }
+            })
+
+            let postData = {
+                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
+                json: {
+                    examID: 'E1547451334457',
+                    practiceList: answerList
+                }
+            }
+            fetch.sendUserDoExam(postData).then((respone)=>{
+                wx.showToast({
+                    title: '正在生成你的结果',
+                    icon: 'loading',
+                    duration: 3000,
+                    complete: ()=>{
+                        wx.redirectTo({ url: `/pages/activity-module/new-appraisal-results?examID=E1547451334457`})
+                    }
+                })
+            }).catch(error => {
+                wx.showToast({
+                    title: '网络错误',
+                    icon: 'none'
+                })
+            })
         }
 
         methods = {
@@ -580,7 +225,7 @@
                 if (distanceX > space
                     && self.cardCurrent === self.questionsList.length-1
                     && !self.cardCurrentInfo[0].isFinish) { // 向右
-                    wx.showToast({title: '请选择正答案'})
+                    wx.showToast({title: '请选择答案'})
                 }
             },
             /**
@@ -589,12 +234,17 @@
              */
             getNextCard() {
                 let self = this
-                let isFlag = self.__addQuestion()
+                if (self.cardCurrent !== self.originList.length -1) {
+                    let isFlag = self.__addQuestion()
 
-                isFlag && setTimeout(() => {
-                    self.cardCurrent += 1
-                    self.$apply()
-                }, 300)
+                    isFlag && setTimeout(() => {
+                        self.cardCurrent += 1
+                        self.$apply()
+                    }, 300)
+                    return
+                }
+
+                self.__confirmAnswer()
             }
         }
 
@@ -624,7 +274,7 @@
                 if (number < self.originList.length && self.cardCurrentInfo[0].isFinish) {
                     self.questionsList.splice(number, 0, self.originList[number])
                 }
-
+console.log(12, self.originList)
                 self.$apply()
             },
         }

@@ -13,6 +13,13 @@
             .cell-details{display:block;font-size:34rpx;color:@color-gray;text-align:justify;}
         }
 
+        .ui-poll-box{
+            padding:24rpx 32rpx;
+            .cell-button{
+                width:200rpx;height:60rpx;margin:40rpx auto 0;background:@background-gray-F4;color:@color-blue;font-size:30rpx;line-height:60rpx;text-align:center;border-radius: @border-radius-32;
+                &.cell-seleted{color:@color-gray;background:none;}
+            }
+        }
 
         .ui-share-box{
             padding:24rpx 0;
@@ -39,30 +46,36 @@
     <view class="ui-appraisal-box">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
         <view class="ui-thumb-box flex">
-            <image mode="widthFix" src="http://image.runwise.cn/image/imageIDa7ec7a877ed44780781bfff14169.png"></image>
+            <image mode="widthFix" src="{{detailsInfo.coverImageURL}}"></image>
         </view>
 
-        <view class="ui-text-box">
-            <div class="cell-details">
-                <text>你是否学习了很多内容营销的技巧，却还在原地打转？你是否费尽心思制作了内容，读者却寥寥无几？你是否分发了内容，却不知道怎样去统计内容营销的效果？
-                所有这些问题都是初级内容小编的硬伤，要做好一篇推文，决定的因素很多。而且也不是好文就自带流量。想要看看你是否有足够的水平来的打造一款爆文，先来一个小调查：
-                </text>
-            </div>
-        </view>
+        <repeat for="{{coverCardList}}" key="index" index="index" item="data">
+            <view class="ui-divider" wx:if="{{'border'==data.type}}"></view>
 
-        <view class="ui-divider"></view>
+            <view class="ui-thumb-box flex"
+                  wx:if="{{'image'==data.type}}">
+                <image mode="widthFix" src="{{data.img}}"></image>
+            </view>
 
-       <!-- <view class="ui-poll-box">
-            <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
+            <view class="ui-text-box"
+                  wx:if="{{'text'==data.type}}">
+                <view class="cell-title">{{data.title}}</view>
+                <div class="cell-details"><text>{{data.content}}</text></div>
+            </view>
 
-            <button class="cell-poll-btn"
-                    :class="{'cell-seleted' : item.isDone}"
-                    data-index="{{index}}"
-                    data-item="{{item}}"
-                    open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                    bindgetuserinfo="getAuthorize"
-                    @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
-        </view>-->
+            <view class="ui-poll-box"
+                  wx:if="{{'poll'==data.type}}">
+                <jn-poll :cardIndex.sync="index" :cardsList.sync="coverCardList" isLearning></jn-poll>
+
+                <button class="cell-button"
+                        :class="{'cell-seleted' : data.isDone}"
+                        data-index="{{index}}"
+                        data-item="{{data}}"
+                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                        bindgetuserinfo="getAuthorize"
+                        @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
+            </view>
+        </repeat>
 
 
         <view class="ui-share-box main-center">
@@ -71,7 +84,10 @@
 
         <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
             <view class="cell-button">
-                <button @tap.stop="getStartAppraisal">开始测试</button>
+                <button data-role="2"
+                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                        bindgetuserinfo="getAuthorize"
+                        @tap.stop="getStartAppraisal">开始测试</button>
             </view>
         </view>
     </view>
@@ -85,11 +101,17 @@
     import poll from '../../components/cards-type/poll'
     import {fetch} from '../../api'
     import {initializationDeligate} from "../../utils"
+    import {CustomError} from '../../errors'
+    import {login} from '../../redux/models/user'
+    import _ from 'underscore'
 
     const store = getStore()
     @connect({
         systemInfo(state) {
             return state.user
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
         }
     })
     export default class courseLearning extends wepy.page {
@@ -102,7 +124,9 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isHeadHeight: false,
-            parmasInfo: {}
+            parmasInfo: {},
+            detailsInfo: {},
+            coverCardList: []
         }
 
         onLoad(parmas) {
@@ -120,22 +144,106 @@
             let self = this
             let postData = {
                 token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
-                examID: ''
+                examID: 'E1547451334457'
             }
             fetch.getExamFront(postData).then(respone => {
-                console.log(12, respone)
+                self.coverCardList = _.sortBy(respone.coverCardDetail, (item) => {
+                    if ('poll' === item.type) {
+                        item.cardStatus = item.pollType
+                    }
+                    return item.index
+                })
+
+                self.detailsInfo = respone
+                console.log( self.coverCardList)
+                self.$apply()
             }).catch(error => {
 
             })
         }
 
-        methods = {
-            getStartAppraisal() {
-                let self = this
+        __gotoAppraisalSubject() {
+            let self = this
+            if (!self.isTokenSet) {
+                return
             }
+
+            self.$navigate(`/pages/activity-module/new-appraisal-subject`, {examID: 'E1547451334457'})
         }
 
-        events = {}
+        methods = {
+            /**
+             * 投票
+             * @param event
+             */
+            getPoll(event) {
+                let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
+
+                if (item.isDone || !self.isTokenSet) {
+                    return
+                }
+
+                let postData = {
+                    token: self.systemInfo.token,
+                    pollID: item.pollID,
+                    optionList:item.selectedItem.id
+                }
+
+                fetch.sendUserPoll(postData).then((respone) => {
+                    item.isDone = true
+                    wepy.$instance.globalData.getHuilder(`${self.detailsInfo.subject}投票`, 'click', `${item.title}`)
+                    self.$broadcast('broadcast-poll', item)
+                }).catch(error => {
+
+                })
+            },
+            getStartAppraisal() {
+                let self = this
+                self.__gotoAppraisalSubject()
+            },
+            /**
+             * 授权登录信息
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getAuthorize(event) {
+                let self = this
+                let {detail: {errMsg}, currentTarget: {dataset:{item, role}}} = event
+
+                if (self.isTokenSet) {
+                    return
+                }
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+                }).then((respone) => { // 授权成功
+                    if (2 == role) {
+                        self.__gotoAppraisalSubject()
+                    }
+                }).catch(error => { // 拒接授权
+
+                })
+            },
+        }
+
+        events = {
+            /**
+             * 交互卡，选择，排序卡
+             * @param data
+             */
+            'on-interaction': (data) => {
+                let self = this
+                let item = _.find(self.coverCardList, {pollID: data.id})
+
+                _.extend(item, data)
+                self.$apply()
+            }
+        }
 
         onShareAppMessage(event) {
             let self = this

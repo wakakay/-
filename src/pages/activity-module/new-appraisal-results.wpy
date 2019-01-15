@@ -163,6 +163,9 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
+    import {fetch} from '../../api'
+    import {initializationDeligate} from "../../utils"
+    import _ from 'underscore'
 
     const store = getStore()
     @connect({
@@ -179,18 +182,33 @@
         data = {
             isHeadHeight: false,
             headerHeigth: 68,
+            isLoaded: false,
+            parmasInfo: {},
+            detailsInfo: {}
         }
 
-        onLoad() {
-
+        onLoad(parmas) {
+            let self = this
+            self.parmasInfo = parmas
+            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
         onShow() {
 
         }
 
-        onReady() {
+        initialize() {
+            let self = this
+            let postData = {
+                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
+                examID: 'E1547451334457'
+            }
+            fetch.getUserExamScore(postData).then(respone => {
+                console.log(respone)
+                self.$apply()
+            }).catch(error => {
 
+            })
         }
 
         methods = {}

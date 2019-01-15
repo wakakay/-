@@ -124,8 +124,8 @@
                     fullImageBottomtText: '我已选好',
                     json: item.sId,
                     answerStatus: item.isanswer ? 1 : 2, // 1回答正确, 2回答错误
-                    answerTitle: item.feedback.title,
-                    answerDescription: item.feedback.description
+                    answerTitle: item.feedback && item.feedback.title,
+                    answerDescription: item.feedback && item.feedback.description
                 }
                 self.$emit('on-interaction', data)
             },

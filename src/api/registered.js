@@ -77,15 +77,35 @@ export default {
     },
 
     /*--------------------测评-----------------------*/
-    // 获得测评题目
+    /**
+     * 获取测评卷封面信息
+     * @param  examID: 测评ID
+     */
+    getExamFront(params) {
+        return fetch({method: 'post', url: 'userExam/getExamFront', params: params, isVisitor: true})
+    },
+    /**
+     * 获取测评卷题目列表
+     * @param  examID: 测评ID
+     */
     getExamPracticeList(params) {
         return fetch({method: 'post', url: 'userExam/getExamPracticeList', params: params, isVisitor: true})
     },
-    // 获得测评题目
+    /**
+     * 提交测评答题信息
+     * @param  examID: 测评ID
+     */
     sendUserDoExam(params) {
         return fetch({method: 'post', url: 'userExam/sendUserDoExam', params: params, isVisitor: true})
     },
-    
+    /**
+     * 获取测评卷结果
+     * @param  examID: 测评ID
+     */
+    getUserExamScore(params) {
+        return fetch({method: 'post', url: 'userExam/getUserExamScore', params: params, isVisitor: true})
+    },
+
     // 获得专题详情
     getNewSpecialCourse(params) {
         return fetch({method: 'post', url: 'course/getNewSpecialCourse', params: params, isVisitor: true})
@@ -93,13 +113,6 @@ export default {
     // 专题投票
     sendUserPoll(params) {
         return fetch({method: 'post', url: 'course/sendUserPoll', params: params})
-    },
-    /**
-     * 获取测评卷封面信息
-     * @param  examID: 测评ID
-     */
-    getExamFront(params) {
-        return fetch({method: 'post', url: 'userExam/getExamFront', params: params, isVisitor: true})
     },
     /*--------------------其他公共-----------------------*/
     // 获取staff的openid
@@ -146,12 +159,5 @@ export default {
      */
     getMyLearningPageBySkillgetDetail(params) {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
-    },
-    /**
-     * 新版测评封面页
-     * @param  examID: 测评ID
-     */
-    getExamFront(params) {
-        return fetch({method: 'post', url: 'userExam/getExamFront', params: params})
-    },
+    }
 }
