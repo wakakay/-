@@ -114,10 +114,10 @@
                     <view class="ui-item" wx:for="{{informationList}}" wx:key="{{index}}" wx:index="{{index}}" >
                         <view wx:if="{{item.type == 'editor'}}" class="ui-special-subject"
                               hover-stay-time="100"
-                              @tap.stop="getItem" data-item="{{item}}">
+                              @tap.stop="getEditorItem" data-item="{{item}}">
                             <image mode="aspectFit" src="{{item.coverImageURL}}" />
                         </view>
-                        <view wx:if="{{item.type == 'noSkill'}}" class="ui-evaluation" style="background-image:url({{item.coverImageURL}})" @tap.stop="getItem" data-item="{{item}}">
+                        <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}" class="ui-evaluation" style="background-image:url({{item.coverImageURL}})" @tap.stop="getSkillItem" data-item="{{item}}">
                             <view class="ui-num">
                                 <view class="ui-cri">
                                     <view class="cell-item">{{item.userCount}}</view>
@@ -500,10 +500,9 @@
                 })
                 wx.navigateTo({url: '/pages/registered-module/interest-select'})
             },
-            getItem({currentTarget: {dataset: {item}}}) {
+            getEditorItem({currentTarget: {dataset: {item}}}) {
                 let self = this
                 let courseID = item.id
-                let examID = item.id
                 let type = item.type
 
 
@@ -513,16 +512,36 @@
                     nickname: self.userName,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     type: type,
-                    id: courseID ? courseID : examID
+                    id: courseID
                 })
 
-                if (type && type === 'noSkill') {
-                    wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
+                wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
+                return self.$navigate('/pages/SpecialCourse/index', {courseID})
+            },
+            getSkillItem({currentTarget: {dataset: {item}}}){
+                let self = this
+                let examID = item.id
+                let type = item.type
+
+                 // 微信事件上报
+                wx.reportAnalytics('tap_discover_slogan', {
+                    role: self.role,
+                    nickname: self.userName,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    type: type,
+                    id: examID
+                })
+
+                // ga
+                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
+
+                if (type === 'skill') {
+                    return self.$navigate('/pages/activity-module/new-appraisal-cover', {examID})
+                }else {
                     let postData ={
                         token: self.token,
                         examID : examID
                     }
-
                     fetch.getExamFront(postData).then((res) => {
                         if(res.buttonStatus === 'done') {
                             return self.$navigate('/pages/activity-module/appraisal-results', {examID})
@@ -530,11 +549,6 @@
                             return self.$navigate('/pages/activity-module/appraisal-start', {examID})
                         }
                     })
-                }
-
-                if(type && type === 'editor') {
-                    wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
-                    return self.$navigate('/pages/SpecialCourse/index', {courseID})
                 }
             }
         }
