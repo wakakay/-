@@ -143,8 +143,8 @@
         initialize() {
             let self = this
             let postData = {
-                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
-                examID: 'E1547451334457'
+                token: self.systemInfo.token,
+                examID: self.paramsInfo.examID
             }
             fetch.getExamFront(postData).then(respone => {
                 self.coverCardList = _.sortBy(respone.coverCardDetail, (item) => {
@@ -155,8 +155,8 @@
                 })
 
                 self.detailsInfo = respone
-                console.log( self.coverCardList)
                 self.$apply()
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.title}) // ga统计
             }).catch(error => {
 
             })
@@ -168,7 +168,7 @@
                 return
             }
 
-            self.$navigate(`/pages/activity-module/new-appraisal-subject`, {examID: 'E1547451334457'})
+            self.$navigate(`/pages/activity-module/new-appraisal-subject`, {examID: self.paramsInfo.examID})
         }
 
         methods = {
@@ -249,7 +249,7 @@
             let self = this
             return {
                 title: '',
-                path: `/pages/activity-module/new-appraisal-cover?examID=${self.parmasInfo}`,
+                path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,
                 imageUrl: ''
             }
         }

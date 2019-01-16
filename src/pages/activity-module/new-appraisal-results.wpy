@@ -5,10 +5,10 @@
         view{box-sizing:border-box;}
         .ui-background {
             width:100%;
-            image{width:100%;}
+            image{width:100%;height:1500rpx;}
         }
         .ui-canvas-box{
-            width:100%;padding:40rpx 32rpx 0;position:absolute;left:0;top:0;z-index:@z-index-normal;
+            width:100%;padding:20rpx 32rpx 0;position:absolute;left:0;top:0;z-index:@z-index-normal;
             .cell-subtitle{padding:0 46rpx;font-size:30rpx;color:@color-white-opacity;line-height:42rpx;}
             .cell-title{
                 padding:24rpx 46rpx 8rpx;
@@ -17,13 +17,18 @@
             }
             .ui-thumb{
                 width:100%;height:200rpx;
-                image{height:100%;}
+                image{height:80%;}
             }
             .ui-cylindrical-list{
-                height:240rpx;padding:0 46rpx;margin-top:52rpx;
+                height:240rpx;padding:0 46rpx;margin-top:90rpx;
                 .cell-item{
-                    width:112rpx;height:100%;margin-left:12rpx;background:#FFC102;
-                    text{font-size:24rpx;color:@color-black;line-height:48rpx;}
+                    width:112rpx;height:100%;margin-left:12rpx;background-color:@background-white;position:relative;
+                    &.is-selected{background-color:#FFC102;}
+                    >text{display:block;width:112rpx;font-size:24rpx;font-weight:700;color:@color-white;text-align:center;line-height:48rpx;position:absolute;left:0;top:-48rpx;}
+                    .ui-tips{
+                        width:120rpx;height:40rpx;background-color:@background-mask-mid-white-40;font-size:24rpx;color:@color-white;text-align:center;line-height:40rpx;border-radius:@border-radius-20;position:absolute;left:-6rpx;top:-100rpx;
+                        text{display:block;font-size:32rpx;color:@color-white-opacity-40;transform:rotatex(180deg);position:absolute;left:42rpx;bottom:-26rpx;}
+                    }
                 }
             }
             .ui-level{
@@ -37,7 +42,7 @@
                 text:nth-of-type(2){display:block;padding-top:32rpx;font-size:32rpx;text-align:justify;}
             }
             .ui-button-box{
-                width:100%;padding-top:88rpx;
+                width:100%;padding-top:68rpx;
                 button{
                     width:100%;height:96rpx;background-color:@background-mask-white;font-size:34rpx;font-weight:700;color:@color-white;text-align:center;line-height:96rpx;border-radius:@border-radius-20;
                     text{font-size:44rpx;font-weight:400;margin-right:20rpx;}
@@ -81,23 +86,26 @@
     <view class="ui-appraisal-result-box">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
         <view class="ui-background flex">
-            <image mode="widthFix" src="http://wakakay.com/wx-images/11.png"></image>
+            <image mode="aspectFill" src="http://wakakay.com/wx-images/11.png"></image>
         </view>
         <view class="ui-canvas-box" style="{{'top:'+headerHeigth+'px;'}}">
-            <view class="cell-subtitle">内容营销水平能力测试</view>
+            <view class="cell-subtitle">{{detailsInfo.subject}}</view>
             <view class="cell-title flex">
-                <image class="flex-box-0" mode="aspectFit" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIk5E5pbRm4P9V8Zahpbxbvg/132"></image>
-                <text>你的内容营销水平是</text>
+                <image class="flex-box-0" mode="aspectFill" src="{{detailsInfo.userAvatarUrl}}"></image>
+                <text>{{detailsInfo.subjectHeading}}</text>
             </view>
-            <view class="ui-thumb main-center">
-                <image mode="aspectFill" src="http://wakakay.com/wx-images/22.png"></image>
+            <view class="ui-thumb main-center cross-center">
+                <image mode="aspectFit" src="{{detailsInfo.multiple.resultImageURL}}"></image>
             </view>
             <view class="ui-cylindrical-list cross-end">
-                <view class="cell-item main-center cross-start" style="height:25%;"><text>11%</text></view>
-                <view class="cell-item main-center cross-start" style="height:53%;"><text>23%</text></view>
-                <view class="cell-item main-center cross-start" style="height:100%;"><text>43%</text></view>
-                <view class="cell-item main-center cross-start" style="height:37%;"><text>16%</text></view>
-                <view class="cell-item main-center cross-start" style="height:18%;"><text>8%</text></view>
+                <repeat for="{{detailsInfo.skillPercent}}" key="index" index="index" item="item">
+                    <view class="cell-item main-center"
+                          :class="{'is-selected': item.isSelected}"
+                          style="{{'height:'+(item.height ? item.height+'%;' : '1rpx')}}">
+                        <text>{{item.percent}}%</text>
+                        <view class="ui-tips" wx:if="{{item.isSelected}}">你在这里<text class="icon-arrow"></text></view>
+                    </view>
+                </repeat>
             </view>
             <view class="ui-level">
                 <view class="cell-line"></view>
@@ -106,8 +114,8 @@
                 </view>
             </view>
             <view class="ui-analyze">
-                <text>你的得分高于80%的产品经理</text>
-                <text>您有足够的技能来管理产品的特定模块/功能。您的重点是应用和增强PM技能。</text>
+                <text></text>
+                <text>{{detailsInfo.multiple.evaluationScript}}</text>
             </view>
             <view class="ui-button-box">
                 <button open-type="share"><text class="icon-share"></text>分享给好友</button>
@@ -117,39 +125,26 @@
 
         <view class="ui-ability-analysis-box">
             <view class="ui-title">能力分析</view>
-
-            <view class="ui-item">
-                <view class="cell-title main-justify">
-                    <text># 产品战略规划</text><text>6</text>
-                </view>
-                <view class="ui-progress">
-                    <view class="cell-line box-mean">
-                        <view></view><view></view><view></view><view></view><view></view>
+            <repeat for="{{detailsInfo.single}}" key="index" index="index" item="item">
+                <view class="ui-item">
+                    <view class="cell-title main-justify">
+                        <text># {{item.labelIDText}}</text><text>6</text>
                     </view>
-                    <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
-                </view>
-                <view class="ui-details">
-                    <text>你通晓市场运作规律，有着敏锐的眼光，往往能对产品制定一个十分不错的战略规划，让整个团队看起来就像明日的独角兽。</text>
-                </view>
-            </view>
-            <view class="ui-item">
-                <view class="cell-title main-justify">
-                    <text># 产品战略规划</text><text>6</text>
-                </view>
-                <view class="ui-progress">
-                    <view class="cell-line box-mean">
-                        <view></view><view></view><view></view><view></view><view></view>
+                    <view class="ui-progress">
+                        <view class="cell-line box-mean">
+                            <view></view><view></view><view></view><view></view><view></view>
+                        </view>
+                        <view class="cell-percent" style="{{'width: '+(item.score * 10)+'%;'}}"></view>
                     </view>
-                    <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                    <view class="ui-details">
+                        <text>{{item.evaluationScript}}</text>
+                    </view>
                 </view>
-                <view class="ui-details">
-                    <text>你通晓市场运作规律，有着敏锐的眼光，往往能对产品制定一个十分不错的战略规划，让整个团队看起来就像明日的独角兽。</text>
-                </view>
-            </view>
+            </repeat>
 
             <view class="ui-button-box">
-                <button>生成我的学习计划</button>
-                <view class="cell-text">
+                <!--<button>生成我的学习计划</button>-->
+                <view class="cell-text" @tap.stop="getAgain">
                     <text class="icon-back"></text> 再做一次
                 </view>
             </view>
@@ -200,18 +195,33 @@
         initialize() {
             let self = this
             let postData = {
-                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
-                examID: 'E1547451334457'
+                token: self.systemInfo.token,
+                examID: self.paramsInfo.examID
             }
             fetch.getUserExamScore(postData).then(respone => {
-                console.log(respone)
+                self.detailsInfo = respone
+
+                let maxPercent = _.max(self.detailsInfo.skillPercent, (item, index) => {
+                    item.index = index
+                    return item.percent
+                })
+
+                _.each(self.detailsInfo.skillPercent, (item, index) => {
+                    item.height = index === maxPercent.index ? 100 : (parseFloat(item.percent / maxPercent.percent))
+                })
+
                 self.$apply()
             }).catch(error => {
 
             })
         }
 
-        methods = {}
+        methods = {
+            getAgain() {
+                let self = this
+                wx.redirectTo({ url: `/pages/activity-module/new-appraisal-subject?examID=${self.paramsInfo.examID}`})
+            }
+        }
 
         events = {
             'header-info': (data) => {
@@ -224,9 +234,9 @@
         onShareAppMessage(event) {
             let self = this
             return {
-                title: '',
-                path: `/pages/activity-module/new-appraisal-cover?examID=12`,
-                imageUrl: ''
+                title: self.detailsInfo.subjectHeading,
+                path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,
+                imageUrl: self.detailsInfo.shareImage
             }
         }
     }

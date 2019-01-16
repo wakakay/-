@@ -76,6 +76,9 @@
     @connect({
         systemInfo(state) {
             return state.user
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
         }
     })
     export default class newAppraisalSubject extends wepy.page {
@@ -106,8 +109,8 @@
         initialize() {
             let self = this
             let postData = {
-                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
-                examID: 'E1547451334457'
+                token: self.systemInfo.token,
+                examID: self.paramsInfo.examID
             }
             fetch.getExamPracticeList(postData).then((respone) => {
                 self.isLoaded = true
@@ -133,8 +136,8 @@
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.prePracticeObj.examTitle})
                 // 微信统计
                 wx.reportAnalytics('pre_test_ing', {
-                    username: self.userName,
-                    examid: self.examID,
+                    username: self.systemInfo.name,
+                    examid: self.paramsInfo.examID,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                 })
             }).catch(error => {
@@ -173,9 +176,9 @@
             })
 
             let postData = {
-                token: 'userID7ca4f2e48c574d40a315e5ab10e03b85-1547094626557-66f23c4289f5e6e440efb57b003dfbe2',
+                token: self.systemInfo.token,
                 json: {
-                    examID: 'E1547451334457',
+                    examID: self.paramsInfo.examID,
                     practiceList: answerList
                 }
             }
@@ -185,7 +188,7 @@
                     icon: 'loading',
                     duration: 3000,
                     complete: ()=>{
-                        wx.redirectTo({ url: `/pages/activity-module/new-appraisal-results?examID=E1547451334457`})
+                        wx.redirectTo({ url: `/pages/activity-module/new-appraisal-results?examID=${self.paramsInfo.examID}`})
                     }
                 })
             }).catch(error => {
