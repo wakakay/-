@@ -117,9 +117,7 @@
                               @tap.stop="getEditorItem" data-item="{{item}}">
                             <image mode="aspectFit" src="{{item.coverImageURL}}" />
                         </view>
-                        <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}"
-                              class="ui-evaluation" style="background-image:url({{item.coverImageURL}})"
-                              @tap.stop="getItem" data-item="{{item}}">
+                        <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}" class="ui-evaluation" style="background-image:url({{item.coverImageURL}})" @tap.stop="getSkillItem" data-item="{{item}}">
                             <view class="ui-num">
                                 <view class="ui-cri">
                                     <view class="cell-item">{{item.userCount}}</view>
@@ -430,18 +428,17 @@
                 self.senceID = courseItem.id
 
                 if ('subject' === item.type) {
-                    wepy.$instance.globalData.getHuilder('发现页/简易版专题', 'click', `${senceName}`)
+                    wepy.$instance.globalData.getHuilder('发现页/简易版专题','click',`${senceName}`)
                 } else if ('todayTask' === item.type) {
-                    wepy.$instance.globalData.getHuilder('发现页/今日任务', 'click', `${senceName}`)
+                    wepy.$instance.globalData.getHuilder('发现页/今日任务','click',`${senceName}`)
                 }
 
                 //
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
-                        courseID: self.courseID,
-                        senceID: self.senceID,
-                        source
-                    })
+                        courseID:self.courseID,
+                        senceID:self.senceID,
+                        source})
                 }
 
                 if ('needPay' === buttonStatus) {
@@ -449,15 +446,12 @@
                     return
                 }
                 if ('finish' === buttonStatus) {
-                    self.$navigate(`/pages/course-module/course-review`, {
-                        courseID: self.courseID,
-                        senceID: self.senceID
-                    })
+                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
                     return
                 }
                 navigateToLesson({
-                    courseID: self.courseID,
-                    senceID: self.senceID,
+                    courseID:self.courseID,
+                    senceID:self.senceID,
                     resumeLastRead: resume,
                     source
                 })
@@ -521,15 +515,15 @@
                     id: courseID
                 })
 
-                wepy.$instance.globalData.getHuilder('发现页/专题', 'click', `${item.name}`)
+                wepy.$instance.globalData.getHuilder('发现页/专题','click', `${item.name}`)
                 return self.$navigate('/pages/SpecialCourse/index', {courseID})
             },
-            getSkillItem({currentTarget: {dataset: {item}}}) {
+            getSkillItem({currentTarget: {dataset: {item}}}){
                 let self = this
                 let examID = item.id
                 let type = item.type
 
-                // 微信事件上报
+                 // 微信事件上报
                 wx.reportAnalytics('tap_discover_slogan', {
                     role: self.role,
                     nickname: self.userName,
@@ -539,40 +533,26 @@
                 })
 
                 // ga
-                wepy.$instance.globalData.getHuilder('发现页/测一测', 'click', `${item.name}`)
+                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
 
                 if (type === 'skill') {
                     return self.$navigate('/pages/activity-module/new-appraisal-cover', {examID})
-                } else {
-                    let postData = {
+                }else {
+                    let postData ={
                         token: self.token,
-                        examID: examID
+                        examID : examID
                     }
-                    switch (type) {
-                        case 'skill':
-                        case 'noSkill':
-                            wepy.$instance.globalData.getHuilder('发现页/测一测', 'click', `${item.name}`)
-                            let postData = {
-                                token: self.token,
-                                examID: examID
-                            }
-
-                            fetch.getExamFront(postData).then((res) => {
-                                if (res.buttonStatus === 'done') {
-                                    self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-results' : 'new-appraisal-results'}`, {examID})
-                                } else {
-                                    self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
-                                }
-                            })
-                            break
-                        case 'editor':
-                            wepy.$instance.globalData.getHuilder('发现页/专题', 'click', `${item.name}`)
-                            self.$navigate('/pages/SpecialCourse/index', {courseID})
-                            break
-                    }
+                    fetch.getExamFront(postData).then((res) => {
+                        if(res.buttonStatus === 'done') {
+                            return self.$navigate('/pages/activity-module/appraisal-results', {examID})
+                        }else {
+                            return self.$navigate('/pages/activity-module/appraisal-start', {examID})
+                        }
+                    })
                 }
             }
         }
+
         events = {
             /**
              * 监听是否要禁止滚动
