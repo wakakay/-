@@ -8,9 +8,9 @@
                  scroll-top="{{scrollTop}}"
                  scroll-with-animation="{{isScrollAnimation}}">
         <view class="ui-content">
-            <view class="ui-skill" wx:if="{{cardsList[cardIndex].abilitySkill}}">{{cardsList[cardIndex].abilitySkill}}</view>
+            <view class="ui-subtitle" wx:if="{{cardsList[cardIndex].subTitle}}"># {{cardsList[cardIndex].subTitle}}</view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
-            <view class="ui-subtitle" wx:if="{{!isExercises && cardsList[cardIndex].singleChoiceDescribe}}">{{cardsList[cardIndex].singleChoiceDescribe}}</view>
+            <view class="ui-description">{{cardsList[cardIndex].singleChoiceDescribe || cardsList[cardIndex].description}}</view>
             <view class="ui-thumb" wx:if="{{cardsList[cardIndex].bigimage}}">
                 <image mode="widthFix" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>

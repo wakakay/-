@@ -51,7 +51,7 @@
                 <repeat for="{{questionsList}}" key="index" index="index" item="item">
                     <swiper-item bindtouchstart="getSwipperStart"
                                  bindtouchend="getSwipperEnd">
-                        <jn-single-choice :cardIndex.sync="index" :cardsList.sync="questionsList"></jn-single-choice>
+                        <jn-single-choice :cardIndex.sync="index" :cardsList.sync="questionsList" isExercises></jn-single-choice>
                     </swiper-item>
                 </repeat>
             </swiper>
@@ -125,6 +125,7 @@
                 self.pageName = respone.examTitle
                  _.each(respone.practiceList, (data) => {
                      data.id = data.practiceID
+                     data.bigimage = data.imageURL
                      data.select = []
                      _.each(data.optionList, (item) => {
                          data.select.push({

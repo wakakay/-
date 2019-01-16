@@ -544,7 +544,6 @@
                 fetch.getExamFront(postData).then((res) => {
                     if (res.buttonStatus === 'done') {
                         self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-results' : 'new-appraisal-results'}`, {examID})
-                        
                     } else {
                         self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
                     }

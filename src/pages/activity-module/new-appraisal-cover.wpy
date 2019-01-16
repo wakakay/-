@@ -46,9 +46,6 @@
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
     <view class="ui-appraisal-box" wx:if="{{isLoaded}}">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
-        <view class="ui-thumb-box flex">
-            <image mode="widthFix" src="{{detailsInfo.coverImageURL}}"></image>
-        </view>
 
         <repeat for="{{coverCardList}}" key="index" index="index" item="data">
             <view class="ui-divider" wx:if="{{'border'==data.type}}"></view>
@@ -274,7 +271,7 @@
             let self = this
             wepy.$instance.globalData.getHuilder('开始测评/分享', 'click', `${self.detailsInfo.subjectHeading}`)
             return {
-                title: self.detailsInfo.subjectHeading,
+                title: self.detailsInfo.shareContent,
                 path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,
                 imageUrl: self.detailsInfo.shareImageURL
             }

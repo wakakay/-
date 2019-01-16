@@ -12,7 +12,7 @@
             .cell-subtitle{padding:0 46rpx;font-size:30rpx;color:@color-white-opacity;line-height:42rpx;}
             .cell-title{
                 padding:24rpx 46rpx 8rpx;
-                image{width:72rpx;height:72rpx;margin-right:12rpx;border:1rpx solid @border-white;border-radius:50%;}
+                image{width:72rpx;height:72rpx;margin-right:12rpx;border:2rpx solid @border-white;border-radius:50%;}
                 text{font-size:48rpx;font-weight:700;color:@color-white;line-height:72rpx;}
             }
             .ui-thumb{
@@ -93,10 +93,10 @@
             <view class="cell-subtitle">{{detailsInfo.subject}}</view>
             <view class="cell-title flex">
                 <image class="flex-box-0" mode="aspectFill" src="{{detailsInfo.userAvatarUrl}}"></image>
-                <text>{{detailsInfo.subjectHeading}}</text>
+                <text>{{detailsInfo.resultTitle}}</text>
             </view>
             <view class="ui-thumb main-center cross-center">
-                <image mode="aspectFit" src="{{detailsInfo.multiple.resultImageURL}}"></image>
+                <image mode="aspectFit" src="{{detailsInfo.resultImageURL}}"></image>
             </view>
             <view class="ui-cylindrical-list cross-end">
                 <repeat for="{{detailsInfo.skillPercent}}" key="index" index="index" item="item">
@@ -129,7 +129,7 @@
             <repeat for="{{detailsInfo.single}}" key="index" index="index" item="item">
                 <view class="ui-item">
                     <view class="cell-title main-justify">
-                        <text># {{item.labelIDText}}</text><text>6</text>
+                        <text># {{item.labelIDText}}</text><text>{{item.score}}</text>
                     </view>
                     <view class="ui-progress">
                         <view class="cell-line box-mean">
@@ -210,8 +210,9 @@
                 })
 
                 _.each(self.detailsInfo.skillPercent, (item, index) => {
-                    item.height = index === maxPercent.index ? 100 : (parseFloat(item.percent / maxPercent.percent))
+                    item.height = index === maxPercent.index ? 100 :  Math.floor(item.percent / maxPercent.percent * 1000) / 10
                 })
+
                 self.isLoaded = true
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.subjectHeading})
@@ -250,7 +251,7 @@
                 examid: self.paramsInfo.examID
             })
             return {
-                title: self.detailsInfo.subjectHeading,
+                title: self.detailsInfo.shareContent,
                 path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,
                 imageUrl: self.detailsInfo.shareImage
             }

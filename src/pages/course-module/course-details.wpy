@@ -955,14 +955,14 @@
         onShareAppMessage(event) {
             let self = this
             let dataset = event.target && event.target.dataset
-
+            console.log('role:', self.giftID, self.shareID)
             let title = ''
             let path = ''
             let reportType = ''
-            //console.log('role:', dataset.role, self.shareID)
+
             if (dataset && dataset.role) {
                 title = `${self.systemInfo.name} 赠送你一个好课，立即领取`
-                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}`
+                path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}&source=GiftShare`
                 if (self.giftID) {
                     let postData = {
                         token: self.systemInfo.token,

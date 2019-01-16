@@ -9,6 +9,7 @@
                 <image mode="aspectFit" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
+            <view class="ui-description">{{cardsList[cardIndex].pollDesc}}</view>
             <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' ? '单选' : '多选'}}】</view>
 
             <view class="ui-answer-list">
