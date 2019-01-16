@@ -119,7 +119,7 @@
                         </view>
                         <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}"
                               class="ui-evaluation" style="background-image:url({{item.coverImageURL}})"
-                              @tap.stop="getItem" data-item="{{item}}">
+                              @tap.stop="getSkillItem" data-item="{{item}}">
                             <view class="ui-num">
                                 <view class="ui-cri">
                                     <view class="cell-item">{{item.userCount}}</view>
@@ -541,36 +541,18 @@
                 // ga
                 wepy.$instance.globalData.getHuilder('发现页/测一测', 'click', `${item.name}`)
 
-                if (type === 'skill') {
-                    return self.$navigate('/pages/activity-module/new-appraisal-cover', {examID})
-                } else {
-                    let postData = {
-                        token: self.token,
-                        examID: examID
-                    }
-                    switch (type) {
-                        case 'skill':
-                        case 'noSkill':
-                            wepy.$instance.globalData.getHuilder('发现页/测一测', 'click', `${item.name}`)
-                            let postData = {
-                                token: self.token,
-                                examID: examID
-                            }
-
-                            fetch.getExamFront(postData).then((res) => {
-                                if (res.buttonStatus === 'done') {
-                                    self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-results' : 'new-appraisal-results'}`, {examID})
-                                } else {
-                                    self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
-                                }
-                            })
-                            break
-                        case 'editor':
-                            wepy.$instance.globalData.getHuilder('发现页/专题', 'click', `${item.name}`)
-                            self.$navigate('/pages/SpecialCourse/index', {courseID})
-                            break
-                    }
+                let postData = {
+                    token: self.token,
+                    examID: examID
                 }
+                fetch.getExamFront(postData).then((res) => {
+                    if (res.buttonStatus === 'done') {
+                        self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-results' : 'new-appraisal-results'}`, {examID})
+                        
+                    } else {
+                        self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
+                    }
+                })
             }
         }
         events = {

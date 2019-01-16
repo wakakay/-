@@ -124,15 +124,14 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isHeadHeight: false,
-            parmasInfo: {},
+            paramsInfo: {},
             detailsInfo: {},
             coverCardList: []
         }
 
         onLoad(parmas) {
             let self = this
-            self.parmasInfo = parmas
-
+            self.paramsInfo = parmas
             initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 
@@ -167,7 +166,6 @@
             if (!self.isTokenSet) {
                 return
             }
-
             self.$navigate(`/pages/activity-module/new-appraisal-subject`, {examID: self.paramsInfo.examID})
         }
 

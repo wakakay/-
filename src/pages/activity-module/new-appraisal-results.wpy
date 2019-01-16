@@ -178,13 +178,13 @@
             isHeadHeight: false,
             headerHeigth: 68,
             isLoaded: false,
-            parmasInfo: {},
+            paramsInfo: {},
             detailsInfo: {}
         }
 
         onLoad(parmas) {
             let self = this
-            self.parmasInfo = parmas
+            self.paramsInfo = parmas
             initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
         }
 

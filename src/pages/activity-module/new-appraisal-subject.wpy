@@ -92,7 +92,7 @@
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerHeigth: 68,
             isLoaded: false,
-            parmasInfo: {},
+            paramsInfo: {},
             startTouches: {},
             cardCurrent: 0,
             cardCurrentInfo: [],
@@ -102,7 +102,7 @@
 
         onLoad(parmas) {
             let self = this
-            self.parmasInfo = parmas
+            self.paramsInfo = parmas
             self.initialize()
         }
 
