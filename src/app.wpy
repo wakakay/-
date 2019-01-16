@@ -33,7 +33,6 @@
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
                 'pages/course-module/course-details', // 课程详情
-                'pages/course-module/course-new-details', // 课程详情
                 'pages/course-module/course-learning', // 新微课学习
                 'pages/course-module/course-learning-discuss', // 新微课学习想法详情
                 'pages/course-module/course-exercises', // 微课课后练习题
@@ -205,7 +204,7 @@
                 var trackerInfo = self.getTracker()
                 let builder = {}
                 // console.log('ga----', category, action, label)
-                if (action === 'click') {
+                if (action === 'click' || action === 'onUnload') {
                     builder = new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build()
                 } else {
                     trackerInfo.setScreenName(category)

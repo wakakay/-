@@ -32,7 +32,8 @@
 </style>
 
 <template>
-    <view class="ui-appraisal-subject-box">
+    <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
+    <view class="ui-appraisal-subject-box" wx:if="{{isLoaded}}">
         <jn-header className="background-transparent">
             <view slot="content" class="ui-progress-box main-center cross-center">
                 <view class="ui-progress">
@@ -69,7 +70,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import singleChoice from '../../components/cards-type/single-choice'
-    import {fetch} from '../../api'
+    import {fetch, report as reportApi} from '../../api'
     import _ from 'underscore'
 
     const store = getStore()
@@ -92,6 +93,7 @@
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerHeigth: 68,
             isLoaded: false,
+            pageName: '',
             paramsInfo: {},
             startTouches: {},
             cardCurrent: 0,
@@ -106,6 +108,13 @@
             self.initialize()
         }
 
+        onUnload() {
+            let self = this
+            if (self.cardCurrent !== self.originList.length - 1) {
+                wepy.$instance.globalData.getHuilder(`评做题→半途而废[${self.cardCurrent}/${self.originList.length}]`, 'onUnload', `${self.pageName}`)
+            }
+        }
+
         initialize() {
             let self = this
             let postData = {
@@ -113,7 +122,7 @@
                 examID: self.paramsInfo.examID
             }
             fetch.getExamPracticeList(postData).then((respone) => {
-                self.isLoaded = true
+                self.pageName = respone.examTitle
                  _.each(respone.practiceList, (data) => {
                      data.id = data.practiceID
                      data.select = []
@@ -130,10 +139,11 @@
                 self.originList = respone.practiceList
                 self.questionsList.push(self.originList[0])
                 self.cardCurrentInfo.push(self.originList[0])
+                self.isLoaded = true
                 self.$apply()
 
                 // ga统计
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.prePracticeObj.examTitle})
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.pageName})
                 // 微信统计
                 wx.reportAnalytics('pre_test_ing', {
                     username: self.systemInfo.name,
@@ -183,6 +193,7 @@
                 }
             }
             fetch.sendUserDoExam(postData).then((respone)=>{
+                wepy.$instance.globalData.getHuilder('完成测评做题', 'click', `${self.pageName}`)
                 wx.showToast({
                     title: '正在生成你的结果',
                     icon: 'loading',
@@ -197,6 +208,26 @@
                     icon: 'none'
                 })
             })
+        }
+        /**
+         * 服务通知数据上报
+         */
+        __report(practiceID) {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                body: {
+                    json: {
+                        pageType: "测评做题页",
+                        eventType: "测评做题事件上报",
+                        componentName: "测评模块",
+                        courseID: self.paramsInfo.examID,
+                        cpnPresentName: "测评做题",
+                        senceID: self.cardCurrentInfo[0].id
+                    }
+                }
+            }
+            reportApi.doUserBehaviourLog(postData)
         }
 
         methods = {
@@ -239,7 +270,7 @@
                 let self = this
                 if (self.cardCurrent !== self.originList.length -1) {
                     let isFlag = self.__addQuestion()
-
+                    self.__report();
                     isFlag && setTimeout(() => {
                         self.cardCurrent += 1
                         self.$apply()
@@ -277,7 +308,7 @@
                 if (number < self.originList.length && self.cardCurrentInfo[0].isFinish) {
                     self.questionsList.splice(number, 0, self.originList[number])
                 }
-console.log(12, self.originList)
+
                 self.$apply()
             },
         }

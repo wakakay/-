@@ -83,7 +83,8 @@
 </style>
 
 <template>
-    <view class="ui-appraisal-result-box">
+    <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
+    <view class="ui-appraisal-result-box" wx:if="{{isLoaded}}">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
         <view class="ui-background flex">
             <image mode="aspectFill" src="http://wakakay.com/wx-images/11.png"></image>
@@ -166,6 +167,9 @@
     @connect({
         systemInfo(state) {
             return state.user
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
         }
     })
     export default class courseLearning extends wepy.page {
@@ -200,7 +204,6 @@
             }
             fetch.getUserExamScore(postData).then(respone => {
                 self.detailsInfo = respone
-
                 let maxPercent = _.max(self.detailsInfo.skillPercent, (item, index) => {
                     item.index = index
                     return item.percent
@@ -209,16 +212,23 @@
                 _.each(self.detailsInfo.skillPercent, (item, index) => {
                     item.height = index === maxPercent.index ? 100 : (parseFloat(item.percent / maxPercent.percent))
                 })
-
+                self.isLoaded = true
                 self.$apply()
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.subjectHeading})
+                wx.reportAnalytics('pre_test_end', {
+                    username: self.systemInfo.name,
+                    examid: self.paramsInfo.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID]
+                })
             }).catch(error => {
-
+                self.isLoaded = true
             })
         }
 
         methods = {
             getAgain() {
                 let self = this
+                wepy.$instance.globalData.getHuilder('再测一次', 'click', `${self.detailsInfo.subjectHeading}`)
                 wx.redirectTo({ url: `/pages/activity-module/new-appraisal-subject?examID=${self.paramsInfo.examID}`})
             }
         }
@@ -233,6 +243,12 @@
 
         onShareAppMessage(event) {
             let self = this
+            wepy.$instance.globalData.getHuilder('完成测评/分享', 'click', `${self.detailsInfo.subjectHeading}`)
+            wx.reportAnalytics('pre_result_share', {
+                username: self.systemInfo.name,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                examid: self.paramsInfo.examID
+            })
             return {
                 title: self.detailsInfo.subjectHeading,
                 path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,

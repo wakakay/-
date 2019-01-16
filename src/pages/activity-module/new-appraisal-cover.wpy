@@ -43,7 +43,8 @@
 </style>
 
 <template>
-    <view class="ui-appraisal-box">
+    <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
+    <view class="ui-appraisal-box" wx:if="{{isLoaded}}">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
         <view class="ui-thumb-box flex">
             <image mode="widthFix" src="{{detailsInfo.coverImageURL}}"></image>
@@ -79,7 +80,7 @@
 
 
         <view class="ui-share-box main-center">
-            <button><text class="icon-share"></text>分享</button>
+            <button open-type="share"><text class="icon-share"></text>分享</button>
         </view>
 
         <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
@@ -112,6 +113,9 @@
         },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
+        },
+        entrance(state) {//全局场景值
+            return state.entrance
         }
     })
     export default class courseLearning extends wepy.page {
@@ -124,6 +128,7 @@
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isHeadHeight: false,
+            isLoaded: false,
             paramsInfo: {},
             detailsInfo: {},
             coverCardList: []
@@ -146,26 +151,48 @@
                 examID: self.paramsInfo.examID
             }
             fetch.getExamFront(postData).then(respone => {
-                self.coverCardList = _.sortBy(respone.coverCardDetail, (item) => {
-                    if ('poll' === item.type) {
-                        item.cardStatus = item.pollType
+                self.coverCardList = _.sortBy(respone.coverCardDetail, (data) => {
+                    if ('poll' === data.type) {
+                        data.cardStatus = data.pollType
+                        if (data.isDone) {
+                            let ballotTotal =_.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
+                            _.each(data.optionList, (item) => {
+                                item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                            })
+                        }
                     }
-                    return item.index
+                    return data.index
                 })
 
                 self.detailsInfo = respone
+                self.isLoaded = true
                 self.$apply()
-                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.title}) // ga统计
+                wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.subjectHeading}) // ga统计
+                wx.reportAnalytics('pre_test_cover', {
+                    username: self.systemInfo.name,
+                    examid: self.paramsInfo.examID,
+                    channel: self.entrance.mappers[self.entrance.scenceID],
+                    role: self.systemInfo.role
+                })
             }).catch(error => {
-
+                self.isLoaded = true
             })
         }
-
+        /**
+         * 开始测评
+         */
         __gotoAppraisalSubject() {
             let self = this
             if (!self.isTokenSet) {
                 return
             }
+            wepy.$instance.globalData.getHuilder('开始测评', 'click', `${self.detailsInfo.subjectHeading}`)
+            wx.reportAnalytics('examstart_click', {
+                username: self.systemInfo.name,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                examid: self.paramsInfo.examID
+            });
+
             self.$navigate(`/pages/activity-module/new-appraisal-subject`, {examID: self.paramsInfo.examID})
         }
 
@@ -190,7 +217,7 @@
 
                 fetch.sendUserPoll(postData).then((respone) => {
                     item.isDone = true
-                    wepy.$instance.globalData.getHuilder(`${self.detailsInfo.subject}投票`, 'click', `${item.title}`)
+                    wepy.$instance.globalData.getHuilder(`${self.detailsInfo.subjectHeading}投票`, 'click', `${item.title}`)
                     self.$broadcast('broadcast-poll', item)
                 }).catch(error => {
 
@@ -226,7 +253,7 @@
                 }).catch(error => { // 拒接授权
 
                 })
-            },
+            }
         }
 
         events = {
@@ -245,10 +272,11 @@
 
         onShareAppMessage(event) {
             let self = this
+            wepy.$instance.globalData.getHuilder('开始测评/分享', 'click', `${self.detailsInfo.subjectHeading}`)
             return {
-                title: '',
+                title: self.detailsInfo.subjectHeading,
                 path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,
-                imageUrl: ''
+                imageUrl: self.detailsInfo.shareImageURL
             }
         }
     }
