@@ -258,7 +258,7 @@
             if (!routerItem.pageType) {
                 return
             }
-            console.log('落地页', query)
+            console.log('落地页', query, path)
             if (query.source) { // 是否又在场景值中
                 sourceName = query.source
             } else if (SCENE[sceneID]) { // 地址栏的source有带直接给
@@ -272,7 +272,7 @@
                 body: {
                     json: {
                         pageType: routerItem.pageType,
-                        eventType: `${sourceName || 'other'}'/'${sceneID}`,
+                        eventType: `${sourceName || 'other'}/${sceneID}`,
                         componentName: routerItem.screenName,
                         cpnPresentName: query.pageName || query.giftID,
                         courseID: query.courseID || query.id || query.courseSeriesID || null,
@@ -280,7 +280,7 @@
                     }
                 }
             }
-
+            console.log('落地页', postData)
             reportApi.doUserBehaviourLog(postData)
         }
 

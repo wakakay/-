@@ -4,8 +4,9 @@
         width:100%;position:relative;
         view{box-sizing:border-box;}
         .ui-background {
-            width:100%;
+            width:100%;position:relative;
             image{width:100%;height:1500rpx;}
+            .ui-mask{width:100%;height:100%;background-color:rgba(0,0,0,0.7);position:absolute;left:0;top:0;}
         }
         .ui-canvas-box{
             width:100%;padding:20rpx 32rpx 0;position:absolute;left:0;top:0;z-index:@z-index-normal;
@@ -17,7 +18,7 @@
             }
             .ui-thumb{
                 width:100%;height:200rpx;
-                image{height:80%;}
+                image{height:90%;}
             }
             .ui-cylindrical-list{
                 height:240rpx;padding:0 46rpx;margin-top:90rpx;
@@ -87,7 +88,8 @@
     <view class="ui-appraisal-result-box" wx:if="{{isLoaded}}">
         <jn-header :isHeadHeight="isHeadHeight" buttonAfter className="background-transparent"></jn-header>
         <view class="ui-background flex">
-            <image mode="aspectFill" src="http://wakakay.com/wx-images/11.png"></image>
+            <image mode="aspectFill" src="{{detailsInfo.imageResultURL}}"></image>
+            <view class="ui-mask"></view>
         </view>
         <view class="ui-canvas-box" style="{{'top:'+headerHeigth+'px;'}}">
             <view class="cell-subtitle">{{detailsInfo.subject}}</view>
@@ -96,7 +98,7 @@
                 <text>{{detailsInfo.resultTitle}}</text>
             </view>
             <view class="ui-thumb main-center cross-center">
-                <image mode="aspectFit" src="{{detailsInfo.resultImageURL}}"></image>
+                <image mode="aspectFit" src="{{detailsInfo.multiple.resultImageURL}}"></image>
             </view>
             <view class="ui-cylindrical-list cross-end">
                 <repeat for="{{detailsInfo.skillPercent}}" key="index" index="index" item="item">
