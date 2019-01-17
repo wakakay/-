@@ -9,7 +9,7 @@
                 .cell-title{padding-bottom:8rpx;font-size:40rpx;font-weight:700;color:@color-black;line-height:56rpx;text-align:center;}
                 .ui-input{
                     height:80rpx;margin-top:24rpx;background-color:@background-gray-F4;
-                    input{box-sizing:border-box;width:100%;padding:20rpx 26rpx;height:100%;font-size:28rpx;color:@color-gray;}
+                    input{box-sizing:border-box;width:100%;padding:0 26rpx;height:100%;font-size:28rpx;color:@color-gray;line-height:80rpx;}
                 }
             }
 
@@ -27,7 +27,7 @@
 </style>
 
 <template>
-    <view class="ui-popup main-center cross-center">
+    <view class="ui-popup main-center cross-center" wx:if="{{isShow}}">
         <view class="ui-container">
             <view class="ui-content">
                 <view class="cell-title">插入超连接</view>
@@ -65,10 +65,14 @@
         }
     })
     export default class skillsBoard extends wepy.component {
-        props = {}
+        props = {
+            isShow: {
+                type: Boolean,
+                default: false
+            }
+        }
 
         data = {
-            isShow: false,
             linkLoaction: '',
             linkTitle: ''
         }
@@ -90,8 +94,7 @@
             },
             getCancel() {
                 let self = this
-                self.isShow = false
-                self.$apply()
+                self.$emit('on-insert-link')
             },
             getConfrim() {
                 let self = this
@@ -99,11 +102,11 @@
                     title: self.linkTitle,
                     link: self.linkLoaction
                 })
-                self.isShow = false
-                self.$apply()
             }
         }
 
-        events = {}
+        events = {
+
+        }
     }
 </script>
