@@ -29,6 +29,7 @@
     export default class extends wepy.app {
         config = {
             pages: [
+                'pages/training-camp-module/release-discuss', // 发布谈论
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
