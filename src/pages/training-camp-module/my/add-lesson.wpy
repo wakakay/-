@@ -1,0 +1,33 @@
+<style lang="less" scoped>
+
+</style>
+<template>
+    <!-- <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+    <jn-header hiddenButton class="ui-today-header"> -->
+        <!-- <view slot="cursor-button" class="cell-header-date"></view>
+    </jn-header> -->
+    <view></view>
+</template>
+<script>
+    import wepy from "wepy"
+    import {getStore, connect} from "wepy-redux"
+    import header from '../../../components/common/header'
+    const store = getStore()
+    @connect({
+        token(state) {
+            return state.user.token;
+        },
+    })
+    export default class addLesson extends wepy.page {
+
+        components = {
+            'jn-header': header,
+        } 
+        data = {
+            
+        }; 
+        
+    }
+</script>
+
+
