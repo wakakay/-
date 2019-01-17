@@ -2,6 +2,7 @@
     @import "../../../assets/style/theme";
     .ui-header-button text{color:@color-blue}
     .ui-camp-lesson{
+        padding-bottom:160rpx;
         .ui-search{
             display: flex;height:72rpx;align-items:center;justify-content: space-between;padding:32rpx 32rpx 0;
             .ui-input{
@@ -30,7 +31,11 @@
                 }
             }
         }
-        .cell-btn{width: 686rpx;height: 100rpx;border-radius: 20rpx;color:@color-white;background-color: @background-blue;text-align: center;line-height: 100rpx;margin:34rpx auto;position: fixed;bottom: 0;left: 50%;transform: translate(-50%,0);}
+        .ui-btn-box{
+            position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg, rgba(255,255,255,0), #fff);z-index:3;
+            .cell-btn{width: 686rpx;height: 100rpx;border-radius: 20rpx;color:@color-white;background-color: @background-blue;text-align: center;line-height: 100rpx;margin:34rpx auto;}
+        }
+       
     }
 </style>
 <template>
@@ -39,7 +44,7 @@
             <text class="icon-back-close"></text>
         </button>
     </jn-header>
-    <view class="ui-camp-lesson" style="height: calc(100% - {{headerHeigth}}px)">
+    <view class="ui-camp-lesson">
         <view class="ui-search">
             <view class="ui-input">
                 <text class="iconfont icon-search"></text>
@@ -69,7 +74,9 @@
                 </view>
             </repeat>
         </view>
-        <view class="cell-btn">确定</view>
+        <view class="ui-btn-box">
+            <view class="cell-btn">确定</view>
+        </view>
     </view>
     <view></view>
 </template>
@@ -117,34 +124,10 @@
                             imageUrl:"http://image.runwise.cn/image/imageID860efa258a9487954289a2dc53e9.png",
                             id:"senceID2fca73c79954e48da6369700e705"
                         },
-                        {
-                            senceName:'战胜拖延症',
-                            senceTarget:'管理个人进度',
-                            imageUrl:"http://image.runwise.cn/image/imageID49c9c9bd7a446997dc422dcba5c1.png",
-                            id:"senceID40b54493e47488bf7e32c7808ba3"
-                        },
-                    ]
-                },
-                {
-                    courseName:'增长黑客',
-                    senceList:[
-                        {
-                            senceName:'摆脱学习焦虑，制定高效计划',
-                            senceTarget:'开发学习计划',
-                            imageUrl:"http://image.runwise.cn/image/imageID860efa258a9487954289a2dc53e9.png",
-                            id:"senceID2fca73c79954e48da6369700e705"
-                        },
-                        {
-                            senceName:'战胜拖延症',
-                            senceTarget:'管理个人进度',
-                            imageUrl:"http://image.runwise.cn/image/imageID49c9c9bd7a446997dc422dcba5c1.png",
-                            id:"senceID40b54493e47488bf7e32c7808ba3"
-                        },
                     ]
                 },
 
             ],
-            headerHeigth:68,
         }; 
         methods = {
             getSearchName(e) {
@@ -153,14 +136,6 @@
                 self.$apply();
             }
         };
-
-        events = {
-            'header-info': (data) => {
-                let self = this
-                self.headerHeigth = data.headerHeigth
-                self.$apply()
-            }
-        }
         
     }
 </script>
