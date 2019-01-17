@@ -30,14 +30,6 @@
                     <view class="cell-item cell-add-input" style="" @tap.stop="handleAddSelect">添加选项</view>
                 </view>
                 <view class="ui-function">
-                    <view class="ui-item">
-                        <text>置顶</text>
-                        <switch class="cell-switch" checked="{{isTop}}" bindchange="switch1Change"/>
-                    </view>
-                    <view class="ui-item">
-                        <text>定时发布</text>
-                        <switch class="cell-switch" checked="{{isTime}}" bindchange="switch2Change"/>
-                    </view>
                     <view class="ui-item ui-date" wx:if="{{isTime}}">
                         <text>发布日期</text>
                         <picker mode="date" value="{{isTimeDate}}" end="2030-09-01" bindchange="bindDateChange">
@@ -75,31 +67,22 @@
 
 <script>
 	import wepy from "wepy";
-	import loadingMixin from "../../../mixins/loading";
 	import header from '../../../components/common/header'
 	import {team as teamApi} from "../../../api";
 	import {getStore, connect} from "wepy-redux";
+
 	const store = getStore();
 	const state = store.getState();
 	@connect({
-		userName(state) {
-		return state.user.name;
-		}, // mapState 即getters
-		avatar(state) {
-		return state.user.avatar;
-		},
 		token(state) {
-		return state.user.token;
-		},
-		code(state) {
-		return state.user.code;
+			return state.user.token;
 		},
 		ipX(state) {
-		return state.user.equipmentModel.startsWith('iPhone X')
+			return state.user.equipmentModel.startsWith('iPhone X')
 		}	
 	})
+
   	export default class TeamLearningPoll extends wepy.page {
-		mixins = [loadingMixin]; // end mixins
 		data = {
 			readyToSend: false,
 			needSave: false,
@@ -123,51 +106,29 @@
 		components = {
 			'jn-header': header
 		};
-		onLoad({
-			teamID = 'defaultTeamID'
-		}) {
-			this.teamID = teamID
+		onLoad(events) {
+			let self = this;
+			self.teamID = events.teamID
 			wepy.$instance.globalData.getLoadHuilder() // ga统计
-			teamApi.getTeamPoll({
-				token: this.token,
-				teamID
-			})
-			.then(data => {
-				if(!data.pollID) return
-				this.teamID = data.teamID
-				this.pollID = data.pollID
-				this.title = data.title
-				this.isTop = data.isTop
-				this.isTime = data.isTime
-				this.isTimeDate = data.isTimeDate
-				this.isTimeTime = data.isTimeTime
-				this.pollOptionList = data.pollOptionList
-				this.pollType = data.pollType
-				this.$apply()
-				this.checkButtonStatus(true)
-			})
-		}
-		onUnload() {
-			if (this.needSave) {
-				this.doTeamPoll('draft')
-				this.readyToSend = false
-				this.teamID = ''
-				this.pollID = ''
-				this.title = ''
-				this.isTop = false
-				this.isTime = false
-				this.pollType = 'radio'
-				this.isTimeDate = ''
-				this.isTimeTime = ''
-				this.status = 'draft'
-				this.pollOptionList = [{
-					optionID: '',
-					optionContent: '',
-				}, {
-					optionID: '',
-					optionContent: '',
-				}]
+			let postData = {
+				token:self.token,
+				teamID:self.teamID
 			}
+			teamApi.getTeamPoll(postData).then(data => {
+				if(!data.pollID) return
+
+
+				self.pollID = data.pollID
+				self.title = data.title
+				self.isTop = data.isTop
+				self.isTime = data.isTime
+				self.isTimeDate = data.isTimeDate
+				self.isTimeTime = data.isTimeTime
+				self.pollOptionList = data.pollOptionList
+				self.pollType = data.pollType
+				self.$apply()
+				self.checkButtonStatus(true)
+			})
 		}
     methods = {
 		/* 点击单选item */
@@ -184,14 +145,6 @@
 		},
 		bindTimeChange: function(e) {
 			this.isTimeTime = e.detail.value
-			this.checkButtonStatus()
-		},
-		switch1Change: function(e) {
-			// console.log('switch1 发生 change 事件，携带值为', e.detail.value)
-			this.isTop = e.detail.value
-		},
-		switch2Change: function(e) {
-			this.isTime = e.detail.value
 			this.checkButtonStatus()
 		},
 		handleAddSelect() {
