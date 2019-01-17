@@ -145,16 +145,7 @@
             isShowShade: false,
             headerHeigth: 68,
             shareButtonMessage: '', // 弹窗的分享按钮文案
-            resultObj: {
-                buttonAttr: '',
-                buttonFebackImageURL: '',
-                buttonMsg: '',
-                resultImageURL: '',
-                subjectHeading: '',
-                shareImage: '',
-                course: ''
-            }
-
+            resultObj: {}
         }
 
         onLoad({senceID, examID}) {
@@ -166,10 +157,7 @@
 
         onShow() {
             let self = this
-            this.initialize().catch(error => {
-                this.showErrorPage = true
-                this.$apply()
-            })
+            self.initialize()
 
             let postData = {
                 token: self.token,
@@ -206,17 +194,9 @@
 
         initialize() {
             let self = this
-            return practiceApi.getUserExamScore({
-                token: self.token, examID: self.examID
-            }).then(data => {
+            practiceApi.getUserExamScore({token: self.token, examID: self.examID}).then(data => {
                 self.isLoaded = true
-                self.resultObj.buttonAttr = data.buttonAttr
-                self.resultObj.buttonFebackImageURL = data.buttonFebackImageURL
-                self.resultObj.buttonMsg = data.buttonMsg
-                self.resultObj.resultImageURL = data.resultImageURL
-                self.resultObj.subjectHeading = data.subjectHeading
-                self.resultObj.shareImage = data.shareImage
-                self.resultObj.course = data.course
+                self.resultObj = data
                 self.$apply()
 
                 setTimeout(() => {
@@ -230,6 +210,9 @@
                     examid: self.examID,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
+            }).catch(error => {
+                self.showErrorPage = true
+                self.$apply()
             })
         }
 
