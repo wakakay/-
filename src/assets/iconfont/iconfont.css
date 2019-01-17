@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_tn83rl039ne.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_9jiuoprfn.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -154,3 +154,10 @@
 .icon-empty-review-list:before { content: "\e626"; }
 
 .icon-delete-select:before {content: "\e627";}
+
+.icon-topic-delete:before {content: "\e628";}
+  
+.icon-topic-selected:before {content: "\e629";}
+  
+.icon-search:before {content: "\e62a";}
+  
