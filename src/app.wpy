@@ -290,7 +290,7 @@
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
-
+            console.log(option)
             wx.getStorage({
                 key: 'token',
                 complete(res) {
