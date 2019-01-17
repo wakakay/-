@@ -961,7 +961,7 @@
             let reportType = ''
 
             if (dataset && dataset.role) {
-                title = `${self.systemInfo.name} 赠送你一个好课，立即领取`
+                title = `${self.systemInfo.name} 赠送你一个好课，点击免费领`
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}&source=GiftShare`
                 if (self.giftID) {
                     let postData = {

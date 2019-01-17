@@ -285,6 +285,7 @@
         }
 
         onLaunch(option) {
+            console.log(option)
             let self = this
             let {scene: sceneID, path, query} = option
             store.dispatch(setSceneID(sceneID))
