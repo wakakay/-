@@ -1,0 +1,145 @@
+<style lang="less" scoped>
+    @import "../../../assets/style/theme";
+    .ui-header-button text{color:@color-blue}
+    .ui-camp-practice{
+        .ui-practice{
+            padding-top: 16rpx;border-top:1rpx solid @border-gray; margin-top: 20rpx;
+            .ui-item{
+                padding:24rpx 32rpx 0;display: flex;
+                text{font-size:52rpx;color:@color-blue;margin-right: 32rpx;}
+                .cell-title{display: flex;flex:1;border-bottom:1rpx solid @border-gray;padding-bottom: 40rpx;}
+            }
+        }
+    }
+</style>
+<template>
+    <jn-header hiddenButton title="题目选择">
+        <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
+            <text class="icon-back-close"></text>
+        </button>
+    </jn-header>
+    <view class="ui-camp-search ui-camp-practice">
+        <view class="ui-search">
+            <view class="ui-input">
+                <text class="iconfont icon-search"></text>
+                <input value="{{searchName}}"
+                    bindinput="getSearchName"
+                    placeholder-class="cell-placeholder"
+                    placeholder="请输入题目名称关键词"/>
+            </view>
+            <view class="cell-search">搜索</view>
+        </view>
+        <view class="ui-practice">
+            <repeat for="{{practiceList}}" key="index" index="index" item="item">
+                <view class="ui-item">
+                    <text class="icon-selectable"></text>
+                    <view class="cell-title">{{item.title}}</view>
+                </view>
+            </repeat>
+        </view>
+       
+        <view class="ui-btn-box">
+            <view class="cell-btn">确定</view>
+        </view>
+    </view>
+    <view></view>
+</template>
+<script>
+    import wepy from "wepy"
+    import {getStore, connect} from "wepy-redux"
+    import header from '../../../components/common/header'
+    const store = getStore()
+    @connect({
+        token(state) {
+            return state.user.token;
+        },
+    })
+    export default class addPractice extends wepy.page {
+
+        components = {
+            'jn-header': header,
+        } 
+        data = {
+            searchName:'',
+            practiceList:[
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？时候，你一般是怎么做的时候，你一般是怎么做的时候',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+                {
+                    title:'在为你的产品编写内容的时候，你一般是怎么做的？',
+                    id:'cardID21baba2e1e94919bce4e0f0db952',
+                    abilitySkill:'内容营销',
+                    subTitle:'',
+                    isSelected:false,
+                },
+            ]
+            
+        }; 
+        methods = {
+            getSearchName(e) {
+                let self = this;
+                self.searchName = e.detail.value;
+                self.$apply();
+            },
+            getClosePage(){
+                wepy.switchTab({ url: '/pages/course-module/course'})
+            }
+        };
+        
+    }
+</script>
+
+

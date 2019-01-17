@@ -2,25 +2,16 @@
     @import "../../../assets/style/theme";
     .ui-header-button text{color:@color-blue}
     .ui-camp-lesson{
-        padding-bottom:160rpx;
-        .ui-search{
-            display: flex;height:72rpx;align-items:center;justify-content: space-between;padding:32rpx 32rpx 0;
-            .ui-input{
-                display:flex;height:72rpx;align-items:center;width:556rpx;background:rgba(142,142,147,0.12);border-radius:20rpx;padding-left:20rpx;box-sizing:border-box;
-                .cell-placeholder{font-size: 34rpx;color:@color-gray;}
-                text{margin-right: 14rpx;color: @background-gray-cc}
-            }
-            .cell-search{color:@color-blue;font-size: 34rpx;}
-        }
         .ui-lesson{
             padding: 20rpx 0;
             .ui-item{
+                border-bottom:1rpx solid @border-gray;margin: 0 32rpx;
                 .cell-course{font-size: 40rpx;font-weight: bold;height: 88rpx;line-height: 88rpx;margin-top: 23rpx;padding-left: 32rpx;}
                 .ui-sence{
-                    display: flex;padding: 0 32rpx;height: 176rpx;align-items: center;justify-content: space-between;
+                    display: flex;height: 176rpx;align-items: center;justify-content: space-between;
                     image{width: 112rpx;height: 112rpx;border-radius: 28rpx;}
                     .ui-detail{
-                        display: flex;flex: 1;margin-left: 24rpx;align-items:center;border-bottom:1rpx solid @border-color; height:100%;
+                        display: flex;flex: 1;margin-left: 24rpx;align-items:center;border-bottom:1rpx solid @border-gray; height:100%;
                         text{font-size:52rpx;color:@color-blue;}
                         .ui-name{
                             display: flex;flex: 1;flex-direction: column;
@@ -28,23 +19,19 @@
                             .cell-targer{font-size: 26rpx;color:@color-gray;margin-top: 16rpx;}
                         }
                     }
+                    &:last-of-type .ui-detail{border-bottom: none;}
                 }
             }
         }
-        .ui-btn-box{
-            position:fixed;width:100%;bottom:0;left:0;right:0;background-image:linear-gradient(180deg, rgba(255,255,255,0), #fff);z-index:3;
-            .cell-btn{width: 686rpx;height: 100rpx;border-radius: 20rpx;color:@color-white;background-color: @background-blue;text-align: center;line-height: 100rpx;margin:34rpx auto;}
-        }
-       
     }
 </style>
 <template>
     <jn-header hiddenButton title="添加微课">
-        <button slot="cursor-button" class="cell-back ui-header-button">
+        <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
             <text class="icon-back-close"></text>
         </button>
     </jn-header>
-    <view class="ui-camp-lesson">
+    <view class="ui-camp-search ui-camp-lesson">
         <view class="ui-search">
             <view class="ui-input">
                 <text class="iconfont icon-search"></text>
@@ -60,7 +47,7 @@
                 <view class="ui-item">
                     <view class="cell-course">{{item.courseName}}</view>
                     <repeat for="{{item.senceList}}" key="senceIndex" index="senceIndex" item="senceItem">
-                        <view class="ui-sence">
+                        <view class="ui-sence" @tap.stop="getItem(index,)">
                             <image src="{{senceItem.imageUrl}}"></image>
                             <view class="ui-detail">
                                 <view class="ui-name">
@@ -105,13 +92,15 @@
                             senceName:'如何找到效率巅峰时段',
                             senceTarget:'管理个人精力',
                             imageUrl:"http://image.runwise.cn/image/imageID49c9c9bd7a446997dc422dcba5c1.png",
-                            id:"senceID52bd464d65d49092d875d3543391"
+                            id:"senceID52bd464d65d49092d875d3543391",
+                            select:false,
                         },
                         {
                             senceName:'战胜拖延症',
                             senceTarget:'管理个人进度',
                             imageUrl:"http://image.runwise.cn/image/imageID49c9c9bd7a446997dc422dcba5c1.png",
-                            id:"senceID40b54493e47488bf7e32c7808ba3"
+                            id:"senceID40b54493e47488bf7e32c7808ba3",
+                            select:false,
                         },
                     ]
                 },
@@ -122,7 +111,8 @@
                             senceName:'摆脱学习焦虑，制定高效计划',
                             senceTarget:'开发学习计划',
                             imageUrl:"http://image.runwise.cn/image/imageID860efa258a9487954289a2dc53e9.png",
-                            id:"senceID2fca73c79954e48da6369700e705"
+                            id:"senceID2fca73c79954e48da6369700e705",
+                            select:false,
                         },
                     ]
                 },
@@ -134,6 +124,9 @@
                 let self = this;
                 self.searchName = e.detail.value;
                 self.$apply();
+            },
+            getClosePage(){
+                wepy.switchTab({ url: '/pages/course-module/course'})
             }
         };
         
