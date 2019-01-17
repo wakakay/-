@@ -61,6 +61,7 @@ export const ROUTERS = {
     'pages/training-camp-module/my/students-list': {screenName: '我管理-学员列表'},
     'pages/training-camp-module/my/students-management': {screenName: '我管理-学员管理'},
     'pages/training-camp-module/my/release-task': {screenName: '我管理-发布任务'},
+    'pages/training-camp-module/my/add-lesson': {screenName: '我管理-添加微课'},
     'pages/training-camp-module/my/share-link': {screenName: '我管理-分享链接'},
     'pages/training-camp-module/my/course-evaluation': {screenName: '我管理-课程评价'},
     'pages/training-camp-module/my/release-poll': {screenName: '我管理-发布投票'},
