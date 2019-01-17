@@ -1,0 +1,98 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <jn-header className="background-transparent"></jn-header>
+    <view class="module-team-discuss-edit">
+
+        <view class="ui-title">
+            <textarea placeholder="输入标题（选填）"
+                      maxlength="-1"
+                      auto-height="{{true}}"
+                      adjust-position="{{false}}"></textarea>
+        </view>
+
+
+        <view class="ui-textarea">
+            <textarea placeholder="输入内容"
+                   maxlength="-1"
+                   auto-height="{{true}}"
+                   adjust-position="{{false}}"></textarea>
+        </view>
+
+        <view class="ui-link">
+            <textarea maxlength="-1"
+                      auto-height="{{true}}"
+                      adjust-position="{{false}}"></textarea>
+        </view>
+
+
+        <view class="ui-thumb">
+
+        </view>
+
+
+        <!--<repeat for="{{coverCardList}}" key="index" index="index" item="data">
+
+        </repeat>-->
+
+
+        <jn-insert-link></jn-insert-link>
+
+
+        <view class="ui-tool">
+            <view class="ui-container main-justify cross-center">
+                <view class="ui-list flex-box-1">
+                    <view class="cell-item"><text class="icon-link"></text></view>
+                    <view class="cell-item"><text class="icon-link"></text></view>
+                    <view class="cell-item"><text class="icon-link"></text></view>
+                </view>
+                <view class="cell-button flex-box-0"><text class="icon-send"></text></view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import insertLink from '../../components/team-module/insert-link'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class courseLearning extends wepy.page {
+        components = {
+            'jn-header': header,
+            'jn-insert-link': insertLink
+        }
+
+        data = {}
+
+        onLoad() {
+
+        }
+
+        onShow() {
+
+        }
+
+        onReady() {
+
+        }
+
+        methods = {}
+
+        events = {
+            'on-insert-link': (data) => {
+                let self = this
+                console.log(3, data)
+            }
+        }
+    }
+</script>
