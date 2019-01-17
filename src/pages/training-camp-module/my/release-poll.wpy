@@ -16,9 +16,7 @@
                 <input bindinput="bindKeyInput" value="{{title}}" class="cell-title"
                        maxlength="{{30}}" placeholder="请输入投票标题"/>
                 <view class="ui-select" wx:for="{{pollOptionList}}" wx:key="{{index}}">
-                    <image class="cell-icon" @tap.stop="handleDeleteSelect" data-index="{{index}}"
-                           mode="scaleToFill"
-                           src="http://wx-small.runwise.cn/image/imageID7183b4be4314acab9044a221c470.png"></image>
+					<text class="icon-delete-select cell-delete" @tap.stop="handleDeleteSelect" data-index="{{index}}"></text>
                     <input bindinput="bindSelectInput" value="{{item.optionContent}}" data-index="{{index}}"
                            class="cell-item cell-nomal-input" maxlength="{{14}}" placeholder-class="cell-placeholder"
                            placeholder="选项（限14个字）"/>
@@ -245,7 +243,7 @@
 			}
 			.ui-select{
 				margin: 28rpx 40rpx 0;border-bottom: 2rpx solid @border-gray;display: flex;align-items: center;
-				.cell-icon{width: 40rpx;height: 40rpx;margin-right: 20rpx;}
+				.cell-delete{font-size:38rpx;margin-right:16rpx;color:#ff0f16;}
 				.cell-item{line-height: 44rpx;background-color: @background-white;font-family: PingFangSC-Regular;font-size: 32rpx;padding: 24rpx 0;width: 90%;}
 				.ui-add{
 					width: 40rpx;height: 40rpx;border-radius: 50%;background-color: @background-blue;color:@color-white;line-height:40rpx;text-align:center;margin-right:16rpx;display:flex;align-items:center;justify-content:center;

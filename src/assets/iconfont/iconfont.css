@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_6jw2rfxq82n.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_tn83rl039ne.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -152,3 +152,5 @@
 .icon-coursr-empty:before { content: "\e625"; }
 
 .icon-empty-review-list:before { content: "\e626"; }
+
+.icon-delete-select:before {content: "\e627";}

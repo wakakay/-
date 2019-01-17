@@ -852,30 +852,18 @@
         avatar(state) {
             return state.user.avatar
         },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
-        },
         token(state) {
-            return state.user.token
+			return state.user.token
         },
         role(state) {
             return state.user.role
         },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
-        },
-        code(state) {
-            return state.user.code
-        },
-        windowHeight(state) {
-            return state.user.windowHeight
         },
         phone(state) {
             // return '13536641408'
             return state.user.phone
-        },
-        learningMap(state) {
-            return state.learning
         },
         platform(state) {
             return state.user.platform === 'android'
