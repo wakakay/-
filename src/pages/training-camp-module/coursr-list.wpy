@@ -1248,7 +1248,10 @@
             },
             // 点击悬浮 加号
             handleToggleBtnOpeartion() {
-                if(this.teamRole === 'member') return this.$navigate('/pages/training-camp-module/release-message', {teamID: this.teamID, action:'question'})
+                if(this.teamRole === 'member') {
+                    //return this.$navigate('/pages/training-camp-module/release-message', {teamID: this.teamID, action:'question'})
+                    return this.$navigate('/pages/training-camp-module/release-discuss', {teamID: this.teamID, action:'question'})
+				}
                 this.toggleOperations()
             },
             // 标题提示弹窗

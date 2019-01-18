@@ -15,7 +15,7 @@
                       bindblur="getBlur"></textarea>
         </view>
 
-        <repeat for="{{sendData.list}}" key="index" index="index" item="data">
+        <repeat for="{{sendData.infoList}}" key="index" index="index" item="data">
             <view class="ui-description" wx:if="{{'text'==data.type}}">
                 <textarea placeholder="输入内容"
                           maxlength="-1"
@@ -85,7 +85,9 @@
                     <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
                     <button class="cell-item" @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
                 </view>
-                <view class="cell-button flex-box-0"><text class="icon-send"></text></view>
+                <button class="cell-button flex-box-0"
+                        disabled="{{!isSumbit}}"
+                        @tap.stop="getSumbitDiscuss"><text class="icon-send"></text></button>
             </view>
         </view>
     </view>
@@ -102,6 +104,8 @@
     import insertLesson from '../../components/team-module/add-lesson'
     import insertPractice from '../../components/team-module/add-practice'
     import singleChoice from '../../components/cards-type/single-choice'
+    import config from '../../api/config'
+    import {fetch} from '../../api'
     import _ from 'underscore'
 
     const store = getStore()
@@ -124,9 +128,10 @@
             isShowInsertLink: false,
             isShowInsertLesson:false,
             isShowInsertPractice:false,
+            isSumbit: true,
             sendData: {
                 title: '',
-                list: [
+                infoList: [
                     {
                         content: "",
                         index: 0,
@@ -144,23 +149,56 @@
 
         }
 
+        /**
+         * 删除模块
+         * @param index
+         * @private
+         */
         __deteleModule(index) {
             let self = this
-            let list = self.sendData.list
+            let list = self.sendData.infoList
             list.splice(index, 1)
             self.$apply()
         }
 
+        /**
+         * 上传图片到服务器
+         * @param flie
+         * @private
+         */
+        __chooseImage(flie) {
+            let self = this
+            let list = self.sendData.infoList
+            wx.uploadFile({
+                url: `${config.baseUrl + 'upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51`,
+                filePath: flie,
+                name: 'file',
+                success(respone) {
+                    let info = JSON.parse(respone.data)
+                    list.push({
+                        img: info.data.url,
+                        index: list.length,
+                        type: "image"
+                    })
+                    self.$apply()
+                }
+            })
+        }
+
         methods = {
+            /**
+             * textarea失去焦点
+             * @param event
+             */
             getBlur(event) {
                 let self = this
                 let {detail:{value}, currentTarget: {dataset: {type}}} = event
                 switch(type) {
                     case 'title':
-                        self.linkLoaction = value
+                        self.sendData.title = value
                         break
                     case 'content':
-                        self.linkTitle = value
+                        self.sendData.infoList[0].content = value
                         break
                     default:
                         if ('' === value) {
@@ -168,48 +206,110 @@
                         }
                 }
             },
+            /**
+             * 添加图片模块
+             */
             getAddThumb() {
                 let self = this
-                let list = self.sendData.list
+                let list = self.sendData.infoList
                 wx.chooseImage({
                     count: 1,
                     success: (data) => {
-                        list.push({
-                            img: data.tempFiles[0].path,
-                            index: list.length,
-                            type: "image"
-                        })
-                        self.$apply()
+                        self.__chooseImage(data.tempFiles[0].path)
                     }
                 })
             },
+            /**
+             * 添加超链接
+             */
             getAddLink() {
                 let self = this
                 self.isShowInsertLink = true
                 self.$apply()
             },
+            /**
+             * 添加练习题
+             */
             getAddPractice() {
                 let self = this;
                 self.isShowInsertPractice = true;
                 self.$apply()
             },
+            /**
+             * 添加微课
+             */
             getAddLesson() {
                 let self = this
                 self.isShowInsertLesson = true
                 self.isShowFullComponent = true
                 self.$apply()
             },
+            /**
+             * 删除模块
+             * @param event
+             */
             getDetele(event) {
                 let self = this
                 let {currentTarget: {dataset: {type}}} = event
                 self.__deteleModule(type)
+            },
+            /**
+             * 提交讨论信息
+             */
+            getSumbitDiscuss() {
+                let self = this
+                setTimeout(()=>{
+                    if (!self.sendData.infoList[0].content) {
+                        wx.showToast({title: '请填写内容', icon: 'none'})
+                        return
+                    }
+
+                    self.isSumbit = false
+                    self.$apply()
+                    let postData = {
+                        token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51',
+                        body: {
+                            json: {
+                                teamID: 'T2c7ac27b5634eb843993a616a35c',
+                                roleType: 'member',
+                                infoType: 'normal',
+                                userID: 'defaultUserID',
+                                postID: 'defaultpostID',
+                                ...self.sendData
+                            }
+                        }
+                    }
+
+                    fetch.queryPracticeList(postData).then(respone => {
+                        self.isSumbit = true
+                        self.sendData = {
+                            title: '',
+                                infoList: [
+                                {
+                                    content: "",
+                                    index: 0,
+                                    type: "text"
+                                }
+                            ]
+                        }
+                        self.$apply()
+                        wx.showToast({title: '提交成功'})
+                        setTimeout(() => {
+                            wx.navigateBack()
+                        }, 1500)
+                    }).catch(error => {
+                        wx.showToast({title: '网络错误', icon: 'none'})
+                        self.isSumbit = true
+                        self.$apply()
+                    })
+                }, 300)
             }
         }
 
         events = {
             'on-insert-link': (data) => {
                 let self = this
-                let list = self.sendData.list
+                let list = self.sendData.infoList
                 let item = _.find(list, {type: 'link'})
 
                 if (!item) {
@@ -229,7 +329,7 @@
             },
             'on-add-lesson': (data) => {
                 let self = this
-                let list = self.sendData.list
+                let list = self.sendData.infoList
                 if (data) {
                     list.push({
                         list: data,
@@ -245,7 +345,7 @@
             'on-add-practice': (data) => {
                 console.log('practice', data)
                 let self= this
-                let list = self.sendData.list
+                let list = self.sendData.infoList
                 if (data) {
                     list.push({
                         list: data,

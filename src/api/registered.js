@@ -173,5 +173,13 @@ export default {
      */
     queryPracticeList(params) {
         return fetch({method: 'post', url: 'team/queryPracticeList', params: params})
-    }
+    },
+    /**
+     * 团读书学习→发起讨论
+     * @param  teamID: 团队ID
+     */
+    queryPracticeList(params) {
+        return fetch({method: 'post', url: 'team/saveTeamPost', params: params})
+    },
+
 }
