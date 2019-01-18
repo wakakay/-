@@ -148,6 +148,8 @@
             },
             getLessonList(event) {
                 let self = this;
+                self.isShowInsertLesson = false;
+                self.$apply()
                 console.log(event,111)
             }
         }
