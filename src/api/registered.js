@@ -161,10 +161,17 @@ export default {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
     },
     /**
-     * 即能看板
+     * 团队学习
      * @param  queryText: 搜索的名字
      */
     querySenceList(params) {
         return fetch({method: 'post', url: 'team/querySenceList', params: params})
+    },
+    /**
+     * 团队学习
+     * @param  queryText: 搜索的名字
+     */
+    queryPracticeList(params) {
+        return fetch({method: 'post', url: 'team/queryPracticeList', params: params})
     }
 }

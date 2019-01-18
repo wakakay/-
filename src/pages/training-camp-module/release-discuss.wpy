@@ -8,6 +8,10 @@
         :isShowInsertLesson.sync="isShowInsertLesson" 
         @onClickClose.user="getCloseLesson" 
         @onClickSure.user="getLessonList"></jn-insert-lesson>
+    <jn-insert-practice wx:if="{{ true }}" 
+        :isShowInsertPractice.sync="isShowInsertPractice" 
+        @onClickClose.user="getClosePractice" 
+        @onClickSure.user="getPracticeList"></jn-insert-practice>
     <view class="module-team-discuss-edit">
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
@@ -62,6 +66,7 @@
                     <button class="cell-item" @tap.stop="getAddThumb"><text class="icon-thumb"></text></button>
                     <button class="cell-item" @tap.stop="getAddLink"><text class="icon-link"></text></button>
                     <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
+                    <button class="cell-item" @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
                 </view>
                 <view class="cell-button flex-box-0"><text class="icon-send"></text></view>
             </view>
@@ -76,6 +81,7 @@
     import header from '../../components/common/header'
     import insertLink from '../../components/team-module/insert-link'
     import insertLesson from '../../components/team-module/add-lesson'
+    import insertPractice from '../../components/team-module/add-practice'
     import _ from 'underscore'
 
     const store = getStore()
@@ -88,12 +94,14 @@
         components = {
             'jn-header': header,
             'jn-insert-link': insertLink,
-            'jn-insert-lesson' : insertLesson
+            'jn-insert-lesson' : insertLesson,
+            'jn-insert-practice' : insertPractice,
         }
 
         data = {
-            isShowInsertLink: true,
+            isShowInsertLink: false,
             isShowInsertLesson:false,
+            isShowInsertPractice:false,
             sendData: {
                 title: '',
                 list: [
@@ -158,6 +166,11 @@
                 self.isShowInsertLink = true
                 self.$apply()
             },
+            getAddPractice() {
+                let self = this;
+                self.isShowInsertPractice = true;
+                self.$apply()
+            },
             getAddLesson() {
                 let self = this;
                 self.isShowInsertLesson = true;
@@ -168,9 +181,20 @@
                 self.isShowInsertLesson = false;
                 self.$apply()
             },
+            getClosePractice() {
+                let self = this;
+                self.isShowInsertPractice = false;
+                self.$apply()
+            },
             getLessonList(event) {
                 let self = this;
                 self.isShowInsertLesson = false;
+                self.$apply()
+                console.log(event,111)
+            },
+            getPracticeList(event) {
+                let self = this;
+                self.isShowInsertPractice = false;
                 self.$apply()
                 console.log(event,111)
             },

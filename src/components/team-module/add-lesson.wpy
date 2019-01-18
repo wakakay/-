@@ -22,25 +22,18 @@
                     &:last-of-type .ui-detail{border-bottom: none;}
                 }
             }
-            .cell-height{height: 200rpx;}
         }
     }
-    @keyframes fadeInLeft{
-        0%{left:100%}
-        100%{left:0}
-    }
-    .ui-camp-add-lesson{
-        position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: @z-index-mask;width: 100%;height: 100%;background: @background-white;animation: fadeInLeft 200ms ease-out;
-    }
+    
 </style>
 <template>
-    <view class="ui-camp-add-lesson"  hidden="{{ !isShow }}">
+    <view class="ui-camp-discuss-component"  hidden="{{ !isShow }}">
         <jn-header hiddenButton title="添加微课">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
                 <text class="icon-back-close"></text>
             </button>
         </jn-header>
-        <scroll-view  scroll-y class="ui-camp-search ui-camp-lesson" style="height: calc(100% - {{headerHeigth}}px)">
+        <scroll-view  scroll-y class="ui-camp-lesson" style="height: calc(100% - {{headerHeigth}}px)">
             <view class="ui-search">
                 <view class="ui-input">
                     <text class="iconfont icon-search"></text>
@@ -87,8 +80,7 @@
     const store = getStore()
     @connect({
         token(state) {
-            return 'userID574c448521c04ef59ad4542fbdd497fc-1547780027775-1a760516c9bff2c2914d70bed3c4a1e1'
-            // return state.user.token;
+            return state.user.token;
         },
     })
     export default class addLesson extends wepy.component {
@@ -147,7 +139,7 @@
             getSure(){
                 let self = this;
                 let dataList = self.dataList;
-                _.each(dataList,(item,index)=>{
+                _.each(dataList,(item)=>{
                     _.each(item.senceList,senceItem=>{
                         if(senceItem.isSelected) {
                             self.seleteList.push(senceItem)
