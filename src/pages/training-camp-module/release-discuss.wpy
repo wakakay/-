@@ -4,6 +4,10 @@
 
 <template>
     <jn-header></jn-header>
+    <jn-insert-lesson wx:if="{{ true }}" 
+        :isShowInsertLesson.sync="isShowInsertLesson" 
+        @onClickClose.user="getCloseLesson" 
+        @onClickSure.user="getLessonList"></jn-insert-lesson>
     <view class="module-team-discuss-edit">
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
@@ -47,12 +51,13 @@
                 <view class="ui-list flex-box-1">
                     <button class="cell-item" @tap.stop="getAddThumb"><text class="icon-thumb"></text></button>
                     <button class="cell-item" @tap.stop="getAddLink"><text class="icon-link"></text></button>
-                    <button class="cell-item"><text class="icon-course1"></text></button>
+                    <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
                 </view>
                 <view class="cell-button flex-box-0"><text class="icon-send"></text></view>
             </view>
         </view>
     </view>
+    <view></view>
 </template>
 
 <script>
@@ -60,6 +65,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import insertLink from '../../components/team-module/insert-link'
+    import insertLesson from '../../components/team-module/add-lesson'
     import _ from 'underscore'
 
     const store = getStore()
@@ -71,11 +77,13 @@
     export default class courseLearning extends wepy.page {
         components = {
             'jn-header': header,
-            'jn-insert-link': insertLink
+            'jn-insert-link': insertLink,
+            'jn-insert-lesson' : insertLesson
         }
 
         data = {
             isShowInsertLink: false,
+            isShowInsertLesson:false,
             sendData: {
                 title: '',
                 list: [
@@ -127,6 +135,20 @@
                 let self = this
                 self.isShowInsertLink = true
                 self.$apply()
+            },
+            getAddLesson() {
+                let self = this;
+                self.isShowInsertLesson = true;
+                self.$apply()
+            },
+            getCloseLesson() {
+                let self = this;
+                self.isShowInsertLesson = false;
+                self.$apply()
+            },
+            getLessonList(event) {
+                let self = this;
+                console.log(event,111)
             }
         }
 

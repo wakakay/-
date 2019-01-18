@@ -159,5 +159,12 @@ export default {
      */
     getMyLearningPageBySkillgetDetail(params) {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
+    },
+    /**
+     * 即能看板
+     * @param  queryText: 搜索的名字
+     */
+    querySenceList(params) {
+        return fetch({method: 'post', url: 'team/querySenceList', params: params})
     }
 }
