@@ -120,8 +120,13 @@
                     queryText : self.searchName
                 }
                 fetch.querySenceList(postData).then(res => {
-                    self.dataList = res.dataList;
-                    self.$apply();
+                    if(res.dataList.length) {
+                        self.dataList = res.dataList;
+                        self.$apply();
+                    }else{
+                        wx.showToast({icon:'none',title: '暂无您要查找的微课',duration: 2000})
+                    }
+                    
                 })
             },
             getItem(event) {
@@ -142,6 +147,11 @@
                         }
                     })
                 })
+                // 清空数据
+                self.dataList = [];
+                self.searchName = ''
+                self.$apply();
+
                 self.$emit('on-add-lesson',self.seleteList)
             }
         };
