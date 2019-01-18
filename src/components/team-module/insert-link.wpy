@@ -9,6 +9,7 @@
                 .cell-title{padding-bottom:8rpx;font-size:40rpx;font-weight:700;color:@color-black;line-height:56rpx;text-align:center;}
                 .ui-input{
                     height:80rpx;margin-top:24rpx;background-color:@background-gray-F4;
+                    &.is-error{border:2rpx solid @color-red;}
                     input{box-sizing:border-box;width:100%;padding:0 26rpx;height:100%;font-size:28rpx;color:@color-gray;line-height:80rpx;}
                 }
             }
@@ -31,7 +32,7 @@
         <view class="ui-container">
             <view class="ui-content">
                 <view class="cell-title">插入超连接</view>
-                <view class="ui-input">
+                <view class="ui-input" :class="{'is-error': isError}">
                     <input placeholder="输入链接地址"
                            data-type="1"
                            value="{{linkLoaction}}"
@@ -48,7 +49,7 @@
 
             <view class="ui-button flex">
                 <button class="main-center cross-center" @tap.stop="getCancel">取消</button>
-                <button class="main-center cross-center" @tap.stop="getConfrim">确定</button>
+                <button class="main-center cross-center" disabled="{{!isConfirm}}" @tap.stop="getConfrim">确定</button>
             </view>
         </view>
     </view>
@@ -73,6 +74,8 @@
         }
 
         data = {
+            isConfirm: false,
+            isError: false,
             linkLoaction: '',
             linkTitle: ''
         }
@@ -86,7 +89,20 @@
                 let {detail:{value}, currentTarget: {dataset: {type}}} = event
                 switch(type) {
                     case '1':
+                        let reg =new RegExp(/^((https|http)?:\/\/)[^\s]+/);
+                        if (!reg.test(value)) {
+                            self.isConfirm = false
+                            self.isError = true
+                            wx.showToast({
+                                title: '请输入有效的链接地址',
+                                icon: 'none'
+                            })
+                            return
+                        }
+                        self.isConfirm = true
+                        self.isError = false
                         self.linkLoaction = value
+                        self.$apply()
                         break
                     case '2':
                         self.linkTitle = value
