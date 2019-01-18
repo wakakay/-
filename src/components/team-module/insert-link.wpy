@@ -65,7 +65,7 @@
             return state.user
         }
     })
-    export default class skillsBoard extends wepy.component {
+    export default class insertLink extends wepy.component {
         props = {
             isShow: {
                 type: Boolean,
@@ -84,6 +84,10 @@
         }
 
         methods = {
+            /**
+             * 失去 焦点
+             * @param event
+             */
             getBlur(event) {
                 let self = this
                 let {detail:{value}, currentTarget: {dataset: {type}}} = event
@@ -108,10 +112,16 @@
                         self.linkTitle = value
                 }
             },
+            /**
+             * 关闭弹窗
+             */
             getCancel() {
                 let self = this
                 self.$emit('on-insert-link')
             },
+            /**
+             * 提交
+             */
             getConfrim() {
                 let self = this
                 self.$emit('on-insert-link', {

@@ -1,7 +1,7 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
     .ui-header-button text{color:@color-blue}
-    .ui-camp-lesson{
+    .module-camp-add-lesson{
         .ui-lesson{
             padding: 20rpx 0;
             .ui-item{
@@ -29,12 +29,12 @@
         0%{left:100%}
         100%{left:0}
     }
-    .ui-camp-add-lesson{
+    .module-camp-add-lesson{
         position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: @z-index-mask;width: 100%;height: 100%;background: @background-white;animation: fadeInLeft 200ms ease-out;
     }
 </style>
 <template>
-    <view class="ui-camp-add-lesson"  hidden="{{ !isShow }}">
+    <view class="module-camp-add-lesson"  hidden="{{ !isShow }}">
         <jn-header hiddenButton title="添加微课">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
                 <text class="icon-back-close"></text>
@@ -49,7 +49,7 @@
                         placeholder-class="cell-placeholder"
                         placeholder="请输入要查找的微课"/>
                 </view>
-                <view class="cell-search" @tap.stop="getStartSearch">搜索</view>
+                <view class="cell-search" @tap.stop="getSearch">搜索</view>
             </view>
             <view class="ui-lesson" scroll-y>
                 <repeat for="{{dataList}}" key="index" index="index" item="item">
@@ -95,27 +95,21 @@
 
         components = {
             'jn-header': header,
-        } 
-
-        props = {
-            isShowInsertLesson:{
-                type: Boolean
-            }
         }
 
-        computed = {
-            isShow () {
-                let self = this;
-                return self.isShowInsertLesson;
+        props = {
+            isShow:{
+                type: Boolean,
+                default: false
             }
         }
 
         data = {
+            headerHeigth:68,
             searchName:'',
             dataList:[],
-            headerHeigth:68,
             seleteList:[],
-        }; 
+        };
         methods = {
             getSearchName(e) {
                 let self = this;
@@ -124,9 +118,9 @@
             },
             getClosePage(){
                 let self = this;
-                self.$emit('onClickClose')
+                self.$emit('on-add-lesson')
             },
-            getStartSearch() {
+            getSearch() {
                 let self = this;
                 let postData = {
                     token : self.token,
@@ -153,9 +147,9 @@
                             self.seleteList.push(senceItem)
                             self.$apply();
                         }
-                    }) 
+                    })
                 })
-                self.$emit('onClickSure',self.seleteList)
+                self.$emit('on-add-lesson', self.seleteList)
             }
         };
 
@@ -166,7 +160,6 @@
                 self.$apply()
             }
         }
-        
     }
 </script>
 

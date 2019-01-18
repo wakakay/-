@@ -4,11 +4,7 @@
 
 <template>
     <jn-header></jn-header>
-    <jn-insert-lesson wx:if="{{ true }}" 
-        :isShowInsertLesson.sync="isShowInsertLesson" 
-        @onClickClose.user="getCloseLesson" 
-        @onClickSure.user="getLessonList"></jn-insert-lesson>
-    <view class="module-team-discuss-edit">
+    <view class="module-team-discuss-edit" wx:if="{{!isShowFullComponent}}">
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
                       maxlength="-1"
@@ -45,16 +41,31 @@
             </view>
 
             <view class="ui-thumb" wx:if="{{'image'==data.type}}">
+                <image mode="widthFix" src="{{data.img}}"></image>
                 <text class="icon-delete-select"
                       data-type="{{index}}"
                       @tap.stop="getDetele"></text>
-                <image mode="widthFix" src="{{data.img}}"></image>
+            </view>
+
+            <view class="ui-lesson" wx:if="{{'lesson'==data.type}}">
+                <repeat for="{{data.list}}" key="index" index="index" item="item">
+                    <view class="ui-item flex">
+                        <view class="cell-thumb flex-box-0">
+                            <image mode="aspectFit" src="{{item.imageUrl}}"></image>
+                        </view>
+                        <view class="ui-content main-justify cross-center">
+                            <view class="ui-info">
+                                <view class="cell-title">{{item.senceName}}</view>
+                                <view class="cell-description">{{item.senceTarget}}…</view>
+                            </view>
+                        </view>
+                    </view>
+                </repeat>
+                <text class="icon-delete-select"
+                      data-type="{{index}}"
+                      @tap.stop="getDetele"></text>
             </view>
         </repeat>
-
-
-        <jn-insert-link :isShow.sync="isShowInsertLink"></jn-insert-link>
-
 
         <view class="ui-tool">
             <view class="ui-container main-justify cross-center">
@@ -67,7 +78,8 @@
             </view>
         </view>
     </view>
-    <view></view>
+    <jn-insert-link :isShow.sync="isShowInsertLink"></jn-insert-link>
+    <jn-insert-lesson :isShow.sync="isShowInsertLesson"></jn-insert-lesson>
 </template>
 
 <script>
@@ -92,7 +104,8 @@
         }
 
         data = {
-            isShowInsertLink: true,
+            isShowFullComponent: false,
+            isShowInsertLink: false,
             isShowInsertLesson:false,
             sendData: {
                 title: '',
@@ -101,6 +114,26 @@
                         content: "",
                         index: 0,
                         type: "text"
+                    },
+                    {
+                        type: 'lesson',
+                        index: 1,
+                        list: [
+                            {
+                                id:"senceID39e9c34a6a146ea32098c9b71349",
+                                imageUrl: "http://image.runwise.cn/image/imageID84fe6aae802405832c54752d0978.png",
+                                isSelected: true,
+                                senceName: "定性衡量增长的基础",
+                                senceTarget: "确定增长基础",
+                            },
+                            {
+                                id:"senceID39e9c34a6a146ea32098c9b71349",
+                                imageUrl: "http://image.runwise.cn/image/imageID84fe6aae802405832c54752d0978.png",
+                                isSelected: true,
+                                senceName: "定性衡量增长的基础",
+                                senceTarget: "确定增长基础",
+                            }
+                        ]
                     }
                 ]
             }
@@ -159,20 +192,10 @@
                 self.$apply()
             },
             getAddLesson() {
-                let self = this;
-                self.isShowInsertLesson = true;
+                let self = this
+                self.isShowInsertLesson = true
+                self.isShowFullComponent = true
                 self.$apply()
-            },
-            getCloseLesson() {
-                let self = this;
-                self.isShowInsertLesson = false;
-                self.$apply()
-            },
-            getLessonList(event) {
-                let self = this;
-                self.isShowInsertLesson = false;
-                self.$apply()
-                console.log(event,111)
             },
             getDetele(event) {
                 let self = this
@@ -200,6 +223,21 @@
                 }
 
                 self.isShowInsertLink = false
+                self.$apply()
+            },
+            'on-add-lesson': (data) => {
+                let self = this
+                let list = self.sendData.list
+                if (data) {
+                    list.push({
+                        list: data,
+                        type: 'lesson',
+                        index: list.length
+                    })
+                }
+console.log(list)
+                self.isShowInsertLesson = false
+                self.isShowFullComponent = false
                 self.$apply()
             }
         }
