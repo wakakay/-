@@ -65,6 +65,16 @@
                       data-type="{{index}}"
                       @tap.stop="getDetele"></text>
             </view>
+
+            <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
+                <repeat for="{{data.list}}" key="index" index="index" item="item">
+                    <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list"></jn-single-choice>
+                </repeat>
+                <text class="icon-delete-select"
+                      data-type="{{index}}"
+                      @tap.stop="getDetele"></text>
+            </view>
+
         </repeat>
 
         <view class="ui-tool">
@@ -81,10 +91,7 @@
     </view>
     <jn-insert-link :isShow.sync="isShowInsertLink"></jn-insert-link>
     <jn-insert-lesson :isShow.sync="isShowInsertLesson"></jn-insert-lesson>
-    <jn-insert-practice wx:if="{{ true }}"
-                        :isShowInsertPractice.sync="isShowInsertPractice"
-                        @onClickClose.user="getClosePractice"
-                        @onClickSure.user="getPracticeList"></jn-insert-practice>
+    <jn-insert-practice :isShow.sync="isShowInsertPractice"></jn-insert-practice>
 </template>
 
 <script>
@@ -94,6 +101,7 @@
     import insertLink from '../../components/team-module/insert-link'
     import insertLesson from '../../components/team-module/add-lesson'
     import insertPractice from '../../components/team-module/add-practice'
+    import singleChoice from '../../components/cards-type/single-choice'
     import _ from 'underscore'
 
     const store = getStore()
@@ -108,6 +116,7 @@
             'jn-insert-link': insertLink,
             'jn-insert-lesson' : insertLesson,
             'jn-insert-practice' : insertPractice,
+            'jn-single-choice': singleChoice
         }
 
         data = {
@@ -122,26 +131,6 @@
                         content: "",
                         index: 0,
                         type: "text"
-                    },
-                    {
-                        type: 'lesson',
-                        index: 1,
-                        list: [
-                            {
-                                id:"senceID39e9c34a6a146ea32098c9b71349",
-                                imageUrl: "http://image.runwise.cn/image/imageID84fe6aae802405832c54752d0978.png",
-                                isSelected: true,
-                                senceName: "定性衡量增长的基础",
-                                senceTarget: "确定增长基础",
-                            },
-                            {
-                                id:"senceID39e9c34a6a146ea32098c9b71349",
-                                imageUrl: "http://image.runwise.cn/image/imageID84fe6aae802405832c54752d0978.png",
-                                isSelected: true,
-                                senceName: "定性衡量增长的基础",
-                                senceTarget: "确定增长基础",
-                            }
-                        ]
                     }
                 ]
             }
@@ -210,12 +199,6 @@
                 self.isShowFullComponent = true
                 self.$apply()
             },
-            getPracticeList(event) {
-                let self = this;
-                self.isShowInsertPractice = false;
-                self.$apply()
-                console.log(event,111)
-            },
             getDetele(event) {
                 let self = this
                 let {currentTarget: {dataset: {type}}} = event
@@ -254,8 +237,24 @@
                         index: list.length
                     })
                 }
-console.log(list)
+
                 self.isShowInsertLesson = false
+                self.isShowFullComponent = false
+                self.$apply()
+            },
+            'on-add-practice': (data) => {
+                console.log('practice', data)
+                let self= this
+                let list = self.sendData.list
+                if (data) {
+                    list.push({
+                        list: data,
+                        type: 'textSelectionVer2',
+                        index: list.length
+                    })
+                }
+
+                self.isShowInsertPractice = false
                 self.isShowFullComponent = false
                 self.$apply()
             }

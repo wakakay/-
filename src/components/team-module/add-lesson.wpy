@@ -1,7 +1,7 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
     .ui-header-button text{color:@color-blue}
-    .ui-camp-discuss-component{
+    .ui-camp-lesson{
         .ui-lesson{
             padding: 20rpx 0;
             .ui-item{
@@ -22,16 +22,9 @@
                     &:last-of-type .ui-detail{border-bottom: none;}
                 }
             }
-            .cell-height{height: 200rpx;}
         }
     }
-    @keyframes fadeInLeft{
-        0%{left:100%}
-        100%{left:0}
-    }
-    .ui-camp-discuss-component{
-        position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: @z-index-mask;width: 100%;height: 100%;background: @background-white;animation: fadeInLeft 200ms ease-out;
-    }
+
 </style>
 <template>
     <view class="ui-camp-discuss-component"  hidden="{{ !isShow }}">
@@ -40,7 +33,7 @@
                 <text class="icon-back-close"></text>
             </button>
         </jn-header>
-        <scroll-view  scroll-y class="ui-camp-search ui-camp-lesson" style="height: calc(100% - {{headerHeigth}}px)">
+        <scroll-view  scroll-y class="ui-camp-lesson" style="height: calc(100% - {{headerHeigth}}px)">
             <view class="ui-search">
                 <view class="ui-input">
                     <text class="iconfont icon-search"></text>
@@ -49,7 +42,7 @@
                         placeholder-class="cell-placeholder"
                         placeholder="请输入要查找的微课"/>
                 </view>
-                <view class="cell-search" @tap.stop="getSearch">搜索</view>
+                <view class="cell-search" @tap.stop="getStartSearch">搜索</view>
             </view>
             <view class="ui-lesson" scroll-y>
                 <repeat for="{{dataList}}" key="index" index="index" item="item">
@@ -88,7 +81,7 @@
     @connect({
         token(state) {
             return 'userID574c448521c04ef59ad4542fbdd497fc-1547780027775-1a760516c9bff2c2914d70bed3c4a1e1'
-            // return state.user.token;
+            return state.user.token;
         },
     })
     export default class addLesson extends wepy.component {
@@ -105,9 +98,9 @@
         }
 
         data = {
-            headerHeigth:68,
             searchName:'',
             dataList:[],
+            headerHeigth:68,
             seleteList:[],
         };
         methods = {
@@ -118,9 +111,9 @@
             },
             getClosePage(){
                 let self = this;
-                self.$emit('on-add-lesson')
+                self.$emit('on-add-lesson', {})
             },
-            getSearch() {
+            getStartSearch() {
                 let self = this;
                 let postData = {
                     token : self.token,
@@ -141,7 +134,7 @@
             getSure(){
                 let self = this;
                 let dataList = self.dataList;
-                _.each(dataList,(item,index)=>{
+                _.each(dataList,(item)=>{
                     _.each(item.senceList,senceItem=>{
                         if(senceItem.isSelected) {
                             self.seleteList.push(senceItem)
@@ -149,7 +142,7 @@
                         }
                     })
                 })
-                self.$emit('on-add-lesson', self.seleteList)
+                self.$emit('on-add-lesson',self.seleteList)
             }
         };
 
@@ -160,6 +153,7 @@
                 self.$apply()
             }
         }
+
     }
 </script>
 

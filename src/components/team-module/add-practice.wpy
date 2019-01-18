@@ -55,31 +55,27 @@
     const store = getStore()
     @connect({
         token(state) {
+            return 'userID574c448521c04ef59ad4542fbdd497fc-1547780027775-1a760516c9bff2c2914d70bed3c4a1e1'
             return state.user.token;
         },
     })
     export default class addPractice extends wepy.component {
-
         components = {
             'jn-header': header,
-        } 
+        }
         props = {
-            isShowInsertPractice:{
-                type: Boolean
+            isShow:{
+                type: Boolean,
+                default: false
             }
         }
-        computed = {
-            isShow () {
-                let self = this;
-                return self.isShowInsertPractice;
-            }
-        }
+
         data = {
+            headerHeigth:68,
             searchName:'',
             practiceList:[],
-            headerHeigth:68,
             seleteList:[],
-        }; 
+        };
         methods = {
             getSearchName(e) {
                 let self = this;
@@ -88,7 +84,7 @@
             },
             getClosePage(){
                 let self = this;
-                self.$emit('onClickClose')
+                self.$emit('on-add-practice')
             },
             getStartSearch(){
                 let self = this;
@@ -118,7 +114,7 @@
                         self.$apply();
                     }
                 })
-                self.$emit('onClickSure',self.seleteList)
+                self.$emit('on-add-practice',self.seleteList)
             }
         };
         events = {
@@ -128,7 +124,7 @@
                 self.$apply()
             }
         }
-        
+
     }
 </script>
 
