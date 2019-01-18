@@ -458,19 +458,24 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
     padding:0 32rpx;
     view{box-sizing:border-box;}
     .ui-title{
-        padding:36rpx 0;border-bottom:2rpx dashed @color-gray-c7;
+        padding:36rpx 0;margin-bottom:28rpx;border-bottom:2rpx dashed @color-gray-c7;
         textarea{width:100%;font-size:40rpx;font-weight:700;color:@color-black;line-heihgt:56rpx;}
     }
-    .ui-textarea{
-        padding-top:24rpx;
+    .ui-description{
+        margin-bottom:8rpx;
         textarea{width:100%;font-size:32rpx;color:@color-black;line-heihgt:52rpx;}
     }
     .ui-link{
-        padding-top:24rpx;
+        margin-top:16rpx;
         textarea{width:100%;font-size:32rpx;color:@color-blue;line-heihgt:52rpx;}
+        .cell-close{
+            width:72rpx;height:100%;padding:0 12rpx;position:relative;top:8rpx;
+            text{font-size:48rpx;color:@color-red;}
+        }
     }
     .ui-thumb{
-        width:100%;padding-top:24rpx;
+        width:100%;margin-top:16rpx;position:relative;
+        >text{display:block;padding:12rpx;font-size:48rpx;color:@color-red;position:absolute;right:0;top:0;}
         image{width:100%;}
     }
     .ui-tool{

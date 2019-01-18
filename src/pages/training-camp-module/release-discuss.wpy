@@ -14,30 +14,40 @@
                       maxlength="-1"
                       auto-height="{{true}}"
                       adjust-position="{{false}}"
-                      data-type="1"
+                      data-type="title"
                       value="{{sendData.title}}"
                       bindblur="getBlur"></textarea>
         </view>
 
         <repeat for="{{sendData.list}}" key="index" index="index" item="data">
-            <view class="ui-textarea" wx:if="{{'text'==data.type}}">
+            <view class="ui-description" wx:if="{{'text'==data.type}}">
                 <textarea placeholder="输入内容"
                           maxlength="-1"
                           auto-height="{{true}}"
                           adjust-position="{{false}}"
-                          data-type="2"
+                          data-type="content"
                           value="{{data.content}}"
                           bindblur="getBlur"></textarea>
             </view>
 
-            <view class="ui-link" wx:if="{{'link'==data.type}}">
+            <view class="ui-link main-justify" wx:if="{{'link'==data.type}}">
                 <textarea maxlength="-1"
                           auto-height="{{true}}"
+                          data-type="{{index}}"
                           value="{{data.title}}"
-                          adjust-position="{{false}}"></textarea>
+                          adjust-position="{{false}}"
+                          bindblur="getBlur"></textarea>
+                <view class="cell-close cross-center">
+                    <text class="icon-delete-select"
+                          data-type="{{index}}"
+                          @tap.stop="getDetele"></text>
+                </view>
             </view>
 
             <view class="ui-thumb" wx:if="{{'image'==data.type}}">
+                <text class="icon-delete-select"
+                      data-type="{{index}}"
+                      @tap.stop="getDetele"></text>
                 <image mode="widthFix" src="{{data.img}}"></image>
             </view>
         </repeat>
@@ -82,14 +92,14 @@
         }
 
         data = {
-            isShowInsertLink: false,
+            isShowInsertLink: true,
             isShowInsertLesson:false,
             sendData: {
                 title: '',
                 list: [
                     {
                         content: "",
-                        index: 1,
+                        index: 0,
                         type: "text"
                     }
                 ]
@@ -104,16 +114,28 @@
 
         }
 
+        __deteleModule(index) {
+            let self = this
+            let list = self.sendData.list
+            list.splice(index, 1)
+            self.$apply()
+        }
+
         methods = {
             getBlur(event) {
                 let self = this
                 let {detail:{value}, currentTarget: {dataset: {type}}} = event
                 switch(type) {
-                    case '1':
+                    case 'title':
                         self.linkLoaction = value
                         break
-                    case '2':
+                    case 'content':
                         self.linkTitle = value
+                        break
+                    default:
+                        if ('' === value) {
+                           self.__deteleModule(type)
+                        }
                 }
             },
             getAddThumb() {
@@ -151,6 +173,11 @@
                 self.isShowInsertLesson = false;
                 self.$apply()
                 console.log(event,111)
+            },
+            getDetele(event) {
+                let self = this
+                let {currentTarget: {dataset: {type}}} = event
+                self.__deteleModule(type)
             }
         }
 
