@@ -42,6 +42,9 @@ export const ROUTERS = {
     /*-------------------训练营-----------------------*/
     'pages/training-camp-module/index': {screenName: '训练营', isLevel: true, isVisitor: true},
     'pages/training-camp-module/release-discuss': {screenName: '发布谈论'},
+    'pages/training-camp-module/my/release-discuss': {screenName: '我管理-发布谈论'},
+
+
     'pages/training-camp-module/all-training': {screenName: '训练营-查看全部训练营'},
     'pages/training-camp-module/introduce': {screenName: '训练营-训练营介绍'},
     'pages/training-camp-module/registration': {screenName: '训练营-报名'},

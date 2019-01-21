@@ -1,9 +1,62 @@
 <style lang="less" scoped>
-
+    @import "../../../assets/style/theme";
+    .ui-select-list{
+        box-sizing:border-box;height:120rpx;padding:24rpx 32rpx;background-color:@background-color-E5;border-bottom:2rpx solid @border-gray;
+        .cell-radio{
+            margin-right:32rpx;font-size:34rpx;color:@color-black;line-height:64rpx;
+            text{margin-right:12rpx;font-size:48rpx;color:@color-blue;position:relative;top:10rpx;}
+        }
+        .ui-switch{
+            width:280rpx;
+            text{margin-right:16rpx;font-size:34rpx;color:@color-black;line-height:64rpx;}
+        }
+    }
+    .ui-time{
+        box-sizing:border-box;height:140rpx;padding:16rpx 32rpx;background-color:@background-color-E5;border-bottom:2rpx solid @border-gray;
+        .cell-unit{width:80rpx;text-align:center;font-size:24rpx;color:@color-blue;}
+        .cell-label{padding-bottom:8rpx;font-size:24rpx;color:@color-gray;line-height:40rpx;}
+        .cell-time{
+            height:56rpx;padding:0 20rpx;background-color:@background-white;font-size:24rpx;color:@color-blue;line-height:56rpx;border-radius:@border-radius-32;
+            text{display:block;font-size:24rpx;transform:rotate(90deg);}
+        }
+    }
 </style>
 
 <template>
     <jn-header></jn-header>
+    <view class="ui-select-list main-justify">
+        <view class="ui-radio dir-left">
+            <view class="cell-radio">
+                <text class="icon-selectable"></text>通知
+            </view>
+            <view class="cell-radio">
+                <text class="icon-selected"></text>其他
+            </view>
+        </view>
+
+        <view class="ui-switch flex-right">
+            <text>置顶</text><switch color="#007AFF" />
+        </view>
+    </view>
+
+    <view class="ui-time flex">
+        <picker mode="date"
+                value="{{date}}"
+                start="2015-09-01"
+                bindchange="bindDateChange">
+            <view class="cell-label">开始时间</view>
+            <view class="cell-time main-justify">{{date}}<text class="icon-right-arrow"></text></view>
+        </picker>
+        <view class="cell-unit">:</view>
+        <picker mode="time"
+                value="{{time}}"
+                start="2015-09-01"
+                bindchange="bindDateChange">
+            <view class="cell-label">开始时间</view>
+            <view class="cell-time main-justify">{{date}}<text class="icon-right-arrow"></text></view>
+        </picker>
+    </view>
+
     <view class="module-team-discuss-edit">
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
@@ -99,13 +152,13 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import header from '../../components/common/header'
-    import insertLink from '../../components/team-module/insert-link'
-    import insertLesson from '../../components/team-module/add-lesson'
-    import insertPractice from '../../components/team-module/add-practice'
-    import singleChoice from '../../components/cards-type/single-choice'
-    import config from '../../api/config'
-    import {fetch} from '../../api'
+    import header from '../../../components/common/header'
+    import insertLink from '../../../components/team-module/insert-link'
+    import insertLesson from '../../../components/team-module/add-lesson'
+    import insertPractice from '../../../components/team-module/add-practice'
+    import singleChoice from '../../../components/cards-type/single-choice'
+    import config from '../../../api/config'
+    import {fetch} from '../../../api'
     import _ from 'underscore'
 
     const store = getStore()
@@ -114,7 +167,7 @@
             return state.user
         }
     })
-    export default class releaseDiscuss extends wepy.page {
+    export default class myReleaseDiscuss extends wepy.page {
         components = {
             'jn-header': header,
             'jn-insert-link': insertLink,
@@ -124,6 +177,8 @@
         }
 
         data = {
+            date: '2016-09-01',
+            time: '12:01',
             isShowFullComponent: false,
             isShowInsertLink: false,
             isShowInsertLesson:false,
@@ -146,6 +201,7 @@
         }
 
         onShow() {
+            let self = this
 
         }
 
@@ -173,6 +229,9 @@
                 url: `${config.baseUrl + 'app/upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51`,
                 filePath: flie,
                 name: 'file',
+                header: {
+                    'content-type': 'application/x-www-form-urlencoded'  //这里注意POST请求content-type是小写，大写会报错
+                },
                 success(respone) {
                     let info = JSON.parse(respone.data)
                     list.push({
@@ -186,6 +245,9 @@
         }
 
         methods = {
+            bindDateChange(e) {
+                console.log('picker发送选择改变，携带值为', e)
+            },
             /**
              * textarea失去焦点
              * @param event
