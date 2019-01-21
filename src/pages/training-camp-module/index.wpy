@@ -154,11 +154,14 @@
 
 					<!-- 我参与的 当列表为空时-->
 					<view class="ui-empty-list"
-						  wx:if="{{ isLoaded && !teamDoingList.length && !teamBeforList.length}}">
-						<image mode="scaleToFill"
-							   src="http://wx-small.runwise.cn/image/imageID63f4f9ce69d433b12a647a979545.png" />
-						<view class="cell-text" wx:if="{{memberTeamStatus == 'neverSign'}}">快去报名你的第一个训练营吧~</view>
-						<view class="cell-text" wx:else>最近没有报名训练营噢~</view>
+						  wx:if="{{ !teamDoingList.length && !teamBeforList.length}}">
+						<view class="cell-title">暂无进行中的团队学习哦</view>
+						<view class="cell-dec">
+							<view>请加入即能核心用户群，</view>
+							<view>有新的团队学习我们将第一时间通知你~</view>
+						</view>
+						<image class="cell-wecan" mode="widthFix" src="{{wetCanImg}}"/>
+						<view class="cell-btn" @tap.stop="getWetCan">复制微信号</view>
 					</view>
 
 					<!-- 为你推荐 -->
@@ -193,7 +196,7 @@
     import header from '../../components/common/header'
     import TeamLearningCourse from '../../components/TeamLearningCourse/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {practice as practiceApi } from '../../api'
+    import {practice as practiceApi,fetch } from '../../api'
     import {initializationDeligate} from '../../utils'
 
     const store = getStore();
@@ -249,7 +252,8 @@
             teamDoingList: [],//正在学习的课程
             teamBeforList: [],//未开始的课程
             adminTeamBeforList: [],//我管理的 未开始的
-            memberTeamStatus:'sign' //从未参加过 neverSign  曾经参加过sign
+			memberTeamStatus:'sign' ,//从未参加过 neverSign  曾经参加过sign
+			wetCanImg:''
         }
 
         onLoad() {
@@ -338,14 +342,37 @@
                 setTimeout(() => {
                     self.scrollTop = scrollTop
                 }, 100)
-            }
+			},
+			getWetCan() {
+				let self = this;
+				wx.setClipboardData({
+					data:'pascalbo',
+					success:() => {
+
+						wepy.$instance.globalData.getHuilder('团队学习', 'click', '复制微信')
+
+						wx.showToast({
+							title: '复制成功',
+							icon: 'success',
+							duration: 2000
+						})
+					},
+					fail:() => {
+						wx.showToast({
+							title: '复制失败',
+							duration: 2000
+						})
+					}
+				})
+			}
         }
         initialize() {
-            // 通知组件，生成图片预览
+			// 通知组件，生成图片预览
+			let self = this;
             this.$broadcast('studying-bar')
             practiceApi.getMyTeamListByTabByCommend({token: this.token})
 			.then(res => {
-				this.isLoaded = true
+				
 				this.teamDoingList = res.memberTeam.memberTeamDoingList //正在学习的 课程
 				this.teamCommendList = res.memberTeam.memberTeamCommendList //为你推荐的 课程
 				this.teamBeforList = res.memberTeam.memberTeamBeforList //还没开始的 课程
@@ -353,10 +380,25 @@
 				this.adminTeamEndList = res.adminTeam.adminTeamEndList //我管理的 已结束的
 				this.memberTeamStatus = res.memberTeam.memberTeamStatus //是否参加过训练营
 				this.adminTeamBeforList = res.adminTeam.adminTeamBeforList
+
+				if(!self.teamDoingList.length && !self.teamBeforList.length){
+					let postData = {
+						token: self.token,
+						imgKey: 'upjiang_imagecode',
+					}
+					fetch.commonImgUrl(postData).then((respone) => {
+						self.wetCanImg = respone.imgUrl
+						this.$apply()
+					})
+				}
+				this.isLoaded = true
+
 				this.$apply()
+
 
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
 			})
+			
 			.then(()=>{
 				wx.showTabBar()
 			})
@@ -418,7 +460,10 @@
 			}
 			.ui-empty-list{
 				text-align: center;
-				.cell-text{margin-top:44rpx;font-family:PingFangSC-Regular;font-size:28rpx;color:@color-gray;}
+				.cell-title{margin-top: 152rpx;font-size: 48rpx;font-weight: bold}
+				.cell-dec{font-size: 34rpx;color: @color-gray;margin: 90rpx 0 32rpx;}
+				.cell-wecan{width: 376rpx;}
+				.cell-btn{width: 442rpx;height:96rpx;background: @background-gray-F4;border-radius: 20rpx;line-height: 96rpx;color:@color-blue;font-weight: bold;margin: 16rpx auto 96rpx;}
 			}
 		}
 	}

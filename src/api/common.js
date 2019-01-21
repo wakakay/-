@@ -18,6 +18,10 @@ export default {
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})
     },
+    // 通用图片功能
+    commonImgUrl(params) {
+        return fetch({method: 'post', url: 'common/imgUrl', params: params, isVisitor: true})
+    },
     /**
      * study bar
      * @param params

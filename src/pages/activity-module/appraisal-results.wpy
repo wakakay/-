@@ -64,7 +64,7 @@
             <image mode="widthFix" src="{{resultObj.resultImageURL}}" />
         </view>
         <view class="ui-bottom-btn main-justify">
-            <view class="ui-tips" wx:if="{{isTips}}">立即保存你的专属卡~<text class="icon-arrow"></text></view>
+            <view class="ui-tips" wx:if="{{isTips}}">生成测评结果图片<text class="icon-arrow"></text></view>
             <button class="flex-box-0 main-center" @tap.stop="getSaveImage"><text class="icon-down"></text></button>
             <button class="flex-box-1 main-center"
                     open-type="{{resultObj.buttonAttr === '分享' ? 'share' : ''}}"
