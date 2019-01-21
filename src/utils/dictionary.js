@@ -77,7 +77,7 @@ export const ROUTERS = {
 
     /*-------------------注册-----------------------*/
     'pages/registered-module/weclome': {enName: 'welcome_page', screenName: 'user onboarding-欢迎页', isVisitor: true},
-    'pages/registered-module/interest-select': {enName: 'interest_select', screenName: 'user onboarding-职能选择页'},
+    'pages/registered-module/interest-select': {enName: 'interest_select', screenName: 'user onboarding-职能选择页', isVisitor: true},
     'pages/registered-module/recommend': {enName: 'course_recommend', screenName: 'user onboarding-课程推荐页'},
     /*-------------------我的-----------------------*/
     'pages/user-module/mine': {screenName: '我的'},

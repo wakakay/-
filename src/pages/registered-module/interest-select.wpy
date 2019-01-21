@@ -137,20 +137,22 @@
         </view>
 
         <view class="ui-button main-center" :class="{'is-iphonex': isIphonex}">
-            <view class="cell-button main-center cross-center"
-                :class="{'is-finish':isInterest}"
-                wx:if="{{step == 0}}"
-                hover-class="cell-hover"
-                @tap.stop="getNext">
-                {{isInterest ? textInfo[step].buttonText : '最多选择2个兴趣噢'}}
-            </view>
-            <view class="cell-button main-center cross-center"
-                :class="{'is-finish':isComplate}"
-                wx:else
-                hover-class="cell-hover"
-                @tap.stop="getNext">
+            <button class="cell-button main-center cross-center"
+                    :class="{'is-finish': isInterest}"
+                    wx:if="{{step == 0}}"
+                    hover-class="cell-hover"
+                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
+                    bindgetuserinfo="getAuthorize"
+                    @tap.stop="getNext">
+                    {{isInterest ? textInfo[step].buttonText : '最多选择2个兴趣噢'}}
+            </button>
+            <button class="cell-button main-center cross-center"
+                    :class="{'is-finish':isComplate}"
+                    wx:else
+                    hover-class="cell-hover"
+                    @tap.stop="getNext">
                 {{isComplate ? textInfo[step].buttonText : '最多选择3个能力噢'}}
-            </view>
+            </button>
         </view>
     </view>
 </template>
@@ -162,12 +164,17 @@
     import Loading from '../../components/common/loading'
     import {fetch, report as reportApi} from '../../api'
     import {initializationDeligate} from '../../utils'
+    import {CustomError} from '../../errors'
+    import {login} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
     @connect({
         systemInfo(state) {
             return state.user
+        },
+        isTokenSet(state) {
+            return state.user.token.startsWith('userID')
         },
         entrance(state) { // 全局场景值
             return state.entrance
@@ -209,7 +216,7 @@
 
         onLoad(params) {
             let self = this
-            if (params && params.src === 'weclome') {
+            if (params && 'weclome' === params.src || 'defaultToken' === self.systemInfo.token) {
                 self.initialize()
             } else {
                 self.__isGetGift()
@@ -219,7 +226,7 @@
         onShow() {
             let self = this
             let number = _.filter(self.interestList, {isActive: true}).length
-            self.isInterest = number > -1 ? true : false
+            self.isInterest = number > 1 ? true : false
             self.$apply()
         }
 
@@ -231,7 +238,7 @@
             fetch.profileList(postData).then((respone) => {
                 self.interestList = respone.positionList
                 let number = _.filter(self.interestList, {isActive: true}).length
-                self.isInterest = number >-1 ? true : false
+                self.isInterest = number > 1 ? true : false
                 self.__report()
                 self.$apply()
             }).catch(error => {
@@ -277,60 +284,95 @@
             }).catch(error => {
             })
         }
+        /**
+         * 下一步
+         */
+        __nextStep() {
+            let self = this
+            switch (self.step) {
+                case 0:
+                    let lists = _.filter(self.interestList, {isActive: true})
+                    if (!lists.length) {
+                        wx.showToast({
+                            icon: 'none',
+                            title: ' 请选择感兴趣的领域 '
+                        })
+                        return false
+                    }
+                    self.isComplate = false
+                    self.isInit = false
+                    self.step = 1
+
+                    self.studyList = []
+                    _.each(lists, (data) => {
+                        _.each(data.interestList, (item) => {
+                            let index = _.findIndex(self.studyList, {labelID: item.labelID})
+                            if (-1 === index) {
+                                item.isActive = false
+                                self.studyList.push(item)
+                            }
+                        })
+                    })
+                    self.$apply()
+
+                    wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-能力选择页', pageTheme: ''})
+                    wx.reportAnalytics('interest_select_next', {
+                        username: self.systemInfo.name,
+                        channel: self.entrance.mappers[self.entrance.scenceID],
+                        role: self.systemInfo.role
+                    })
+                    break;
+                case 1:
+
+                    let sLists = _.filter(self.studyList, {isActive: true})
+                    if (!sLists.length) {
+                        wx.showToast({
+                            icon: 'none',
+                            title: ' 请选择您想提升的能力 '
+                        })
+                        return false
+                    }
+
+                    self.isFinish && self.__finish()
+                    break;
+            }
+        }
 
         methods = {
+            /**
+             * 授权登录信息
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getAuthorize(event) {
+                let self = this
+                let {detail: {errMsg}} = event
+
+                if (self.isTokenSet) {
+                    return
+                }
+                return new Promise((resolve, reject) => {
+                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
+                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
+
+                    resolve(errMsg)
+                }).then(userInfo => { // 确定授权
+                    return store.dispatch(login())
+                }).then((respone) => { // 授权成功
+                    self.__nextStep()
+                }).catch(error => { // 拒接授权
+
+                })
+            },
             /**
              * 底部按钮
              */
             getNext() {
                 let self = this
-                switch (self.step) {
-                    case 0:
-                        let lists = _.filter(self.interestList, {isActive: true})
-                        if (!lists.length) {
-                            wx.showToast({
-                                icon: 'none',
-                                title: ' 请选择感兴趣的领域 '
-                            })
-                            return false
-                        }
-                        self.isComplate = false
-                        self.isInit = false
-                        self.step = 1
-                        
-                        self.studyList = []
-                        _.each(lists, (data) => {
-                            _.each(data.interestList, (item) => {
-                                let index = _.findIndex(self.studyList, {labelID: item.labelID})
-                                if (-1 === index) {
-                                    item.isActive = false
-                                    self.studyList.push(item)
-                                }
-                            })
-                        })
-                        self.$apply()
-
-                        wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-能力选择页', pageTheme: ''})
-                        wx.reportAnalytics('interest_select_next', {
-                            username: self.systemInfo.name,
-                            channel: self.entrance.mappers[self.entrance.scenceID],
-                            role: self.systemInfo.role
-                        })
-                        break;
-                    case 1:
-                        
-                        let sLists = _.filter(self.studyList, {isActive: true})
-                        if (!sLists.length) {
-                            wx.showToast({
-                                icon: 'none',
-                                title: ' 请选择您想提升的能力 '
-                            })
-                            return false
-                        }
-
-                        self.isFinish && self.__finish()
-                        break;
+                if (!self.isTokenSet) {
+                    return
                 }
+                self.__nextStep()
             },
             /**
              * 头部返回按钮
@@ -354,8 +396,7 @@
                 let {currentTarget: {dataset: {item, index}}} = event
                 let data = self.interestList[index]
                 let number = _.filter(self.interestList, {isActive: true}).length
-                
-                
+
                 if (number >= 2 && !data.isActive) {
                     wx.showToast({
                         icon: 'none',
@@ -367,9 +408,9 @@
                 data.isActive = !data.isActive
                 let interesNum = _.filter(self.interestList, {isActive: true}).length
                 if(interesNum >0){
-                    self.isInterest = true 
+                    self.isInterest = true
                 }else{
-                    self.isInterest = false 
+                    self.isInterest = false
                 }
                 self.$apply()
             },
