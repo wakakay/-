@@ -27,7 +27,7 @@
 
 </style>
 <template>
-    <view class="ui-camp-discuss-component"  hidden="{{ !isShow }}">
+    <view class="ui-camp-discuss-component" hidden="{{ !isShow }}">
         <jn-header hiddenButton title="添加微课">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
                 <text class="icon-back-close"></text>
@@ -81,7 +81,7 @@
     @connect({
         token(state) {
             return 'userID574c448521c04ef59ad4542fbdd497fc-1547780027775-1a760516c9bff2c2914d70bed3c4a1e1'
-            return state.user.token;
+            return state.user.token
         },
     })
     export default class addLesson extends wepy.component {
@@ -126,7 +126,7 @@
                     }else{
                         wx.showToast({icon:'none',title: '暂无您要查找的微课',duration: 2000})
                     }
-                    
+
                 })
             },
             getItem(event) {

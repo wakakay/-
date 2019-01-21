@@ -1,19 +1,20 @@
 <style lang="less" scoped>
     @import "../../../assets/style/theme";
     .ui-select-list{
-        box-sizing:border-box;height:120rpx;padding:24rpx 32rpx;background-color:@background-color-E5;border-bottom:2rpx solid @border-gray;
+        box-sizing:border-box;height:120rpx;padding:24rpx 32rpx;background-color:@background-color-F3;border-bottom:2rpx solid @border-color;position:relative;
         .cell-radio{
-            margin-right:32rpx;font-size:34rpx;color:@color-black;line-height:64rpx;
-            text{margin-right:12rpx;font-size:48rpx;color:@color-blue;position:relative;top:10rpx;}
+            width:auto;margin-right:32rpx;font-size:34rpx;color:@color-black;
+            text{margin-right:12rpx;font-size:48rpx;color:@color-blue;position:relative;top:2rpx;}
         }
         .ui-switch{
-            width:280rpx;
-            text{margin-right:16rpx;font-size:34rpx;color:@color-black;line-height:64rpx;}
+            width:auto;position:absolute;right:32rpx;top:0;
+            text{margin-right:16rpx;font-size:34rpx;color:@color-black;}
         }
     }
-    .ui-time{
-        box-sizing:border-box;height:140rpx;padding:16rpx 32rpx;background-color:@background-color-E5;border-bottom:2rpx solid @border-gray;
-        .cell-unit{width:80rpx;text-align:center;font-size:24rpx;color:@color-blue;}
+    .ui-picker-box{
+        box-sizing:border-box;height:140rpx;padding:16rpx 32rpx;background-color:@background-color-F3;border-bottom:2rpx solid @border-color;
+        picker:nth-of-type(1){margin-right:28rpx;}
+        .cell-unit{width:36rpx;margin:0 18rpx 0 28rpx;padding-top:48rpx;text-align:center;font-size:24rpx;color:@color-blue;text-align:center;line-height:56rpx;}
         .cell-label{padding-bottom:8rpx;font-size:24rpx;color:@color-gray;line-height:40rpx;}
         .cell-time{
             height:56rpx;padding:0 20rpx;background-color:@background-white;font-size:24rpx;color:@color-blue;line-height:56rpx;border-radius:@border-radius-32;
@@ -24,36 +25,41 @@
 
 <template>
     <jn-header></jn-header>
-    <view class="ui-select-list main-justify">
+    <view class="ui-select-list">
         <view class="ui-radio dir-left">
-            <view class="cell-radio">
+            <view class="cell-radio cross-center">
                 <text class="icon-selectable"></text>通知
             </view>
-            <view class="cell-radio">
+            <view class="cell-radio cross-center">
                 <text class="icon-selected"></text>其他
             </view>
         </view>
 
-        <view class="ui-switch flex-right">
-            <text>置顶</text><switch color="#007AFF" />
+        <view class="ui-switch cross-center">
+            <text>置顶</text><switch color="#007AFF"
+                                   checked="{{sendData.isTop}}"
+                                   bindchange="getSwitch"></switch>
         </view>
     </view>
 
-    <view class="ui-time flex">
+    <view class="ui-picker-box dir-left">
         <picker mode="date"
-                value="{{date}}"
-                start="2015-09-01"
-                bindchange="bindDateChange">
+                data-type="date"
+                value="{{currentDate}}"
+                start="{{startDate}}"
+                bindchange="getDateChange">
             <view class="cell-label">开始时间</view>
-            <view class="cell-time main-justify">{{date}}<text class="icon-right-arrow"></text></view>
+            <view class="cell-time main-justify">{{currentDate}}<text class="icon-right-arrow"></text></view>
+
         </picker>
         <view class="cell-unit">:</view>
         <picker mode="time"
-                value="{{time}}"
-                start="2015-09-01"
-                bindchange="bindDateChange">
-            <view class="cell-label">开始时间</view>
-            <view class="cell-time main-justify">{{date}}<text class="icon-right-arrow"></text></view>
+                data-type="time"
+                value="{{currentTime}}"
+                start="{{startTime}}"
+                bindchange="getDateChange">
+            <view class="cell-label">具体时间</view>
+            <view class="cell-time main-justify">{{currentTime}}<text class="icon-right-arrow"></text></view>
         </picker>
     </view>
 
@@ -147,6 +153,7 @@
     <jn-insert-link :isShow.sync="isShowInsertLink"></jn-insert-link>
     <jn-insert-lesson :isShow.sync="isShowInsertLesson"></jn-insert-lesson>
     <jn-insert-practice :isShow.sync="isShowInsertPractice"></jn-insert-practice>
+    <jn-insert-poll :isShow.sync="isShowInsertPoll"></jn-insert-poll>
 </template>
 
 <script>
@@ -156,6 +163,7 @@
     import insertLink from '../../../components/team-module/insert-link'
     import insertLesson from '../../../components/team-module/add-lesson'
     import insertPractice from '../../../components/team-module/add-practice'
+    import insertPoll from '../../../components/team-module/add-poll'
     import singleChoice from '../../../components/cards-type/single-choice'
     import config from '../../../api/config'
     import {fetch} from '../../../api'
@@ -173,19 +181,24 @@
             'jn-insert-link': insertLink,
             'jn-insert-lesson' : insertLesson,
             'jn-insert-practice' : insertPractice,
+            'jn-insert-poll': insertPoll,
             'jn-single-choice': singleChoice
         }
 
         data = {
-            date: '2016-09-01',
-            time: '12:01',
             isShowFullComponent: false,
             isShowInsertLink: false,
             isShowInsertLesson:false,
             isShowInsertPractice:false,
+            isShowInsertPoll: false,
             isSumbit: true,
+            currentDate: '2019-01-01',
+            currentTime: '00: 00',
+            startDate: '2019-01-01',
+            startTime: '00: 00',
             sendData: {
                 title: '',
+                isTop: false,
                 infoList: [
                     {
                         content: "",
@@ -197,7 +210,13 @@
         }
 
         onLoad() {
-
+            let self = this
+            let date = new Date()
+            self.currentDate = date.format('yyyy-MM-dd')
+            self.currentTime = date.format('hh: mm')
+            self.startDate = self.currentDate + ''
+            self.startTime = self.currentTime + ''
+            self.$apply()
         }
 
         onShow() {
@@ -245,8 +264,25 @@
         }
 
         methods = {
-            bindDateChange(e) {
-                console.log('picker发送选择改变，携带值为', e)
+            getSwitch(event) {
+                let self = this
+                let {detail: {value}} = event
+                self.sendData.isTop = value
+                self.$apply()
+            },
+            getDateChange(event) {
+                let self = this
+                let {detail: {value}, currentTarget: {dataset: {type}}} = event
+
+                switch (type) {
+                    case 'date':
+                        self.currentDate = value
+                        break
+                    case 'time':
+                        self.currentTime = value.replace(':', ': ')
+                        break
+                }
+                self.$apply()
             },
             /**
              * textarea失去焦点

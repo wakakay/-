@@ -1,0 +1,91 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-add-poll-box{
+        width:100%;height:100%;background-color:@background-color-F3;position:fixed;left:0;top:0;z-index:@z-index-mask;
+        view{box-sizing:border-box;}
+        .ui-header-button text{color:@color-blue}
+        .ui-radio{
+            box-sizing:border-box;height:120rpx;padding:24rpx 32rpx;position:relative;
+            .cell-radio{
+                width:auto;margin-right:54rpx;font-size:34rpx;color:@color-black;
+                text{margin-right:12rpx;font-size:48rpx;color:@color-blue;position:relative;top:2rpx;}
+            }
+        }
+        .ui-title{
+            padding:36rpx 32rpx;background-color:@background-white;position:relative;
+            &:before{content:' ';width:100%;height:2rpx;background-color:@background-gray;position:absolute;left:32rpx;bottom:0;}
+            textarea{width:100%;font-size:40rpx;font-weight:700;color:@color-black;line-heihgt:56rpx;}
+        }
+        .ui-poll-list{
+            background-color:@background-white;
+            .ui-item{
+                
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="ui-add-poll-box" hidden="{{isShow}}">
+        <jn-header hiddenButton title="添加投票">
+            <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClose">
+                <text class="icon-back-close"></text>
+            </button>
+        </jn-header>
+
+        <view class="ui-radio flex">
+            <view class="cell-radio cross-center">
+                <text class="icon-selectable"></text>单选
+            </view>
+            <view class="cell-radio cross-center">
+                <text class="icon-selected"></text>多选
+            </view>
+        </view>
+
+        <view class="ui-title">
+            <input placeholder="输入标题（选填）" maxlength="-1" data-type="title" bindblur="getBlur" />
+        </view>
+
+        <view class="ui-poll-list">
+            <view class="ui-item flex">
+                <text class="icon-delete-select"></text>
+                <input placeholder="选项（限14个字）" maxlength="14" bindblur="getBlur" />
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import header from '../../components/common/header'
+
+    export default class addPoll extends wepy.component {
+        components = {
+            'jn-header': header,
+        }
+
+        props = {
+            isShow:{
+                type: Boolean,
+                default: false
+            }
+        }
+
+        data = {}
+
+        onLoad() {
+            let self = this
+        }
+
+        methods = {
+            getBlur() {
+
+            },
+            getClose() {
+
+            }
+        }
+
+        events = {}
+    }
+</script>
