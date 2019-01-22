@@ -14,7 +14,7 @@
         .ui-title{
             padding:36rpx 32rpx;background-color:@background-white;position:relative;
             &:before{content:' ';width:100%;border-top:2rpx solid @border-gray;position:absolute;left:32rpx;bottom:0;}
-            input{width:100%;font-size:40rpx;font-weight:700;color:@color-black;line-heihgt:56rpx;}
+            input{width:100%;font-size:40rpx;font-weight:700;color:@color-black;line-height:56rpx;}
         }
         .ui-poll-list{
             .ui-item{
@@ -35,7 +35,7 @@
                 .ui-container{height:204rpx;}
             }
             .ui-container{width:100%;height:134rpx;padding:0 32rpx;position:fixed;left:0;bottom:0;}
-            button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weigth:700;color:@color-white;text-align:center;line-height:100rpx;border-radius:@border-radius-20;}
+            button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weight:700;color:@color-white;text-align:center;line-height:100rpx;border-radius:@border-radius-20;}
         }
     }
 </style>

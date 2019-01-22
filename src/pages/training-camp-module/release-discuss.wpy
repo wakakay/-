@@ -346,7 +346,6 @@
                     })
                     self.status.isLesson = false
                 }
-
                 self.isShowInsertLesson = false
                 self.isShowFullComponent = false
                 self.$apply()
