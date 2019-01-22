@@ -90,7 +90,7 @@
 
         onLoad() {
             let self = this
-            self.senceID = self.isExercises && self.$parent.paramsInfo.senceID
+            self.senceID = self.isExercises && self.$parent.paramsInfo && self.$parent.paramsInfo.senceID
         }
 
         methods = {
