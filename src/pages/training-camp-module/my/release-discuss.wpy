@@ -27,18 +27,19 @@
     <jn-header></jn-header>
     <view class="ui-select-list">
         <view class="ui-radio dir-left">
-            <view class="cell-radio cross-center">
-                <text class="icon-selectable"></text>通知
+            <view class="cell-radio cross-center" data-type="importent" @tap.stop="getRadio">
+                <text class="{{sendData.infoType=='importent' ? 'icon-selected' : 'icon-selectable'}}"></text>通知
             </view>
-            <view class="cell-radio cross-center">
-                <text class="icon-selected"></text>其他
+            <view class="cell-radio cross-center" data-type="normal" @tap.stop="getRadio">
+                <text class="{{sendData.infoType=='normal' ? 'icon-selected' : 'icon-selectable'}}"></text>其他
             </view>
         </view>
 
         <view class="ui-switch cross-center">
-            <text>置顶</text><switch color="#007AFF"
-                                   checked="{{sendData.isTop}}"
-                                   bindchange="getSwitch"></switch>
+            <text>置顶</text>
+            <switch color="#007AFF"
+                    checked="{{sendData.isTop}}"
+                    bindchange="getSwitch"></switch>
         </view>
     </view>
 
@@ -94,7 +95,8 @@
                           bindblur="getBlur"></textarea>
                 <view class="cell-close cross-center">
                     <text class="icon-delete-select"
-                          data-type="{{index}}"
+                          data-index="{{index}}"
+                          data-item="{{data}}"
                           @tap.stop="getDetele"></text>
                 </view>
             </view>
@@ -102,7 +104,8 @@
             <view class="ui-thumb" wx:if="{{'image'==data.type}}">
                 <image mode="widthFix" src="{{data.img}}"></image>
                 <text class="icon-delete-select"
-                      data-type="{{index}}"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
                       @tap.stop="getDetele"></text>
             </view>
 
@@ -121,7 +124,8 @@
                     </view>
                 </repeat>
                 <text class="icon-delete-select"
-                      data-type="{{index}}"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
                       @tap.stop="getDetele"></text>
             </view>
 
@@ -130,19 +134,39 @@
                     <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list"></jn-single-choice>
                 </repeat>
                 <text class="icon-delete-select"
-                      data-type="{{index}}"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
                       @tap.stop="getDetele"></text>
             </view>
 
+            <view class="ui-poll" wx:if="{{'poll'==data.type}}">
+                <jn-poll :cardIndex.sync="index" :cardsList.sync="sendData.infoList"></jn-poll>
+                <text class="icon-delete-select"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
+                      @tap.stop="getDetele"></text>
+            </view>
         </repeat>
 
         <view class="ui-tool">
             <view class="ui-container main-justify cross-center">
                 <view class="ui-list flex-box-1">
-                    <button class="cell-item" @tap.stop="getAddThumb"><text class="icon-thumb"></text></button>
-                    <button class="cell-item" @tap.stop="getAddLink"><text class="icon-link"></text></button>
-                    <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
-                    <button class="cell-item" @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
+                    <button class="cell-item"
+                            disabled="{{!status.isThumb}}"
+                            @tap.stop="getAddThumb"><text class="icon-thumb"></text></button>
+                    <button class="cell-item"
+                            @tap.stop="getAddLink"><text class="icon-link"></text></button>
+                    <button class="cell-item"
+                            disabled="{{!status.isLesson}}"
+                            @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
+                    <button class="cell-item"
+                            wx:if="{{sendData.infoType!='importent'}}"
+                            disabled="{{!status.isPractice}}"
+                            @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
+                    <button class="cell-item"
+                            wx:if="{{sendData.infoType!='importent'}}"
+                            disabled="{{!status.isPoll}}"
+                            @tap.stop="getAddPoll"><text class="icon-poll"></text></button>
                 </view>
                 <button class="cell-button flex-box-0"
                         disabled="{{!isSumbit}}"
@@ -165,6 +189,7 @@
     import insertPractice from '../../../components/team-module/add-practice'
     import insertPoll from '../../../components/team-module/add-poll'
     import singleChoice from '../../../components/cards-type/single-choice'
+    import poll from '../../../components/cards-type/poll'
     import config from '../../../api/config'
     import {fetch} from '../../../api'
     import _ from 'underscore'
@@ -179,10 +204,11 @@
         components = {
             'jn-header': header,
             'jn-insert-link': insertLink,
-            'jn-insert-lesson' : insertLesson,
-            'jn-insert-practice' : insertPractice,
+            'jn-insert-lesson': insertLesson,
+            'jn-insert-practice': insertPractice,
             'jn-insert-poll': insertPoll,
-            'jn-single-choice': singleChoice
+            'jn-single-choice': singleChoice,
+            'jn-poll': poll
         }
 
         data = {
@@ -195,10 +221,20 @@
             currentDate: '2019-01-01',
             currentTime: '00: 00',
             startDate: '2019-01-01',
-            startTime: '00: 00',
+            startTime: '00:00',
+            status: { // 底部按钮是否可用, 微课跟联系是互斥
+                isThumb: true,
+                isLesson: true,
+                isPractice: true,
+                isPoll: true
+            },
             sendData: {
                 title: '',
                 isTop: false,
+                infoType: 'normal', // 信息类型
+                roleType: 'admin',
+                userID: 'defaultUserID',
+                postID: 'defaultpostID',
                 infoList: [
                     {
                         content: "",
@@ -229,10 +265,26 @@
          * @param index
          * @private
          */
-        __deteleModule(index) {
+        __deteleModule(item, index) {
             let self = this
             let list = self.sendData.infoList
             list.splice(index, 1)
+
+            switch (item.type) {
+                case 'image':
+                    self.status.isThumb = true
+                    break
+                case 'lesson':
+                    self.status.isLesson = true
+                    break
+                case 'textSelectionVer2':
+                    self.status.isPractice = true
+                    break
+                case 'poll':
+                    self.status.isPoll = true
+                    break
+            }
+
             self.$apply()
         }
 
@@ -258,12 +310,19 @@
                         index: list.length,
                         type: "image"
                     })
+                    self.status.isThumb = false
                     self.$apply()
                 }
             })
         }
 
         methods = {
+            getRadio(event) {
+                let self = this
+                let {currentTarget: {dataset: {type}}} = event
+                self.sendData.infoType = type
+                self.$apply()
+            },
             getSwitch(event) {
                 let self = this
                 let {detail: {value}} = event
@@ -279,7 +338,7 @@
                         self.currentDate = value
                         break
                     case 'time':
-                        self.currentTime = value.replace(':', ': ')
+                        self.currentTime = value
                         break
                 }
                 self.$apply()
@@ -329,8 +388,9 @@
              * 添加练习题
              */
             getAddPractice() {
-                let self = this;
-                self.isShowInsertPractice = true;
+                let self = this
+                self.isShowInsertPractice = true
+                self.isShowFullComponent = true
                 self.$apply()
             },
             /**
@@ -343,13 +403,22 @@
                 self.$apply()
             },
             /**
+             * 添加投票
+             */
+            getAddPoll() {
+                let self = this
+                self.isShowInsertPoll = true
+                self.isShowFullComponent = true
+                self.$apply()
+            },
+            /**
              * 删除模块
              * @param event
              */
             getDetele(event) {
                 let self = this
-                let {currentTarget: {dataset: {type}}} = event
-                self.__deteleModule(type)
+                let {currentTarget: {dataset: {item, index}}} = event
+                self.__deteleModule(item, index)
             },
             /**
              * 提交讨论信息
@@ -362,22 +431,20 @@
                         return
                     }
 
-                    self.isSumbit = false
+                    //self.isSumbit = false
                     self.$apply()
                     let postData = {
                         token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51',
                         body: {
                             json: {
                                 teamID: 'T2c7ac27b5634eb843993a616a35c',
-                                roleType: 'member',
-                                infoType: 'normal',
-                                userID: 'defaultUserID',
-                                postID: 'defaultpostID',
+                                beginTime: `${self.currentDate} ${self.currentTime}`,
                                 ...self.sendData
                             }
                         }
                     }
-
+                    console.log(postData)
+return
                     fetch.queryPracticeList(postData).then(respone => {
                         self.isSumbit = true
                         self.sendData = {
@@ -428,12 +495,13 @@
             'on-add-lesson': (data) => {
                 let self = this
                 let list = self.sendData.infoList
-                if (data) {
+                if (!_.isEmpty(data)) {
                     list.push({
                         list: data,
                         type: 'lesson',
                         index: list.length
                     })
+                    self.status.isLesson = false
                 }
 
                 self.isShowInsertLesson = false
@@ -441,18 +509,38 @@
                 self.$apply()
             },
             'on-add-practice': (data) => {
-                console.log('practice', data)
                 let self= this
                 let list = self.sendData.infoList
-                if (data) {
+                if (!_.isEmpty(data)) {
                     list.push({
                         list: data,
                         type: 'textSelectionVer2',
                         index: list.length
                     })
+                    self.status.isPractice = false
+                    self.status.isPoll = false
                 }
 
                 self.isShowInsertPractice = false
+                self.isShowFullComponent = false
+                self.$apply()
+            },
+            'on-add-poll': (data) => {
+                let self= this
+                let list = self.sendData.infoList
+                if (!_.isEmpty(data)) {
+                    list.push({
+                        select: data.list,
+                        title: data.title,
+                        pollType: data.pollType,
+                        type: 'poll',
+                        index: list.length
+                    })
+                    self.status.isPractice = false
+                    self.status.isPoll = false
+                }
+
+                self.isShowInsertPoll = false
                 self.isShowFullComponent = false
                 self.$apply()
             }

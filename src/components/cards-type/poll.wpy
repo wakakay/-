@@ -84,6 +84,11 @@
              */
             getSelected(event) {
                 let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
+                if (!item.id) {
+                    return
+                }
+
                 let cardItem = self.cardsList[self.cardIndex]
                 // poll只能投一次
                 if (cardItem.isDone
@@ -91,7 +96,6 @@
                     return false
                 }
 
-                let {currentTarget: {dataset: {item, index}}} = event
                 let selectList = cardItem.select || cardItem.optionList
                 let selectedIds = []
                 if ('single' === cardItem.cardStatus) {

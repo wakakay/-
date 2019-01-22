@@ -38,14 +38,10 @@
             button{width:100%;height:100rpx;background-color:@background-blue;font-size:34rpx;font-weigth:700;color:@color-white;text-align:center;line-height:100rpx;border-radius:@border-radius-20;}
         }
     }
-
-    .router-translate {transition:all 5.5s cubic-bezier(.55,0,.1,1);transform:translateX(100%);}
-    .slide-leave{transform:translateX(100%);}
-    .slide-enter{transform:translateX(0);}
 </style>
 
 <template>
-    <view class="ui-add-poll-box router-translate {{!isShow ? 'slide-enter' : 'slide-leave'}}">
+    <view class="ui-add-poll-box router-translate {{isShow ? 'router-enter' : 'router-leave'}}">
         <jn-header hiddenButton title="添加投票">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClose">
                 <text class="icon-back-close"></text>
@@ -78,7 +74,7 @@
             </repeat>
 
             <view class="ui-item ui-add flex cross-center" @tap.stop="getAddItem">
-                <text class="icon-close"></text>添加选项
+                <text class="icon-add-btn"></text>添加选项
             </view>
         </view>
 
@@ -93,6 +89,7 @@
 
 <script>
     import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
 
     export default class addPoll extends wepy.component {
@@ -151,12 +148,12 @@
                 })
             },
             getClose() {
-
+                let self = this
+                self.$emit('on-add-poll', {})
             },
-
             getConfirm(){
                 let self = this
-                console.log(self.seleteInfo)
+                self.$emit('on-add-poll', self.seleteInfo)
             }
         }
 
