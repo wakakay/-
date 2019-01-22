@@ -92,14 +92,15 @@
                     token : self.token,
                     queryText : self.searchName
                 }
+
                 fetch.queryPracticeList(postData).then(res => {
-                    if(res.practiceList.length) {
+                    if(res && res.practiceList.length) {
                         self.practiceList = res.practiceList;
                         self.$apply();
                     }else{
                         wx.showToast({icon:'none',title: '暂无您要查找的题目',duration: 2000})
                     }
-                    
+
                 })
             },
             getItem(event) {
@@ -125,7 +126,7 @@
                 self.$apply();
 
                 self.$emit('on-add-practice',self.seleteList)
-                
+
             }
         };
         events = {
