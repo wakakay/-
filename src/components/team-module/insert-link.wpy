@@ -87,7 +87,7 @@
                 switch(type) {
                     case '1':
                         let reg =new RegExp(/^((https|http)?:\/\/)[^\s]+/);
-                        if (!reg.test(value)) {
+                        if ('' !== value && !reg.test(value)) {
                             self.isConfirm = false
                             self.isError = true
                             wx.showToast({
@@ -110,7 +110,7 @@
              */
             getCancel() {
                 let self = this
-                self.$emit('on-insert-link')
+                self.$emit('on-insert-link', {})
             },
             /**
              * 提交
