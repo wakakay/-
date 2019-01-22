@@ -5,10 +5,76 @@
             height: 480rpx;width: 100%;background-size: 100% 100%;position: relative;
             .ui-content{
                 left: 0;right: 0;position: absolute;top: 0;bottom: 0;background: rgba(0,0,0,0.4);padding:156rpx 0 0 40rpx;box-sizing: border-box;color:@color-white;
-                .cell-time{opacity: 0.7;font-size: 26rpx;margin-bottom:120rpx;}
-                .cell-name{font-weight: bold;font-size: 48rpx;}
+                .ui-date{
+                    display: flex;justify-content: space-between;padding-right:26rpx;
+                    .cell-manage{
+                        font-size: 26rpx;height:52rpx;display:flex;align-items:center;
+                        text{font-size: 48rpx;margin-left: 16rpx;}
+                    }
+                    .cell-time{opacity: 0.7;font-size: 26rpx;margin-bottom:64rpx;}
+
+                }
+                .cell-name{
+                    font-weight: bold;font-size: 48rpx;height: 120rpx;position: relative;
+                    view{position: absolute;bottom: 0;}
+                    text{margin-left: 16rpx;}
+                }
+                .ui-team-msg{
+                    display: flex;justify-content: space-between;padding-right: 26rpx;margin-top:28rpx;font-size: 26rpx;color:rgba(255,255,255,0.60);
+                    text{
+                        font-size: 28rpx;margin-right: 11rpx;
+                    }
+                    view{&:nth-of-type(2){text{font-size: 32rpx;}}}
+                }
             }
-            
+        }
+        .ui-rank{
+            height: 208rpx;display: flex;align-items:center;padding-left:30rpx;border-bottom: 1rpx solid @border-gray;
+            .ui-member{
+                display: flex;width: 332rpx;
+                .ui-item{
+                    margin-right: 20rpx;width: 90rpx;display: flex;align-items:center;flex-direction: column;position: relative;
+                    &:first-child .cell-num{background: #FFB400;}
+                    &:nth-child(2) .cell-num{background:#B9C8CE;}
+                    &:nth-child(3) .cell-num{background:#D8B07A;}
+                    &:first-child .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageIDb3ec50f7091431b62d7fd42f7ef0.png');}
+                    &:nth-child(2) .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageID74a525ad27542e8557e82e66b2d3.png');}
+                    &:nth-child(3) .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageID23819cddd694e58c35fbae09b3f8.png');}
+                    .ui-brand{
+                        width: 42rpx;height: 46rpx;background-size: 100% 100%;position: absolute;top: -20rpx;
+                    }
+                    .ui-avatar{
+                        display: flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width: 88rpx;height: 88rpx;
+                        image{width: 88rpx;height: 88rpx;border-radius: 50%;}
+                    }
+                    .cell-num{
+                        width: 76rpx;height: 32rpx;border-radius: 16rpx;font-family: PingFangSC-Semibold;font-size: 20rpx;color: @color-white;display: flex;align-items: center;justify-content: center;margin-top: 10rpx;
+                    }
+
+                }
+            }
+            .ui-oneself{
+                display: flex;flex: 1;height: 100%;align-items: center;justify-content:flex-end;padding-right:28rpx;
+                .ui-member{
+                    display: flex;justify-content:flex-end;align-items: center;
+                    .ui-num{
+                        font-family: PingFangSC-Regular;font-size: 24rpx;color:@color-gray;height:88rpx;margin-right:20rpx;
+                        text{color:@color-red}
+                    }
+                    .ui-item{
+                        margin-right: 20rpx;width: 90rpx;display: flex;align-items:center;flex-direction: column;
+                        .ui-avatar{
+                            display: flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width: 88rpx;height: 88rpx;
+                            image{width: 88rpx;height: 88rpx;border-radius: 50%;}
+                        }
+                        .cell-num{
+                            width: 76rpx;height: 32rpx;border-radius: 16rpx;font-family: PingFangSC-Semibold;font-size: 20rpx;color: @color-white;display: flex;align-items: center;justify-content: center;margin-top: 10rpx;background: @background-mask-slightly
+                        }
+                    }
+                }
+                .cell-teacher{color:@color-blue;font-size: 32rpx;display: flex;justify-content:flex-end;height:102rpx;margin-right: 20rpx;align-items: flex-start}
+                .icon-details{color:@color-blue;height:88rpx;display:flex;}
+            }
         }
         .ui-today-task{
             .ui-title{
@@ -91,17 +157,62 @@
     <view class="ui-training-detail">
         <view class="ui-bg" style="background-image: url('{{imageUrl}}');">
             <view class="ui-content">
-                <view class="cell-time">{{teamTime}}</view>
-                <view class="cell-name">
-                    {{teamName}} <text class="icon-question" @tap.stop="getToggleQuestion"></text>
+                <view class="ui-date">
+                    <view class="cell-time">{{teamTime}}</view>
+                    <view wx:if="{{role == 'member'}}" class="cell-manage" @tap.stop="getManageTeam">
+                        管理 <text class="icon-setting"></text>
+                    </view>
                 </view>
-                <view></view>
+                <view class="cell-name">
+                    <view>
+                        {{teamName}} 
+                        <text class="icon-question" @tap.stop="getToggleQuestion"></text>
+                    </view>
+                    
+                </view>
+                <view class="ui-team-msg">
+                    <view>
+                        <text class="icon-lesson"></text>24节微课
+                    </view>
+                    <view>
+                        <text class="icon-community"></text>46个互动
+                    </view>
+                    <view>
+                        <text class="icon-member"></text>128人参与
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="ui-rank" @tap.stop="getRankList">
+            <view class="ui-member">
+                <view class="ui-item" wx:for="{{teamDetail.teamRankUserList}}" wx:key="{{index}}">
+                    <view class="ui-brand"></view>
+                    <view class="ui-avatar">
+                        <image src="{{item.avatarUrl}}"/>
+                    </view>
+                    <view class="cell-num">{{item.activeness}}</view>
+                </view>
+            </view>
+            <view class="ui-oneself">
+                <view wx:if="{{role === 'member'}}" class="ui-member">
+                    <view class="ui-num">
+                        第 <text class="cell-num"> {{teamDetail.myTeamRank.index}} </text> 名
+                    </view>
+                    <view class="ui-item">
+                        <view class="ui-avatar">
+                            <image src="{{teamDetail.myTeamRank.avatarUrl}}" />
+                        </view>
+                        <view class="cell-num">{{teamDetail.myTeamRank.activeness}}</view>
+                    </view>
+                </view>
+                <view wx:else class="cell-teacher">查看排行榜</view>
+                <text class="icon-details"></text>
             </view>
         </view>
         <view class="ui-today-task">
             <view class="ui-title">
                 <view class="cell-tip">今日任务</view>
-                <view class="cell-plan">查看学习计划<text class="icon-details"></text></view>
+                <view class="cell-plan" @tap.stop="getAllToadyTask">全部任务<text class="icon-details"></text></view>
             </view>
             <repeat for="{{todayTask}}" key="index" index="index" item="item">
                 <view class="ui-lesson" wx:if="{{item.taskType == 'online'}}">
@@ -206,13 +317,41 @@ export default class teamDetail extends wepy.page {
         courseImageList: [], // 课程介绍海报
         teacherImage:'',
         todayTask:[],
+        isShowManagerButton:false,
+        managerButtonStatus:'',
+        teamDetail:{}
+
     }
     methods= {
+        // 标题 问好
         getToggleQuestion(){
             let self = this;
             self.isShowQuestion = !self.isShowQuestion
             self.$apply()
-        } 
+        },
+        /* 
+            管理训练营
+        */
+        getManageTeam() {
+            let self = this;
+            if ('showManager' === self.managerButtonStatus) {
+                return self.$navigate(`/pages/training-camp-module/my/main`, {teamID: self.teamID})
+            }else if ('showMenberComplete' === self.managerButtonStatus) {
+                return self.$navigate(`/pages/training-camp-module/learning-result`, {teamID: self.teamID})
+            }else {
+                return console.log(`未定义与该状态${self.managerButtonStatus}对应的行为`)
+            }
+        },
+        // 排行榜
+        getRankList(){
+            let self = this;
+            self.$navigate('/pages/training-camp-module/ranking-list', {teamID: self.teamID,teamName: self.teamName})
+        },
+        // 查看今日的全部任务
+        getAllToadyTask() {
+            let self = this;
+            self.$navigate(`/pages/training-camp-module/task-list`, {teamID: self.teamID})
+        }
     }
 
     onLoad(params) {
@@ -251,6 +390,9 @@ export default class teamDetail extends wepy.page {
             self.courseImageList = res.courseImageList;
             self.teacherImage = res.teacherImage;
             self.todayTask = res.taskList.TaskContentList;
+            self.isShowManagerButton = res.isShowManagerButton
+            self.managerButtonStatus = res.managerButtonStatus
+            self.teamDetail = res.teamDetail;
 
             console.log(self.todayTask,1)
 

@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_nz4pe6bqg0h.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_nexps2awbb.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -166,3 +166,8 @@
 .icon-practice:before { content: "\e78d"; }
 
 .icon-add-btn:before { content: "\e78e"; }
+
+.icon-member:before { content: "\e629";}
+
+.icon-lesson:before { content: "\e62b";}
+  
