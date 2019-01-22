@@ -3,8 +3,8 @@
 </style>
 
 <template>
-    <jn-header></jn-header>
-    <view class="module-team-discuss-edit">
+    <view class="module-team-discuss-edit" hidden="{{isShowFullComponent}}">
+        <jn-header></jn-header>
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
                       maxlength="-1"
@@ -143,8 +143,13 @@
             }
         }
 
+        /**
+         * @param teamID 训练营ID
+         * */
         onLoad() {
-
+            let self = this
+            self.paramsInfo = params
+            self.$apply()
         }
 
         onShow() {
@@ -182,7 +187,7 @@
             let self = this
             let list = self.sendData.infoList
             wx.uploadFile({
-                url: `${config.baseUrl + 'app/upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51`,
+                url: `${config.baseUrl + 'app/upload'}?token=${self.paramsInfo.teamID}`,
                 filePath: flie,
                 name: 'file',
                 success(respone) {
@@ -277,10 +282,10 @@
                     self.isSumbit = false
                     self.$apply()
                     let postData = {
-                        token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51',
+                        token: self.paramsInfo.teamID,
                         body: {
                             json: {
-                                teamID: 'T2c7ac27b5634eb843993a616a35c',
+                                teamID: self.paramsInfo.teamID,
                                 ...self.sendData
                             }
                         }

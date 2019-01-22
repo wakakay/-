@@ -24,158 +24,160 @@
 </style>
 
 <template>
-    <jn-header></jn-header>
-    <view class="ui-select-list">
-        <view class="ui-radio dir-left">
-            <view class="cell-radio cross-center" data-type="importent" @tap.stop="getRadio">
-                <text class="{{sendData.infoType=='importent' ? 'icon-selected' : 'icon-selectable'}}"></text>通知
+    <view hidden="{{isShowFullComponent}}">
+        <jn-header></jn-header>
+        <view class="ui-select-list">
+            <view class="ui-radio dir-left">
+                <view class="cell-radio cross-center" data-type="importent" @tap.stop="getRadio">
+                    <text class="{{sendData.infoType=='importent' ? 'icon-selected' : 'icon-selectable'}}"></text>通知
+                </view>
+                <view class="cell-radio cross-center" data-type="normal" @tap.stop="getRadio">
+                    <text class="{{sendData.infoType=='normal' ? 'icon-selected' : 'icon-selectable'}}"></text>其他
+                </view>
             </view>
-            <view class="cell-radio cross-center" data-type="normal" @tap.stop="getRadio">
-                <text class="{{sendData.infoType=='normal' ? 'icon-selected' : 'icon-selectable'}}"></text>其他
+
+            <view class="ui-switch cross-center">
+                <text>置顶</text>
+                <switch color="#007AFF"
+                        checked="{{sendData.isTop}}"
+                        bindchange="getSwitch"></switch>
             </view>
         </view>
 
-        <view class="ui-switch cross-center">
-            <text>置顶</text>
-            <switch color="#007AFF"
-                    checked="{{sendData.isTop}}"
-                    bindchange="getSwitch"></switch>
-        </view>
-    </view>
+        <view class="ui-picker-box dir-left">
+            <picker mode="date"
+                    data-type="date"
+                    value="{{currentDate}}"
+                    start="{{startDate}}"
+                    bindchange="getDateChange">
+                <view class="cell-label">开始时间</view>
+                <view class="cell-time main-justify">{{currentDate}}<text class="icon-right-arrow"></text></view>
 
-    <view class="ui-picker-box dir-left">
-        <picker mode="date"
-                data-type="date"
-                value="{{currentDate}}"
-                start="{{startDate}}"
-                bindchange="getDateChange">
-            <view class="cell-label">开始时间</view>
-            <view class="cell-time main-justify">{{currentDate}}<text class="icon-right-arrow"></text></view>
-
-        </picker>
-        <view class="cell-unit">:</view>
-        <picker mode="time"
-                data-type="time"
-                value="{{currentTime}}"
-                start="{{startTime}}"
-                bindchange="getDateChange">
-            <view class="cell-label">具体时间</view>
-            <view class="cell-time main-justify">{{currentTime}}<text class="icon-right-arrow"></text></view>
-        </picker>
-    </view>
-
-    <view class="module-team-discuss-edit">
-        <view class="ui-title">
-            <textarea placeholder="输入标题（选填）"
-                      maxlength="-1"
-                      auto-height="{{true}}"
-                      adjust-position="{{false}}"
-                      data-type="title"
-                      value="{{sendData.title}}"
-                      bindblur="getBlur"></textarea>
+            </picker>
+            <view class="cell-unit">:</view>
+            <picker mode="time"
+                    data-type="time"
+                    value="{{currentTime}}"
+                    start="{{startTime}}"
+                    bindchange="getDateChange">
+                <view class="cell-label">具体时间</view>
+                <view class="cell-time main-justify">{{currentTime}}<text class="icon-right-arrow"></text></view>
+            </picker>
         </view>
 
-        <repeat for="{{sendData.infoList}}" key="index" index="index" item="data">
-            <view class="ui-description" wx:if="{{'text'==data.type}}">
-                <textarea placeholder="输入内容"
+        <view class="module-team-discuss-edit">
+            <view class="ui-title">
+                <textarea placeholder="输入标题（选填）"
                           maxlength="-1"
                           auto-height="{{true}}"
                           adjust-position="{{false}}"
-                          data-type="content"
-                          value="{{data.content}}"
+                          data-type="title"
+                          value="{{sendData.title}}"
                           bindblur="getBlur"></textarea>
             </view>
 
-            <view class="ui-link main-justify" wx:if="{{'link'==data.type}}">
-                <textarea maxlength="-1"
-                          auto-height="{{true}}"
-                          data-type="{{index}}"
-                          value="{{data.title}}"
-                          adjust-position="{{false}}"
-                          bindblur="getBlur"></textarea>
-                <view class="cell-close cross-center">
+            <repeat for="{{sendData.infoList}}" key="index" index="index" item="data">
+                <view class="ui-description" wx:if="{{'text'==data.type}}">
+                    <textarea placeholder="输入内容"
+                              maxlength="-1"
+                              auto-height="{{true}}"
+                              adjust-position="{{false}}"
+                              data-type="content"
+                              value="{{data.content}}"
+                              bindblur="getBlur"></textarea>
+                </view>
+
+                <view class="ui-link main-justify" wx:if="{{'link'==data.type}}">
+                    <textarea maxlength="-1"
+                              auto-height="{{true}}"
+                              data-type="{{index}}"
+                              value="{{data.title}}"
+                              adjust-position="{{false}}"
+                              bindblur="getBlur"></textarea>
+                    <view class="cell-close cross-center">
+                        <text class="icon-delete-select"
+                              data-index="{{index}}"
+                              data-item="{{data}}"
+                              @tap.stop="getDetele"></text>
+                    </view>
+                </view>
+
+                <view class="ui-thumb" wx:if="{{'image'==data.type}}">
+                    <image mode="widthFix" src="{{data.img}}"></image>
                     <text class="icon-delete-select"
                           data-index="{{index}}"
                           data-item="{{data}}"
                           @tap.stop="getDetele"></text>
                 </view>
-            </view>
 
-            <view class="ui-thumb" wx:if="{{'image'==data.type}}">
-                <image mode="widthFix" src="{{data.img}}"></image>
-                <text class="icon-delete-select"
-                      data-index="{{index}}"
-                      data-item="{{data}}"
-                      @tap.stop="getDetele"></text>
-            </view>
-
-            <view class="ui-lesson" wx:if="{{'lesson'==data.type}}">
-                <repeat for="{{data.list}}" key="index" index="index" item="item">
-                    <view class="ui-item flex">
-                        <view class="cell-thumb flex-box-0">
-                            <image mode="aspectFit" src="{{item.imageUrl}}"></image>
-                        </view>
-                        <view class="ui-content main-justify cross-center">
-                            <view class="ui-info">
-                                <view class="cell-title">{{item.senceName}}</view>
-                                <view class="cell-description">{{item.senceTarget}}…</view>
+                <view class="ui-lesson" wx:if="{{'lesson'==data.type}}">
+                    <repeat for="{{data.list}}" key="index" index="index" item="item">
+                        <view class="ui-item flex">
+                            <view class="cell-thumb flex-box-0">
+                                <image mode="aspectFit" src="{{item.imageUrl}}"></image>
+                            </view>
+                            <view class="ui-content main-justify cross-center">
+                                <view class="ui-info">
+                                    <view class="cell-title">{{item.senceName}}</view>
+                                    <view class="cell-description">{{item.senceTarget}}…</view>
+                                </view>
                             </view>
                         </view>
-                    </view>
-                </repeat>
-                <text class="icon-delete-select"
-                      data-index="{{index}}"
-                      data-item="{{data}}"
-                      @tap.stop="getDetele"></text>
-            </view>
-
-            <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
-                <repeat for="{{data.list}}" key="index" index="index" item="item">
-                    <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list" isExercises></jn-single-choice>
-                </repeat>
-                <text class="icon-delete-select"
-                      data-index="{{index}}"
-                      data-item="{{data}}"
-                      @tap.stop="getDetele"></text>
-            </view>
-
-            <view class="ui-poll" wx:if="{{'poll'==data.type}}">
-                <jn-poll :cardIndex.sync="index" :cardsList.sync="sendData.infoList"></jn-poll>
-                <text class="icon-delete-select"
-                      data-index="{{index}}"
-                      data-item="{{data}}"
-                      @tap.stop="getDetele"></text>
-            </view>
-        </repeat>
-
-        <view class="ui-tool">
-            <view class="ui-container main-justify cross-center">
-                <view class="ui-list flex-box-1">
-                    <button class="cell-item"
-                            data-type="image"
-                            disabled="{{!status.isThumb}}"
-                            @tap.stop="getAddLayer"><text class="icon-thumb"></text></button>
-                    <button class="cell-item"
-                            data-type="link"
-                            @tap.stop="getAddLayer"><text class="icon-link"></text></button>
-                    <button class="cell-item"
-                            data-type="lesson"
-                            disabled="{{!status.isLesson}}"
-                            @tap.stop="getAddLayer"><text class="icon-course1"></text></button>
-                    <button class="cell-item"
-                            wx:if="{{sendData.infoType!='importent'}}"
-                            data-type="practice"
-                            disabled="{{!status.isPractice}}"
-                            @tap.stop="getAddLayer"><text class="icon-practice"></text></button>
-                    <button class="cell-item"
-                            wx:if="{{sendData.infoType!='importent'}}"
-                            data-type="poll"
-                            disabled="{{!status.isPoll}}"
-                            @tap.stop="getAddLayer"><text class="icon-poll"></text></button>
+                    </repeat>
+                    <text class="icon-delete-select"
+                          data-index="{{index}}"
+                          data-item="{{data}}"
+                          @tap.stop="getDetele"></text>
                 </view>
-                <button class="cell-button flex-box-0"
-                        disabled="{{!isSumbit}}"
-                        @tap.stop="getSumbitDiscuss"><text class="icon-send"></text></button>
+
+                <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
+                    <repeat for="{{data.list}}" key="index" index="index" item="item">
+                        <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list" isExercises></jn-single-choice>
+                    </repeat>
+                    <text class="icon-delete-select"
+                          data-index="{{index}}"
+                          data-item="{{data}}"
+                          @tap.stop="getDetele"></text>
+                </view>
+
+                <view class="ui-poll" wx:if="{{'poll'==data.type}}">
+                    <jn-poll :cardIndex.sync="index" :cardsList.sync="sendData.infoList"></jn-poll>
+                    <text class="icon-delete-select"
+                          data-index="{{index}}"
+                          data-item="{{data}}"
+                          @tap.stop="getDetele"></text>
+                </view>
+            </repeat>
+
+            <view class="ui-tool">
+                <view class="ui-container main-justify cross-center">
+                    <view class="ui-list flex-box-1">
+                        <button class="cell-item"
+                                data-type="image"
+                                disabled="{{!status.isThumb}}"
+                                @tap.stop="getAddLayer"><text class="icon-thumb"></text></button>
+                        <button class="cell-item"
+                                data-type="link"
+                                @tap.stop="getAddLayer"><text class="icon-link"></text></button>
+                        <button class="cell-item"
+                                data-type="lesson"
+                                disabled="{{!status.isLesson}}"
+                                @tap.stop="getAddLayer"><text class="icon-course1"></text></button>
+                        <button class="cell-item"
+                                wx:if="{{sendData.infoType!='importent'}}"
+                                data-type="practice"
+                                disabled="{{!status.isPractice}}"
+                                @tap.stop="getAddLayer"><text class="icon-practice"></text></button>
+                        <button class="cell-item"
+                                wx:if="{{sendData.infoType!='importent'}}"
+                                data-type="poll"
+                                disabled="{{!status.isPoll}}"
+                                @tap.stop="getAddLayer"><text class="icon-poll"></text></button>
+                    </view>
+                    <button class="cell-button flex-box-0"
+                            disabled="{{!isSumbit}}"
+                            @tap.stop="getSumbitDiscuss"><text class="icon-send"></text></button>
+                </view>
             </view>
         </view>
     </view>
@@ -217,6 +219,7 @@
         }
 
         data = {
+            paramsInfo: {},
             isShowFullComponent: false,
             isShowInsertLink: false,
             isShowInsertLesson:false,
@@ -250,9 +253,13 @@
             }
         }
 
-        onLoad() {
+        /**
+         * @param teamID 训练营ID
+         * */
+        onLoad(params) {
             let self = this
             let date = new Date()
+            self.paramsInfo = params
             self.currentDate = date.format('yyyy-MM-dd')
             self.currentTime = date.format('hh: mm')
             self.startDate = self.currentDate + ''
@@ -301,7 +308,7 @@
             let self = this
             let list = self.sendData.infoList
             wx.uploadFile({
-                url: `${config.baseUrl + 'app/upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51`,
+                url: `${config.baseUrl + 'app/upload'}?token=${self.systemInfo.token}`,
                 filePath: flie,
                 name: 'file',
                 header: {
@@ -426,10 +433,10 @@
                     self.isSumbit = false
                     self.$apply()
                     let postData = {
-                        token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1547699531518-1e9020e9ae68406c5968328bb56faa51',
+                        token: self.systemInfo.token,
                         body: {
                             json: {
-                                teamID: 'T2c7ac27b5634eb843993a616a35c',
+                                teamID: self.paramsInfo.teamID,
                                 beginTime: `${self.currentDate} ${self.currentTime}`,
                                 ...self.sendData
                             }
