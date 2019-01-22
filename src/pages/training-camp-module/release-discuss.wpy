@@ -337,13 +337,11 @@
                         index: list.length
                     })
                 }
-
                 self.isShowInsertLesson = false
                 self.isShowFullComponent = false
                 self.$apply()
             },
             'on-add-practice': (data) => {
-                console.log('practice', data)
                 let self= this
                 let list = self.sendData.infoList
                 if (data) {

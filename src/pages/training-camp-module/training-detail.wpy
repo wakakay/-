@@ -30,6 +30,36 @@
                 }
                 .ui-btn{width: 148rpx;height: 60rpx;border-radius: 60rpx;background: @background-gray-F4;font-size: 30rpx;color: @color-blue;text-align: center;line-height: 60rpx;font-weight: bold;}
             }
+            .ui-image{
+                margin-top:16rpx;text-align:center;
+                image{width: 622rpx;}
+            }
+            .ui-detail{
+                display: flex;margin-top:16rpx;
+                .ui-portrait{
+                    margin-right: 22rpx;
+                    image{width: 160rpx;height: 192rpx;border-radius:@border-radius-20}
+                }
+                .ui-message{
+                    color:@color-gray;font-size:26rpx;
+                    .ui-name{font-size: 40rpx;color:@color-black}
+                    .ui-teacher{
+                        display: flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                    .ui-time{
+                        display: flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                    .ui-address{
+                        display: flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                }
+            }
         }
 
     }
@@ -84,6 +114,31 @@
                     </view>
                     <view class="ui-btn">
                         {{item.buttonMsg}}
+                    </view>
+                </view>
+                <view class="ui-image" wx:if="{{'offline' == item.taskType &&  '图片' == item.contentType}}">
+                    <image  mode="widthFix"  src="{{item.image}}"/>
+                </view>
+                <view  wx:if="{{'offline' == item.taskType &&  '列表' == item.contentType}}" class="ui-detail">
+                    <view class="ui-portrait">
+                        <image  mode="aspectFill"  src="{{item.portrait}}"/>
+                    </view>
+                    <view class="ui-message">
+                        <view class="ui-name">
+                            <view>{{item.offlineTaskName}}</view>
+                        </view>
+                        <view class="ui-time">
+                            <text class="cell-key">主持人：</text>
+                            <text class="cell-value">{{item.teacherName}}</text>
+                        </view>
+                        <view class="ui-time">
+                            <text class="cell-key">授课时间：</text>
+                            <text class="cell-value">{{item.offlineTime}}</text>
+                        </view>
+                        <view class="ui-address">
+                            <text class="cell-key">授课地点：</text>
+                            <text class="cell-value">{{item.address}}</text>
+                        </view>
                     </view>
                 </view>
             </repeat>

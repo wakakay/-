@@ -13,7 +13,7 @@
     }
 </style>
 <template>
-    <view class="ui-camp-discuss-component"  hidden="{{ !isShow }}">
+    <view class="ui-camp-discuss-component router-translate  {{isShow ? 'router-enter' : 'router-leave'}}">
         <jn-header hiddenButton title="题目选择">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClosePage">
                 <text class="icon-back-close"></text>
@@ -84,7 +84,7 @@
             },
             getClosePage(){
                 let self = this;
-                self.$emit('on-add-practice')
+                self.$emit('on-add-practice', {})
             },
             getStartSearch(){
                 let self = this;
