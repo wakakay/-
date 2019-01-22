@@ -1,0 +1,224 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-training-detail{
+        .ui-bg{
+            height: 480rpx;width: 100%;background-size: 100% 100%;position: relative;
+            .ui-content{
+                left: 0;right: 0;position: absolute;top: 0;bottom: 0;background: rgba(0,0,0,0.4);padding:156rpx 0 0 40rpx;box-sizing: border-box;color:@color-white;
+                .cell-time{opacity: 0.7;font-size: 26rpx;margin-bottom:120rpx;}
+                .cell-name{font-weight: bold;font-size: 48rpx;}
+            }
+            
+        }
+        .ui-today-task{
+            .ui-title{
+                display: flex;height: 88rpx;justify-content: space-between;align-items: center;box-sizing: border-box;padding: 0 28rpx 0 32rpx;
+                .cell-tip{font-size: 44rpx;font-weight: bold;}
+                .cell-plan{color: @color-blue;font-size: 34rpx;}
+            }
+            .ui-lesson{
+                display: flex;padding:0 32rpx;height: 176rpx;align-items: center;justify-content: space-between;
+                .ui-name{
+                    display: flex;flex:1;
+                    image{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 24rpx;}
+                    .ui-detail{
+                        display: flex;flex-direction: column;justify-content:center;flex:1;
+                        .cell-name{font-size: 32rpx;font-weight: bold}
+                        .cell-skill{font-size: 26rpx;color: @color-blue}
+                    }
+                    
+                }
+                .ui-btn{width: 148rpx;height: 60rpx;border-radius: 60rpx;background: @background-gray-F4;font-size: 30rpx;color: @color-blue;text-align: center;line-height: 60rpx;font-weight: bold;}
+            }
+        }
+
+    }
+    .ui-title-shade{
+		width:100%;height:100vh;position:fixed;left:0;top:0;background-color:@background-mask-slightly;z-index:50;
+		.ui-box{
+			position: absolute;bottom:-100%;left: 0;transition: all .6s ease-in;right:0;
+			.ui-top{
+				width: 100%;background-color: @background-white;
+				text{width: 24px;height: 24px;display: block;margin: 0 10px 0 auto;padding: 8px 0;color:@color-gray;}
+			}
+			.ui-scroll{
+				width: 100%;display: relative;box-sizing: border-box;padding: 0 30rpx;overflow-y: scroll;background-color: @background-white;height: 463px;
+				.cell-title{padding:36rpx 0 46rpx;position:relative;white-space:nowrap;font-size:48rpx;color:@color-black;font-weight: bold;border-top:2rpx solid @border-gray}
+				.cell-li{width:598rpx;display:block;margin-bottom:32rpx;position:relative;font-size:32rpx;color:@color-gray;}
+				.cell-course-title{padding:32rpx 0 48rpx;position:relative;white-space:nowrap;font-weight: bold;font-size:48rpx;color:@color-black;border-top:2rpx solid @border-gray}
+				.cell-poster{width:686rpx;display:block;margin-bottom:43rpx;}
+				.cell-teacher{padding:34rpx 0 52rpx;position:relative;white-space:nowrap;font-weight: bold;font-size:48rpx;color:@color-black;border-top:2rpx solid @border-gray}
+				.cell-teacher-image{width:100%;display:block;padding-bottom:136rpx;}
+
+			}
+		}
+		.ui-box.active{bottom:0;background: @background-white;}
+	}
+</style>
+<template>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
+    <view class="ui-training-detail">
+        <view class="ui-bg" style="background-image: url('{{imageUrl}}');">
+            <view class="ui-content">
+                <view class="cell-time">{{teamTime}}</view>
+                <view class="cell-name">
+                    {{teamName}} <text class="icon-question" @tap.stop="getToggleQuestion"></text>
+                </view>
+                <view></view>
+            </view>
+        </view>
+        <view class="ui-today-task">
+            <view class="ui-title">
+                <view class="cell-tip">今日任务</view>
+                <view class="cell-plan">查看学习计划<text class="icon-details"></text></view>
+            </view>
+            <repeat for="{{todayTask}}" key="index" index="index" item="item">
+                <view class="ui-lesson" wx:if="{{item.taskType == 'online'}}">
+                    <view class="ui-name">
+                        <image mode="aspectFill"  src="{{item.imageUrl}}"/>
+                        <view class="ui-detail">
+                            <view class="cell-name">{{item.senceName}}</view>
+                            <view class="cell-skill" wx:if="{{item.skillGroup}}">#{{item.skillGroup}}</view>
+                        </view>
+                    </view>
+                    <view class="ui-btn">
+                        {{item.buttonMsg}}
+                    </view>
+                </view>
+            </repeat>
+        </view>
+    </view>
+    <!-- 点击 标题 弹窗 -->
+	<view hidden="{{ !isShowQuestion }}" class="ui-title-shade">
+		<view class="ui-box {{ isShowQuestion? 'active': '' }}" style="bottom: {{ isShowQuestion? '0': '-1006rpx' }};">
+			<view class="ui-top" @tap.stop="getToggleQuestion">
+				<text class="icon-back-close"></text>
+			</view>
+			<scroll-view class="ui-scroll" scroll-y>
+				<view wx:if="{{ targetList.length&&targetList[0] }}" class="cell-title">学习目标</view>
+				<text wx:if="{{ targetList.length&&item }}" wx:for="{{ targetList }}" wx:key="{{ index }}" class="cell-li">
+                    {{ item }}
+                </text>
+
+				<view wx:if="{{ courseImageList.length }}" class="cell-course-title">训练营介绍</view>
+
+				<image wx:if="{{ courseImageList.length }}" wx:for="{{ courseImageList }}" wx:key="{{ index }}" class="cell-poster" src="{{item}}" mode="widthFix"></image>
+
+				<view wx:if="{{ teacherImage }}" class="cell-teacher">导师介绍</view>
+				<image wx:if="{{ teacherImage }}" class="cell-teacher-image" src="{{ teacherImage }}" mode="widthFix" />
+			</scroll-view>
+		</view>
+	</view>
+    <view></view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Loading from '../../components/common/loading'
+import header from '../../components/common/header'
+import {initializationDeligate, navigateToLesson} from "../../utils"
+import {getStore, connect} from "wepy-redux"
+import {team as teamApi, share as shareApi} from '../../api'
+
+const store = getStore();
+
+@connect({
+    token(state) {
+        return state.user.token
+    },
+})
+
+export default class teamDetail extends wepy.page {
+    components = {
+        'jn-header': header,
+        'mloading': Loading,
+    };
+
+    data={
+        isLoaded:false,
+        isHeadHeight:false,
+        headerBackground: 'background-transparent',
+        teamID:'',
+        wxPushType:'',
+        role:'',
+        teamTime:null,
+        teamName:null,
+        signUpUserCount:0,
+        imageUrl:'',
+        isShowQuestion:false,
+        targetList: [],
+        courseImageList: [], // 课程介绍海报
+        teacherImage:'',
+        todayTask:[],
+    }
+    methods= {
+        getToggleQuestion(){
+            let self = this;
+            self.isShowQuestion = !self.isShowQuestion
+            self.$apply()
+        } 
+    }
+
+    onLoad(params) {
+        let self = this;
+        self.teamID = params.teamID
+        self.wxPushType = params.wxPushType
+        self.$apply()
+
+        wepy.$instance.globalData.getLoadHuilder() // ga统计
+    }
+
+
+    onShow() {
+        let self = this
+        initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+    }
+
+    initialize() {
+        let self = this
+        let postData = {
+            token: self.token,
+            teamID : self.teamID
+        }
+
+        if (self.wxPushType) {
+            postData.wxPushType = self.wxPushType
+        }
+        teamApi.getTeamDetail(postData).then((res)=>{
+
+            self.imageUrl = res.imageUrl;
+            self.teamName = res.name;
+            self.signUpUserCount = res.signUpUserCount;
+            self.teamTime = res.time;
+            self.role = res.role;
+            self.targetList = res.targetList;
+            self.courseImageList = res.courseImageList;
+            self.teacherImage = res.teacherImage;
+            self.todayTask = res.taskList.TaskContentList;
+
+            console.log(self.todayTask,1)
+
+            self.isLoaded = true;
+
+
+
+            self.$apply()
+
+        }).then(()=>{
+
+            teamApi.getExtraList(postData).then((res) => {
+                console.log(res)
+            })
+
+        }).catch((error) => {
+            console.log('fail to load vote data du to', error)
+        })
+
+       
+    }
+
+}
+</script>
+
+

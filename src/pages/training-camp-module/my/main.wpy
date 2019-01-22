@@ -583,8 +583,8 @@
                         })) //分享事件上报
                       .then(() => {
                         let pages = getCurrentPages()
-                        let index = pages.findIndex(item => item.route === 'pages/training-camp-module/coursr-list')
-                        if (-1===index) return this.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+                        let index = pages.findIndex(item => item.route === 'pages/training-camp-module/training-detail')
+                        if (-1===index) return this.$redirect(`/pages/training-camp-module/training-detail`, { teamID })
                         let delta = pages.length - 1 - index
                         return wepy.navigateBack({
                           delta
@@ -611,8 +611,8 @@
                         })
                         .then(() => {
                           let pages = getCurrentPages()
-                          let index = pages.findIndex(item => item.route === 'pages/training-camp-module/coursr-list')
-                          if (-1===index) return this.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+                          let index = pages.findIndex(item => item.route === 'pages/training-camp-module/training-detail')
+                          if (-1===index) return this.$redirect(`/pages/training-camp-module/training-detail`, { teamID })
                           let delta = pages.length - 1 - index
                           return wepy.navigateBack({
                             delta

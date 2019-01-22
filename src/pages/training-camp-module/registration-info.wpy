@@ -186,9 +186,9 @@
 					}, 4000)
                     let rounter = getCurrentPages()
                     if (rounter.length > 2) {
-                        return wx.redirectTo({url:`/pages/training-camp-module/coursr-list?teamID=${this.teamID}`})
+                        return wx.redirectTo({url:`/pages/training-camp-module/training-detail?teamID=${this.teamID}`})
                     }
-					return wx.reLaunch({url:`/pages/training-camp-module/coursr-list?teamID=${this.teamID}`})
+					return wx.reLaunch({url:`/pages/training-camp-module/training-detail?teamID=${this.teamID}`})
 				})
 				.catch(error => {
 					console.log(error + 'fail to confirm from backend')
