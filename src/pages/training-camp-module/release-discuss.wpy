@@ -65,25 +65,22 @@
                       data-type="{{index}}"
                       @tap.stop="getDetele"></text>
             </view>
-
-            <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
-                <repeat for="{{data.list}}" key="index" index="index" item="item">
-                    <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list"></jn-single-choice>
-                </repeat>
-                <text class="icon-delete-select"
-                      data-type="{{index}}"
-                      @tap.stop="getDetele"></text>
-            </view>
-
         </repeat>
 
         <view class="ui-tool">
             <view class="ui-container main-justify cross-center">
                 <view class="ui-list flex-box-1">
-                    <button class="cell-item" @tap.stop="getAddThumb"><text class="icon-thumb"></text></button>
-                    <button class="cell-item" @tap.stop="getAddLink"><text class="icon-link"></text></button>
-                    <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
-                    <button class="cell-item" @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
+                    <button class="cell-item"
+                            data-type="image"
+                            disabled="{{!status.isThumb}}"
+                            @tap.stop="getAddLayer"><text class="icon-thumb"></text></button>
+                    <button class="cell-item"
+                            data-type="link"
+                            @tap.stop="getAddLayer"><text class="icon-link"></text></button>
+                    <button class="cell-item"
+                            data-type="lesson"
+                            disabled="{{!status.isLesson}}"
+                            @tap.stop="getAddLayer"><text class="icon-course1"></text></button>
                 </view>
                 <button class="cell-button flex-box-0"
                         disabled="{{!isSumbit}}"
@@ -93,7 +90,6 @@
     </view>
     <jn-insert-link :isShow.sync="isShowInsertLink"></jn-insert-link>
     <jn-insert-lesson :isShow.sync="isShowInsertLesson"></jn-insert-lesson>
-    <jn-insert-practice :isShow.sync="isShowInsertPractice"></jn-insert-practice>
 </template>
 
 <script>
@@ -102,8 +98,6 @@
     import header from '../../components/common/header'
     import insertLink from '../../components/team-module/insert-link'
     import insertLesson from '../../components/team-module/add-lesson'
-    import insertPractice from '../../components/team-module/add-practice'
-    import singleChoice from '../../components/cards-type/single-choice'
     import config from '../../api/config'
     import {fetch} from '../../api'
     import _ from 'underscore'
@@ -118,9 +112,7 @@
         components = {
             'jn-header': header,
             'jn-insert-link': insertLink,
-            'jn-insert-lesson' : insertLesson,
-            'jn-insert-practice' : insertPractice,
-            'jn-single-choice': singleChoice
+            'jn-insert-lesson' : insertLesson
         }
 
         data = {
@@ -129,8 +121,18 @@
             isShowInsertLesson:false,
             isShowInsertPractice:false,
             isSumbit: true,
+            status: { // 底部按钮是否可用, 微课跟联系是互斥
+                isThumb: true,
+                isLesson: true,
+                isPractice: true,
+                isPoll: true
+            },
             sendData: {
                 title: '',
+                roleType: 'member',
+                infoType: 'normal',
+                userID: 'defaultUserID',
+                postID: 'defaultpostID',
                 infoList: [
                     {
                         content: "",
@@ -154,10 +156,20 @@
          * @param index
          * @private
          */
-        __deteleModule(index) {
+        __deteleModule(item, index) {
             let self = this
             let list = self.sendData.infoList
             list.splice(index, 1)
+
+            switch (item.type) {
+                case 'image':
+                    self.status.isThumb = true
+                    break
+                case 'lesson':
+                    self.status.isLesson = true
+                    break
+            }
+
             self.$apply()
         }
 
@@ -207,42 +219,40 @@
                 }
             },
             /**
-             * 添加图片模块
+             * 弹出对应的添加框
+             * @param event
              */
-            getAddThumb() {
+            getAddLayer(event) {
                 let self = this
-                let list = self.sendData.infoList
-                wx.chooseImage({
-                    count: 1,
-                    success: (data) => {
-                        self.__chooseImage(data.tempFiles[0].path)
-                    }
-                })
-            },
-            /**
-             * 添加超链接
-             */
-            getAddLink() {
-                let self = this
-                self.isShowInsertLink = true
-                self.$apply()
-            },
-            /**
-             * 添加练习题
-             */
-            getAddPractice() {
-                let self = this;
-                self.isShowInsertPractice = true;
-                self.$apply()
-            },
-            /**
-             * 添加微课
-             */
-            getAddLesson() {
-                let self = this
-                self.isShowInsertLesson = true
-                self.isShowFullComponent = true
-                self.$apply()
+                let {currentTarget: {dataset: {type}}} = event
+
+                switch (type) {
+                    case 'image':
+                        let list = self.sendData.infoList
+                        wx.chooseImage({
+                            count: 1,
+                            success: (data) => {
+                                self.__chooseImage(data.tempFiles[0].path)
+                            }
+                        })
+                        break
+                    case 'link':
+                        self.isShowInsertLink = true
+                        break
+                    case 'lesson':
+                        self.isShowInsertLesson = true
+                        self.isShowFullComponent = true
+                        break
+                    case 'practice':
+                        self.isShowInsertPractice = true
+                        self.isShowFullComponent = true
+                        break
+                    case 'poll':
+                        self.isShowInsertPoll = true
+                        self.isShowFullComponent = true
+                        break
+                }
+
             },
             /**
              * 删除模块
@@ -250,8 +260,8 @@
              */
             getDetele(event) {
                 let self = this
-                let {currentTarget: {dataset: {type}}} = event
-                self.__deteleModule(type)
+                let {currentTarget: {dataset: {item, index}}} = event
+                self.__deteleModule(item, index)
             },
             /**
              * 提交讨论信息
@@ -271,20 +281,16 @@
                         body: {
                             json: {
                                 teamID: 'T2c7ac27b5634eb843993a616a35c',
-                                roleType: 'member',
-                                infoType: 'normal',
-                                userID: 'defaultUserID',
-                                postID: 'defaultpostID',
                                 ...self.sendData
                             }
                         }
                     }
 
-                    fetch.queryPracticeList(postData).then(respone => {
+                    fetch.saveTeamPost(postData).then(respone => {
                         self.isSumbit = true
                         self.sendData = {
                             title: '',
-                                infoList: [
+                            infoList: [
                                 {
                                     content: "",
                                     index: 0,
@@ -312,16 +318,18 @@
                 let list = self.sendData.infoList
                 let item = _.find(list, {type: 'link'})
 
-                if (!item) {
-                    list.push({
-                        title: data.title || data.link,
-                        link: data.link,
-                        type: 'link',
-                        index: list.length
-                    })
-                } else {
-                    item.title = data.title,
-                    item.link = data.link
+                if (!_.isEmpty(data)) {
+                    if (!item) {
+                        list.push({
+                            title: data.title || data.link,
+                            link: data.link,
+                            type: 'link',
+                            index: list.length
+                        })
+                    } else {
+                        item.title = data.title,
+                            item.link = data.link
+                    }
                 }
 
                 self.isShowInsertLink = false
@@ -330,29 +338,15 @@
             'on-add-lesson': (data) => {
                 let self = this
                 let list = self.sendData.infoList
-                if (data) {
+                if (!_.isEmpty(data)) {
                     list.push({
                         list: data,
                         type: 'lesson',
                         index: list.length
                     })
+                    self.status.isLesson = false
                 }
                 self.isShowInsertLesson = false
-                self.isShowFullComponent = false
-                self.$apply()
-            },
-            'on-add-practice': (data) => {
-                let self= this
-                let list = self.sendData.infoList
-                if (data) {
-                    list.push({
-                        list: data,
-                        type: 'textSelectionVer2',
-                        index: list.length
-                    })
-                }
-
-                self.isShowInsertPractice = false
                 self.isShowFullComponent = false
                 self.$apply()
             }

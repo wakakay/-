@@ -178,7 +178,7 @@ export default {
      * 团读书学习→发起讨论
      * @param  teamID: 团队ID
      */
-    queryPracticeList(params) {
+    saveTeamPost(params) {
         return fetch({method: 'post', url: 'team/saveTeamPost', params: params})
     },
 
