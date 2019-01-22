@@ -29,7 +29,7 @@
     export default class extends wepy.app {
         config = {
             pages: [
-
+                'pages/training-camp-module/training-detail', // 训练营-课程列表
                 'pages/training-camp-module/my/release-discuss', // 我管理-发布谈论
                 'pages/training-camp-module/release-discuss', // 发布谈论
                 /* 课程模板 */
@@ -70,7 +70,6 @@
                 'pages/training-camp-module/registration', // 训练营-报名
                 'pages/training-camp-module/registration-info', // 训练营-报名信息
                 'pages/training-camp-module/coursr-list', // 训练营-课程列表
-                'pages/training-camp-module/training-detail', // 训练营-课程列表
 
                 'pages/training-camp-module/release-message', // 训练营-发布消息
                 'pages/training-camp-module/add-task', // 添加任务

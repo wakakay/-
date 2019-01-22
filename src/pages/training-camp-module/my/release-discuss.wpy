@@ -283,9 +283,8 @@
                     self.status.isLesson = true
                     break
                 case 'textSelectionVer2':
-                    self.status.isPractice = true
-                    break
                 case 'poll':
+                    self.status.isPractice = true
                     self.status.isPoll = true
                     break
             }
