@@ -131,7 +131,7 @@
 
             <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
                 <repeat for="{{data.list}}" key="index" index="index" item="item">
-                    <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list"></jn-single-choice>
+                    <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list" isExercises></jn-single-choice>
                 </repeat>
                 <text class="icon-delete-select"
                       data-index="{{index}}"
