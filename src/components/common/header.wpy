@@ -216,7 +216,7 @@
                 let delta = self.routerDelta + 0
                 let rounter = getCurrentPages()
                 if (rounter.length
-                    && rounter[rounter.length-1] === 'pages/training-camp-module/coursr-list'
+                    && rounter[rounter.length-1] === 'pages/training-camp-module/training-detail'
                     && rounter[rounter.length-2] === 'pages/training-camp-module/registration') {
                     delta = 2
                 }

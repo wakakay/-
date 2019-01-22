@@ -314,7 +314,7 @@
             //跳往详情页
 			handleTendToAttendTeamLearning({currentTarget: {dataset: {teamID}}})
 			{
-                this.$navigate('/pages/training-camp-module/coursr-list', {
+                this.$navigate('/pages/training-camp-module/training-detail', {
                     teamID
                 })
             },

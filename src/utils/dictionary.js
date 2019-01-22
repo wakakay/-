@@ -50,6 +50,7 @@ export const ROUTERS = {
     'pages/training-camp-module/registration': {screenName: '训练营-报名'},
     'pages/training-camp-module/registration-info': {screenName: '训练营-报名信息'},
     'pages/training-camp-module/coursr-list': {screenName: '训练营-课程列表', sence: 'teamLearShare'},
+    'pages/training-camp-module/training-detail': {screenName: '训练营-课程列表', sence: 'teamLearShare'},
     'pages/training-camp-module/release-message': {screenName: '训练营-发布消息'},
     'pages/training-camp-module/add-task': {screenName: '训练营-添加任务'},
     'pages/training-camp-module/invite-friends': {screenName: '训练营-邀请好友'},
