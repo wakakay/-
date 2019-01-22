@@ -143,6 +143,7 @@
                     <button class="cell-item" @tap.stop="getAddLink"><text class="icon-link"></text></button>
                     <button class="cell-item" @tap.stop="getAddLesson"><text class="icon-course1"></text></button>
                     <button class="cell-item" @tap.stop="getAddPractice"><text class="icon-practice"></text></button>
+                    <button class="cell-item" @tap.stop="getAddPoll"><text class="icon-poll"></text></button>
                 </view>
                 <button class="cell-button flex-box-0"
                         disabled="{{!isSumbit}}"
@@ -179,8 +180,8 @@
         components = {
             'jn-header': header,
             'jn-insert-link': insertLink,
-            'jn-insert-lesson' : insertLesson,
-            'jn-insert-practice' : insertPractice,
+            'jn-insert-lesson': insertLesson,
+            'jn-insert-practice': insertPractice,
             'jn-insert-poll': insertPoll,
             'jn-single-choice': singleChoice
         }
@@ -329,8 +330,9 @@
              * 添加练习题
              */
             getAddPractice() {
-                let self = this;
-                self.isShowInsertPractice = true;
+                let self = this
+                self.isShowInsertPractice = true
+                self.isShowFullComponent = true
                 self.$apply()
             },
             /**
@@ -339,6 +341,15 @@
             getAddLesson() {
                 let self = this
                 self.isShowInsertLesson = true
+                self.isShowFullComponent = true
+                self.$apply()
+            },
+            /**
+             * 添加投票
+             */
+            getAddPoll() {
+                let self = this
+                self.isShowInsertPoll = true
                 self.isShowFullComponent = true
                 self.$apply()
             },
@@ -453,6 +464,13 @@
                 }
 
                 self.isShowInsertPractice = false
+                self.isShowFullComponent = false
+                self.$apply()
+            },
+            'on-add-poll': (data) => {
+                console.log('poll', data)
+                let self= this
+                self.isShowInsertPoll = false
                 self.isShowFullComponent = false
                 self.$apply()
             }
