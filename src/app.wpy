@@ -81,8 +81,6 @@
                 'pages/training-camp-module/task-list', // 全部任务
                 'pages/training-camp-module/my/main', // 我管理-管理
                 'pages/training-camp-module/my/edit', // 我管理-编辑训练营
-                'pages/training-camp-module/my/add-lesson', // 我管理-选择微课
-                'pages/training-camp-module/my/add-practice', // 我管理-题目选择
                 'pages/training-camp-module/my/students-list', // 我管理-学员列表
                 'pages/training-camp-module/my/students-management', // 我管理-学员管理
                 'pages/training-camp-module/my/release-task', // 我管理-发布任务

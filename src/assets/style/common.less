@@ -1,5 +1,10 @@
 @import "./theme";
 button[disabled]{background-color:@background-gray-F4 !important;color:@color-gray !important;}
+.router-translate{
+    transition:all .5s cubic-bezier(.55,0,.1,1);transform:translateX(100%);opacity:0.5;
+    &.router-leave{transform:translateX(100%);opacity:0.5;}
+    &.router-enter{transform:translateX(0);opacity:1;}
+}
 /* header组件 */
 .module-header{
     width:100%;transition:all .2s ease;
