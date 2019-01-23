@@ -102,7 +102,7 @@
     import Loading from '../../components/common/loading'
     import singleChoice from '../../components/cards-type/single-choice'
     import sort from '../../components/cards-type/sort'
-    import {card as cardApi} from '../../api'
+    import {fetch, share as shareApi} from '../../api'
     import {initializationDeligate} from '../../utils'
     import _ from 'underscore'
 
@@ -163,7 +163,7 @@
                 teamID: self.paramsInfo.teamID || 'defaultTeamID'
             }
             self.isLoaded = false
-            cardApi.getPracticeList(postData).then(respone => {
+            fetch.getPracticeList(postData).then(respone => {
                 self.isLoaded = true
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: respone.name}) // ga统计
                 self.__dataRegroup(respone)
@@ -237,9 +237,9 @@
                 }
             }
 
-            cardApi.sendCardScore(postData).then((respone) => {
+            fetch.sendCardScore(postData).then((respone) => {
                 // 当技能分数大于上一次的才更新
-                let res = respone.data.data
+                let res = respone
                 res.showScore = res.upScore >= 0 ? res.currentScore : res.beforeScore
                 self.commentsCount = res.commentsCount
                 self.scoreInfo = res

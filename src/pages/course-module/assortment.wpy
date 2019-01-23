@@ -178,7 +178,6 @@
     import header from '../../components/common/header'
     import couseList from '../../components/course-module/course-list'
     import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
-    import {share as shareApi} from "../../api";
     import _ from 'underscore'
 
     const store = getStore()
@@ -417,7 +416,7 @@
                     let token = self.systemInfo.token
                     let courseID = self.courseInfo.courseSeriesID
                     self.isStatisticalCourse = true
-                    shareApi.reportSharing({
+                    fetch.reportSharing({
                         token,
                         type: shareDictionary.SHARE_ASSORTMENT_COURSE.type,
                         courseID
@@ -461,7 +460,7 @@
                     let courseID = self.courseInfo.courseSeriesID
 
                     wepy.$instance.globalData.getHuilder('系列详情页/分享', 'click', `${self.courseInfo.seriesName}`)
-                    shareApi.reportSharing({
+                    fetch.reportSharing({
                         token,
                         type: shareDictionary.SHARE_ASSORTMENT.type,
                         courseID

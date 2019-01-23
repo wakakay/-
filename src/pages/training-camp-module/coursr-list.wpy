@@ -833,7 +833,7 @@
     import wepy from 'wepy'
     import {getStore, connect} from "wepy-redux"
     import {navigateToLesson, sleep, parsePercentageForPoll, shareDictionary} from "../../utils"
-    import {team as teamApi, share as shareApi} from '../../api'
+    import {fetch, team as teamApi} from '../../api'
     import Loading from '../../components/common/loading'
     import PushMixin from "../../mixins/push";
     import loadingMixin from '../../mixins/loading'
@@ -1535,7 +1535,7 @@
                         shareFlag: mNow
                     })
                         .then(() =>
-                            shareApi.reportSharing({
+                            fetch.reportSharing({
                                 token: self.token,
                                 type: shareDictionary.SHARE_TEAM.type,
                             })) // 向后台上报分享行为

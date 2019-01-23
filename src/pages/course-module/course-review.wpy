@@ -255,7 +255,7 @@
 
 <script>
     import wepy from "wepy";
-    import {share as shareApi, fetch} from "../../api/index";
+    import {fetch} from "../../api/index";
     import {getStore, connect} from "wepy-redux";
     import Loading from "../../components/common/loading";
     import header from '../../components/common/header'
@@ -570,7 +570,7 @@
                     senceID: self.senceID
                 }
 
-                shareApi.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
+                fetch.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {
                     self.isSubmit = false
                     let shareImages = {
                         senceThumb: self.imageUrl,

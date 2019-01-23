@@ -411,7 +411,7 @@
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import actionSheet from '../../components/common/actionSheet'
-    import {course as courseApi, share as shareApi, fetch} from '../../api'
+    import {course as courseApi, fetch} from '../../api'
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary, getStorageAsync} from '../../utils'
     import {CustomError} from '../../errors'
@@ -998,7 +998,7 @@
                 }
             }
 
-            shareApi.reportSharing({
+            fetch.reportSharing({
                 token: self.systemInfo.token,
                 type: reportType,
                 courseID: self.paramsInfo.id

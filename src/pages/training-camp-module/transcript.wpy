@@ -282,7 +282,7 @@
   import header from '../../components/common/header'
   import { getStore, connect } from 'wepy-redux'
   import { getStorageAsync, sleep, downLoadPhoto, drawText, canvasPreviewAndSave,shareDictionary } from "../../utils"
-  import { share as shareApi, team as teamApi } from '../../api'
+  import {fetch, team as teamApi } from '../../api'
 
   const store = getStore()
 
@@ -349,7 +349,7 @@
 
     methods = {
       handlePreviewSaveImage() {
-        shareApi.reportSharing({
+        fetch.reportSharing({
             token: this.token,
             type: shareDictionary.SHARE_TEAM.report,
             teamID:this.teamID

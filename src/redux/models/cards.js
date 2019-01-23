@@ -1,4 +1,4 @@
-import {card as cardApi} from '../../api'
+import {fetch} from '../../api'
 import {setCurrentCourseID} from './courses'
 import {parsePercentageForPoll} from '../../utils'
 
@@ -163,7 +163,7 @@ export const fetchCards = ({token, senceID, courseID, teamID}) => (dispatch, get
     const requestFlag = Date.now()
     dispatch(setCards({status: 'pending'}))
     dispatch(setRequestFlag(requestFlag))
-    return cardApi.getCardList({token, senceID, courseID, requestFlag, teamID}).then(({description, list, name, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow, lessonType}) => {
+    return fetch.getCardList({token, senceID, courseID, requestFlag, teamID}).then(({description, list, name, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow, lessonType}) => {
         const mArr = list && list.map(item => formatAppointedItem({item, senceIndex, senceCount}))
         dispatch(setCards({
             status: 'success',
@@ -194,7 +194,8 @@ export const fetchCardsWithPreview = ({token, senceID, courseID, teamID, source}
     const requestFlag = Date.now()
     dispatch(setCards({status: 'pending'}))
     dispatch(setRequestFlag(requestFlag))
-    return cardApi.getCardListWithPreview({token, senceID, courseID, requestFlag, teamID, source})
+
+    return fetch.getCardListWithPreview({token, senceID, courseID, requestFlag, teamID, source})
         .then(({description, isTryAllowStatus, isTryAllow, listTry, list, name, imageUrl, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow, lessonType}) => {
             const mArr = list && list.map(item => formatAppointedItem({item, senceIndex, senceCount}))
             const mArrPreview = listTry && listTry.map(item => formatAppointedItem({item, senceIndex, senceCount}))
@@ -203,6 +204,7 @@ export const fetchCardsWithPreview = ({token, senceID, courseID, teamID, source}
                 response: mArr
             }))
             dispatch(setCurrentCourseID(courseID))
+            console.log(mArr)
             return {
                 isTryAllowStatus,
                 isTryAllow,
@@ -225,13 +227,6 @@ export const fetchCardsWithPreview = ({token, senceID, courseID, teamID, source}
             dispatch(setCards({status: 'failure', error}))
             throw error
         })
-}
-
-export const windUpScoreForSence = ({token, senceID, cardID}) => (dispatch, getState) => {
-    return cardApi.getStudyConclusion({token, senceID, cardID}).then(({errMsg, statusCode, data: {data}}) => {
-        if (200 !== statusCode) throw new Error(errMsg)
-        dispatch(setConclusionForSence({status: 'success', ...data, cardID}))
-    }).catch(error => new Error('设置总份数失败'))
 }
 
 export const unlockRejectedCard = ({componentOffset, flag}) => ({

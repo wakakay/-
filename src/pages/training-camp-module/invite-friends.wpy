@@ -211,7 +211,7 @@
   import header from '../../components/common/header'
   import { getStore, connect } from 'wepy-redux'
   import { getStorageAsync, sleep, downLoadPhoto, drawText, canvasPreviewAndSave, shareDictionary } from "../../utils"
-  import { share as shareApi } from '../../api'
+  import {fetch} from '../../api'
 
   const store = getStore()
 
@@ -257,7 +257,7 @@
 
     methods = {
       handlePreviewSaveImage() {
-        shareApi.reportSharing({
+        fetch.reportSharing({
             token: this.token,
             type: shareDictionary.SHARE_TEAM.type,
             teamID:this.teamID
@@ -457,7 +457,7 @@
     } // end asyncGetViewPort
 
     initialize(teamID) {
-      return shareApi.getDetailOfShareCard({
+      return fetch.getDetailOfShareCard({
         token: this.token,
         teamID
       })

@@ -328,7 +328,7 @@
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {share as shareApi, fetch} from '../../api'
+    import {fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -633,7 +633,7 @@
                     }).catch(error => error)
 
                     getStorageAsync({key: 'token'}).then(token => {
-                        shareApi.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
 
                     }).catch(error => error)
                 },
