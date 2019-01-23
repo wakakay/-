@@ -29,9 +29,6 @@
     export default class extends wepy.app {
         config = {
             pages: [
-
-                'pages/training-camp-module/my/release-discuss', // 我管理-发布谈论
-                'pages/training-camp-module/release-discuss', // 发布谈论
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -64,6 +61,8 @@
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
                 /* 训练营 */
+                'pages/training-camp-module/my/release-discuss', // 我管理-发布谈论
+                'pages/training-camp-module/release-discuss', // 发布谈论
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营
                 'pages/training-camp-module/introduce', // 训练营介绍

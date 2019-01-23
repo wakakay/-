@@ -92,7 +92,7 @@
                         .cell-name{font-size: 32rpx;font-weight: bold}
                         .cell-skill{font-size: 26rpx;color: @color-blue}
                     }
-                    
+
                 }
                 .ui-btn{width: 148rpx;height: 60rpx;border-radius: 60rpx;background: @background-gray-F4;font-size: 30rpx;color: @color-blue;text-align: center;line-height: 60rpx;font-weight: bold;}
             }
@@ -165,10 +165,10 @@
                 </view>
                 <view class="cell-name">
                     <view>
-                        {{teamName}} 
+                        {{teamName}}
                         <text class="icon-question" @tap.stop="getToggleQuestion"></text>
                     </view>
-                    
+
                 </view>
                 <view class="ui-team-msg">
                     <view>
@@ -327,9 +327,10 @@ export default class teamDetail extends wepy.page {
         getToggleQuestion(){
             let self = this;
             self.isShowQuestion = !self.isShowQuestion
+            self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID})
             self.$apply()
         },
-        /* 
+        /*
             管理训练营
         */
         getManageTeam() {
@@ -412,7 +413,7 @@ export default class teamDetail extends wepy.page {
             console.log('fail to load vote data du to', error)
         })
 
-       
+
     }
 
 }
