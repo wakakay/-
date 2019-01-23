@@ -132,6 +132,39 @@
         }
     }
     .cell-mask{background:@background-mask-normal;z-index: @z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
+    .ui-interact-item{
+        background: @background-gray-F4;padding-top:20rpx;
+        .ui-user{
+            background:@background-white;padding:0 32rpx;height: 128rpx;border-bottom: 1rpx solid @border-gray;box-sizing: border-box;
+            image{width: 80rpx;height: 80rpx;border-radius: 50%;margin-right: 16rpx;}
+            .cell-name{font-size: 32rpx;width:290rpx;}
+            .ui-stand{
+                font-size: 24rpx;
+                .cell-role{border: 1rpx solid @background-gray-cc;border-radius: 6rpx;padding:2rpx 4rpx;color:@color-gray;margin-right:8rpx;}
+                .cell-date{color:@color-gray-c7}
+            }
+            .ui-stick{
+                color:@color-gray;font-size:24rpx;
+                text{color:@color-gray-c7;margin-right: 10rpx;}
+            }
+        }
+        .ui-type{
+            background: @background-white;height: 88rpx;line-height: 88rpx;padding:0 32rpx;box-sizing: border-box;
+            text{
+                &:nth-of-type(1){font-size: 34rpx;font-weight: bold;color:@color-gray-E5;margin-right: 14rpx;} 
+                &:nth-of-type(2){font-size: 34rpx;font-weight: bold;color:@color-black;} 
+            } 
+            .cell-status{
+                background: #ffeae8;color:@color-red;font-size: 24rpx;width: 96rpx;height: 40rpx;text-align: center;line-height: 40rpx;
+                &.cell-completed{background:#f4fdf7;color:#07AD23;}
+            }
+        }
+        .cell-title{background: @background-white;padding:16rpx 32rpx;font-size: 32rpx}
+        .cell-image{
+            background: @background-white;padding: 16rpx 32rpx 32rpx;
+            image{width: 100%;}
+        }
+    }
 		
 </style>
 <template>
@@ -240,6 +273,48 @@
                 </view>
             </repeat>
         </view>
+        <view  wx:for="{{intereactList}}" wx:key="{{index}}" class="ui-interact-item">
+            <view class="ui-user main-justify cross-center">
+                <image src="{{item.avatar}}"/>
+                <view class="flex-width-1 flex-start-column">
+                    <view class="cell-name text-overflow">{{item.userName}}</view>
+                    <view class="ui-stand flex">
+                        <view class="cell-role">{{item.role}}</view>
+                        <view class="cell-date">{{item.time}}</view>
+                    </view>
+                </view>
+                <view class="ui-stick">
+                        <text class="icon-stick"></text>置顶
+                </view>
+            </view>
+            
+            <view wx:if="{{item.type=='question'}}">
+                <view class="ui-type main-justify cross-center">
+                    <view>
+                        <text class="icon-discuss"></text>
+                        <text>疑问，求解答</text>
+                    </view>
+                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                </view>
+                <view class="cell-title">{{item.title}}</view>
+                <view class="cell-image">
+                    <image mode="widthFix" src="{{item.imgUrl}}"/>
+                </view>
+            </view>
+            <view wx:if="{{item.type=='discuss'}}">
+                <view class="ui-type main-justify cross-center">
+                    <view>
+                        <text class="icon-discuss"></text>
+                        <text>通知，晚间讨论</text>
+                    </view>
+                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                </view>
+                <view class="cell-title">{{item.title}}</view>
+                <view class="cell-image">
+                    <image mode="widthFix" src="{{item.imgUrl}}"/>
+                </view>
+            </view>
+        </view>
     </view>
     <!-- 点击 标题 弹窗 -->
     <view class="ui-box" :class="{'active':isShowQuestion}">
@@ -304,7 +379,33 @@ export default class teamDetail extends wepy.page {
         todayTask:[],
         isShowManagerButton:false,
         managerButtonStatus:'',
-        teamDetail:{}
+        teamDetail:{},
+        intereactList:[
+            {
+                type:'question',
+                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
+                userName:'鱼米',
+                isComplete:false,
+                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
+                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+                time:'9-29 12:24',
+                role:'管理员',
+                isStick:false,
+                CompleteMsg:"未参加"
+            },{
+                type:'discuss', 
+                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
+                userName:'鱼米',
+                isComplete:false,
+                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
+                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+                time:'9-29 12:24',
+                role:'管理员',
+                isStick:false,
+                CompleteMsg:"未参加"
+
+            }
+        ]
 
     }
     methods= {

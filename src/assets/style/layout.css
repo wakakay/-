@@ -45,6 +45,8 @@ button::after{border:0;}
 .flex-box-1{display:flex;flex-grow:1;flex-shrink:1;}
 .flex-box-2{display:flex;flex-grow:2;flex-shrink:2;}
 
+.flex-width-1{display:flex;flex:1}
+
 .flex-space-between-row{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between;}
 .flex-start-row{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;}
 .flex-start-column{display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:flex-start;}
