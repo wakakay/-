@@ -230,7 +230,6 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
-    import {share as shareApi} from "../../api";
 
     const store = getStore()
     @connect({
@@ -361,7 +360,7 @@
                     let courseID = self.courseInfo.courseSeriesID
 
                     wepy.$instance.globalData.getHuilder('系列详情页/分享', 'click', `${self.courseInfo.seriesName}`)
-                    shareApi.reportSharing({
+                    fetch.reportSharing({
                         token,
                         type: shareDictionary.SHARE_ASSORTMENT.type,
                         courseID

@@ -3,7 +3,6 @@ import * as auth from './auth'
 import course from './course'
 import card from './card'
 import * as sence from './sence'
-import * as share from './share'
 import * as team from './team'
 import * as score from './score'
 import * as practice from './practice'
@@ -16,7 +15,6 @@ export {
     fetch,
     auth,
     sence,
-    share,
     team,
     score,
     practice,
