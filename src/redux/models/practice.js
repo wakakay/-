@@ -1,4 +1,4 @@
-import { card as cardApi, practice as practiceApi } from '../../api'
+import {practice as practiceApi } from '../../api'
 
 // Contents
 const CARDS_GAP = 5
@@ -94,58 +94,6 @@ export const dropAppointedCardAnimation = offset => {
     }
 }
 
-// async Actions
-export const fetchPractices = ({ token, cardID, senceID, courseID, teamID }) => (dispatch, getState) => {
-    // console.log('sence id', senceID)
-    // console.log('course id', courseID)
-    // const requestFlag = Date.now()
-
-    const requestFlag = getState().cards.requestFlag
-    dispatch(setPractices({ status: 'pending' }))
-        // dispatch(setRequestFlag(requestFlag))
-    dispatch(setCourseID(courseID))
-    dispatch(setSenceID(senceID))
-    dispatch(setTeamID(teamID))
-    return cardApi.getPracticeList({ token, cardID, senceID, courseID, requestFlag, teamID })
-        .then(({ description, list, name, target, lastCardID, senceIndex, senceCount, minute, subtitle, isSwitchTipsShow }) => {
-            dispatch(setPractices({
-                status: 'success',
-                response: list && list.map(item => formatAppointedItem({ item, senceIndex, senceCount }))
-                    // .concat({ type: 'front', description: '这个是测试场景描述方案，内容将两不要超过四行。这个是测试场景描述方案，内容将两不要超过四行。这个是测试场景描述方案，内容将两不要超过四行。', isView: true, title: '测一测' })
-            }))
-            return { senceID, senceName: name, courseID, lastCardID, requestFlag, minute, subtitle, isSwitchTipsShow }
-        })
-        .catch(error => {
-            // console.log('fetch cards error', error)
-            dispatch(setPractices({ status: 'failure', error }))
-            throw error
-        })
-}
-
-// export const fetchPreviousPractices = ({ token, senceID, courseID, teamID }) => (dispatch, getState) => {
-//     // console.log('sence id', senceID)
-//     // console.log('course id', courseID)return dispatch(setLastPracticeOffset(11))
-//     const requestFlag = Date.now()
-//     dispatch(setPractices({ status: 'pending' }))
-//     dispatch(setRequestFlag(requestFlag))
-//     dispatch(setCourseID(courseID))
-//     dispatch(setSenceID(senceID))
-//     return practiceApi.getPreviousPracticeList({ token, senceID, courseID, requestFlag, teamID })
-//         .then(({ listCard, senceName }) => {
-//             dispatch(setPractices({
-//                 status: 'success',
-//                 response: listCard && listCard.map(item => formatAppointedPreviousItem({ item, senceName }))
-//                     // .concat({ type: 'front', description: '这个是测试场景描述方案，内容将两不要超过四行。这个是测试场景描述方案，内容将两不要超过四行。这个是测试场景描述方案，内容将两不要超过四行。', isView: true, title: '测一测' })
-//             }))
-//             return true
-//         })
-//         .catch(error => {
-//             // console.log('fetch cards error', error)
-//             dispatch(setPractices({ status: 'failure', error }))
-//             throw error
-//         })
-// }
-
 export const fetchPreviousPractices = ({ token, senceID, courseID, teamID, examID }) => (dispatch, getState) => { //-------------------------------->>>>
     // console.log('sence id', senceID)
     // console.log('course id', courseID)
@@ -191,11 +139,11 @@ export const clearCardsSections = () => ({
 
 const formatAppointedItem = ({ item, senceIndex, senceCount }) => {
         return item
-    } // end formatAppointedItem 
+    } // end formatAppointedItem
 
 const formatAppointedPreviousItem = ({ item, senceName }) => {
         return {...item, senceName }
-    } // end formatAppointedItem 
+    } // end formatAppointedItem
 
 const formatOrderItem = ({ item }) => {
         if ('order' !== item.type && 'order' !== item['fragment']['orginalType']) return item

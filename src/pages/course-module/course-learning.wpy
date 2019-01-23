@@ -177,7 +177,7 @@
     import {getStore, connect} from 'wepy-redux'
     import {fetchCardsWithPreview} from '../../redux/models/cards'
     import {initializationDeligate, deepCopy, parsePercentageForPoll} from '../../utils'
-    import {card as cardApi, fetch, share as shareApi} from '../../api'
+    import {fetch, share as shareApi} from '../../api'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
     import shareCard from '../../components/shareImages/share-card'
@@ -519,7 +519,7 @@
                 teamID: self.teamID
             }
 
-            cardApi.markCard(postData).then(() => {
+            fetch.markCard(postData).then(() => {
 
             }).catch(error => {
 
@@ -599,7 +599,7 @@
                     abilitySkill: current.abilitySkill,
                     json: current.json // 选中选项的id或顺序
                 }
-                cardApi.sendCardScore(postData).then(() => {
+                fetch.sendCardScore(postData).then(() => {
                     console.log('练习上报成功')
                 }).catch(error => {
                     console.log('练习上报失败', error)
