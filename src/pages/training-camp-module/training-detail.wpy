@@ -82,25 +82,11 @@
                 .cell-tip{font-size: 44rpx;font-weight: bold;}
                 .cell-plan{color: @color-blue;font-size: 34rpx;}
             }
-            .ui-lesson{
-                display: flex;padding:0 32rpx;height: 176rpx;align-items: center;justify-content: space-between;
-                .ui-name{
-                    display: flex;flex:1;
-                    image{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 24rpx;}
-                    .ui-detail{
-                        display: flex;flex-direction: column;justify-content:center;flex:1;
-                        .cell-name{font-size: 32rpx;font-weight: bold}
-                        .cell-skill{font-size: 26rpx;color: @color-blue}
-                    }
-
-                }
-                .ui-btn{width: 148rpx;height: 60rpx;border-radius: 60rpx;background: @background-gray-F4;font-size: 30rpx;color: @color-blue;text-align: center;line-height: 60rpx;font-weight: bold;}
-            }
-            .ui-image{
+            .ui-offline-image{
                 margin-top:16rpx;text-align:center;
                 image{width: 622rpx;}
             }
-            .ui-detail{
+            .ui-offline-detail{
                 display: flex;margin-top:16rpx;
                 .ui-portrait{
                     margin-right: 22rpx;
@@ -129,27 +115,24 @@
         }
 
     }
-    .ui-title-shade{
-		width:100%;height:100vh;position:fixed;left:0;top:0;background-color:@background-mask-slightly;z-index:50;
-		.ui-box{
-			position: absolute;bottom:-100%;left: 0;transition: all .6s ease-in;right:0;
-			.ui-top{
-				width: 100%;background-color: @background-white;
-				text{width: 24px;height: 24px;display: block;margin: 0 10px 0 auto;padding: 8px 0;color:@color-gray;}
-			}
-			.ui-scroll{
-				width: 100%;display: relative;box-sizing: border-box;padding: 0 30rpx;overflow-y: scroll;background-color: @background-white;height: 463px;
-				.cell-title{padding:36rpx 0 46rpx;position:relative;white-space:nowrap;font-size:48rpx;color:@color-black;font-weight: bold;border-top:2rpx solid @border-gray}
-				.cell-li{width:598rpx;display:block;margin-bottom:32rpx;position:relative;font-size:32rpx;color:@color-gray;}
-				.cell-course-title{padding:32rpx 0 48rpx;position:relative;white-space:nowrap;font-weight: bold;font-size:48rpx;color:@color-black;border-top:2rpx solid @border-gray}
-				.cell-poster{width:686rpx;display:block;margin-bottom:43rpx;}
-				.cell-teacher{padding:34rpx 0 52rpx;position:relative;white-space:nowrap;font-weight: bold;font-size:48rpx;color:@color-black;border-top:2rpx solid @border-gray}
-				.cell-teacher-image{width:100%;display:block;padding-bottom:136rpx;}
+    .ui-box{
+        position: fixed;bottom:0;width: 100%;transition: all 0.6s ease-in;background: @background-white;z-index: @z-index-highest;transform:translateY(100%);
+        &.active{transform:translateY(0);}
+        .ui-top{
+            width: 100%;
+            text{width: 24px;height: 24px;display: block;margin: 0 10px 0 auto;padding: 8px 0;color:@color-gray;}
+        }
+        .ui-scroll{
+            width: 100%;box-sizing: border-box;padding: 0 30rpx;overflow-y: scroll;height: 463px;color:@color-black;background: @background-white;
+            .cell-title{padding:36rpx 0 46rpx;font-size:48rpx;font-weight: bold;border-top:2rpx solid @border-gray}
+            .cell-li{width:598rpx;margin-bottom:32rpx;font-size:32rpx;color:@color-gray;}
+            .cell-poster{width:686rpx;margin-bottom:43rpx;}
+            .cell-teacher-image{width:100%;padding-bottom:136rpx;}
 
-			}
-		}
-		.ui-box.active{bottom:0;background: @background-white;}
-	}
+        }
+    }
+    .cell-mask{background:@background-mask-normal;z-index: @z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
+		
 </style>
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
@@ -215,22 +198,25 @@
                 <view class="cell-plan" @tap.stop="getAllToadyTask">全部任务<text class="icon-details"></text></view>
             </view>
             <repeat for="{{todayTask}}" key="index" index="index" item="item">
-                <view class="ui-lesson" wx:if="{{item.taskType == 'online'}}">
-                    <view class="ui-name">
-                        <image mode="aspectFill"  src="{{item.imageUrl}}"/>
-                        <view class="ui-detail">
-                            <view class="cell-name">{{item.senceName}}</view>
-                            <view class="cell-skill" wx:if="{{item.skillGroup}}">#{{item.skillGroup}}</view>
+                <view class="module-lesson-box">
+                    <view class="ui-item" wx:if="{{item.taskType == 'online'}}">
+                        <view class="ui-content">
+                            <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
+                            <view class="ui-detail">
+                                <view class="cell-name">{{item.senceName}}</view>
+                                <view class="cell-dec" wx:if="{{item.skillGroup}}">#{{item.skillGroup}}</view>
+                            </view>
+                        </view>
+                        <view class="ui-btn">
+                            {{item.buttonMsg}}
                         </view>
                     </view>
-                    <view class="ui-btn">
-                        {{item.buttonMsg}}
-                    </view>
                 </view>
-                <view class="ui-image" wx:if="{{'offline' == item.taskType &&  '图片' == item.contentType}}">
+                
+                <view class="ui-offline-image" wx:if="{{'offline' == item.taskType &&  '图片' == item.contentType}}">
                     <image  mode="widthFix"  src="{{item.image}}"/>
                 </view>
-                <view  wx:if="{{'offline' == item.taskType &&  '列表' == item.contentType}}" class="ui-detail">
+                <view  wx:if="{{'offline' == item.taskType &&  '列表' == item.contentType}}" class="ui-offline-detail">
                     <view class="ui-portrait">
                         <image  mode="aspectFill"  src="{{item.portrait}}"/>
                     </view>
@@ -256,27 +242,26 @@
         </view>
     </view>
     <!-- 点击 标题 弹窗 -->
-	<view hidden="{{ !isShowQuestion }}" class="ui-title-shade">
-		<view class="ui-box {{ isShowQuestion? 'active': '' }}" style="bottom: {{ isShowQuestion? '0': '-1006rpx' }};">
-			<view class="ui-top" @tap.stop="getToggleQuestion">
-				<text class="icon-back-close"></text>
-			</view>
-			<scroll-view class="ui-scroll" scroll-y>
-				<view wx:if="{{ targetList.length&&targetList[0] }}" class="cell-title">学习目标</view>
-				<text wx:if="{{ targetList.length&&item }}" wx:for="{{ targetList }}" wx:key="{{ index }}" class="cell-li">
-                    {{ item }}
-                </text>
-
-				<view wx:if="{{ courseImageList.length }}" class="cell-course-title">训练营介绍</view>
-
-				<image wx:if="{{ courseImageList.length }}" wx:for="{{ courseImageList }}" wx:key="{{ index }}" class="cell-poster" src="{{item}}" mode="widthFix"></image>
-
-				<view wx:if="{{ teacherImage }}" class="cell-teacher">导师介绍</view>
-				<image wx:if="{{ teacherImage }}" class="cell-teacher-image" src="{{ teacherImage }}" mode="widthFix" />
-			</scroll-view>
-		</view>
-	</view>
-    <view></view>
+    <view class="ui-box" :class="{'active':isShowQuestion}">
+        <view class="ui-top" @tap.stop="getToggleQuestion">
+            <text class="icon-back-close"></text>
+        </view>
+        <scroll-view class="ui-scroll" scroll-y>
+            <view wx:if="{{ targetList.length&&targetList[0]}}" >
+                <view class="cell-title">学习目标</view>
+                <view wx:for="{{ targetList }}" wx:key="{{ index }}" class="cell-li">{{ item }}</view>
+            </view>
+            <view wx:if="{{ courseImageList.length }}">
+                <view class="cell-title">训练营介绍</view>
+                <image wx:for="{{ courseImageList }}" wx:key="{{ index }}" class="cell-poster" src="{{item}}" mode="widthFix"></image>
+            </view>
+            <view wx:if="{{ teacherImage }}" >
+                <view class="cell-title">导师介绍</view>
+                <image class="cell-teacher-image" src="{{ teacherImage }}" mode="widthFix" />
+            </view>
+        </scroll-view>
+    </view>
+    <view class="cell-mask" hidden="{{ !isShowQuestion }}" ></view>
 </template>
 
 <script>
@@ -327,7 +312,6 @@ export default class teamDetail extends wepy.page {
         getToggleQuestion(){
             let self = this;
             self.isShowQuestion = !self.isShowQuestion
-            self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID})
             self.$apply()
         },
         /*
