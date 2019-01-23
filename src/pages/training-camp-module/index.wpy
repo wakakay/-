@@ -348,17 +348,17 @@
 				this.isLoaded = true
 				this.teamDoingList = res.memberTeam.memberTeamDoingList //正在学习的 课程
 				this.teamCommendList = res.memberTeam.memberTeamCommendList //为你推荐的 课程
-				this.teamBeforList = res.memberTeam.memberTeamBeforList //还没开始的 课程
+				this.teamBeforList = res.memberTeam.memberTeamBeforList || res.memberTeam.memberTeamBeforeList || [] //还没开始的 课程
 				this.adminTeamDoingList = res.adminTeam.adminTeamDoingList //我管理的 课程
 				this.adminTeamEndList = res.adminTeam.adminTeamEndList //我管理的 已结束的
 				this.memberTeamStatus = res.memberTeam.memberTeamStatus //是否参加过训练营
-				this.adminTeamBeforList = res.adminTeam.adminTeamBeforList
+				this.adminTeamBeforList = res.adminTeam.adminTeamBeforList || []
 				this.$apply()
 
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
 			})
 			.then(()=>{
-				wx.showTabBar()
+
 			})
 			.catch(error => {
 				throw error

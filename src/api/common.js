@@ -50,7 +50,7 @@ export default {
         return fetch({method: 'post', url: 'common/getImageCodeByCourseID', params: params})
     },
     /**
-     * 分享上报x
+     * 分享上报
      * @param teamID: 训练营ID
      */
     reportSharing(params) {
