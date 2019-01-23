@@ -40,7 +40,7 @@
                 <view class="cell-height"></view>
             </view>
             <view class="ui-btn-box">
-                <view class="cell-btn" @tap.stop="getSure">确定</view>
+                <view class="cell-btn" :class="{'is-iphonex': isIphonex}" @tap.stop="getSure">确定</view>
             </view>
         </scroll-view>
     </view>
@@ -55,7 +55,6 @@
     const store = getStore()
     @connect({
         token(state) {
-            return 'userID574c448521c04ef59ad4542fbdd497fc-1547780027775-1a760516c9bff2c2914d70bed3c4a1e1'
             return state.user.token;
         },
     })
@@ -72,6 +71,7 @@
 
         data = {
             headerHeigth:68,
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             searchName:'',
             practiceList:[],
             seleteList:[],
