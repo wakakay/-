@@ -228,7 +228,7 @@
             isShowInsertPoll: false,
             isSumbit: true,
             currentDate: '2019-01-01',
-            currentTime: '00: 00',
+            currentTime: '00:00',
             startDate: '2019-01-01',
             startTime: '00:00',
             status: { // 底部按钮是否可用, 微课跟联系是互斥
@@ -262,7 +262,7 @@
             let date = new Date()
             self.paramsInfo = params
             self.currentDate = date.format('yyyy-MM-dd')
-            self.currentTime = date.format('hh: mm')
+            self.currentTime = date.format('hh:mm')
             self.startDate = self.currentDate + ''
             self.startTime = self.currentTime + ''
             self.$apply()
@@ -309,7 +309,7 @@
             let self = this
             let list = self.sendData.infoList
             wx.uploadFile({
-                url: `${config.baseUrl + 'app/upload'}?token=${self.systemInfo.token}`,
+                url: `${config.baseUrl + 'app/upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1548304056007-699aa3d9ba7f0cc961972e3366fd6231`,
                 filePath: flie,
                 name: 'file',
                 header: {
@@ -434,11 +434,11 @@
                     self.isSumbit = false
                     self.$apply()
                     let postData = {
-                        token: self.systemInfo.token,
+                        token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1548304056007-699aa3d9ba7f0cc961972e3366fd6231',
                         body: {
                             json: {
-                                teamID: self.paramsInfo.teamID,
-                                beginTime: `${self.currentDate} ${self.currentTime}`,
+                                teamID: 'T1d99a66b0724fdba15b5a148f648',
+                                beginTime: Date.parse(`${self.currentDate} ${self.currentTime}:00`),
                                 ...self.sendData
                             }
                         }

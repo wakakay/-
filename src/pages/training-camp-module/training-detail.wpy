@@ -156,9 +156,9 @@
         .ui-type{
             height: 88rpx;line-height: 88rpx;padding:0 32rpx;box-sizing: border-box;
             text{
-                &:nth-of-type(1){font-size: 34rpx;font-weight: bold;color:@color-gray-E5;margin-right: 14rpx;} 
-                &:nth-of-type(2){font-size: 34rpx;font-weight: bold;color:@color-black;} 
-            } 
+                &:nth-of-type(1){font-size: 34rpx;font-weight: bold;color:@color-gray-E5;margin-right: 14rpx;}
+                &:nth-of-type(2){font-size: 34rpx;font-weight: bold;color:@color-black;}
+            }
             .cell-status{
                 background: #ffeae8;color:@color-red;font-size: 24rpx;width: 96rpx;height: 40rpx;text-align: center;line-height: 40rpx;
                 &.cell-completed{background:#f4fdf7;color:#07AD23;}
@@ -174,14 +174,14 @@
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
 </style>
 <template>
-    <mloading wx:if="{{ !isLoaded }}"/>
+    <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
     <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
     <view class="ui-training-detail">
         <view class="ui-bg" style="background-image: url('{{imageUrl}}');">
             <view class="ui-content">
                 <view class="ui-date">
                     <view class="cell-time">{{teamTime}}</view>
-                    <view wx:if="{{role == 'member'}}" class="cell-manage" @tap.stop="getManageTeam">
+                    <view wx:if="{{role == 'admin'}}" class="cell-manage" @tap.stop="getManageTeam">
                         管理 <text class="icon-setting"></text>
                     </view>
                 </view>
@@ -231,6 +231,7 @@
                 <text class="icon-details"></text>
             </view>
         </view>
+
         <view class="ui-today-task">
             <view class="ui-title">
                 <view class="cell-tip">今日任务</view>
@@ -246,12 +247,10 @@
                                 <view class="cell-dec" wx:if="{{item.skillGroup}}">#{{item.skillGroup}}</view>
                             </view>
                         </view>
-                        <view class="ui-btn">
-                            {{item.buttonMsg}}
-                        </view>
+                        <button class="ui-btn">{{item.buttonMsg}}</button>
                     </view>
                 </view>
-                
+
                 <view class="ui-offline-image" wx:if="{{'offline' == item.taskType &&  '图片' == item.contentType}}">
                     <image  mode="widthFix"  src="{{item.image}}"/>
                 </view>
@@ -279,86 +278,121 @@
                 </view>
             </repeat>
         </view>
-        <view  wx:for="{{intereactList}}" wx:key="{{index}}" class="ui-interact-item">
-            <view class="ui-user main-justify cross-center">
-                <image src="{{item.avatar}}"/>
-                <view class="flex-width-1 flex-start-column">
-                    <view class="ui-stand cross-center">
-                        <view class="cell-name text-overflow">{{item.userName}}</view>
-                        <view class="cell-role">{{item.role}}</view>
 
+        <repeat for="{{intereactList}}" key="index" index="index" item="data">
+            <view class="ui-interact-item">
+                <view class="ui-user main-justify cross-center">
+                    <image src="{{data.avatar}}"/>
+                    <view class="flex-width-1 flex-start-column">
+                        <view class="ui-stand cross-center">
+                            <view class="cell-name text-overflow">{{data.name}}</view>
+                            <view class="cell-role">{{data.roleType}}</view>
+
+                        </view>
+                        <view class="cell-date">{{data.date}}</view>
                     </view>
-                    <view class="cell-date">{{item.time}}</view>
-                </view>
-                <view class="ui-stick" :class="{'is-sticked' : item.isStick}">
-                        <text class="icon-stick"></text>置顶
-                </view>
-            </view>
-            
-            <view class="ui-content" wx:if="{{item.type=='question'}}">
-                <view class="ui-type main-justify cross-center">
-                    <view>
-                        <text class="icon-discuss"></text>
-                        <text>疑问，求解答</text>
+                    <view class="ui-stick" :class="{'is-sticked': data.isPartIn}">
+                            <text class="icon-stick"></text>置顶
                     </view>
-                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
                 </view>
-                <view class="cell-title">{{item.title}}</view>
-                <view class="cell-image">
-                    <image mode="widthFix" src="{{item.imgUrl}}"/>
-                </view>
-            </view>
-            <view class="ui-content" wx:if="{{item.type=='discuss'}}">
-                <view class="ui-type main-justify cross-center">
-                    <view>
-                        <text class="icon-discuss"></text>
-                        <text>通知，晚间讨论</text>
+                <view class="ui-content" wx:if="{{data.type=='discuss'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-discuss"></text>
+                            <text>{{data.title || '通知，晚间讨论'}}</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
-                </view>
-                <view class="cell-title">{{item.title}}</view>
-                <view class="cell-image">
-                    <image mode="widthFix" src="{{item.imgUrl}}"/>
-                </view>
-            </view>
-            <view class="ui-content" wx:if="{{item.type=='practice'}}">
-                <view class="ui-type main-justify cross-center">
-                    <view>
-                        <text class="icon-practice"></text>
-                        <text>小练习</text>
+                    <view class="cell-title">{{data.description}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{data.image}}"/>
                     </view>
-                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
                 </view>
-                <view class="cell-title">{{item.title}}</view>
-                <view class="cell-image">
-                    <image mode="widthFix" src="{{item.imgUrl}}"/>
-                </view>
-            </view>
-            <view class="ui-content" wx:if="{{item.type=='poll'}}">
-                <view class="ui-type main-justify cross-center">
-                    <view>
-                        <text class="icon-poll"></text>
-                        <text>来投一下票，做下调查</text>
+
+                <view class="ui-content" wx:if="{{data.type=='poll'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-discuss"></text>
+                            <text>{{data.title || '来投一下票，做下调查'}}</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
-                </view>
-                <view class="cell-title">{{item.title}}</view>
-                <view class="cell-image">
-                    <image mode="widthFix" src="{{item.imgUrl}}"/>
-                </view>
-                <view class="cell-poll-btn">投票</view>
-            </view>
-            <view class="ui-content" wx:if="{{item.type=='task'}}">
-                <view class="ui-type main-justify cross-center">
-                    <view>
-                        <text class="icon-task"></text>
-                        <text>学习任务</text>
+                    <view class="cell-title">{{data.description}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{data.image}}"/>
                     </view>
-                    <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+
+                    <repeat for="{{data.pollList}}" key="index" index="number" item="item">
+                        <jn-poll :cardIndex.sync="number" :cardsList.sync="data.pollList"></jn-poll>
+                    </repeat>
                 </view>
-                <view class="cell-title">{{item.title}}</view>
+
+                <view class="ui-content" wx:if="{{data.type=='practice'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-discuss"></text>
+                            <text>{{data.title || '小练习'}}</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
+                    </view>
+                    <view class="cell-title">{{data.description}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{data.image}}"/>
+                    </view>
+                </view>
+
+                <!--<view class="ui-content" wx:if="{{item.type=='question'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-discuss"></text>
+                            <text>疑问，求解答</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                    </view>
+                    <view class="cell-title">{{item.title}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{item.imgUrl}}"/>
+                    </view>
+                </view>
+                <view class="ui-content" wx:if="{{item.type=='practice'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-practice"></text>
+                            <text>小练习</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                    </view>
+                    <view class="cell-title">{{item.title}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{item.imgUrl}}"/>
+                    </view>
+                </view>
+                <view class="ui-content" wx:if="{{item.type=='poll'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-poll"></text>
+                            <text>来投一下票，做下调查</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                    </view>
+                    <view class="cell-title">{{item.title}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{item.imgUrl}}"/>
+                    </view>
+                    <view class="cell-poll-btn">投票</view>
+                </view>
+                <view class="ui-content" wx:if="{{item.type=='task'}}">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-task"></text>
+                            <text>学习任务</text>
+                        </view>
+                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                    </view>
+                    <view class="cell-title">{{item.title}}</view>
+                </view>-->
             </view>
-        </view>
+        </repeat>
         <view class="cell-more">没有更多内容了</view>
     </view>
     <!-- 点击 标题 弹窗 -->
@@ -400,15 +434,16 @@
             <view class="cell-btn">{{floatBox.buttonStatusMsg}}</view>
         </view>
     </button>
-    <view></view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import {getStore, connect} from "wepy-redux"
 import Loading from '../../components/common/loading'
 import header from '../../components/common/header'
+import poll from '../../components/cards-type/poll'
+import singleChoice from '../../components/cards-type/single-choice'
 import {initializationDeligate, navigateToLesson} from "../../utils"
-import {getStore, connect} from "wepy-redux"
 import {team as teamApi, share as shareApi} from '../../api'
 
 const store = getStore();
@@ -425,11 +460,14 @@ const store = getStore();
 export default class teamDetail extends wepy.page {
     components = {
         'jn-header': header,
-        'mloading': Loading,
+        'jn-loading': Loading,
+        'jn-poll': poll,
+        'jn-single-choice': singleChoice
     };
 
     data={
         isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+        labelDictionary: {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F'},
         isLoaded:false,
         isHeadHeight:false,
         headerBackground: 'background-transparent',
@@ -449,56 +487,7 @@ export default class teamDetail extends wepy.page {
         managerButtonStatus:'',
         teamDetail:{},
         senceID:null,
-        intereactList:[
-            {
-                type:'question',
-                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
-                userName:'鱼米',
-                isComplete:false,
-                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
-                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                time:'9-29 12:24',
-                role:'管理员',
-                isStick:false,
-                CompleteMsg:"未参加"
-            },{
-                type:'discuss', 
-                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
-                userName:'鱼米',
-                isComplete:false,
-                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
-                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                time:'9-29 12:24',
-                role:'管理员',
-                isStick:false,
-                CompleteMsg:"未参加"
-
-            },
-            {
-                type:'practice',
-                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
-                userName:'鱼米',
-                isComplete:false,
-                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
-                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                time:'9-29 12:24',
-                role:'管理员',
-                isStick:false,
-                CompleteMsg:"未参加"
-            },
-            {
-                type:'poll',
-                avatar:'http://wx-small.runwise.cn/image/imageIDa78a9702f47406b970b047d43966.png',
-                userName:'鱼米',
-                isComplete:true,
-                title:'什么叫想法前的未知因素？总觉得这个说法，有点陇统。谁能解答一下？',
-                imgUrl:'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                time:'9-29 12:24',
-                role:'管理员',
-                isStick:true,
-                CompleteMsg:"已完成"
-            }
-        ],
+        intereactList: [],
         floatBox:{
             buttonStatus:"notBeginOrTry",
             buttonStatusMsg:"即学",
@@ -568,13 +557,60 @@ export default class teamDetail extends wepy.page {
                 senceID:self.senceID,
                 resumeLastRead: resume,
             })
-        },
+        }
     }
 
     onLoad(params) {
         let self = this;
         self.teamID = params.teamID
         self.wxPushType = params.wxPushType
+
+        self.intereactList.push({
+            type: 'practice',
+            avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
+            name: '昵称',
+            date: '9-29 12:24', // MM-dd hh:mm
+            roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
+            isTop: false,
+            isPartIn: false,
+            title: '讨论的标题', // 可能为null
+            description: '讨论的问题',
+            image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+            linkName: '超链接→标题',
+            linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
+            practiceList: [
+                {
+                    id: '',
+                    title: "你着手描述这个产品的具体形态，开始撰写PRD文档。下面摘录了其中几段文字，其中有歧义的是哪句？",
+                    subtitle: '',
+                    cardStatus: "textSelectionVer2",
+                    singleChoiceDescribe: '',
+                    abilityGroup: "",
+                    abilitySkill: "",
+                    select: [
+                        {
+                            abilityGroup: "",
+                            abilitySkill: "",
+                            description: "",
+                            feedback: {
+                                title: '555',
+                                description: '333',
+                                bigimage: ''
+                            },
+                            hidden: "",
+                            icon: "",
+                            id: "optionID2e9454a0dbfa11e899be8d2e680c0c2a",
+                            index: "",
+                            isanswer: false,
+                            option: "当用户按下充电宝开关时，LED灯将根据剩余电量闪动1-5次",
+                            pullDownFlag: false,
+                            weight: 0
+                        }
+                    ]
+                }
+            ]
+        })
+
         self.$apply()
 
         wepy.$instance.globalData.getLoadHuilder() // ga统计
@@ -611,7 +647,7 @@ export default class teamDetail extends wepy.page {
             self.managerButtonStatus = res.managerButtonStatus
             self.teamDetail = res.teamDetail;
 
-            console.log(self.todayTask,1)
+            // console.log(self.todayTask,1)
 
             self.isLoaded = true;
 
