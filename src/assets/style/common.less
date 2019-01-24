@@ -448,9 +448,9 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
             display: flex;flex:1;
             .cell-thumb{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 24rpx;}
             .ui-detail{
-                display: flex;flex-direction: column;justify-content: space-between;flex:1;
+                display: flex;flex-direction: column;justify-content: center;flex:1;
                 .cell-name{font-size: 32rpx;font-weight: bold;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;width:390rpx;}
-                .cell-dec{font-size: 26rpx;color: @color-blue;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:390rpx;}
+                .cell-dec{font-size: 26rpx;color: @color-blue;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:390rpx;margin-top:12rpx;}
             }
 
         }
@@ -571,6 +571,28 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
         }
 
     }
+}
+
+// 悬浮 微课
+.module-floax-box{
+    position:fixed;width:100%;bottom:0;left:0;right:0;background:none;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
+    .ui-share-course{
+        width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
+        .ui-left{
+            display: flex;
+            .ui-img {
+                display: flex;align-items: center;
+                image{width: 112rpx;height: 112rpx;border-radius: 28rpx;}
+            }
+            .ui-content{
+                margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;text-align:left;line-height:1.5;
+                .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;font-weight: 700;}
+                .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+            }
+        }
+        .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700;}
+    }
+    .ui-share-course.is-phonex{margin: 68rpx auto;}
 }
 
 
