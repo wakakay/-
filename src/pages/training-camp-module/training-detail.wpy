@@ -169,6 +169,7 @@
             padding: 16rpx 32rpx 32rpx;
             image{width: 100%;}
         }
+        .cell-link{padding:16rpx 32rpx;font-size: 32rpx;color:@color-blue;text-decoration:underline}
         .cell-poll-btn{width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx}
     }
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
@@ -293,25 +294,41 @@
                         </view>
                         <view class="cell-date">{{data.date}}</view>
                     </view>
-                    <view class="ui-stick" :class="{'is-sticked': data.isPartIn}">
+                    <view class="ui-stick" :class="{'is-sticked': data.isTop}">
                             <text class="icon-stick"></text>置顶
                     </view>
                 </view>
-                <view class="ui-content" wx:if="{{data.type=='discuss'}}">
+                <view class="ui-content">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
                             <text>{{data.title || '通知，晚间讨论'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
+                        <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-title">{{data.description}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{data.image}}"/>
-                    </view>
+                    <repeat for="{{data.infoList}}" key="infoIndex" index="infoIndex" item="infoItem">
+                        <view class="cell-title" wx:if="{{'text' == infoItem.type}}">{{infoItem.content}}</view>
+                        <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
+                            <image mode="widthFix" src="{{infoItem.img}}"/>
+                        </view>
+                        <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
+                            <view class="module-lesson-box">
+                                <view class="ui-item">
+                                    <view class="ui-content">
+                                        <image class="cell-thumb" mode="aspectFill"  src="{{lessonItem.imageUrl}}"/>
+                                        <view class="ui-detail">
+                                            <view class="cell-name">{{lessonItem.senceName}}</view>
+                                            <view class="cell-dec" wx:if="{{lessonItem.senceTarget}}">#{{lessonItem.senceTarget}}</view>
+                                        </view>
+                                    </view>
+                                    <button class="ui-btn">{{item.buttonMsg}}</button>
+                                </view>
+                            </view>
+                        </repeat>
+                    </repeat>
                 </view>
 
-                <view class="ui-content" wx:if="{{data.type=='poll'}}">
+                <!-- <view class="ui-content" wx:if="{{data.type=='poll'}}">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
@@ -328,9 +345,9 @@
                         <jn-poll :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
                                  :cardIndex.sync="option" :cardsList.sync="data.pollList"></jn-poll>
                     </repeat>
-                </view>
+                </view> -->
 
-                <view class="ui-content" wx:if="{{data.type=='practice'}}">
+                <!-- <view class="ui-content" wx:if="{{data.type=='practice'}}">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
@@ -340,14 +357,14 @@
                     </view>
                     <view class="cell-title">{{data.description}}</view>
                     <view class="cell-image">
-                        <image mode="widthFix" src="{{data.image}}"/>
+                        <image mode="widthFix" src="{{data.img}}"/>
                     </view>
 
                     <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
                         <jn-single-choice :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
                                 :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
                     </repeat>
-                </view>
+                </view> -->
 
                 <!--<view class="ui-content" wx:if="{{item.type=='question'}}">
                     <view class="ui-type main-justify cross-center">
@@ -362,43 +379,7 @@
                         <image mode="widthFix" src="{{item.imgUrl}}"/>
                     </view>
                 </view>
-                <view class="ui-content" wx:if="{{item.type=='practice'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-practice"></text>
-                            <text>小练习</text>
-                        </view>
-                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
-                    </view>
-                    <view class="cell-title">{{item.title}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{item.imgUrl}}"/>
-                    </view>
-                </view>
-                <view class="ui-content" wx:if="{{item.type=='poll'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-poll"></text>
-                            <text>来投一下票，做下调查</text>
-                        </view>
-                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
-                    </view>
-                    <view class="cell-title">{{item.title}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{item.imgUrl}}"/>
-                    </view>
-                    <view class="cell-poll-btn">投票</view>
-                </view>
-                <view class="ui-content" wx:if="{{item.type=='task'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-task"></text>
-                            <text>学习任务</text>
-                        </view>
-                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
-                    </view>
-                    <view class="cell-title">{{item.title}}</view>
-                </view>-->
+                -->
             </view>
         </repeat>
         <view class="cell-more">没有更多内容了</view>
@@ -484,132 +465,138 @@ export default class teamDetail extends wepy.page {
         managerButtonStatus:'',
         teamDetail:{},
         senceID:null,
-        intereactList: [
-            {
-                type: 'discuss',
-                avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-                name: '昵称',
-                date: '9-29 12:24', // MM-dd hh:mm
-                roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
-                isTop: false,
-                isPartIn: false, // {false: 未参与, true: 完成}
-                title: '讨论的标题', // 可能为null
-                description: '讨论的问题',
-                image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                linkName: '超链接→标题',
-                linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-            },
-            {
-                type: 'notice',
-                avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-                name: '昵称',
-                date: '9-29 12:24', // MM-dd hh:mm
-                roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
-                isTop: false,
-                isPartIn: false,
-                title: '讨论的标题', // 可能为null
-                description: '讨论的问题',
-                image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                linkName: '超链接→标题',
-                linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-            },
-            {
-                type: 'poll',
-                avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-                name: '昵称',
-                date: '9-29 12:24', // MM-dd hh:mm
-                roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
-                isTop: false,
-                isPartIn: false,
-                title: '讨论的标题', // 可能为null
-                description: '讨论的问题',
-                image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                linkName: '超链接→标题',
-                linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-                pollList: [
-                    {
-                        pollDesc: "11",
-                        pollID: "P1547699732721",
-                        pollType: "single",
-                        title: "32",
-                        type: "poll", // 导师才有
-                        index: 2,
-                        optionList: [
-                            {
-                                id: "O1547699732722",
-                                option: "导师才有"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                type: 'practice',
-                avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-                name: '昵称',
-                date: '9-29 12:24', // MM-dd hh:mm
-                roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
-                isTop: false,
-                isPartIn: false,
-                title: '讨论的标题', // 可能为null
-                description: '讨论的问题',
-                image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-                linkName: '超链接→标题',
-                linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-                practiceList: [
-                    {
-                        id: '123',
-                        title: "你着手描述这个产品的具体形态，开始撰写PRD文档。下面摘录了其中几段文字，其中有歧义的是哪句？",
-                        subtitle: '',
-                        cardStatus: "textSelectionVer2",
-                        singleChoiceDescribe: '',
-                        abilityGroup: "",
-                        abilitySkill: "",
-                        select: [
-                            {
-                                abilityGroup: "",
-                                abilitySkill: "",
-                                description: "",
-                                feedback: {
-                                    title: '555',
-                                    description: '333',
-                                    bigimage: ''
-                                },
-                                hidden: "",
-                                icon: "",
-                                id: "optionID2e9454a0dbfa11e899be8d2e680c0c2a",
-                                index: "",
-                                isanswer: false,
-                                option: "当用户按下充电宝开关时，LED灯将根据剩余电量闪动1-5次",
-                                pullDownFlag: false,
-                                weight: 0
-                            },
-                            {
-                                abilityGroup: "",
-                                abilitySkill: "",
-                                description: "",
-                                feedback: {
-                                    title: '66',
-                                    description: '666',
-                                    bigimage: ''
-                                },
-                                hidden: "",
-                                icon: "",
-                                id: "optionID2e9454a0dbfa11e899be8d2e680c0c2C",
-                                index: "",
-                                isanswer: false,
-                                option: "LED灯将根据剩余电量闪动1-5次",
-                                pullDownFlag: false,
-                                weight: 0
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
+        // intereactList: [
+        //     {
+        //         type: 'discuss',
+        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
+        //         name: '昵称',
+        //         date: '9-29 12:24', // MM-dd hh:mm
+        //         roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
+        //         isTop: false,
+        //         isPartIn: false, // {false: 未参与, true: 完成}
+        //         title: '讨论的标题', // 可能为null
+        //         description: '讨论的问题',
+        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+        //         linkName: '超链接→标题',
+        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
+        //     },
+        //     {
+        //         type: 'notice',
+        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
+        //         name: '昵称',
+        //         date: '9-29 12:24', // MM-dd hh:mm
+        //         roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
+        //         isTop: false,
+        //         isPartIn: false,
+        //         title: '讨论的标题', // 可能为null
+        //         description: '讨论的问题',
+        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+        //         linkName: '超链接→标题',
+        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
+        //     },
+        //     {
+        //         type: 'poll',
+        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
+        //         name: '昵称',
+        //         date: '9-29 12:24', // MM-dd hh:mm
+        //         roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
+        //         isTop: false,
+        //         isPartIn: false,
+        //         title: '讨论的标题', // 可能为null
+        //         description: '讨论的问题',
+        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+        //         linkName: '超链接→标题',
+        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
+        //         pollList: [
+        //             {
+        //                 pollDesc: "11",
+        //                 pollID: "P1547699732721",
+        //                 pollType: "single",
+        //                 title: "32",
+        //                 type: "poll", // 导师才有
+        //                 index: 2,
+        //                 optionList: [
+        //                     {
+        //                         id: "O1547699732722",
+        //                         option: "导师才有"
+        //                     }
+        //                 ]
+        //             }
+        //         ]
+        //     },
+        //     {
+        //         type: 'practice',
+        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
+        //         name: '昵称',
+        //         date: '9-29 12:24', // MM-dd hh:mm
+        //         roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
+        //         isTop: false,
+        //         isPartIn: false,
+        //         title: '讨论的标题', // 可能为null
+        //         description: '讨论的问题',
+        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
+        //         linkName: '超链接→标题',
+        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
+        //         practiceList: [
+        //             {
+        //                 id: '123',
+        //                 title: "你着手描述这个产品的具体形态，开始撰写PRD文档。下面摘录了其中几段文字，其中有歧义的是哪句？",
+        //                 subtitle: '',
+        //                 cardStatus: "textSelectionVer2",
+        //                 singleChoiceDescribe: '',
+        //                 abilityGroup: "",
+        //                 abilitySkill: "",
+        //                 select: [
+        //                     {
+        //                         abilityGroup: "",
+        //                         abilitySkill: "",
+        //                         description: "",
+        //                         feedback: {
+        //                             title: '555',
+        //                             description: '333',
+        //                             bigimage: ''
+        //                         },
+        //                         hidden: "",
+        //                         icon: "",
+        //                         id: "optionID2e9454a0dbfa11e899be8d2e680c0c2a",
+        //                         index: "",
+        //                         isanswer: false,
+        //                         option: "当用户按下充电宝开关时，LED灯将根据剩余电量闪动1-5次",
+        //                         pullDownFlag: false,
+        //                         weight: 0
+        //                     },
+        //                     {
+        //                         abilityGroup: "",
+        //                         abilitySkill: "",
+        //                         description: "",
+        //                         feedback: {
+        //                             title: '66',
+        //                             description: '666',
+        //                             bigimage: ''
+        //                         },
+        //                         hidden: "",
+        //                         icon: "",
+        //                         id: "optionID2e9454a0dbfa11e899be8d2e680c0c2C",
+        //                         index: "",
+        //                         isanswer: false,
+        //                         option: "LED灯将根据剩余电量闪动1-5次",
+        //                         pullDownFlag: false,
+        //                         weight: 0
+        //                     }
+        //                 ]
+        //             }
+        //         ]
+        //     }
+        // ],
+        intereactList:[],
 
     }
     methods= {
+        getGoLink(event) {
+            let self = this;
+            let {currentTarget: {dataset:{link}}} = event
+            console.log(link,1)
+        },
         // 标题 问好
         getToggleQuestion(){
             let self = this;
@@ -678,6 +665,7 @@ export default class teamDetail extends wepy.page {
         }
     }
 
+
     onLoad(params) {
         let self = this;
         self.teamID = params.teamID
@@ -744,11 +732,11 @@ export default class teamDetail extends wepy.page {
             self.$apply()
 
         }).then(()=>{
-
-            fetch.getActivityfeedList(postData).then((res) => {
-                console.log()
+            fetch.getActivityfeedList(postData).then((response) => {
+                self.intereactList = response
+                console.log(self.intereactList ,1)
+                self.$apply()
             })
-
         }).catch((error) => {
             console.log('fail to load vote data du to', error)
         })

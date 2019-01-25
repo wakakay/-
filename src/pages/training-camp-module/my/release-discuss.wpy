@@ -309,7 +309,7 @@
             let self = this
             let list = self.sendData.infoList
             wx.uploadFile({
-                url: `${config.baseUrl + 'app/upload'}?token=userID77083e905f624045bd17d4ac4d5c2c0e-1548304056007-699aa3d9ba7f0cc961972e3366fd6231`,
+                url: `${config.baseUrl + 'app/upload'}?token=${self.systemInfo.token}`,
                 filePath: flie,
                 name: 'file',
                 header: {
@@ -434,11 +434,11 @@
                     self.isSumbit = false
                     self.$apply()
                     let postData = {
-                        token: 'userID77083e905f624045bd17d4ac4d5c2c0e-1548304056007-699aa3d9ba7f0cc961972e3366fd6231',
+                        token: self.systemInfo.token,
                         body: {
                             json: {
-                                teamID: 'T1d99a66b0724fdba15b5a148f648',
-                                beginTime: Date.parse(`${self.currentDate} ${self.currentTime}:00`),
+                                teamID: self.paramsInfo.teamID,
+                                beginTime: `${self.currentDate} ${self.currentTime}:00`,
                                 ...self.sendData
                             }
                         }
