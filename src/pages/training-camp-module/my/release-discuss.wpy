@@ -130,7 +130,7 @@
                           @tap.stop="getDetele"></text>
                 </view>
 
-                <view class="ui-practice" wx:if="{{'textSelectionVer2'==data.type}}">
+                <view class="ui-practice" wx:if="{{'practice'==data.type}}">
                     <repeat for="{{data.list}}" key="index" index="index" item="item">
                         <jn-single-choice :cardIndex.sync="index" :cardsList.sync="data.list" isExercises></jn-single-choice>
                     </repeat>
@@ -290,7 +290,7 @@
                 case 'lesson':
                     self.status.isLesson = true
                     break
-                case 'textSelectionVer2':
+                case 'practice':
                 case 'poll':
                     self.status.isPractice = true
                     self.status.isPoll = true
@@ -515,7 +515,7 @@
                 if (!_.isEmpty(data)) {
                     list.push({
                         list: data,
-                        type: 'textSelectionVer2',
+                        type: 'practice',
                         index: list.length
                     })
                     self.status.isPractice = false
