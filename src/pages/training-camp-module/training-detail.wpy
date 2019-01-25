@@ -322,8 +322,9 @@
                         <image mode="widthFix" src="{{data.image}}"/>
                     </view>
 
-                    <repeat for="{{data.pollList}}" key="index" index="number" item="item">
-                        <jn-poll :cardIndex.sync="number" :cardsList.sync="data.pollList"></jn-poll>
+                    <repeat for="{{data.pollList}}" key="option" index="option" item="item">
+                        <jn-poll :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
+                                 :cardIndex.sync="option" :cardsList.sync="data.pollList"></jn-poll>
                     </repeat>
                 </view>
 
@@ -341,8 +342,7 @@
                     </view>
 
                     <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
-                        {{index}}--{{option}}
-                        <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
+                        <jn-single-choice :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
                                 :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
                     </repeat>
                 </view>
@@ -474,7 +474,6 @@ export default class teamDetail extends wepy.page {
 
     data={
         isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
-        labelDictionary: {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F'},
         isLoaded:false,
         isHeadHeight:false,
         headerBackground: 'background-transparent',
@@ -750,12 +749,14 @@ export default class teamDetail extends wepy.page {
 
     events = {
         /**
-         * 交互卡，选择，排序卡
+         * 投票，选择
          * @param data
          */
         'on-interaction': (data) => {
             let self = this
-            let item = _.find(self.intereactList[data.parentindex][data.parentkey], {id: data.id})
+            let item = _.find(self.intereactList[data.parentindex][data.parentkey], (option) => {
+                return option.id === data.id || option.pollID === data.id
+            })
             _.extend(item, data)
             self.intereactList[data.parentindex][data.parentkey].splice(0, 1, item)
 
