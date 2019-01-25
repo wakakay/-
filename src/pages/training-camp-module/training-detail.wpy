@@ -286,14 +286,14 @@
                     <image src="{{data.avatar}}"/>
                     <view class="flex-width-1 flex-start-column">
                         <view class="ui-stand cross-center">
-                            <view class="cell-name text-overflow">{{data.name}}</view>
+                            <view class="cell-name text-overflow">{{data.nickName}}</view>
                             <view class="cell-role">{{data.roleTypeText}}</view>
 
                         </view>
-                        <view class="cell-date">{{data.date}}</view>
+                        <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" :class="{'is-sticked': data.isTop}">
-                            <text class="icon-stick"></text>置顶
+                    <view class="ui-stick" :class="{'is-sticked': data.isPartIn}">
+                        <text class="icon-stick"></text>置顶
                     </view>
                 </view>
                 <view class="ui-content" wx:if="{{data.type=='discuss'}}">
@@ -302,49 +302,13 @@
                             <text class="icon-discuss"></text>
                             <text>{{data.title || '通知，晚间讨论'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
-                    </view>
-                    <repeat for="{{data.infoList}}" key="infoIndex" index="infoIndex" item="infoItem">
-                        <view class="cell-title" wx:if="{{'text' == infoItem.type}}">{{infoItem.content}}</view>
-                        <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
-                            <image mode="widthFix" src="{{infoItem.img}}"/>
-                        </view>
-                        <view class="cell-link" wx:if="{{'link' == infoItem.type}}"></view>
-                        <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
-                            <view class="module-lesson-box">
-                                <view class="ui-item">
-                                    <view class="ui-content">
-                                        <image class="cell-thumb" mode="aspectFill"  src="{{lessonItem.imageUrl}}"/>
-                                        <view class="ui-detail">
-                                            <view class="cell-name">{{lessonItem.senceName}}</view>
-                                            <view class="cell-dec" wx:if="{{lessonItem.senceTarget}}">#{{lessonItem.senceTarget}}</view>
-                                        </view>
-                                    </view>
-                                    <button class="ui-btn">{{item.buttonMsg}}</button>
-                                </view>
-                            </view>
-                        </repeat>
-                    </repeat>
-                </view>
-
-                <!-- <view class="ui-content" wx:if="{{data.type=='poll'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-discuss"></text>
-                            <text>{{data.title || '来投一下票，做下调查'}}</text>
-                        </view>
                         <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title">{{data.description}}</view>
                     <view class="cell-image">
                         <image mode="widthFix" src="{{data.image}}"/>
                     </view>
-
-                    <repeat for="{{data.pollList}}" key="option" index="option" item="item">
-                        <jn-poll :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
-                                 :cardIndex.sync="option" :cardsList.sync="data.pollList"></jn-poll>
-                    </repeat>
-                </view> -->
+                </view>
 
                 <view class="ui-content" wx:if="{{data.type=='practice'}}">
                     <view class="ui-type main-justify cross-center">
@@ -352,54 +316,52 @@
                             <text class="icon-discuss"></text>
                             <text>{{data.title || '小练习'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
+                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
                     </view>
-                    <repeat for="{{data.infoList}}" key="infoIndex" index="infoIndex" item="infoItem">
-                        <view class="cell-title" wx:if="{{'text' == infoItem.type}}">{{infoItem.content}}</view>
-                        <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
-                            <image mode="widthFix" src="{{infoItem.img}}"/>
-                        </view>
-                        <view class="ui-link" wx:if="{{'link' == infoItem.type}}" data-link="{{infoItem.link}}">
-                            <view>{{infoItem.title}}</view>
-                            <text selectable>{{infoItem.link}}</text>
-                        </view>
-                        <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
-                            <view class="module-lesson-box">
-                                <view class="ui-item">
-                                    <view class="ui-content">
-                                        <image class="cell-thumb" mode="aspectFill"  src="{{lessonItem.imageUrl}}"/>
-                                        <view class="ui-detail">
-                                            <view class="cell-name">{{lessonItem.senceName}}</view>
-                                            <view class="cell-dec" wx:if="{{lessonItem.senceTarget}}">#{{lessonItem.senceTarget}}</view>
-                                        </view>
+                    <view class="cell-title">{{data.content}}</view>
+                    <view class="cell-image">
+                        <image mode="widthFix" src="{{data.img}}"/>
+                    </view>
+
+                    <repeat for="{{data.lessonList}}" key="itemIndex" index="itemIndex" item="item">
+                        <view class="module-lesson-box">
+                            <view class="ui-item">
+                                <view class="ui-content">
+                                    <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
+                                    <view class="ui-detail">
+                                        <view class="cell-name">{{item.senceName}}</view>
+                                        <view class="cell-dec" wx:if="{{item.senceTarget}}">#{{item.senceTarget}}</view>
                                     </view>
-                                    <button class="ui-btn">{{lessonItem.buttonMsg}}</button>
                                 </view>
+                                <button class="ui-btn">{{item.buttonMsg}}</button>
                             </view>
-                        </repeat>
-                        <!-- <repeat wx:if="{{'practice' == infoItem.type}}"  for="{{infoItem.practiceList}}" key="option" index="option" item="item">
-                            <jn-single-choice :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
-                                    :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
-                        </repeat> -->
+                        </view>
                     </repeat>
 
+                    <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
+                        <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
+                                          :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
+                    </repeat>
                 </view>
 
-                <!--<view class="ui-content" wx:if="{{item.type=='question'}}">
+                <view class="ui-content" wx:if="{{data.type=='poll'}}">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
-                            <text>疑问，求解答</text>
+                            <text>{{data.title || '小练习'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed' : item.isComplete}">{{item.CompleteMsg}}</view>
+                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-title">{{item.title}}</view>
+                    <view class="cell-title">{{data.content}}</view>
                     <view class="cell-image">
-                        <image mode="widthFix" src="{{item.imgUrl}}"/>
+                        <image mode="widthFix" src="{{data.img}}"/>
                     </view>
+
+                    <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList"></jn-poll>
                 </view>
-                -->
             </view>
+
+
         </repeat>
         <view class="cell-more">没有更多内容了</view>
     </view>
@@ -484,129 +446,6 @@ export default class teamDetail extends wepy.page {
         managerButtonStatus:'',
         teamDetail:{},
         senceID:null,
-        // intereactList: [
-        //     {
-        //         type: 'discuss',
-        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-        //         name: '昵称',
-        //         date: '9-29 12:24', // MM-dd hh:mm
-        //         roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
-        //         isTop: false,
-        //         isPartIn: false, // {false: 未参与, true: 完成}
-        //         title: '讨论的标题', // 可能为null
-        //         description: '讨论的问题',
-        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-        //         linkName: '超链接→标题',
-        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-        //     },
-        //     {
-        //         type: 'notice',
-        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-        //         name: '昵称',
-        //         date: '9-29 12:24', // MM-dd hh:mm
-        //         roleType: '角色', // {admin: 管理员, member: 学员, XX: 导师}
-        //         isTop: false,
-        //         isPartIn: false,
-        //         title: '讨论的标题', // 可能为null
-        //         description: '讨论的问题',
-        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-        //         linkName: '超链接→标题',
-        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-        //     },
-        //     {
-        //         type: 'poll',
-        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-        //         name: '昵称',
-        //         date: '9-29 12:24', // MM-dd hh:mm
-        //         roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
-        //         isTop: false,
-        //         isPartIn: false,
-        //         title: '讨论的标题', // 可能为null
-        //         description: '讨论的问题',
-        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-        //         linkName: '超链接→标题',
-        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-        //         pollList: [
-        //             {
-        //                 pollDesc: "11",
-        //                 pollID: "P1547699732721",
-        //                 pollType: "single",
-        //                 title: "32",
-        //                 type: "poll", // 导师才有
-        //                 index: 2,
-        //                 optionList: [
-        //                     {
-        //                         id: "O1547699732722",
-        //                         option: "导师才有"
-        //                     }
-        //                 ]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         type: 'practice',
-        //         avatar: 'https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132',
-        //         name: '昵称',
-        //         date: '9-29 12:24', // MM-dd hh:mm
-        //         roleType: 'admin', // {admin: 管理员, member: 学员, XX: 导师}
-        //         isTop: false,
-        //         isPartIn: false,
-        //         title: '讨论的标题', // 可能为null
-        //         description: '讨论的问题',
-        //         image: 'http://wx-small.runwise.cn/image/imageID245e9fe1cd245998795dad2b61fb.png',
-        //         linkName: '超链接→标题',
-        //         linkLoaction: 'https://runwise.sharepoint.com:/s/DigiPlus/EaG0F0RWqjpDiqcqPhEhDPQBn8sAPxPiHDDpZuYSQq7QVQ?e=VHkbNG',
-        //         practiceList: [
-        //             {
-        //                 id: '123',
-        //                 title: "你着手描述这个产品的具体形态，开始撰写PRD文档。下面摘录了其中几段文字，其中有歧义的是哪句？",
-        //                 subtitle: '',
-        //                 cardStatus: "textSelectionVer2",
-        //                 singleChoiceDescribe: '',
-        //                 abilityGroup: "",
-        //                 abilitySkill: "",
-        //                 select: [
-        //                     {
-        //                         abilityGroup: "",
-        //                         abilitySkill: "",
-        //                         description: "",
-        //                         feedback: {
-        //                             title: '555',
-        //                             description: '333',
-        //                             bigimage: ''
-        //                         },
-        //                         hidden: "",
-        //                         icon: "",
-        //                         id: "optionID2e9454a0dbfa11e899be8d2e680c0c2a",
-        //                         index: "",
-        //                         isanswer: false,
-        //                         option: "当用户按下充电宝开关时，LED灯将根据剩余电量闪动1-5次",
-        //                         pullDownFlag: false,
-        //                         weight: 0
-        //                     },
-        //                     {
-        //                         abilityGroup: "",
-        //                         abilitySkill: "",
-        //                         description: "",
-        //                         feedback: {
-        //                             title: '66',
-        //                             description: '666',
-        //                             bigimage: ''
-        //                         },
-        //                         hidden: "",
-        //                         icon: "",
-        //                         id: "optionID2e9454a0dbfa11e899be8d2e680c0c2C",
-        //                         index: "",
-        //                         isanswer: false,
-        //                         option: "LED灯将根据剩余电量闪动1-5次",
-        //                         pullDownFlag: false,
-        //                         weight: 0
-        //                     }
-        //                 ]
-        //             }
-        //         ]
-        //     }
-        // ],
         intereactList:[],
 
     }
@@ -720,9 +559,6 @@ export default class teamDetail extends wepy.page {
         if (self.wxPushType) {
             postData.wxPushType = self.wxPushType
         }
-        /*fetch.getActivityfeedList(postData).then((res)=>{
-
-        })*/
 
         teamApi.getTeamDetail(postData).then((res)=>{
 
@@ -730,7 +566,7 @@ export default class teamDetail extends wepy.page {
             self.teamName = res.name;
             self.signUpUserCount = res.signUpUserCount;
             self.teamTime = res.time;
-            self.role = res.role;
+            self.role = 'admin';
             self.targetList = res.targetList;
             self.courseImageList = res.courseImageList;
             self.teacherImage = res.teacherImage;
@@ -740,13 +576,8 @@ export default class teamDetail extends wepy.page {
             self.teamDetail = res.teamDetail;
 
             // console.log(self.todayTask,1)
-
             self.isLoaded = true;
-
-
-
             self.$apply()
-
         }).then(()=>{
             fetch.getActivityfeedList(postData).then((response) => {
                 self.intereactList = response
@@ -765,11 +596,16 @@ export default class teamDetail extends wepy.page {
          */
         'on-interaction': (data) => {
             let self = this
-            let item = _.find(self.intereactList[data.parentindex][data.parentkey], (option) => {
-                return option.id === data.id || option.pollID === data.id
-            })
-            _.extend(item, data)
-            self.intereactList[data.parentindex][data.parentkey].splice(0, 1, item)
+            let item = null
+            if (data.parentkey) {
+                item = _.find(self.intereactList[data.parentindex][data.parentkey], {id: data.id})
+                _.extend(item, data)
+                self.intereactList[data.parentindex][data.parentkey].splice(0, 1, item)
+            } else {
+                item = _.find(self.intereactList, {id: data.id})
+                _.extend(item, data)
+                self.intereactList.splice(0, 1, item)
+            }
 
             self.$apply()
         }
