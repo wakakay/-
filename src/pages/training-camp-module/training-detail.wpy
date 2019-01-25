@@ -8,10 +8,10 @@
                 .ui-date{
                     display: flex;justify-content: space-between;padding-right:26rpx;
                     .cell-manage{
-                        font-size: 26rpx;height:52rpx;display:flex;align-items:center;
+                        font-size: 26rpx;display:flex;align-items:center;
                         text{font-size: 48rpx;margin-left: 16rpx;}
                     }
-                    .cell-time{opacity: 0.7;font-size: 26rpx;margin-bottom:64rpx;}
+                    .cell-time{opacity: 0.7;font-size: 26rpx;height:110rpx;display:flex;align-items:center;}
 
                 }
                 .cell-name{
@@ -172,12 +172,14 @@
         .cell-poll-btn{width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx}
     }
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
+    .ui-add{width: 88rpx;height: 88rpx;border-radius: 50%;background: @background-blue;color:@color-white;line-height: 88rpx;text-align: center;position: fixed;bottom: 194rpx;right:64rpx;z-index:@z-index-lower}
+
 </style>
 <template>
     <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
     <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
     <view class="ui-training-detail">
-        <view class="ui-bg" style="background-image: url('{{imageUrl}}');">
+        <view class="ui-bg" id="bgBox" style="background-image: url('{{imageUrl}}');">
             <view class="ui-content">
                 <view class="ui-date">
                     <view class="cell-time">{{teamTime}}</view>
@@ -401,6 +403,12 @@
         </repeat>
         <view class="cell-more">没有更多内容了</view>
     </view>
+
+	<!-- 加号 -->
+	<view class="ui-add" @tap.stop="getAddTask">
+		<text wx:if="{{'member'===teamRole}}" class="icon-message"></text>
+		<text wx:else class="icon-add"></text>
+	</view>
     <!-- 点击 标题 弹窗 -->
     <view class="ui-box" :class="{'active':isShowQuestion}">
         <view class="ui-top" @tap.stop="getToggleQuestion">
@@ -422,24 +430,6 @@
         </scroll-view>
     </view>
     <view class="cell-mask" hidden="{{ !isShowQuestion }}" ></view>
-    <button class="module-floax-box"
-            open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-            bindgetuserinfo="getAuthorize"
-            @tap.stop="getLesson"
-            data-item="{{floatBox}}">
-        <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
-            <view class="ui-left">
-                <view class="ui-img">
-                    <image src="{{floatBox.imageUrl}}" />
-                </view>
-                <view class="ui-content">
-                    <view class="cell-title">{{floatBox.name}}</view>
-                    <view class="cell-dec">{{floatBox.skillGroup}}</view>
-                </view>
-            </view>
-            <view class="cell-btn">{{floatBox.buttonStatusMsg}}</view>
-        </view>
-    </button>
 </template>
 
 <script>
@@ -478,6 +468,7 @@ export default class teamDetail extends wepy.page {
         isLoaded:false,
         isHeadHeight:false,
         headerBackground: 'background-transparent',
+        backgroundHeight: 0,
         teamID:'',
         wxPushType:'',
         role:'',
@@ -617,16 +608,6 @@ export default class teamDetail extends wepy.page {
                 ]
             }
         ],
-        floatBox:{
-            buttonStatus:"notBeginOrTry",
-            buttonStatusMsg:"即学",
-            coverImageURL:"http://image.runwise.cn/image/imageIDfe2c722368544b84c2770bd14620.png",
-            skillGroup:"情绪管理",
-            id:"senceID9fcca8102a94da956b81dfe5817e",
-            imageUrl:"http://image.runwise.cn/image/imageIDd957f0433b2434ac4f68987ea363.png",
-            name:"提升产品交付速率",
-            resume:0
-        }
 
     }
     methods= {
@@ -635,6 +616,15 @@ export default class teamDetail extends wepy.page {
             let self = this;
             self.isShowQuestion = !self.isShowQuestion
             self.$apply()
+        },
+        getAddTask() {
+            let self = this;
+
+            if(self.role === 'member') {
+                self.$navigate(`/pages/training-camp-module/release-discuss`, {teamID: self.teamID})
+            }else {
+                self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID})
+            }
         },
         /*
             管理训练营
@@ -698,6 +688,21 @@ export default class teamDetail extends wepy.page {
         wepy.$instance.globalData.getLoadHuilder() // ga统计
     }
 
+    /**
+     * 监听滚动条的位置
+     * @param
+     */
+    onPageScroll(res) {
+        let self = this
+        let scrollTop = res.scrollTop
+        var query = wx.createSelectorQuery()
+        query.select('#bgBox').boundingClientRect(function (response) {
+            self.backgroundHeight = response.top
+        }).exec()
+        self.headerBackground =  self.backgroundHeight < -240 ? 'background-transparent-opacity' : 'background-transparent'
+        self.$apply()
+    }
+
 
     onShow() {
         let self = this
@@ -720,7 +725,8 @@ export default class teamDetail extends wepy.page {
             self.teamName = res.name;
             self.signUpUserCount = res.signUpUserCount;
             self.teamTime = res.time;
-            self.role = res.role;
+            // self.role = res.role;
+            self.role = 'admin';
             self.targetList = res.targetList;
             self.courseImageList = res.courseImageList;
             self.teacherImage = res.teacherImage;
@@ -765,5 +771,3 @@ export default class teamDetail extends wepy.page {
 
 }
 </script>
-
-
