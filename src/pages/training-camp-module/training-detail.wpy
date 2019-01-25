@@ -701,7 +701,6 @@ export default class teamDetail extends wepy.page {
         let postData = {
             token: self.token,
             teamID : self.teamID
-            // teamID : 'T1d99a66b0724fdba15b5a148f648'
         }
 
         if (self.wxPushType) {
