@@ -193,7 +193,7 @@
     import header from '../../components/common/header'
     import TeamLearningCourse from '../../components/TeamLearningCourse/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {practice as practiceApi } from '../../api'
+    import {team as teamApi } from '../../api'
     import {initializationDeligate} from '../../utils'
 
     const store = getStore();
@@ -343,7 +343,7 @@
         initialize() {
             // 通知组件，生成图片预览
             this.$broadcast('studying-bar')
-            practiceApi.getMyTeamListByTabByCommend({token: this.token})
+            teamApi.getMyTeamListByTabByCommend({token: this.token})
 			.then(res => {
 				this.isLoaded = true
 				this.teamDoingList = res.memberTeam.memberTeamDoingList //正在学习的 课程

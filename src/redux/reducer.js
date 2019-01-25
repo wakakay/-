@@ -2,7 +2,6 @@ import { combineReducers } from 'redux'
 
 import { userReducer } from './models/user'
 import { cardsReducer } from './models/cards'
-import { practicesReducer } from './models/practice'
 import { coursesReducer } from './models/courses'
 import { sencesReducer } from './models/sences'
 import { learningReducer } from './models/learning'
@@ -14,7 +13,6 @@ export const rootReducer = combineReducers({
     courses: coursesReducer,
     sences: sencesReducer,
     cards: cardsReducer,
-    practices: practicesReducer,
     learning: learningReducer,
     entrance: entranceReducer,
     activity: activityReducer

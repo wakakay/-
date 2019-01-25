@@ -98,7 +98,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import shareAppraisal from '../../components/shareImages/share-appraisal'
-    import {practice as practiceApi, fetch} from '../../api'
+    import {fetch} from '../../api'
     import {redirectToLesson} from '../../utils'
 
     const store = getStore()
@@ -117,12 +117,6 @@
         },
         windowHeight(state) {
             return state.user.screenHeight
-        },
-        courseID(state) {
-            return state.practices.courseID
-        },
-        senceID(state) {
-            return state.practices.senceID
         },
         entrance(state) {//全局场景值
             return state.entrance
@@ -194,7 +188,7 @@
 
         initialize() {
             let self = this
-            practiceApi.getUserExamScore({token: self.token, examID: self.examID}).then(data => {
+            fetch.getUserExamScore({token: self.token, examID: self.examID}).then(data => {
                 self.isLoaded = true
                 self.resultObj = data
                 self.$apply()
