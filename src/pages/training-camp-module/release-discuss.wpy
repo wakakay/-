@@ -146,7 +146,7 @@
         /**
          * @param teamID 训练营ID
          * */
-        onLoad() {
+        onLoad(params) {
             let self = this
             self.paramsInfo = params
             self.$apply()
