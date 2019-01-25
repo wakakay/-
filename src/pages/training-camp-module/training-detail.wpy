@@ -112,6 +112,7 @@
                     }
                 }
             }
+            .ui-item-false{margin:0 32rpx;font-size: 30rpx;color: @color-gray;text-align:center;border-bottom:2rpx solid border-gray;padding:84rpx 0;}
         }
 
     }
@@ -184,7 +185,7 @@
             <view class="ui-content">
                 <view class="ui-date">
                     <view class="cell-time">{{teamTime}}</view>
-                    <view wx:if="{{role == 'admin'}}" class="cell-manage" @tap.stop="getManageTeam">
+                    <view wx:if="{{role != 'member'}}" class="cell-manage" @tap.stop="getManageTeam">
                         管理 <text class="icon-setting"></text>
                     </view>
                 </view>
@@ -197,13 +198,7 @@
                 </view>
                 <view class="ui-team-msg">
                     <view>
-                        <text class="icon-lesson"></text>24节微课
-                    </view>
-                    <view>
-                        <text class="icon-community"></text>46个互动
-                    </view>
-                    <view>
-                        <text class="icon-member"></text>128人参与
+                        <text class="icon-member"></text>{{signUpUserCount}}人参与
                     </view>
                 </view>
             </view>
@@ -240,7 +235,7 @@
                 <view class="cell-tip">今日任务</view>
                 <view class="cell-plan" @tap.stop="getAllToadyTask">全部任务<text class="icon-details"></text></view>
             </view>
-            <repeat for="{{todayTask}}" key="index" index="index" item="item">
+            <repeat wx:if="{{todayTask.length}}" for="{{todayTask}}" key="index" index="index" item="item">
                 <view class="module-lesson-box">
                     <view class="ui-item" wx:if="{{item.taskType == 'online'}}">
                         <view class="ui-content">
@@ -280,6 +275,9 @@
                     </view>
                 </view>
             </repeat>
+            <view class="ui-item-false"   wx:if="{{!todayTask.length}}" >
+                今日没有学习任务，与其他学员交流下吧
+            </view>
         </view>
 
         <repeat for="{{intereactList}}" key="index" index="index" item="data">
@@ -298,7 +296,7 @@
                             <text class="icon-stick"></text>置顶
                     </view>
                 </view>
-                <view class="ui-content">
+                <view class="ui-content" wx:if="{{data.type=='discuss'}}">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
@@ -311,6 +309,7 @@
                         <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
                             <image mode="widthFix" src="{{infoItem.img}}"/>
                         </view>
+                        <view class="cell-link" wx:if="{{'link' == infoItem.type}}"></view>
                         <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
                             <view class="module-lesson-box">
                                 <view class="ui-item">
@@ -347,24 +346,41 @@
                     </repeat>
                 </view> -->
 
-                <!-- <view class="ui-content" wx:if="{{data.type=='practice'}}">
+                <view class="ui-content" wx:if="{{data.type=='practice'}}">
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-discuss"></text>
                             <text>{{data.title || '小练习'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
+                        <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-title">{{data.description}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{data.img}}"/>
-                    </view>
-
-                    <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
-                        <jn-single-choice :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
-                                :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
+                    <repeat for="{{data.infoList}}" key="infoIndex" index="infoIndex" item="infoItem">
+                        <view class="cell-title" wx:if="{{'text' == infoItem.type}}">{{infoItem.content}}</view>
+                        <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
+                            <image mode="widthFix" src="{{infoItem.img}}"/>
+                        </view>
+                        <view class="cell-link" wx:if="{{'link' == infoItem.type}}"></view>
+                        <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
+                            <view class="module-lesson-box">
+                                <view class="ui-item">
+                                    <view class="ui-content">
+                                        <image class="cell-thumb" mode="aspectFill"  src="{{lessonItem.imageUrl}}"/>
+                                        <view class="ui-detail">
+                                            <view class="cell-name">{{lessonItem.senceName}}</view>
+                                            <view class="cell-dec" wx:if="{{lessonItem.senceTarget}}">#{{lessonItem.senceTarget}}</view>
+                                        </view>
+                                    </view>
+                                    <button class="ui-btn">{{item.buttonMsg}}</button>
+                                </view>
+                            </view>
+                        </repeat>
+                        <!-- <repeat wx:if="{{'practice' == infoItem.type}}"  for="{{infoItem.practiceList}}" key="option" index="option" item="item">
+                            <jn-single-choice :parentIndex.sync="index" parentKey="pollList" :parentList.sync="intereactList"
+                                    :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
+                        </repeat> -->
                     </repeat>
-                </view> -->
+                   
+                </view>
 
                 <!--<view class="ui-content" wx:if="{{item.type=='question'}}">
                     <view class="ui-type main-justify cross-center">
@@ -712,8 +728,7 @@ export default class teamDetail extends wepy.page {
             self.teamName = res.name;
             self.signUpUserCount = res.signUpUserCount;
             self.teamTime = res.time;
-            // self.role = res.role;
-            self.role = 'admin';
+            self.role = res.role;
             self.targetList = res.targetList;
             self.courseImageList = res.courseImageList;
             self.teacherImage = res.teacherImage;
