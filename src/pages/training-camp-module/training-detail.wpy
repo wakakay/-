@@ -440,7 +440,7 @@ import header from '../../components/common/header'
 import poll from '../../components/cards-type/poll'
 import singleChoice from '../../components/cards-type/single-choice'
 import {initializationDeligate, navigateToLesson} from "../../utils"
-import {team as teamApi, share as shareApi} from '../../api'
+import {team as teamApi, share as shareApi , fetch} from '../../api'
 import _ from 'underscore'
 
 const store = getStore();
@@ -713,6 +713,7 @@ export default class teamDetail extends wepy.page {
         let postData = {
             token: self.token,
             teamID : self.teamID
+            // teamID : 'T1d99a66b0724fdba15b5a148f648'
         }
 
         if (self.wxPushType) {
@@ -744,8 +745,8 @@ export default class teamDetail extends wepy.page {
 
         }).then(()=>{
 
-            teamApi.getExtraList(postData).then((res) => {
-                console.log(res)
+            fetch.getActivityfeedList(postData).then((res) => {
+                console.log()
             })
 
         }).catch((error) => {
