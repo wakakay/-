@@ -533,9 +533,7 @@
                     type: type,
                     id: examID
                 })
-
-                // ga
-                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
+                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`) // ga
 
                 let postData = {
                     token: self.token,

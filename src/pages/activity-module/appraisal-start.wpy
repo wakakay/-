@@ -41,10 +41,9 @@
 
 <script>
     import wepy from 'wepy'
-    import {practice as practiceApi, report as reportApi} from '../../api'
+    import {fetch, report as reportApi} from '../../api'
     import {getStore, connect} from 'wepy-redux'
     import {login} from "../../redux/models/user"
-    import {fetchPreviousPractices} from '../../redux/models/practice'
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
 
@@ -61,7 +60,6 @@
             return state.entrance
         },
         token(state) {
-            // return 'userID2078dc313ec94da19f1d9e0cb7603756-1533539113289-dacde2d0203de207732b45998542096a'
             return state.user.token
         },
         role(state) {
@@ -113,7 +111,7 @@
             if (self.wxPushType) {
                 postData.wxPushType = self.wxPushType
             }
-            return practiceApi.getExamFront(postData).then(({description, examID, subject, imageBottomURL, imageHeaderURL, imagePracticeURL, imageResultURL, subjectHeading}) => {
+            return fetch.getExamFront(postData).then(({description, examID, subject, imageBottomURL, imageHeaderURL, imagePracticeURL, imageResultURL, subjectHeading}) => {
                 self.isLoaded = true
                 self.description = description
                 self.imageBottomURL = imageBottomURL
@@ -189,24 +187,14 @@
                     this.$apply()
                     return store.dispatch(login())
                 }).then(() => {
-
                     wx.reportAnalytics('nicknamegive_agree', {
                         username: self.userName,
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         examid: self.examID,
                         routeurl: '',
                     });
-                    store.dispatch(fetchPreviousPractices({
-                        token: this.token,
-                        courseID: this.courseID,
-                        senceID: this.senceID,
-                        examID: this.examID
-                    })).then(data => {
-                        let params = {
-                            examID: this.examID,
-                        }
-                        return this.$redirect('/pages/activity-module/appraisal-questions', params)
-                    })
+
+                    return this.$redirect('/pages/activity-module/appraisal-questions',  {examID: this.examID,})
                 }).catch(error => {
 
                 })
@@ -227,28 +215,17 @@
                     examid: self.examID,
                 });
 
-                store.dispatch(fetchPreviousPractices({
-                    token: self.token,
-                    courseID: self.courseID,
-                    senceID: self.senceID,
-                    examID: self.examID
-                })).then(data => {
-                    if (data === 'done') {
-                        self.$navigate('/pages/activity-module/appraisal-results', {examID: self.examID})
-                        return
-                    }
-                    let params = {
-                        examID: self.examID,
-                        bgUrl: self.imageBottomURL,
-                        imagePracticeURL: self.imagePracticeURL,
-                        subjectHeading: self.subjectHeading
-                    }
-                    if (self.imageResultURL) {
-                        params.imageResultURL = self.imageResultURL
-                    }
-                    wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
-                    self.$redirect('/pages/activity-module/appraisal-questions', params)
-                })
+                let params = {
+                    examID: self.examID,
+                    bgUrl: self.imageBottomURL,
+                    imagePracticeURL: self.imagePracticeURL,
+                    subjectHeading: self.subjectHeading
+                }
+                if (self.imageResultURL) {
+                    params.imageResultURL = self.imageResultURL
+                }
+                wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
+                self.$redirect('/pages/activity-module/appraisal-questions', params)
             }
         }
 

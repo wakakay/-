@@ -35,7 +35,7 @@
 	import loadingMixin from '../../mixins/loading'
 	import header from '../../components/common/header'
 	import TeamLearningCourse from '../../components/TeamLearningCourse/index'
-	import {practice as practiceApi } from '../../api'
+	import {team as teamApi } from '../../api'
 
 	const store = getStore()
 	@connect({
@@ -93,7 +93,7 @@
 
 		//获得 训练营 列表
 		gainAllList() {
-				practiceApi.getMyTeamSignupList({
+				teamApi.getMyTeamSignupList({
 			token: this.token
 		})
 		.then(res => {
@@ -108,7 +108,7 @@
 </script>
 
 <style lang="less">
-	@import "../../assets/style/theme"; 
+	@import "../../assets/style/theme";
 	.ui-all-camp-list{
 		.ui-camp-item {
 			height: 210rpx;width: 686rpx;display: flex;margin: 0 32rpx 0 32rpx;border-bottom:2rpx solid @border-gray;align-items:center;box-sizing:border-box;position: relative;
@@ -116,7 +116,7 @@
 				margin-right: 20rpx;
 				image{width: 240rpx;height: 144rpx;border-radius: 12rpx;}
 			}
-	 		.ui-content{ 
+	 		.ui-content{
 				height: 144rpx;display: flex;flex-direction: column;
 	 			.cell-title {font-family: PingFangSC-Medium;font-size: 32rpx;color: @color-black;line-height: 24px;width: 422rpx;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;height: 96rpx;}
 	 			.ui-date {

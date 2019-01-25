@@ -82,20 +82,21 @@ export const getTeamLearningInfo = ({ token, teamID, buttonStatus, roleType }) =
         })
 }
 // 获得已报名的训练营的列表 /api/myTeam/getMyTeamSignupList
-export const getMyTeamSignupList = ({ token }) => { 
+export const getMyTeamSignupList = ({ token = 'defaultToken'}) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
-            url: `${config.baseUrl}myTeam/getMyTeamSignupList?token=${token}`,
-            method: 'POST'
-        })
+        url: `${config.baseUrl}myTeam/getMyTeamSignupList?token=${token}`,
+        method: 'POST'
+    })
         .then(({ data: { data, status, message } }) => {
             if (200 !== status) throw new Error(message)
             return data
         })
 }
 
+
 // 获得微课列表 /api/myLearning/v1/myFinishSenceList
-export const myFinishSenceList = ({ token }) => { 
+export const myFinishSenceList = ({ token }) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
             url: `${config.baseUrl}myLearning/v1/myFinishSenceList?token=${token}`,
@@ -108,7 +109,7 @@ export const myFinishSenceList = ({ token }) => {
 }
 
 // 训练营 全列表 /api/myTeam/getMyTeamListByTabByCommend
-export const getMyTeamListByTabByCommend = ({ token }) => { 
+export const getMyTeamListByTabByCommend = ({ token }) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
             url: `${config.baseUrl}myTeam/getMyTeamListByTabByCommend?token=${token}`,
@@ -121,7 +122,7 @@ export const getMyTeamListByTabByCommend = ({ token }) => {
 }
 
 //为你推荐 /api/discover/v1/getAnotherRecommendCourse
-export const getAnotherRecommendCourse = ({ token }) => { 
+export const getAnotherRecommendCourse = ({ token }) => {
     if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
     return wepy.request({
             url: `${config.baseUrl}discover/v1/getAnotherRecommendCourse?token=${token}`,

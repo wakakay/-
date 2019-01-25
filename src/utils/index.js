@@ -4,7 +4,6 @@ import { auth as authApi, course as courseApi, practice as practiceApi } from '.
 import {renewWechatCode, setPhone, login, checkLoginStatus, renewUserRole, refreshUserInformations} from "../redux/models/user";
 import { refreshActivity } from '../redux/models/activity'
 import { refreshLearnings } from '../redux/models/learning'
-import { setCurrentPracticeOffset, setLastPracticeOffset, setSubmitSection } from "../redux/models/practice"
 import { CustomError, InitializeError, UnAuthenticationError, RejectAuthenticationError, CancelAuthenticationError } from '../errors'
 import _ from 'underscore'
 
@@ -550,13 +549,6 @@ const initialState = {
             ]
         }
     },
-    practices: {
-        requestFlag: '',
-        currentSectionOffset: 0,
-        sections: [],
-        courseID: 'defaultCourseID',
-        senceID: 'defaultSenceID'
-    }, // end practices
     learning: {
         teamIDForTest: 1526626753087
     },

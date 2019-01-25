@@ -5,18 +5,17 @@ import card from './card'
 import * as sence from './sence'
 import * as team from './team'
 import * as score from './score'
-import * as practice from './practice'
+import practice from './practice'
 import * as report from './report'
 import registered from './registered' // 新增的接口，待整合
 import _ from 'underscore'
 
-const fetch = _.extend(common, card, course, registered)
+const fetch = _.extend(common, card, course, practice, registered)
 export {
     fetch,
     auth,
     sence,
     team,
     score,
-    practice,
     report
 }
