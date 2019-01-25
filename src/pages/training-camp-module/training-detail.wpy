@@ -379,7 +379,7 @@
                                     :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
                         </repeat> -->
                     </repeat>
-                   
+
                 </view>
 
                 <!--<view class="ui-content" wx:if="{{item.type=='question'}}">
@@ -722,6 +722,10 @@ export default class teamDetail extends wepy.page {
         if (self.wxPushType) {
             postData.wxPushType = self.wxPushType
         }
+        /*fetch.getActivityfeedList(postData).then((res)=>{
+
+        })*/
+
         teamApi.getTeamDetail(postData).then((res)=>{
 
             self.imageUrl = res.imageUrl;

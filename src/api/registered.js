@@ -158,5 +158,12 @@ export default {
      */
     getActivityfeedList(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getActivityfeedList', params: params})
+    },
+    /**
+     * 团读书学习→发起讨论
+     * @param  teamID: 团队ID
+     */
+    sendTeamPractice(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: params})
     }
 }

@@ -35,7 +35,8 @@
                           bindblur="getBlur"></textarea>
                 <view class="cell-close cross-center">
                     <text class="icon-delete-select"
-                          data-type="{{index}}"
+                          data-index="{{index}}"
+                          data-item="{{data}}"
                           @tap.stop="getDetele"></text>
                 </view>
             </view>
@@ -43,7 +44,8 @@
             <view class="ui-thumb" wx:if="{{'image'==data.type}}">
                 <image mode="widthFix" src="{{data.img}}"></image>
                 <text class="icon-delete-select"
-                      data-type="{{index}}"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
                       @tap.stop="getDetele"></text>
             </view>
 
@@ -62,7 +64,8 @@
                     </view>
                 </repeat>
                 <text class="icon-delete-select"
-                      data-type="{{index}}"
+                      data-index="{{index}}"
+                      data-item="{{data}}"
                       @tap.stop="getDetele"></text>
             </view>
         </repeat>
