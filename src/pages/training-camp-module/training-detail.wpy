@@ -170,7 +170,7 @@
             padding: 16rpx 32rpx 32rpx;
             image{width: 100%;}
         }
-        .cell-link{padding:16rpx 32rpx;font-size: 32rpx;color:@color-blue;text-decoration:underline}
+        .ui-link{padding:16rpx 32rpx;font-size: 32rpx;color:@color-blue;}
         .cell-poll-btn{width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx}
     }
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
@@ -287,7 +287,7 @@
                     <view class="flex-width-1 flex-start-column">
                         <view class="ui-stand cross-center">
                             <view class="cell-name text-overflow">{{data.name}}</view>
-                            <view class="cell-role">{{data.roleType}}</view>
+                            <view class="cell-role">{{data.roleTypeText}}</view>
 
                         </view>
                         <view class="cell-date">{{data.date}}</view>
@@ -359,7 +359,10 @@
                         <view class="cell-image" wx:if="{{'image' == infoItem.type}}">
                             <image mode="widthFix" src="{{infoItem.img}}"/>
                         </view>
-                        <view class="cell-link" wx:if="{{'link' == infoItem.type}}"></view>
+                        <view class="ui-link" wx:if="{{'link' == infoItem.type}}" data-link="{{infoItem.link}}">
+                            <view>{{infoItem.title}}</view>
+                            <text selectable>{{infoItem.link}}</text>
+                        </view>
                         <repeat wx:if="{{'lesson' == infoItem.type}}" for="{{infoItem.list}}" key="lessonIndex" index="lessonIndex" item="lessonItem">
                             <view class="module-lesson-box">
                                 <view class="ui-item">
@@ -370,7 +373,7 @@
                                             <view class="cell-dec" wx:if="{{lessonItem.senceTarget}}">#{{lessonItem.senceTarget}}</view>
                                         </view>
                                     </view>
-                                    <button class="ui-btn">{{item.buttonMsg}}</button>
+                                    <button class="ui-btn">{{lessonItem.buttonMsg}}</button>
                                 </view>
                             </view>
                         </repeat>
@@ -608,11 +611,6 @@ export default class teamDetail extends wepy.page {
 
     }
     methods= {
-        getGoLink(event) {
-            let self = this;
-            let {currentTarget: {dataset:{link}}} = event
-            console.log(link,1)
-        },
         // 标题 问好
         getToggleQuestion(){
             let self = this;
