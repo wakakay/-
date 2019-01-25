@@ -181,5 +181,11 @@ export default {
     saveTeamPost(params) {
         return fetch({method: 'post', url: 'team/saveTeamPost', params: params})
     },
-
+    /**
+     * 团读书学习→发起讨论
+     * @param  teamID: 团队ID
+     */
+    getActivityfeedList(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getActivityfeedList', params: params})
+    }
 }

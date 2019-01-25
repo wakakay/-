@@ -17,8 +17,12 @@
                     <view class="ui-item"
                           hover-class="{{!cardsList[cardIndex].isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
                           :class="{'is-selected': item.selected, 'is-selected-over': (cardsList[cardIndex].isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
-                          data-item="{{ item }}"
-                          data-index="{{ index }}"
+                          data-parentlist="{{parentList}}"
+                          data-parentkey="{{parentKey}}"
+                          data-parentindex="{{parentIndex}}"
+                          data-cardindex="{{cardIndex}}"
+                          data-item="{{item}}"
+                          data-index="{{index}}"
                           @tap.stop="getSelected">
                         <view class="ui-prop"
                               style="width: {{ballotInfo[item.id] || item.prop}}%"></view>
@@ -48,6 +52,16 @@
     })
     export default class pollCard extends wepy.component {
         props = {
+            parentIndex: {
+                type: Number
+            },
+            parentKey: {
+                type: String
+            },
+            parentList: {
+                type: Array,
+                default: []
+            },
             cardIndex: {
                 type: Number
             },
@@ -84,12 +98,11 @@
              */
             getSelected(event) {
                 let self = this
-                let {currentTarget: {dataset: {item, index}}} = event
+                let {currentTarget: {dataset: {item, index, parentlist, parentindex, parentkey, cardindex}}} = event
+                let cardItem = !parentkey ? self.cardsList[self.cardIndex] : parentlist[parentindex][parentkey][cardindex]
                 if (!item.id) {
                     return
                 }
-
-                let cardItem = self.cardsList[self.cardIndex]
                 // poll只能投一次
                 if (cardItem.isDone
                     || (cardItem.isAnswerOver && self.oldIndex === self.cardIndex)) {
@@ -113,6 +126,9 @@
                 })
 
                 let data = {
+                    parentindex: parentindex,
+                    parentkey: parentkey,
+                    optionList: cardItem.optionList,
                     isFinish: selectedIds.length ? true : false,
                     id: cardItem.id || cardItem.pollID,
                     selectedId: item.id,
@@ -120,7 +136,7 @@
                     select: selectList,
                     fullImageBottomtText: selectedIds.length ? '我选好了' : '请投票'
                 }
-
+console.log(data)
                 self.$emit('on-interaction', data)
             }
         }
