@@ -33,7 +33,6 @@ export default {
     sendCoursePageTime(params) {
         return fetch({method: 'post', url: 'report/sendCoursePageTime', params: params})
     },
-
     /**
      * 上报中台埋点
      * @param code: fromID
