@@ -28,8 +28,8 @@
         <jn-header></jn-header>
         <view class="ui-select-list">
             <view class="ui-radio dir-left">
-                <view class="cell-radio cross-center" data-type="importent" @tap.stop="getRadio">
-                    <text class="{{sendData.infoType=='importent' ? 'icon-selected' : 'icon-selectable'}}"></text>通知
+                <view class="cell-radio cross-center" data-type="important" @tap.stop="getRadio">
+                    <text class="{{sendData.infoType=='important' ? 'icon-selected' : 'icon-selectable'}}"></text>通知
                 </view>
                 <view class="cell-radio cross-center" data-type="normal" @tap.stop="getRadio">
                     <text class="{{sendData.infoType=='normal' ? 'icon-selected' : 'icon-selectable'}}"></text>其他
@@ -164,12 +164,12 @@
                                 disabled="{{!status.isLesson}}"
                                 @tap.stop="getAddLayer"><text class="icon-course1"></text></button>
                         <button class="cell-item"
-                                wx:if="{{sendData.infoType!='importent'}}"
+                                wx:if="{{sendData.infoType!='important'}}"
                                 data-type="practice"
                                 disabled="{{!status.isPractice}}"
                                 @tap.stop="getAddLayer"><text class="icon-practice"></text></button>
                         <button class="cell-item"
-                                wx:if="{{sendData.infoType!='importent'}}"
+                                wx:if="{{sendData.infoType!='important'}}"
                                 data-type="poll"
                                 disabled="{{!status.isPoll}}"
                                 @tap.stop="getAddLayer"><text class="icon-poll"></text></button>

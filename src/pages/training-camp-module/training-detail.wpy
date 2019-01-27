@@ -135,7 +135,7 @@
     .cell-mask{background:@background-mask-normal;z-index: @z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
     .ui-interact-item{
         background: @background-gray-F4;padding-top:20rpx;
-        .ui-content{background: @background-white;}
+        .ui-content{background: @background-white;padding-bottom:20rpx;}
         .ui-user{
             background: @background-white;padding:0 32rpx;height: 128rpx;border-bottom: 1rpx solid @border-gray;box-sizing: border-box;
             image{width: 80rpx;height: 80rpx;border-radius: 50%;margin-right: 16rpx;}
@@ -292,38 +292,36 @@
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" :class="{'is-sticked': data.isPartIn}">
+                    <view class="ui-stick" wx:if="{{data.roleType == 'admin'}}" :class="{'is-sticked': data.isTop}">
                         <text class="icon-stick"></text>置顶
                     </view>
                 </view>
-                <view class="ui-content" wx:if="{{data.type=='discuss'}}">
+                <view class="ui-content">
                     <view class="ui-type main-justify cross-center">
-                        <view>
+                        <view wx:if="{{data.type=='discuss'}}">
                             <text class="icon-discuss"></text>
-                            <text>{{data.title || '通知，晚间讨论'}}</text>
+                            <text>{{data.title || '疑问，求解答'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
-                    </view>
-                    <view class="cell-title">{{data.description}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{data.image}}"/>
-                    </view>
-                </view>
-
-                <view class="ui-content" wx:if="{{data.type=='practice'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-discuss"></text>
+                        <view wx:if="{{data.type=='practice'}}">
+                            <text class="icon-practice"></text>
                             <text>{{data.title || '小练习'}}</text>
                         </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
+                        <view wx:if="{{data.type=='poll'}}">
+                            <text class="icon-poll"></text>
+                            <text>{{data.title || '来投一下票，做下调查'}}</text>
+                        </view>
+                        <view wx:if="{{data.contentType=='notice'}}">
+                            <text class="icon-inform"></text>
+                            <text>{{data.title || '通知，晚间讨论'}}</text>
+                        </view>
+
+                        <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
-                    <view class="cell-title">{{data.content}}</view>
-                    <view class="cell-image">
+                    <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
+                    <view class="cell-image" wx:if="{{data.img}}">
                         <image mode="widthFix" src="{{data.img}}"/>
                     </view>
-
-                    <repeat for="{{data.lessonList}}" key="itemIndex" index="itemIndex" item="item">
+                    <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="itemIndex" index="itemIndex" item="item">
                         <view class="module-lesson-box">
                             <view class="ui-item">
                                 <view class="ui-content">
@@ -337,31 +335,26 @@
                             </view>
                         </view>
                     </repeat>
-
-                    <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
+                    <view wx:if="{{data.linkLoaction}}" class="ui-link">
+                        <view>{{data.linkLoaction}}</view>
+                        <view>{{data.linkName}}</view>
+                    </view>
+                    <repeat wx:if="{{data.type=='practice'}}" for="{{data.practiceList}}" key="option" index="option" item="item">
                         <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
                                           :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
                     </repeat>
-                </view>
-
-                <view class="ui-content" wx:if="{{data.type=='poll'}}">
-                    <view class="ui-type main-justify cross-center">
-                        <view>
-                            <text class="icon-discuss"></text>
-                            <text>{{data.title || '小练习'}}</text>
-                        </view>
-                        <view class="cell-status" :class="{'cell-completed': data.isPartIn}">{{data.isPartIn ? '已完成' : '未参与'}}</view>
+                    <view wx:if="{{data.type=='poll'}}">
+                        <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList" isLearning></jn-poll>
+                        <button class="cell-poll-btn"
+                            data-index="{{index}}"
+                            data-item="{{data}}"
+                            open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                            bindgetuserinfo="getAuthorize"
+                            @tap.stop="getPoll">投票</button>
                     </view>
-                    <view class="cell-title">{{data.content}}</view>
-                    <view class="cell-image">
-                        <image mode="widthFix" src="{{data.img}}"/>
-                    </view>
-
-                    <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList"></jn-poll>
+                    
                 </view>
             </view>
-
-
         </repeat>
         <view class="cell-more">没有更多内容了</view>
     </view>
@@ -464,6 +457,32 @@ export default class teamDetail extends wepy.page {
             }else {
                 self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID})
             }
+        },
+        /**
+         * 投票
+         * @param event
+         */
+        getPoll(event) {
+            let self = this
+            let {currentTarget: {dataset: {item, index}}} = event
+
+            if (item.isDone || !self.isTokenSet) {
+                return
+            }
+
+            wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
+            let postData = {
+                token: self.token,
+                pollID: item.pollID,
+                optionList:item.select.id
+            }
+
+            fetch.sendUserPoll(postData).then((respone) => {
+                item.isDone = true
+                self.$broadcast('broadcast-poll', item)
+            }).catch(error => {
+                console.log(error,1)
+            })
         },
         /*
             管理训练营
