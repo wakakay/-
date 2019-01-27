@@ -153,6 +153,7 @@
                 self.$apply();
 
                 self.$emit('on-add-lesson',self.seleteList)
+                self.seleteList = []
             }
         };
 

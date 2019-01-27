@@ -124,8 +124,8 @@
                 self.practiceList = [];
                 self.searchName = ''
                 self.$apply();
-
                 self.$emit('on-add-practice',self.seleteList)
+                self.seleteList = []
 
             }
         };
