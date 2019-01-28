@@ -483,10 +483,10 @@ export default class teamDetail extends wepy.page {
 
     onPullDownRefresh() {
         let self = this
-        self.initialize({
-            callBack() {
-                wx.stopPullDownRefresh()
-            }
+        self.initialize().then(()=>{
+            wx.stopPullDownRefresh()
+        }).catch((error)=>{
+            console.log(error)
         })
     }
 
@@ -500,7 +500,9 @@ export default class teamDetail extends wepy.page {
         if (self.wxPushType) {
             postData.wxPushType = self.wxPushType
         }
-        fetch.getTeamDetail(postData).then((res)=>{
+        // 下拉刷新
+                
+        return fetch.getTeamDetail(postData).then((res)=>{
             res = res.data;
             self.imageUrl = res.imageUrl;
             self.teamName = res.name;

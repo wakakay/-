@@ -309,7 +309,7 @@
                 self.isMoreLoaded = false
             }
 
-            fetch.discoverPage(postData).then((respone) => {
+            return fetch.discoverPage(postData).then((respone) => {
                 self.isLoaded = true
                 self.discoverPageTitle = respone.discoverPageTitle
                 // 返回跟新微课状态
@@ -592,13 +592,14 @@
                 }
             }
         }
+
         onPullDownRefresh() {
-            let self = this
+            let self =this;
             self.page = 1
-            self.__fetchCourses({
-                callBack() {
-                    wx.stopPullDownRefresh()
-                }
+            self.__fetchCourses().then(()=>{
+                wx.stopPullDownRefresh()
+            }).catch((error)=>{
+                console.log(error)
             })
         }
         onReachBottom() {
