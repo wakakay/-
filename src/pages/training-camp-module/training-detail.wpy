@@ -2,201 +2,209 @@
     @import "../../assets/style/theme";
     .ui-training-detail{
         .ui-bg{
-            height: 480rpx;width: 100%;background-size: 100% 100%;position: relative;
+            width:100%;height:480rpx;background-size:cover;position:relative;
+            &.is-iphonex{height:520rpx;}
+            &:before{content:' ';width:100%;height:100%;background-color:@background-mask-normal-4;position:absolute;left:0;top:0;}
             .ui-content{
-                left: 0;right: 0;position: absolute;top: 0;bottom: 0;background: rgba(0,0,0,0.4);padding:156rpx 0 0 40rpx;box-sizing: border-box;color:@color-white;
+                box-sizing:border-box;padding:0 26rpx 0 40rpx;color:@color-white;position:relative;z-index:@z-index-normal;
                 .ui-date{
-                    display: flex;justify-content: space-between;padding-right:26rpx;
+                    height:72rpx;margin-bottom:24rpx;
+                    .cell-time{opacity:0.7;font-size:26rpx;height:110rpx;display:flex;align-items:center;}
                     .cell-manage{
-                        font-size: 26rpx;display:flex;align-items:center;
-                        text{font-size: 48rpx;margin-left: 16rpx;}
+                        font-size:26rpx;display:flex;align-items:center;
+                        text{font-size:52rpx;margin-left:16rpx;}
                     }
-                    .cell-time{opacity: 0.7;font-size: 26rpx;height:110rpx;display:flex;align-items:center;}
-
                 }
-                .cell-name{
-                    font-weight: bold;font-size: 48rpx;height: 120rpx;position: relative;
-                    view{position: absolute;bottom: 0;}
-                    text{margin-left: 16rpx;}
+                .ui-team-title{
+                    height:140rpx;
+                    .cell-title{
+                        font-size:48rpx;font-weight:700;line-height:70rpx;
+                        text{margin-left:16rpx;}
+                    }
+                    button{
+                        height:70rpx;margin-left:44rpx;background:none;line-height:70rpx;
+                        text{font-size:52rpx;color:@color-white;}
+                    }
                 }
                 .ui-team-msg{
-                    display: flex;justify-content: space-between;padding-right: 26rpx;margin-top:28rpx;font-size: 26rpx;color:rgba(255,255,255,0.60);
+                    display:flex;justify-content:space-between;padding-right:26rpx;margin-top:28rpx;font-size:26rpx;color:rgba(255,255,255,0.60);
                     text{
-                        font-size: 28rpx;margin-right: 11rpx;
+                        font-size:28rpx;margin-right:11rpx;
                     }
-                    view{&:nth-of-type(2){text{font-size: 32rpx;}}}
+                    view{&:nth-of-type(2){text{font-size:32rpx;}}}
                 }
             }
         }
         .ui-rank{
-            height: 208rpx;display: flex;align-items:center;padding-left:30rpx;border-bottom: 1rpx solid @border-gray;
+            height:208rpx;display:flex;align-items:center;padding-left:30rpx;border-bottom:1rpx solid @border-gray;
             .ui-member{
-                display: flex;width: 332rpx;
+                display:flex;width:332rpx;
                 .ui-item{
-                    margin-right: 20rpx;width: 90rpx;display: flex;align-items:center;flex-direction: column;position: relative;
-                    &:first-child .cell-num{background: #FFB400;}
+                    margin-right:20rpx;width:90rpx;display:flex;align-items:center;flex-direction:column;position:relative;
+                    &:first-child .cell-num{background:#FFB400;}
                     &:nth-child(2) .cell-num{background:#B9C8CE;}
                     &:nth-child(3) .cell-num{background:#D8B07A;}
-                    &:first-child .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageIDb3ec50f7091431b62d7fd42f7ef0.png');}
-                    &:nth-child(2) .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageID74a525ad27542e8557e82e66b2d3.png');}
-                    &:nth-child(3) .ui-brand{background-image: url('http://wx-small.runwise.cn/image/imageID23819cddd694e58c35fbae09b3f8.png');}
+                    &:first-child .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageIDb3ec50f7091431b62d7fd42f7ef0.png');}
+                    &:nth-child(2) .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageID74a525ad27542e8557e82e66b2d3.png');}
+                    &:nth-child(3) .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageID23819cddd694e58c35fbae09b3f8.png');}
                     .ui-brand{
-                        width: 42rpx;height: 46rpx;background-size: 100% 100%;position: absolute;top: -20rpx;
+                        width:42rpx;height:46rpx;background-size:100% 100%;position:absolute;top:-20rpx;
                     }
                     .ui-avatar{
-                        display: flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width: 88rpx;height: 88rpx;
-                        image{width: 88rpx;height: 88rpx;border-radius: 50%;}
+                        display:flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width:88rpx;height:88rpx;
+                        image{width:88rpx;height:88rpx;border-radius:50%;}
                     }
                     .cell-num{
-                        width: 76rpx;height: 32rpx;border-radius: 16rpx;font-family: PingFangSC-Semibold;font-size: 20rpx;color: @color-white;display: flex;align-items: center;justify-content: center;margin-top: 10rpx;
+                        width:76rpx;height:32rpx;border-radius:16rpx;font-family:PingFangSC-Semibold;font-size:20rpx;color:@color-white;display:flex;align-items:center;justify-content:center;margin-top:10rpx;
                     }
 
                 }
             }
             .ui-oneself{
-                display: flex;flex: 1;height: 100%;align-items: center;justify-content:flex-end;padding-right:28rpx;
+                display:flex;flex:1;height:100%;align-items:center;justify-content:flex-end;padding-right:28rpx;
                 .ui-member{
-                    display: flex;justify-content:flex-end;align-items: center;
+                    display:flex;justify-content:flex-end;align-items:center;
                     .ui-num{
-                        font-family: PingFangSC-Regular;font-size: 24rpx;color:@color-gray;height:88rpx;margin-right:20rpx;
+                        font-family:PingFangSC-Regular;font-size:24rpx;color:@color-gray;height:88rpx;margin-right:20rpx;
                         text{color:@color-red}
                     }
                     .ui-item{
-                        margin-right: 20rpx;width: 90rpx;display: flex;align-items:center;flex-direction: column;
+                        margin-right:20rpx;width:90rpx;display:flex;align-items:center;flex-direction:column;
                         .ui-avatar{
-                            display: flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width: 88rpx;height: 88rpx;
-                            image{width: 88rpx;height: 88rpx;border-radius: 50%;}
+                            display:flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width:88rpx;height:88rpx;
+                            image{width:88rpx;height:88rpx;border-radius:50%;}
                         }
                         .cell-num{
-                            width: 76rpx;height: 32rpx;border-radius: 16rpx;font-family: PingFangSC-Semibold;font-size: 20rpx;color: @color-white;display: flex;align-items: center;justify-content: center;margin-top: 10rpx;background: @background-mask-slightly
+                            width:76rpx;height:32rpx;border-radius:16rpx;font-family:PingFangSC-Semibold;font-size:20rpx;color:@color-white;display:flex;align-items:center;justify-content:center;margin-top:10rpx;background:@background-mask-slightly
                         }
                     }
                 }
-                .cell-teacher{color:@color-blue;font-size: 32rpx;display: flex;justify-content:flex-end;height:102rpx;margin-right: 20rpx;align-items: flex-start}
+                .cell-teacher{color:@color-blue;font-size:32rpx;display:flex;justify-content:flex-end;height:102rpx;margin-right:20rpx;align-items:flex-start}
                 .icon-details{color:@color-blue;height:88rpx;display:flex;}
             }
         }
         .ui-today-task{
             .ui-title{
-                display: flex;height: 88rpx;justify-content: space-between;align-items: center;box-sizing: border-box;padding: 0 28rpx 0 32rpx;
-                .cell-tip{font-size: 44rpx;font-weight: bold;}
-                .cell-plan{color: @color-blue;font-size: 34rpx;}
+                display:flex;height:88rpx;justify-content:space-between;align-items:center;box-sizing:border-box;padding:0 28rpx 0 32rpx;
+                .cell-tip{font-size:44rpx;font-weight:bold;}
+                .cell-plan{color:@color-blue;font-size:34rpx;}
             }
             .ui-offline-image{
                 margin-top:16rpx;text-align:center;
-                image{width: 622rpx;}
+                image{width:622rpx;}
             }
             .ui-offline-detail{
-                display: flex;margin-top:16rpx;
+                display:flex;margin-top:16rpx;
                 .ui-portrait{
-                    margin-right: 22rpx;
-                    image{width: 160rpx;height: 192rpx;border-radius:@border-radius-20}
+                    margin-right:22rpx;
+                    image{width:160rpx;height:192rpx;border-radius:@border-radius-20}
                 }
                 .ui-message{
                     color:@color-gray;font-size:26rpx;
-                    .ui-name{font-size: 40rpx;color:@color-black}
+                    .ui-name{font-size:40rpx;color:@color-black}
                     .ui-teacher{
-                        display: flex;margin-top:12rpx;
+                        display:flex;margin-top:12rpx;
                         .cell-key{width:142rpx;text-align:left}
                         .cell-value{color:@color-black}
                     }
                     .ui-time{
-                        display: flex;margin-top:12rpx;
+                        display:flex;margin-top:12rpx;
                         .cell-key{width:142rpx;text-align:left}
                         .cell-value{color:@color-black}
                     }
                     .ui-address{
-                        display: flex;margin-top:12rpx;
+                        display:flex;margin-top:12rpx;
                         .cell-key{width:142rpx;text-align:left}
                         .cell-value{color:@color-black}
                     }
                 }
             }
-            .ui-item-false{margin:0 32rpx;font-size: 30rpx;color: @color-gray;text-align:center;border-bottom:2rpx solid border-gray;padding:84rpx 0;}
+            .ui-item-false{margin:0 32rpx;font-size:30rpx;color:@color-gray;text-align:center;border-bottom:2rpx solid border-gray;padding:84rpx 0;}
         }
 
     }
     .ui-box{
-        position: fixed;bottom:0;width: 100%;transition: all 0.6s ease-in;background: @background-white;z-index: @z-index-highest;transform:translateY(100%);
+        position:fixed;bottom:0;width:100%;transition:all 0.6s ease-in;background:@background-white;z-index:@z-index-highest;transform:translateY(100%);
         &.active{transform:translateY(0);}
         .ui-top{
-            width: 100%;
-            text{width: 24px;height: 24px;display: block;margin: 0 10px 0 auto;padding: 8px 0;color:@color-gray;}
+            width:100%;
+            text{width:24px;height:24px;display:block;margin:0 10px 0 auto;padding:8px 0;color:@color-gray;}
         }
         .ui-scroll{
-            width: 100%;box-sizing: border-box;padding: 0 30rpx;overflow-y: scroll;height: 463px;color:@color-black;background: @background-white;
-            .cell-title{padding:36rpx 0 46rpx;font-size:48rpx;font-weight: bold;border-top:2rpx solid @border-gray}
+            width:100%;box-sizing:border-box;padding:0 30rpx;overflow-y:scroll;height:463px;color:@color-black;background:@background-white;
+            .cell-title{padding:36rpx 0 46rpx;font-size:48rpx;font-weight:bold;border-top:2rpx solid @border-gray}
             .cell-li{width:598rpx;margin-bottom:32rpx;font-size:32rpx;color:@color-gray;}
             .cell-poster{width:686rpx;margin-bottom:43rpx;}
             .cell-teacher-image{width:100%;padding-bottom:136rpx;}
 
         }
     }
-    .cell-mask{background:@background-mask-normal;z-index: @z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
+    .cell-mask{background:@background-mask-normal;z-index:@z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
     .ui-interact-item{
-        background: @background-gray-F4;padding-top:20rpx;
-        .ui-content{background: @background-white;padding-bottom:20rpx;}
+        background:@background-gray-F4;padding-top:20rpx;
+        .ui-content{background:@background-white;padding-bottom:20rpx;}
         .ui-user{
-            background: @background-white;padding:0 32rpx;height: 128rpx;border-bottom: 1rpx solid @border-gray;box-sizing: border-box;
-            image{width: 80rpx;height: 80rpx;border-radius: 50%;margin-right: 16rpx;}
+            background:@background-white;padding:0 32rpx;height:128rpx;border-bottom:1rpx solid @border-gray;box-sizing:border-box;
+            image{width:80rpx;height:80rpx;border-radius:50%;margin-right:16rpx;}
             .ui-stand{
-                .cell-name{font-size: 32rpx;max-width:360rpx;}
-                .cell-role{border: 1rpx solid @background-gray-cc;border-radius: 32rpx;padding:0 6rpx;color:@color-gray;margin-left:8rpx;font-size: 24rpx;height:32rpx;}
+                .cell-name{font-size:32rpx;max-width:360rpx;}
+                .cell-role{border:1rpx solid @background-gray-cc;border-radius:32rpx;padding:0 6rpx;color:@color-gray;margin-left:8rpx;font-size:24rpx;height:32rpx;}
             }
-            .cell-date{color:@color-gray-c7;font-size: 24rpx;}
+            .cell-date{color:@color-gray-c7;font-size:24rpx;}
             .ui-stick{
                 color:@color-gray;font-size:24rpx;
                 &.is-sticked{
                     color:@color-blue;
                     text{color:@color-blue;}
                 }
-                text{color:@color-gray-c7;margin-right: 10rpx;}
+                text{color:@color-gray-c7;margin-right:10rpx;}
             }
         }
         .ui-type{
-            height: 88rpx;line-height: 88rpx;padding:0 32rpx;box-sizing: border-box;
+            height:88rpx;line-height:88rpx;padding:0 32rpx;box-sizing:border-box;
             text{
-                &:nth-of-type(1){font-size: 48rpx;font-weight: 700;color:@color-gray-E5;margin-right: 14rpx;position:relative;top:6rpx;}
-                &:nth-of-type(2){font-size: 34rpx;font-weight: 700;color:@color-black;}
+                &:nth-of-type(1){font-size:48rpx;font-weight:700;color:@color-gray-E5;margin-right:14rpx;position:relative;top:6rpx;}
+                &:nth-of-type(2){font-size:34rpx;font-weight:700;color:@color-black;}
             }
             .cell-status{
-                background: #ffeae8;color:@color-red;font-size: 24rpx;width: 96rpx;height: 40rpx;text-align: center;line-height: 40rpx;
+                background:#ffeae8;color:@color-red;font-size:24rpx;width:96rpx;height:40rpx;text-align:center;line-height:40rpx;
                 &.cell-completed{background:#f4fdf7;color:#07AD23;}
             }
         }
-        .cell-title{padding:16rpx 32rpx;font-size: 32rpx}
+        .cell-title{padding:16rpx 32rpx;font-size:32rpx}
         .cell-image{
-            padding: 16rpx 32rpx 32rpx;
-            image{width: 100%;}
+            padding:16rpx 32rpx 32rpx;
+            image{width:100%;}
         }
-        .ui-link{padding:16rpx 32rpx;font-size: 32rpx;color:@color-blue;}
+        .ui-link{padding:16rpx 32rpx;font-size:32rpx;color:@color-blue;}
         .cell-poll-btn{
-            width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx;
+            width:266rpx;height:56rpx;background:@background-gray-F4;border-radius:32rpx;color:@color-blue;text-align:center;line-height:56rpx;margin:52rpx auto 62rpx;font-size:30rpx;
             &.is-selected{color:@color-gray}
         }
     }
-    .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
-    .ui-add{width: 88rpx;height: 88rpx;border-radius: 50%;background: @background-blue;color:@color-white;line-height: 88rpx;text-align: center;position: fixed;bottom: 194rpx;right:64rpx;z-index:@z-index-lower}
+    .cell-more{font-size:26rpx;color:@color-gray;text-align:center;margin:108rpx 0 218rpx;}
+    .ui-add{width:88rpx;height:88rpx;border-radius:50%;background:@background-blue;color:@color-white;line-height:88rpx;text-align:center;position:fixed;bottom:194rpx;right:64rpx;z-index:@z-index-lower}
     .module-poll-box{box-sizing:border-box;padding:0 32rpx;}
 </style>
 <template>
     <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-    <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
     <view class="ui-training-detail">
-        <view class="ui-bg" id="bgBox" style="background-image: url('{{imageUrl}}');">
+        <view class="ui-bg" id="bgBox"
+              :class="{'is-iphonex': isIphonex}"
+              style="background-image: url('{{imageUrl}}');">
+            <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
             <view class="ui-content">
-                <view class="ui-date">
+                <view class="ui-date main-justify cross-center">
                     <view class="cell-time">{{teamTime}}</view>
-                    <view wx:if="{{role != 'member'}}" class="cell-manage" @tap.stop="getManageTeam">
+                    <view class="cell-manage"
+                          wx:if="{{role != 'member'}}"
+                          @tap.stop="getManageTeam">
                         管理 <text class="icon-setting"></text>
                     </view>
                 </view>
-                <view class="cell-name">
-                    <view>
-                        {{teamName}}
-                        <text class="icon-question" @tap.stop="getToggleQuestion"></text>
-                    </view>
-
+                <view class="ui-team-title main-justify">
+                    <view class="cell-title">{{teamName}}<text class="icon-question" @tap.stop="getToggleQuestion"></text></view>
+                    <button class="flex-box-0" open-type="share"><text class="icon-share"></text></button>
                 </view>
                 <view class="ui-team-msg">
                     <view>
@@ -426,7 +434,6 @@ export default class teamDetail extends wepy.page {
     data={
         isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
         isLoaded:false,
-        isHeadHeight:false,
         headerBackground: 'background-transparent',
         backgroundHeight: 0,
         teamID:'',
@@ -677,6 +684,14 @@ export default class teamDetail extends wepy.page {
             }
 
             self.$apply()
+        }
+    }
+
+    onShareAppMessage(event) {
+        let self = this
+        return {
+            title: self.teamName,
+            path: `/pages/training-camp-module/training-detail?teamID=${self.teamID}`
         }
     }
 
