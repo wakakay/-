@@ -83,3 +83,4 @@ export default {
         return fetch({method: 'post', url: 'practice/sendPracticeCard', params: data, isVisitor: true})
     }
 }
+

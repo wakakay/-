@@ -62,7 +62,7 @@
 <script>
     import wepy from "wepy";
     import header from '../../components/common/header'
-    import {team as teamApi ,fetch} from "../../api";
+    import {fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
     import Loading from '../../components/common/loading'
     const store = getStore();
@@ -133,7 +133,7 @@
             handleTickTeamLike(event){
                 let self = this;
                 let {currentTarget: {dataset:{userID}}} = event
-                teamApi.tickTeamRankLike({
+                fetch.tickTeamRankLike({
                     token:self.token,
                     teamID:self.teamID,
                     rankUserID:userID

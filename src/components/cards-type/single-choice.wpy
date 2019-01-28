@@ -10,7 +10,7 @@
         <view class="ui-content">
             <view class="ui-subtitle" wx:if="{{cardsList[cardIndex].subTitle}}"># {{cardsList[cardIndex].subTitle}}</view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
-            <view class="ui-description" wx:if="{{cardsList[cardIndex].singleChoiceDescribe || cardsList[cardIndex].description}}">{{cardsList[cardIndex].singleChoiceDescribe || cardsList[cardIndex].description}}</view>
+            <view class="ui-description">{{cardsList[cardIndex].singleChoiceDescribe || cardsList[cardIndex].description}}</view>
             <view class="ui-thumb" wx:if="{{cardsList[cardIndex].bigimage}}">
                 <image mode="widthFix" src="{{cardsList[cardIndex].bigimage}}"></image>
             </view>
@@ -20,12 +20,8 @@
                     <view class="ui-item main-justify cross-center"
                           :class="{'is-selected': item.selected, 'is-success': cardsList[cardIndex].allowToNext && item.isanswer, 'is-error': cardsList[cardIndex].allowToNext && !item.isanswer && item.selected}"
                           hover-class="{{!isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
-                          data-parentlist="{{parentList}}"
-                          data-parentkey="{{parentKey}}"
-                          data-parentindex="{{parentIndex}}"
-                          data-cardindex="{{cardIndex}}"
-                          data-item="{{item}}"
-                          data-index="{{index}}"
+                          data-item="{{ item }}"
+                          data-index="{{ index }}"
                           @tap.stop="getSelected">
                         <view class="cell-title" :class="{'is-full': isExercises}">
                             <text>{{labelDictionary[index+1]}}. </text>
@@ -62,16 +58,6 @@
     })
     export default class singleChoiceCard extends wepy.component {
         props = {
-            parentIndex: {
-                type: Number
-            },
-            parentKey: {
-                type: String
-            },
-            parentList: {
-                type: Array,
-                default: []
-            },
             cardIndex: {
                 type: Number
             },
@@ -104,7 +90,7 @@
 
         onLoad() {
             let self = this
-            self.senceID = self.isExercises && self.$parent.paramsInfo && self.$parent.paramsInfo.senceID
+            self.senceID = self.isExercises && self.$parent.paramsInfo.senceID
         }
 
         methods = {
@@ -115,14 +101,14 @@
              */
             getSelected(event) {
                 let self = this
-                let {currentTarget: {dataset: {item, index, parentlist, parentindex, parentkey, cardindex}}} = event
-                let cardData = !parentkey ? self.cardsList[self.cardIndex] : parentlist[parentindex][parentkey][cardindex]
-
+                let cardData = self.cardsList[self.cardIndex]
                 if (self.isAnswerOver
                     && self.oldIndex === self.cardIndex
                     || cardData.allowToNext) {
                     return false
                 }
+
+                let {currentTarget: {dataset: {item, index}}} = event
                 _.each(cardData.select, (option) => {
                     option.selected = option.id == item.id ? true : false
                 })
@@ -130,9 +116,6 @@
                 self.$apply()
 
                 let data = {
-                    parentindex: parentindex,
-                    parentkey: parentkey,
-                    select: cardData.select,
                     isFinish: true,
                     isAnswerOver: false,
                     id: cardData.id,
@@ -167,8 +150,8 @@
                 let self = this
                 let cardData = self.cardsList[self.cardIndex]
                 let item = !self.isExercises
-                        ? _.find(cardData.select, {isanswer: true})
-                        : _.find(cardData.select, {id: data.selectedId})
+                    ? _.find(cardData.select, {isanswer: true})
+                    : _.find(cardData.select, {id: data.selectedId})
                 self.resultId = item.id
 
                 self.isAnswerOver = true

@@ -186,7 +186,15 @@ export default {
      * @param  json: 记录JSON格式
      */
     sendTeamPractice(params) {
-        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: params})
+        let data = Object.assign({
+            cardID: '',
+            weight: 0,
+            message: 'defaultMessage',
+            abilityGroup: 'defaultAbilityGroup',
+            abilitySkill: 'defaultAbiitySkill',
+            json: 'defaultJson'
+        }, params)
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: data})
     },
     /**
      * 团队学习→导师，管理员设置置顶

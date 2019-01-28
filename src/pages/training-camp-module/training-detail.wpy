@@ -204,7 +204,7 @@
         </view>
         <view class="ui-rank" @tap.stop="getRankList">
             <view class="ui-member">
-                <view class="ui-item" wx:for="{{teamDetail.teamRankUserList}}" wx:key="{{index}}">
+                <view class="ui-item" wx:for="{{teamDetail.teamRankUserList}}" wx:key="{{ index }}" wx:key="{{index}}">
                     <view class="ui-brand"></view>
                     <view class="ui-avatar">
                         <image src="{{item.avatarUrl}}"/>
@@ -328,7 +328,7 @@
                     <view class="cell-image" wx:if="{{data.img}}">
                         <image mode="widthFix" src="{{data.img}}"/>
                     </view>
-                    <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="itemIndex" index="itemIndex" item="item">
+                    <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="lessonIndex" index="lessonIndex" item="item">
                         <view class="module-lesson-box">
                             <view class="ui-item">
                                 <view class="ui-content">
@@ -342,9 +342,9 @@
                             </view>
                         </view>
                     </repeat>
-                    <repeat for="{{data.practiceList}}" key="option" index="option" item="item">
+                    <repeat for="{{data.practiceList}}" key="practiceIndex" index="practiceIndex" item="item">
                         <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
-                                          :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
+                                          :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiceList" isExercises></jn-single-choice>
                     </repeat>
                     <view wx:if="{{data.type=='poll'}}">
                         <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList" isLearning></jn-poll>
@@ -374,7 +374,7 @@
         <scroll-view class="ui-scroll" scroll-y>
             <view wx:if="{{ targetList.length&&targetList[0]}}" >
                 <view class="cell-title">学习目标</view>
-                <view wx:for="{{ targetList }}" wx:key="{{ index }}" class="cell-li">{{ item }}</view>
+                <view wx:for="{{ targetList }}" wx:key="{{ index }}" wx:key="{{ index }}" class="cell-li">{{ item }}</view>
             </view>
             <view wx:if="{{ courseImageList.length }}">
                 <view class="cell-title">训练营介绍</view>
@@ -395,7 +395,7 @@ import {getStore, connect} from "wepy-redux"
 import Loading from '../../components/common/loading'
 import header from '../../components/common/header'
 import poll from '../../components/cards-type/poll'
-import singleChoice from '../../components/cards-type/single-choice'
+import singleChoice from '../../components/team-module/single-choice'
 import {initializationDeligate, navigateToLesson} from "../../utils"
 import {team as teamApi, share as shareApi , fetch} from '../../api'
 import _ from 'underscore'
@@ -483,7 +483,9 @@ export default class teamDetail extends wepy.page {
             teamApi.vote(postData).then(respone => {
                 item.isDone = true
                 self.$apply()
-                self.$broadcast('broadcast-poll', item)
+                setTimeout(()=>{
+                    self.$broadcast('broadcast-poll', item)
+                }, 300)
             })
         },
         /*
@@ -604,11 +606,25 @@ export default class teamDetail extends wepy.page {
         }).then(()=>{
             fetch.getActivityfeedList(postData).then((response) => {
                 _.each(response, (data) => {
-                    if ('poll' === data.type && data.isDone) {
-                        let ballotTotal =_.reduce(data.select, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
-                        _.each(data.select, (item) => {
-                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
-                        })
+                    switch (data.type) {
+                        case 'practice':
+                            _.each(data.practiceList, (item) => {
+                                _.each(item.select, (option) => {
+                                    option.sId = _.clone(option.id)
+                                    option.id = item.id + option.id
+                                })
+                            })
+                            break
+                        case 'poll':
+                            if (data.isDone) {
+                                let ballotTotal = _.reduce(data.select, (memo, item) => {
+                                    return memo + item.ballot
+                                }, 0) // 统计全部投票人数
+                                _.each(data.select, (item) => {
+                                    item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                                })
+                            }
+                            break
                     }
                 })
                 self.intereactList = response
@@ -628,9 +644,28 @@ export default class teamDetail extends wepy.page {
             let item = null
 
             if (data.parentkey) {
-                item = _.find(self.intereactList[data.parentindex][data.parentkey], {id: data.id})
+                item = self.intereactList[data.parentindex][data.parentkey][data.cardindex]
                 _.extend(item, data)
-                self.intereactList[data.parentindex][data.parentkey].splice(0, 1, item)
+                self.intereactList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
+
+                let postData = {
+                    token: self.token,
+                    senceID: item.senceID,
+                    cardID: item.id,
+                    score: item.score || 0,
+                    message: item.selectedItem.option, // 选中选项的name
+                    weight: item.selectedItem.weight, // 选中选项的权重
+                    abilityGroup: item.abilityGroup || '',
+                    abilitySkill: item.abilitySkill || '',
+                    questionIndex: 0,
+                    json: item.json // 选中选项的id或顺序
+                }
+                fetch.sendTeamPractice(postData).then(respone => {
+                    setTimeout(() => {
+                        item.isAnswerOver = true // 已经答案，不能再次作答
+                        self.$broadcast('broadcast-single-choive', item)
+                    }, 300)
+                })
             } else {
                 item = _.find(self.intereactList, {pollID: data.id})
                 _.extend(item, data)
