@@ -596,7 +596,7 @@
             let self = this
             self.page = 1
             self.__fetchCourses({
-                callBack: ()=>{
+                callBack() {
                     wx.stopPullDownRefresh()
                 }
             })

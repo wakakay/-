@@ -480,11 +480,11 @@ export default class teamDetail extends wepy.page {
         let self = this
         initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
     }
-    
+
     onPullDownRefresh() {
-        let self =this;
+        let self = this
         self.initialize({
-            callBack: ()=>{
+            callBack() {
                 wx.stopPullDownRefresh()
             }
         })
@@ -585,7 +585,7 @@ export default class teamDetail extends wepy.page {
                 }
             }
         })
-        console.log(response)
+
         return response
     }
 
