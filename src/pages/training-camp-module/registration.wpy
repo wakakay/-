@@ -89,12 +89,6 @@
 		}
   	})
   	export default class TeamLearningIntroduction extends wepy.page {
-		config = {
-			navigationBarBackgroundColor: "#ffffff",
-			navigationBarTextStyle: "black",
-			navigationBarTitleText: '训练营报名'
-		}
-
 		components = {
 			'jn-header': header,
 			'jn-loading': Loading,

@@ -302,25 +302,29 @@
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{data.roleType == 'admin'}}" :class="{'is-sticked': data.isTop}">
+                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{data.roleType != 'member'}}" :class="{'is-sticked': data.isTop}">
                         <text class="icon-stick"></text>置顶
                     </view>
                 </view>
                 <view class="ui-content">
                     <view class="ui-type main-justify cross-center">
-                        <view wx:if="{{data.type=='discuss'}}">
+                        <view wx:if="{{data.contentType=='discuss'}}">
                             <text class="icon-discuss"></text>
                             <text>{{data.title || '疑问，求解答'}}</text>
                         </view>
-                        <view wx:if="{{data.type=='practice'}}">
+                        <view wx:if="{{data.contentType=='practice'}}">
                             <text class="icon-practice"></text>
                             <text>{{data.title || '小练习'}}</text>
                         </view>
-                        <view wx:if="{{data.type=='poll'}}">
+                        <view wx:if="{{data.contentType=='lesson'}}">
+                            <text class="icon-practice"></text>
+                            <text>{{data.title || '讨论'}}</text>
+                        </view>
+                        <view wx:if="{{data.contentType=='poll'}}">
                             <text class="icon-poll"></text>
                             <text>{{data.title || '来投一下票，做下调查'}}</text>
                         </view>
-                        <view wx:if="{{data.type=='text'}}">
+                        <view wx:if="{{data.contentType=='text'}}">
                             <text class="icon-message"></text>
                             <text>{{data.title}}</text>
                         </view>
@@ -329,7 +333,7 @@
                             <text>{{data.title || '通知，晚间讨论'}}</text>
                         </view>
                         <view class="cell-status"
-                              :class="{'cell-completed': data.isDone}" wx:if="{{data.type=='poll' || data.type=='practice'}}">
+                              :class="{'cell-completed': data.isDone}" wx:if="{{data.contentType=='poll' || data.contentType=='practice'}}">
                             {{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
@@ -355,7 +359,7 @@
                         <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
                                           :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiceList" isExercises></jn-single-choice>
                     </repeat>
-                    <view wx:if="{{data.type=='poll'}}">
+                    <view wx:if="{{data.contentType=='poll'}}">
                         <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList" isLearning></jn-poll>
                         <button class="cell-poll-btn"
                             data-index="{{index}}"
@@ -363,7 +367,7 @@
                             :class="{'is-selected' : data.isDone}"
                             open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                             bindgetuserinfo="getAuthorize"
-                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
+                            @tap.stop="getPoll">{{data.isDone ? data.ballotTotal+'已投票' : '投票'}}</button>
                     </view>
                 </view>
             </view>
@@ -651,7 +655,7 @@ export default class teamDetail extends wepy.page {
         }).then(()=>{
             fetch.getActivityfeedList(postData).then((response) => {
                 _.each(response, (data) => {
-                    switch (data.type) {
+                    switch (data.contentType) {
                         case 'practice':
                             _.each(data.practiceList, (item) => {
                                 _.each(item.select, (option) => {
@@ -671,6 +675,7 @@ export default class teamDetail extends wepy.page {
                                 _.each(data.select, (item) => {
                                     item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
                                 })
+                                data.ballotTotal = ballotTotal
                             }
                             break
                     }
@@ -694,7 +699,7 @@ export default class teamDetail extends wepy.page {
             if (data.parentkey) {
                 item = self.intereactList[data.parentindex][data.parentkey][data.cardindex]
                 _.extend(item, data)
-                self.intereactList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
+                item && self.intereactList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
 
                 let postData = {
                     token: self.token,
@@ -717,7 +722,7 @@ export default class teamDetail extends wepy.page {
             } else {
                 item = _.find(self.intereactList, {pollID: data.id})
                 _.extend(item, data)
-                self.intereactList.splice(0, 1, item)
+                item && self.intereactList.splice(0, 1, item)
             }
 
             self.$apply()
@@ -728,7 +733,7 @@ export default class teamDetail extends wepy.page {
         let self = this
         return {
             title: self.teamName,
-            path: `/pages/training-camp-module/training-detail?teamID=${self.teamID}`
+            path: `/pages/training-camp-module/registration?teamID=${self.teamID}`
         }
     }
 
