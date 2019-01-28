@@ -642,6 +642,9 @@ export default class teamDetail extends wepy.page {
                                 _.each(item.select, (option) => {
                                     option.sId = _.clone(option.id)
                                     option.id = item.id + option.id
+                                    if (option.isSelected) {
+                                        item.answerDescription = option.feedback && option.feedback.description
+                                    }
                                 })
                             })
                             break

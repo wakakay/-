@@ -20,7 +20,7 @@
             <view class="ui-answer-list">
                 <repeat for="{{parentList[parentIndex][parentKey][cardIndex].select}}" key="singleIndex" index="singleIndex" item="item">
                     <view class="ui-item main-justify cross-center"
-                          :class="{'is-selected': item.selected, 'is-success': parentList[parentIndex][parentKey][cardIndex].allowToNext && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].allowToNext && !item.isanswer && item.selected}"
+                          :class="{'is-selected': item.selected || item.isSelected, 'is-success': parentList[parentIndex][parentKey][cardIndex].allowToNext && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].allowToNext && !item.isanswer && item.selected}"
                           hover-class="{{!isAnswerOver && !parentList[parentIndex][parentKey][cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
                           data-parentlist="{{parentList}}"
                           data-parentkey="{{parentKey}}"
