@@ -174,10 +174,42 @@ export default {
         return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamDetail', params: params})
     },
     /**
-     * 团队学习→获取训练营排行榜
+     * 团队学习→单选题提交答案
+     * @param  teamID: 团队ID
+     * @param  senceID: 微课ID
+     * @param  cardID: 练习卡片ID
+     * @param  score: 练习卡片总分
+     * @param  weight: 权重
+     * @param  questionIndex: 选题选项权重
+     * @param  message: 选项文本内容
+     * @param  skillID: 练习所属技能
+     * @param  json: 记录JSON格式
+     */
+    sendTeamPractice(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: params})
+    },
+    /**
+     * 团队学习→导师，管理员设置置顶
+     * @param  teamID: 团队ID
+     * @param  postID: 排名任务id
+     * @param  type: {top: 置顶, notTop: 取消置顶}
+     */
+    teamSetTop(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/setTop', params: params})
+    },
+    /**
+     * 团队学习→排名列表
      * @param  teamID: 团队ID
      */
     getTeamRankList(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamRankList', params: params})
+    },
+    /**
+     * 团队学习→排名列表→喜欢
+     * @param  teamID: 团队ID
+     * @param  rankUserID: 排名任务id
+     */
+    tickTeamRankLike(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/tickTeamRankLike', params: params})
     }
 }
