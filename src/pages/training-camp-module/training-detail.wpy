@@ -586,9 +586,36 @@ export default class teamDetail extends wepy.page {
         if (self.wxPushType) {
             postData.wxPushType = self.wxPushType
         }
-        fetch.getActivityfeedList(postData).then((response) => {
-            self.intereactList = response
+        teamApi.getTeamDetail(postData).then((res)=>{
+            self.imageUrl = res.imageUrl;
+            self.teamName = res.name;
+            self.signUpUserCount = res.signUpUserCount;
+            self.teamTime = res.time;
+            self.role = 'admin';
+            self.targetList = res.targetList;
+            self.courseImageList = res.courseImageList;
+            self.teacherImage = res.teacherImage;
+            self.todayTask = res.taskList.TaskContentList;
+            self.isShowManagerButton = res.isShowManagerButton
+            self.managerButtonStatus = res.managerButtonStatus
+            self.teamDetail = res.teamDetail;
+
+            // console.log(self.todayTask,1)
+            self.isLoaded = true;
             self.$apply()
+        }).then(()=>{
+            fetch.getActivityfeedList(postData).then((response) => {
+                _.each(response, (data) => {
+                    if ('poll' === data.type && data.isDone) {
+                        let ballotTotal =_.reduce(data.select, (memo, item) => {return memo + item.ballot}, 0) // 统计全部投票人数
+                        _.each(data.select, (item) => {
+                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                        })
+                    }
+                })
+                self.intereactList = response
+                self.$apply()
+            })
         }).catch((error) => {
             console.log('fail to load vote data du to', error)
         })
@@ -633,7 +660,7 @@ export default class teamDetail extends wepy.page {
             console.log('fail to load vote data du to', error)
         })
     }
-    
+
 
     events = {
         /**
