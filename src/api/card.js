@@ -74,6 +74,7 @@ export default {
         let data = Object.assign({
             cardID: '',
             weight: 0,
+            questionIndex: 0,
             message: 'defaultMessage',
             abilityGroup: 'defaultAbilityGroup',
             abilitySkill: 'defaultAbiitySkill',

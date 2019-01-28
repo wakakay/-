@@ -194,6 +194,9 @@
                 url: `${config.baseUrl + 'app/upload'}?token=${self.paramsInfo.teamID}`,
                 filePath: flie,
                 name: 'file',
+                header: {
+                    'content-type': 'application/x-www-form-urlencoded'  //这里注意POST请求content-type是小写，大写会报错
+                },
                 success(respone) {
                     let info = JSON.parse(respone.data)
                     list.push({
@@ -201,6 +204,7 @@
                         index: list.length,
                         type: "image"
                     })
+                    self.status.isThumb = false
                     self.$apply()
                 }
             })

@@ -302,7 +302,11 @@
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{role != 'member'}}" :class="{'is-sticked': data.isTop}">
+                    <view class="ui-stick"
+                          :class="{'is-sticked': data.isTop}"
+                          wx:if="{{(role=='teacher' && data.roleType=='teacher') || (role=='admin' && data.roleType!='member')}}"
+                          data-item="{{data}}"
+                          @tap.stop="getStick" >
                         <text class="icon-stick"></text>置顶
                     </view>
                 </view>
@@ -562,12 +566,8 @@ export default class teamDetail extends wepy.page {
 
             if (data.title) {
                 switch (data.contentType) {
-                    case 'text':
-                        data.title = ''
-                        data.icon = 'practice'
-                        break
                     case 'discuss':
-                        data.title = '疑问，求解答'
+                        data.title = '讨论'
                         data.icon = 'discuss'
                         break
                     case 'notice':
@@ -578,14 +578,13 @@ export default class teamDetail extends wepy.page {
                         data.title = '小练习'
                         data.icon = 'practice'
                         break
-                    case 'lesson':
-                        data.title = '讨论'
-                        data.icon = 'practice'
-                        break
                     case 'poll':
                         data.title = '来投一下票，做下调查'
                         data.icon = 'poll'
                         break
+                    default:
+                        data.title = '讨论'
+                        data.icon = 'discuss'
                 }
             }
         })
