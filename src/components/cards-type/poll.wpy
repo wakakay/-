@@ -10,17 +10,13 @@
             </view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
             <view class="ui-description">{{cardsList[cardIndex].pollDesc}}</view>
-            <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' ? '单选' : '多选'}}】</view>
+            <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' || cardsList[cardIndex].pollType === 'single' ? '单选' : '多选'}}】</view>
 
             <view class="ui-answer-list">
                 <repeat for="{{cardsList[cardIndex].select || cardsList[cardIndex].optionList}}" key="index" index="index" item="item">
                     <view class="ui-item"
                           hover-class="{{!cardsList[cardIndex].isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
                           :class="{'is-selected': item.selected, 'is-selected-over': (cardsList[cardIndex].isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
-                          data-parentlist="{{parentList}}"
-                          data-parentkey="{{parentKey}}"
-                          data-parentindex="{{parentIndex}}"
-                          data-cardindex="{{cardIndex}}"
                           data-item="{{item}}"
                           data-index="{{index}}"
                           @tap.stop="getSelected">
@@ -52,16 +48,6 @@
     })
     export default class pollCard extends wepy.component {
         props = {
-            parentIndex: {
-                type: Number
-            },
-            parentKey: {
-                type: String
-            },
-            parentList: {
-                type: Array,
-                default: []
-            },
             cardIndex: {
                 type: Number
             },
@@ -98,11 +84,11 @@
              */
             getSelected(event) {
                 let self = this
-                let {currentTarget: {dataset: {item, index, parentlist, parentindex, parentkey, cardindex}}} = event
-                let cardItem = !parentkey ? self.cardsList[self.cardIndex] : parentlist[parentindex][parentkey][cardindex]
-                if (!item.id) {
+                let {currentTarget: {dataset: {item, index}}} = event
+                if (!item.id && !self.cardsList) {
                     return
                 }
+                let cardItem = self.cardsList[self.cardIndex]
                 // poll只能投一次
                 if (cardItem.isDone
                     || (cardItem.isAnswerOver && self.oldIndex === self.cardIndex)) {
@@ -111,7 +97,7 @@
 
                 let selectList = cardItem.select || cardItem.optionList
                 let selectedIds = []
-                if ('single' === cardItem.cardStatus) {
+                if ('single' === cardItem.cardStatus || 'single' === cardItem.pollType) {
                     _.each(selectList, (data) => {
                         data.selected = item.id === data.id ? true : false
                     })
@@ -126,8 +112,6 @@
                 })
 
                 let data = {
-                    parentindex: parentindex,
-                    parentkey: parentkey,
                     optionList: cardItem.optionList,
                     isFinish: selectedIds.length ? true : false,
                     id: cardItem.id || cardItem.pollID,
@@ -136,7 +120,7 @@
                     select: selectList,
                     fullImageBottomtText: selectedIds.length ? '我选好了' : '请投票'
                 }
-console.log(data)
+
                 self.$emit('on-interaction', data)
             }
         }
@@ -149,8 +133,8 @@ console.log(data)
             'broadcast-poll': (data) => {
                 let self = this
                 let index = data.index || self.cardIndex
-                let cardItem = self.cardsList[index]
-                let optionList = cardItem.select || cardItem.optionList
+                let cardItem = self.cardsList[index] || data
+                let optionList = data.select || cardItem.select || cardItem.optionList
 
                 let item = _.find(optionList, {id: data.selectedId})
                 self.resultId = item.id
@@ -170,6 +154,7 @@ console.log(data)
                 cardItem.isDone = true
                 cardItem.isAnswerOver = true
                 self.oldIndex = _.clone(index)
+                self.$emit('on-interaction', cardItem)
                 self.$apply()
             },
             /**

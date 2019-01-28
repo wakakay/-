@@ -851,7 +851,6 @@
                 }
 
                 self.cardCurrentInfo.splice(0, 1, item)
-                console.log(self.cardCurrentInfo)
                 self.$broadcast('broadcast-learning-discuss-reset', self.cardCurrentInfo[0])
                 self.$apply()
             },
