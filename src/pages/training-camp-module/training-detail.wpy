@@ -246,7 +246,7 @@
                 <view class="cell-plan" @tap.stop="getAllToadyTask">全部任务<text class="icon-details"></text></view>
             </view>
             <repeat wx:if="{{todayTask.length}}" for="{{todayTask}}" key="index" index="index" item="item">
-                <view class="module-lesson-box">
+                <view class="module-lesson-box" @tap.stop="getLesson" data-item="{{item}}">
                     <view class="ui-item" wx:if="{{item.taskType == 'online'}}">
                         <view class="ui-content">
                             <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
@@ -342,7 +342,7 @@
                         <image mode="widthFix" src="{{data.img}}"/>
                     </view>
                     <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="lessonIndex" index="lessonIndex" item="item">
-                        <view class="module-lesson-box">
+                        <view class="module-lesson-box" @tap.stop="getLesson" data-item="{{data.lessonList[lessonIndex]}}">
                             <view class="ui-item">
                                 <view class="ui-content">
                                     <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
@@ -569,10 +569,12 @@ export default class teamDetail extends wepy.page {
                 return ;
             }
             let {currentTarget: {dataset: {item}}} = event
+            console.log(item,111)
+
             let buttonStatus = item.buttonStatus
             let senceName = item.name
-            let resume = item.resume
-            self.senceID = item.id
+            let resume = item.resume ? item.resume : ''
+            self.senceID = item.senceID ? item.senceID : item.id
 
             if ('needPay' === buttonStatus) {
                 self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
