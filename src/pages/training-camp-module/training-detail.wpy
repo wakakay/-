@@ -442,6 +442,7 @@ export default class teamDetail extends wepy.page {
         teamDetail:{},
         senceID:null,
         intereactList:[],
+        taskList:{}
 
     }
     methods= {
@@ -543,6 +544,7 @@ export default class teamDetail extends wepy.page {
         let self = this;
         self.teamID = params.teamID
         self.wxPushType = params.wxPushType
+        self.__getTeamDetail();
         self.$apply()
 
         wepy.$instance.globalData.getLoadHuilder() // ga统计
@@ -584,22 +586,34 @@ export default class teamDetail extends wepy.page {
         if (self.wxPushType) {
             postData.wxPushType = self.wxPushType
         }
+        fetch.getActivityfeedList(postData).then((response) => {
+            self.intereactList = response
+            self.$apply()
+        }).catch((error) => {
+            console.log('fail to load vote data du to', error)
+        })
+    }
 
-        teamApi.getTeamDetail(postData).then((res)=>{
+    __getTeamDetail() {
+        let self = this
+        let postData = {
+            token: self.token,
+            teamID : self.teamID
+        }
+        fetch.getTeamDetail(postData).then((res)=>{
+            res = res.data;
             self.imageUrl = res.imageUrl;
             self.teamName = res.name;
             self.signUpUserCount = res.signUpUserCount;
             self.teamTime = res.time;
+            self.todayTask = res.taskList.TaskContentList;
             self.role = 'admin';
             self.targetList = res.targetList;
             self.courseImageList = res.courseImageList;
             self.teacherImage = res.teacherImage;
-            self.todayTask = res.taskList.TaskContentList;
             self.isShowManagerButton = res.isShowManagerButton
             self.managerButtonStatus = res.managerButtonStatus
             self.teamDetail = res.teamDetail;
-
-            // console.log(self.todayTask,1)
             self.isLoaded = true;
             self.$apply()
         }).then(()=>{
@@ -619,6 +633,7 @@ export default class teamDetail extends wepy.page {
             console.log('fail to load vote data du to', error)
         })
     }
+    
 
     events = {
         /**
