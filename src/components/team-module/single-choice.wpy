@@ -1,5 +1,6 @@
 <style lang="less" scoped>
     .module-single-choice-box{
+        padding-bottom:40rpx;
         .ui-content{padding:0 32rpx;}
     }
 </style>
