@@ -589,7 +589,7 @@ export default class teamDetail extends wepy.page {
                     data.icon = 'poll'
                     break
             }
-            return respone
+            return response
         })
     }
 
@@ -756,13 +756,18 @@ export default class teamDetail extends wepy.page {
                 fetch.sendTeamPractice(postData).then(respone => {
                     setTimeout(() => {
                         item.isAnswerOver = true // 已经答案，不能再次作答
+                        item.isDone = true
+                        self.$apply()
                         self.$broadcast('broadcast-single-choive', item)
                     }, 300)
                 })
             } else {
                 item = _.find(self.intereactList, {pollID: data.id})
                 _.extend(item, data)
-                item && self.intereactList.splice(0, 1, item)
+                if (item) {
+                    item.isDone = true
+                    self.intereactList.splice(0, 1, item)
+                }
             }
 
             self.$apply()
@@ -776,6 +781,5 @@ export default class teamDetail extends wepy.page {
             path: `/pages/training-camp-module/registration?teamID=${self.teamID}`
         }
     }
-
 }
 </script>
