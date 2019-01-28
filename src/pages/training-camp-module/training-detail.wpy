@@ -314,7 +314,7 @@
                         </view>
                         <view class="cell-status"
                               :class="{'cell-completed': data.isDone}"
-                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  role != 'member'}}">
+                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  role == 'member'}}">
                             {{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
@@ -501,7 +501,7 @@ export default class teamDetail extends wepy.page {
             postData.wxPushType = self.wxPushType
         }
         // 下拉刷新
-                
+
         return fetch.getTeamDetail(postData).then((res)=>{
             res = res.data;
             self.imageUrl = res.imageUrl;
@@ -536,8 +536,8 @@ export default class teamDetail extends wepy.page {
         _.each(response, (data) => {
             switch (data.contentType) {
                 case 'practice':
-                    data.role = self.role
                     _.each(data.practiceList, (item) => {
+                        item.role = self.role
                         _.each(item.select, (option) => {
                             option.sId = _.clone(option.id)
                             option.id = item.id + option.id
@@ -567,8 +567,8 @@ export default class teamDetail extends wepy.page {
                         data.icon = 'practice'
                         break
                     case 'discuss':
-                        data.title = 'discuss'
-                        data.icon = '疑问，求解答'
+                        data.title = '疑问，求解答'
+                        data.icon = 'discuss'
                         break
                     case 'notice':
                         data.title = '通知，晚间讨论'
@@ -579,8 +579,8 @@ export default class teamDetail extends wepy.page {
                         data.icon = 'practice'
                         break
                     case 'lesson':
-                        data.title = 'practice'
-                        data.icon = '讨论'
+                        data.title = '讨论'
+                        data.icon = 'practice'
                         break
                     case 'poll':
                         data.title = '来投一下票，做下调查'
@@ -589,7 +589,7 @@ export default class teamDetail extends wepy.page {
                 }
             }
         })
-
+console.log(response)
         return response
     }
 
@@ -767,7 +767,6 @@ export default class teamDetail extends wepy.page {
                 item = _.find(self.intereactList, {pollID: data.id})
                 _.extend(item, data)
                 if (item) {
-                    item.isDone = true
                     self.intereactList.splice(0, 1, item)
                 }
             }

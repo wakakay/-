@@ -85,10 +85,11 @@
             getSelected(event) {
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
-                if ((!item.id && !self.cardsList) || 'member' !== item.role) {
+                let cardItem = self.cardsList[self.cardIndex]
+                if ((!item.id && !self.cardsList) || 'member' !== cardItem.role) {
                     return
                 }
-                let cardItem = self.cardsList[self.cardIndex]
+
                 // poll只能投一次
                 if (cardItem.isDone
                     || (cardItem.isAnswerOver && self.oldIndex === self.cardIndex)) {
