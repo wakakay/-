@@ -302,7 +302,7 @@
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{data.roleType != 'member'}}" :class="{'is-sticked': data.isTop}">
+                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{role != 'member'}}" :class="{'is-sticked': data.isTop}">
                         <text class="icon-stick"></text>置顶
                     </view>
                 </view>
@@ -314,7 +314,7 @@
                         </view>
                         <view class="cell-status"
                               :class="{'cell-completed': data.isDone}"
-                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  data.roleType != 'member'}}">
+                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  role != 'member'}}">
                             {{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
@@ -348,8 +348,8 @@
                                 :class="{'is-selected' : data.isDone}"
                                 open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                                 bindgetuserinfo="getAuthorize"
-                                disabled="{{data.isDone || data.roleType != 'member'}}"
-                                @tap.stop="getPoll">{{data.isDone || data.roleType != 'member' ? data.ballotTotal+'已投票' : '投票'}}</button>
+                                disabled="{{data.isDone || role != 'member'}}"
+                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'已投票' : '投票'}}</button>
                     </view>
                 </view>
             </view>
@@ -534,6 +534,7 @@ export default class teamDetail extends wepy.page {
         _.each(response, (data) => {
             switch (data.contentType) {
                 case 'practice':
+                    data.role = self.role
                     _.each(data.practiceList, (item) => {
                         _.each(item.select, (option) => {
                             option.sId = _.clone(option.id)
@@ -545,6 +546,7 @@ export default class teamDetail extends wepy.page {
                     })
                     break
                 case 'poll':
+                    data.role = self.role
                     let ballotTotal = _.reduce(data.select, (memo, item) => {
                         return memo + item.ballot
                     }, 0) // 统计全部投票人数
@@ -705,7 +707,6 @@ export default class teamDetail extends wepy.page {
             let senceName = item.name
             let resume = item.resume ? item.resume : ''
             self.senceID = item.senceID ? item.senceID : item.id
-            self.courseID = item.courseID
 
             if ('needPay' === buttonStatus) {
                 self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
@@ -718,7 +719,6 @@ export default class teamDetail extends wepy.page {
 
             navigateToLesson({
                 senceID:self.senceID,
-                courseID : self.courseID,
                 teamID : self.teamID,
                 resumeLastRead: resume,
             })

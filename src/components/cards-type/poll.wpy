@@ -85,7 +85,7 @@
             getSelected(event) {
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
-                if ((!item.id && !self.cardsList) || 'member' !== item.roleType) {
+                if ((!item.id && !self.cardsList) || 'member' !== item.role) {
                     return
                 }
                 let cardItem = self.cardsList[self.cardIndex]

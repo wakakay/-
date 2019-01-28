@@ -104,7 +104,7 @@
                 let {currentTarget: {dataset: {item, index, parentlist, parentindex, parentkey, cardindex}}} = event
                 let cardData = !parentkey ? self.cardsList[self.cardIndex] : parentlist[parentindex][parentkey][cardindex]
 
-                if (cardData.answerDescription || 'member' !== cardData.roleType) {
+                if (cardData.answerDescription || 'member' !== cardData.role) {
                     return false
                 }
                 _.each(cardData.select, (option) => {

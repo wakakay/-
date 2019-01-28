@@ -71,7 +71,7 @@
         </repeat>
 
         <view class="ui-tool" :class="{'is-iphonex': isIphonex}">
-            <view class="ui-container main-justify cross-center">
+            <view class="ui-container main-justify">
                 <view class="ui-list flex-box-1">
                     <button class="cell-item"
                             data-type="image"
@@ -119,6 +119,7 @@
         }
 
         data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isShowFullComponent: false,
             isShowInsertLink: false,
             isShowInsertLesson:false,
@@ -285,7 +286,7 @@
                     self.isSumbit = false
                     self.$apply()
                     let postData = {
-                        token: self.paramsInfo.teamID,
+                        token: self.systemInfo.token,
                         body: {
                             json: {
                                 teamID: self.paramsInfo.teamID,
