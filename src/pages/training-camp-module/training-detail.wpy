@@ -498,7 +498,7 @@ export default class teamDetail extends wepy.page {
         let self = this
         initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
     }
-    
+
     onPullDownRefresh() {
         let self =this;
         self.initialize({
@@ -720,12 +720,12 @@ export default class teamDetail extends wepy.page {
                 return ;
             }
             let {currentTarget: {dataset: {item}}} = event
-            console.log(item,111)
 
             let buttonStatus = item.buttonStatus
             let senceName = item.name
             let resume = item.resume ? item.resume : ''
             self.senceID = item.senceID ? item.senceID : item.id
+            self.courseID = item.courseID
 
             if ('needPay' === buttonStatus) {
                 self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
@@ -738,6 +738,8 @@ export default class teamDetail extends wepy.page {
 
             navigateToLesson({
                 senceID:self.senceID,
+                courseID : self.courseID,
+                teamID : self.teamID,
                 resumeLastRead: resume,
             })
         }
