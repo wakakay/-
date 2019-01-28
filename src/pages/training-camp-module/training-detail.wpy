@@ -302,7 +302,7 @@
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
-                    <view class="ui-stick" wx:if="{{data.roleType == 'admin'}}" :class="{'is-sticked': data.isTop}">
+                    <view class="ui-stick" @tap.stop="getStick" data-item="{{data}}" wx:if="{{data.roleType == 'admin'}}" :class="{'is-sticked': data.isTop}">
                         <text class="icon-stick"></text>置顶
                     </view>
                 </view>
@@ -457,6 +457,25 @@ export default class teamDetail extends wepy.page {
 
     }
     methods= {
+        /**
+         * 置顶
+         * @param event
+         */
+        getStick(event) {
+            let self = this;
+            let {currentTarget: {dataset: {item}}} = event
+            let postID = item.postID;
+            let isTop = item.isTop ? 'notTop' : 'top';
+            let postData = {
+                token: self.token,
+                teamID : self.teamID,
+                postID : postID,
+                type : isTop
+            }
+            fetch.teamSetTop(postData).then(respone => {
+                self.initialize();
+            })
+        },
         // 标题 问好
         getToggleQuestion(){
             let self = this;
