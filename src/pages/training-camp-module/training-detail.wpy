@@ -588,7 +588,7 @@ export default class teamDetail extends wepy.page {
                 }
             }
         })
-console.log(response)
+
         return response
     }
 
@@ -608,7 +608,7 @@ console.log(response)
                         icon: 'success'
                     })
                 }
-            });
+            })
         },
         /**
          * 置顶
@@ -618,7 +618,7 @@ console.log(response)
             let self = this;
             let {currentTarget: {dataset: {item}}} = event
             let postID = item.postID;
-            let isTop = item.isTop ? 'notTop' : 'top';
+            let isTop = item.isTop ? 'notTop' : 'top'
             let postData = {
                 token: self.token,
                 teamID : self.teamID,
@@ -626,7 +626,7 @@ console.log(response)
                 type : isTop
             }
             fetch.teamSetTop(postData).then(respone => {
-                self.initialize();
+                self.initialize()
             })
         },
         // 标题 问好
