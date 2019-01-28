@@ -156,8 +156,8 @@
         .ui-type{
             height: 88rpx;line-height: 88rpx;padding:0 32rpx;box-sizing: border-box;
             text{
-                &:nth-of-type(1){font-size: 34rpx;font-weight: bold;color:@color-gray-E5;margin-right: 14rpx;}
-                &:nth-of-type(2){font-size: 34rpx;font-weight: bold;color:@color-black;}
+                &:nth-of-type(1){font-size: 48rpx;font-weight: 700;color:@color-gray-E5;margin-right: 14rpx;position:relative;top:6rpx;}
+                &:nth-of-type(2){font-size: 34rpx;font-weight: 700;color:@color-black;}
             }
             .cell-status{
                 background: #ffeae8;color:@color-red;font-size: 24rpx;width: 96rpx;height: 40rpx;text-align: center;line-height: 40rpx;
@@ -654,14 +654,14 @@ export default class teamDetail extends wepy.page {
 
                 let postData = {
                     token: self.token,
+                    teamID: self.teamID,
                     senceID: item.senceID,
                     cardID: item.id,
                     score: item.score || 0,
                     message: item.selectedItem.option, // 选中选项的name
                     weight: item.selectedItem.weight, // 选中选项的权重
-                    abilityGroup: item.abilityGroup || '',
-                    abilitySkill: item.abilitySkill || '',
                     questionIndex: 0,
+                    skillID: item.skillID,
                     json: item.json // 选中选项的id或顺序
                 }
                 fetch.sendTeamPractice(postData).then(respone => {

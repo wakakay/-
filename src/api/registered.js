@@ -160,13 +160,6 @@ export default {
         return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getActivityfeedList', params: params})
     },
     /**
-     * 团读书学习→发起讨论
-     * @param  teamID: 团队ID
-     */
-    sendTeamPractice(params) {
-        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: params})
-    },
-    /**
      * 团队学习→获取训练营详情
      * @param  teamID: 团队ID
      */
@@ -187,11 +180,7 @@ export default {
      */
     sendTeamPractice(params) {
         let data = Object.assign({
-            cardID: '',
-            weight: 0,
             message: 'defaultMessage',
-            abilityGroup: 'defaultAbilityGroup',
-            abilitySkill: 'defaultAbiitySkill',
             json: 'defaultJson'
         }, params)
         return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: data})
