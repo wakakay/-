@@ -458,6 +458,141 @@ export default class teamDetail extends wepy.page {
         taskList:{}
 
     }
+
+    onLoad(params) {
+        let self = this;
+        self.teamID = params.teamID
+        self.wxPushType = params.wxPushType
+        self.$apply()
+
+        wepy.$instance.globalData.getLoadHuilder() // ga统计
+    }
+
+    onReady() {
+        let self = this
+        var query = wx.createSelectorQuery()
+        query.select('#bgBox').boundingClientRect((response) => {
+            self.backgroundHeight = response.top
+        }).exec()
+    }
+
+    /**
+     * 监听滚动条的位置
+     * @param
+     */
+    onPageScroll(res) {
+        let self = this
+        let scrollTop = res.scrollTop
+        self.headerBackground =  self.backgroundHeight < -240 ? 'background-transparent-opacity' : 'background-transparent'
+        self.$apply()
+    }
+
+    onShow() {
+        let self = this
+        initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+    }
+
+    initialize() {
+        let self = this
+        let postData = {
+            token: self.token,
+            teamID : self.teamID
+        }
+
+        if (self.wxPushType) {
+            postData.wxPushType = self.wxPushType
+        }
+        fetch.getTeamDetail(postData).then((res)=>{
+            res = res.data;
+            self.imageUrl = res.imageUrl;
+            self.teamName = res.name;
+            self.signUpUserCount = res.signUpUserCount;
+            self.teamTime = res.time;
+            self.todayTask = res.taskList.TaskContentList;
+            self.role = res.role;
+            self.targetList = res.targetList;
+            self.courseImageList = res.courseImageList;
+            self.teacherImage = res.teacherImage;
+            self.isShowManagerButton = res.isShowManagerButton
+            self.managerButtonStatus = res.managerButtonStatus
+            self.teamDetail = res.teamDetail;
+            self.isLoaded = true;
+            self.$apply()
+        }).then(()=>{
+            fetch.getActivityfeedList(postData).then((response) => {
+                self.intereactList = self.__dataRegroup(response)
+                self.$apply()
+            })
+        }).catch((error) => {
+        })
+    }
+    /**
+     * 数组重组
+     * respone 接口返回的数据
+     */
+    __dataRegroup(response) {
+        let self = this
+
+        _.each(response, (data) => {
+            switch (data.contentType) {
+                case 'practice':
+                    _.each(data.practiceList, (item) => {
+                        _.each(item.select, (option) => {
+                            option.sId = _.clone(option.id)
+                            option.id = item.id + option.id
+                            if (option.isSelected) {
+                                item.answerDescription = option.feedback && option.feedback.description
+                            }
+                        })
+                    })
+                    break
+                case 'poll':
+                    if (data.isDone) {
+                        let ballotTotal = _.reduce(data.select, (memo, item) => {
+                            return memo + item.ballot
+                        }, 0) // 统计全部投票人数
+                        _.each(data.select, (item) => {
+                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                        })
+                        data.ballotTotal = ballotTotal
+                    }
+                    break
+            }
+
+            if (!data.title){
+                return respone
+            }
+
+            switch(data.contentType) {
+                case 'text':
+                    data.title = ''
+                    data.icon = 'practice'
+                    break
+                case 'discuss':
+                    data.title = 'discuss'
+                    data.icon = '疑问，求解答'
+                    break
+                case 'notice':
+                    data.title = '通知，晚间讨论'
+                    data.icon = 'inform'
+                    break
+                case 'practice':
+                    data.title = '小练习'
+                    data.icon = 'practice'
+                    break
+                case 'lesson':
+                    data.title = 'practice'
+                    data.icon = '讨论'
+                    break
+                case 'poll':
+                    data.title = '来投一下票，做下调查'
+                    data.icon = 'poll'
+                    break
+            }
+            return respone
+        })
+    }
+
     methods= {
         /**
          * 复制
@@ -590,103 +725,6 @@ export default class teamDetail extends wepy.page {
                 resumeLastRead: resume,
             })
         }
-    }
-
-
-    onLoad(params) {
-        let self = this;
-        self.teamID = params.teamID
-        self.wxPushType = params.wxPushType
-        self.$apply()
-
-        wepy.$instance.globalData.getLoadHuilder() // ga统计
-    }
-
-    onReady() {
-        let self = this
-        var query = wx.createSelectorQuery()
-        query.select('#bgBox').boundingClientRect((response) => {
-            self.backgroundHeight = response.top
-        }).exec()
-    }
-
-    /**
-     * 监听滚动条的位置
-     * @param
-     */
-    onPageScroll(res) {
-        let self = this
-        let scrollTop = res.scrollTop
-
-        self.headerBackground =  self.backgroundHeight < -240 ? 'background-transparent-opacity' : 'background-transparent'
-        self.$apply()
-    }
-
-
-    onShow() {
-        let self = this
-        initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
-    }
-
-    initialize() {
-        let self = this
-        let postData = {
-            token: self.token,
-            teamID : self.teamID
-        }
-
-        if (self.wxPushType) {
-            postData.wxPushType = self.wxPushType
-        }
-        fetch.getTeamDetail(postData).then((res)=>{
-            res = res.data;
-            self.imageUrl = res.imageUrl;
-            self.teamName = res.name;
-            self.signUpUserCount = res.signUpUserCount;
-            self.teamTime = res.time;
-            self.todayTask = res.taskList.TaskContentList;
-            self.role = res.role;
-            self.targetList = res.targetList;
-            self.courseImageList = res.courseImageList;
-            self.teacherImage = res.teacherImage;
-            self.isShowManagerButton = res.isShowManagerButton
-            self.managerButtonStatus = res.managerButtonStatus
-            self.teamDetail = res.teamDetail;
-            self.isLoaded = true;
-            self.$apply()
-        }).then(()=>{
-            fetch.getActivityfeedList(postData).then((response) => {
-                _.each(response, (data) => {
-                    switch (data.contentType) {
-                        case 'practice':
-                            _.each(data.practiceList, (item) => {
-                                _.each(item.select, (option) => {
-                                    option.sId = _.clone(option.id)
-                                    option.id = item.id + option.id
-                                    if (option.isSelected) {
-                                        item.answerDescription = option.feedback && option.feedback.description
-                                    }
-                                })
-                            })
-                            break
-                        case 'poll':
-                            if (data.isDone) {
-                                let ballotTotal = _.reduce(data.select, (memo, item) => {
-                                    return memo + item.ballot
-                                }, 0) // 统计全部投票人数
-                                _.each(data.select, (item) => {
-                                    item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
-                                })
-                                data.ballotTotal = ballotTotal
-                            }
-                            break
-                    }
-                })
-                self.intereactList = response
-                self.$apply()
-            })
-        }).catch((error) => {
-        })
     }
 
     events = {
