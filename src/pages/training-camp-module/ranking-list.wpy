@@ -1,6 +1,7 @@
 <template>
-    <scroll-view class="rank-scroll" scroll-y="{{true}}">
-        <jn-header title=""></jn-header>
+    <mloading wx:if="{{ !isLoaded }}"/>
+    <jn-header title=""></jn-header>
+    <view class="rank-scroll">
         <view class="rank-top">
             <image src="http://wx-small.runwise.cn/image/imageID664545ed3cf4079128720a8c29c2.png" mode="widthFix"/>
             <view class="text">总分：
@@ -54,35 +55,22 @@
             <image class="icon" src="http://wx-small.runwise.cn/image/imageID9523129034a4baa91d85b9511cf6.png"/>
             <text class="text">暂无排行</text>
         </view>
-    </scroll-view>
+    </view>
+    <view></view>
 </template>
 
 <script>
     import wepy from "wepy";
-    import loadingMixin from "../../mixins/loading";
     import header from '../../components/common/header'
-    import {
-        showErrorPage
-    } from "../../utils";
-    import Toast from "wepy-com-toast";
-    import {
-        course as courseApi,
-        team as teamApi
-    } from "../../api";
-    import {
-        NetworkError
-    } from "../../errors";
-    import {
-        getStore,
-        connect
-    } from "wepy-redux";
+    import {team as teamApi} from "../../api";
+    import {getStore, connect} from "wepy-redux";
     import Loading from '../../components/common/loading'
     const store = getStore();
     const state = store.getState();
     @connect({
         userName(state) {
             return state.user.name;
-        }, // mapState 即getters
+        }, 
         avatar(state) {
             return state.user.avatar;
         },
@@ -90,18 +78,13 @@
             return state.user.role;
         },
         token(state) {
-            // return 'userIDf6baae6dfe454ce7ae4bbcba365226c2-1529655008941-aeedff957662e34b19b3bae8a89e49db'
             return state.user.token;
         },
-        code(state) {
-            return state.user.code;
-        },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
         }
     })
     export default class TeamLearningRank extends wepy.page {
-        mixins = [loadingMixin]; // end mixins
         data = {
             teamID:'',
             isLoaded:false,
@@ -110,56 +93,55 @@
             teamRankList:[],
             teamName:'',
             isShowMyMap:false,
-        }; // end data
+        }; 
         components = {
             'mloading': Loading,
             'jn-header': header
-        }; // end components
-        onLoad({
-                   teamID = 'defaultTeamID',
-                   teamName = 'defaultName'
-               }) {
-            this.teamName = teamName
-            this.teamID = teamID
+        };
+        onLoad(params) {
+            let self = this;
+            self.teamName = params.teamName
+            self.teamID = params.teamID
+
             wepy.$instance.globalData.getLoadHuilder() // ga统计
+
             wx.reportAnalytics('team_learning_rank', {
                 nickname: this.userName,
                 channel: this.entrance.mappers[this.entrance.scenceID],
                 role: this.role,
                 teamname: this.teamName,
             });
-            this.initPage()
+
+            self.initPage()
         }
         initPage(){
-            teamApi.getTeamRankList({
-                token: this.token,
-                teamID: this.teamID
+            let self = this;
+            let postData = {
+                token: self.token,
+                teamID: self.teamID
+            }
+            teamApi.getTeamRankList(postData).then(data => {
+                self.isLoaded = true
+                self.myMap = data.myMap
+                self.teamAllScore = data.teamAllScore
+                self.teamRankList = data.teamRankList
+                self.isShowMyMap = data.isShowMyMap
+                self.$apply()
             })
-                .then(data => {
-                    this.isLoaded = true
-                    this.myMap = data.myMap
-                    this.teamAllScore = data.teamAllScore
-                    this.teamRankList = data.teamRankList
-                    this.isShowMyMap = data.isShowMyMap
-                    this.$apply()
-                })
-        }
-        onShow() {}
-        onUnload() {
         }
         methods = {
-            handleTickTeamLike({currentTarget:{dataset:{userID}}}){
+            handleTickTeamLike(event){
+                let self = this;
+                let {currentTarget: {dataset:{userID}}} = event
                 teamApi.tickTeamRankLike({
-                    token:this.token,
-                    teamID:this.teamID,
+                    token:self.token,
+                    teamID:self.teamID,
                     rankUserID:userID
+                }).then(data=>{
+                    this.initPage()
                 })
-                    .then(data=>{
-                        this.initPage()
-                    })
             },
-        }; // end methods
-        events = {}; // end events
+        }; 
     }
 </script>
 

@@ -165,5 +165,19 @@ export default {
      */
     sendTeamPractice(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: params})
+    },
+    /**
+     * 团队学习→获取训练营详情
+     * @param  teamID: 团队ID
+     */
+    getTeamDetail(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamDetail', params: params})
+    },
+    /**
+     * 团队学习→获取训练营排行榜
+     * @param  teamID: 团队ID
+     */
+    getTeamRankList(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamRankList', params: params})
     }
 }
