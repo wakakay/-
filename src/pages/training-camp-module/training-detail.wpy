@@ -426,6 +426,13 @@ const store = getStore();
 })
 
 export default class teamDetail extends wepy.page {
+
+    config = {
+        navigationBarTitleText: "下拉刷新",
+        enablePullDownRefresh: true,
+        backgroundTextStyle: "dark"
+    }
+
     components = {
         'jn-header': header,
         'jn-loading': Loading,
@@ -490,6 +497,15 @@ export default class teamDetail extends wepy.page {
     onShow() {
         let self = this
         initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+    }
+    
+    onPullDownRefresh() {
+        let self =this;
+        self.initialize({
+            callBack: ()=>{
+                wx.stopPullDownRefresh()
+            }
+        })
     }
 
     initialize() {
