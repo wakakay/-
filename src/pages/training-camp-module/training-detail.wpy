@@ -709,18 +709,20 @@ export default class teamDetail extends wepy.page {
             let senceName = item.name
             let resume = item.resume ? item.resume : ''
             self.senceID = item.senceID ? item.senceID : item.id
+            self.courseID = item.courseID
 
             if ('needPay' === buttonStatus) {
-                self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
+                self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID,courseID: self.courseID})
                 return
             }
             if ('finish' === buttonStatus) {
-                self.$navigate(`/pages/course-module/course-review`, {senceID: self.senceID})
+                self.$navigate(`/pages/course-module/course-review`, {senceID: self.senceID,courseID: self.courseID})
                 return
             }
 
             navigateToLesson({
                 senceID:self.senceID,
+                courseID: self.courseID,
                 teamID : self.teamID,
                 resumeLastRead: resume,
             })
