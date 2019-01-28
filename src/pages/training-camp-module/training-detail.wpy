@@ -170,7 +170,10 @@
             image{width: 100%;}
         }
         .ui-link{padding:16rpx 32rpx;font-size: 32rpx;color:@color-blue;}
-        .cell-poll-btn{width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx}
+        .cell-poll-btn{
+            width: 266rpx;height:56rpx;background: @background-gray-F4;border-radius: 32rpx;color:@color-blue;text-align: center;line-height: 56rpx;margin:52rpx auto 62rpx;font-size: 30rpx;
+            &.is-selected{color:@color-gray}
+        }
     }
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
     .ui-add{width: 88rpx;height: 88rpx;border-radius: 50%;background: @background-blue;color:@color-white;line-height: 88rpx;text-align: center;position: fixed;bottom: 194rpx;right:64rpx;z-index:@z-index-lower}
@@ -351,9 +354,10 @@
                         <button class="cell-poll-btn"
                             data-index="{{index}}"
                             data-item="{{data}}"
+                            :class="{'is-selected' : data.isDone}"
                             open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                             bindgetuserinfo="getAuthorize"
-                            @tap.stop="getPoll">投票</button>
+                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
                     </view>
                 </view>
             </view>
