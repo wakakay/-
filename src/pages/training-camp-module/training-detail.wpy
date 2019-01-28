@@ -152,7 +152,6 @@
                 }
                 text{color:@color-gray-c7;margin-right: 10rpx;}
             }
-
         }
         .ui-type{
             height: 88rpx;line-height: 88rpx;padding:0 32rpx;box-sizing: border-box;
@@ -175,7 +174,7 @@
     }
     .cell-more{font-size: 26rpx;color:@color-gray;text-align: center;margin:108rpx 0 218rpx;}
     .ui-add{width: 88rpx;height: 88rpx;border-radius: 50%;background: @background-blue;color:@color-white;line-height: 88rpx;text-align: center;position: fixed;bottom: 194rpx;right:64rpx;z-index:@z-index-lower}
-
+    .module-poll-box{box-sizing:border-box;padding:0 32rpx;}
 </style>
 <template>
     <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
@@ -310,6 +309,10 @@
                             <text class="icon-poll"></text>
                             <text>{{data.title || '来投一下票，做下调查'}}</text>
                         </view>
+                        <view wx:if="{{data.type=='text'}}">
+                            <text class="icon-message"></text>
+                            <text>{{data.title}}</text>
+                        </view>
                         <view wx:if="{{data.contentType=='notice'}}">
                             <text class="icon-inform"></text>
                             <text>{{data.title || '通知，晚间讨论'}}</text>
@@ -318,6 +321,10 @@
                         <view class="cell-status" :class="{'cell-completed': data.isDone}">{{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
+                    <view wx:if="{{data.linkLoaction}}" class="ui-link">
+                        <view>{{data.linkLoaction}}</view>
+                        <view>{{data.linkName}}</view>
+                    </view>
                     <view class="cell-image" wx:if="{{data.img}}">
                         <image mode="widthFix" src="{{data.img}}"/>
                     </view>
@@ -335,10 +342,6 @@
                             </view>
                         </view>
                     </repeat>
-                    <view wx:if="{{data.linkLoaction}}" class="ui-link">
-                        <view>{{data.linkLoaction}}</view>
-                        <view>{{data.linkName}}</view>
-                    </view>
                     <repeat wx:if="{{data.type=='practice'}}" for="{{data.practiceList}}" key="option" index="option" item="item">
                         <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
                                           :cardIndex.sync="option" :cardsList.sync="data.practiceList"></jn-single-choice>
@@ -352,7 +355,6 @@
                             bindgetuserinfo="getAuthorize"
                             @tap.stop="getPoll">投票</button>
                     </view>
-                    
                 </view>
             </view>
         </repeat>
