@@ -308,38 +308,19 @@
                 </view>
                 <view class="ui-content">
                     <view class="ui-type main-justify cross-center">
-                        <view wx:if="{{data.contentType=='discuss'}}">
-                            <text class="icon-discuss"></text>
-                            <text>{{data.title || '疑问，求解答'}}</text>
-                        </view>
-                        <view wx:if="{{data.contentType=='practice'}}">
-                            <text class="icon-practice"></text>
-                            <text>{{data.title || '小练习'}}</text>
-                        </view>
-                        <view wx:if="{{data.contentType=='lesson'}}">
-                            <text class="icon-practice"></text>
-                            <text>{{data.title || '讨论'}}</text>
-                        </view>
-                        <view wx:if="{{data.contentType=='poll'}}">
-                            <text class="icon-poll"></text>
-                            <text>{{data.title || '来投一下票，做下调查'}}</text>
-                        </view>
-                        <view wx:if="{{data.contentType=='text'}}">
-                            <text class="icon-message"></text>
+                        <view>
+                            <text class="icon-{{data.icon}}"></text>
                             <text>{{data.title}}</text>
                         </view>
-                        <view wx:if="{{data.contentType=='notice'}}">
-                            <text class="icon-inform"></text>
-                            <text>{{data.title || '通知，晚间讨论'}}</text>
-                        </view>
                         <view class="cell-status"
-                              :class="{'cell-completed': data.isDone}" wx:if="{{data.contentType=='poll' || data.contentType=='practice'}}">
+                              :class="{'cell-completed': data.isDone}"
+                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  data.roleType != 'member'}}">
                             {{data.isDone ? '已完成' : '未参与'}}</view>
                     </view>
                     <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
                     <view wx:if="{{data.linkLoaction}}" @tap.stop="getCopyLink" data-link="{{data.linkLoaction}}" class="cell-link">{{data.linkName}}</view>
                     <view class="cell-image" wx:if="{{data.img}}">
-                        <image mode="widthFix" src="{{data.img}}"/>
+                        <image mode="widthFix" src="{{data.img}}"></image>
                     </view>
                     <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="lessonIndex" index="lessonIndex" item="item">
                         <view class="module-lesson-box" @tap.stop="getLesson" data-item="{{data.lessonList[lessonIndex]}}">
@@ -348,7 +329,7 @@
                                     <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
                                     <view class="ui-detail">
                                         <view class="cell-name">{{item.senceName}}</view>
-                                        <view class="cell-dec" wx:if="{{item.senceTarget}}">#{{item.senceTarget}}</view>
+                                        <view class="cell-dec" wx:if="{{item.senceTarget}}"># {{item.senceTarget}}</view>
                                     </view>
                                 </view>
                                 <button class="ui-btn">{{item.buttonMsg}}</button>
@@ -362,12 +343,13 @@
                     <view wx:if="{{data.contentType=='poll'}}">
                         <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList" isLearning></jn-poll>
                         <button class="cell-poll-btn"
-                            data-index="{{index}}"
-                            data-item="{{data}}"
-                            :class="{'is-selected' : data.isDone}"
-                            open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                            bindgetuserinfo="getAuthorize"
-                            @tap.stop="getPoll">{{data.isDone ? data.ballotTotal+'已投票' : '投票'}}</button>
+                                data-index="{{index}}"
+                                data-item="{{data}}"
+                                :class="{'is-selected' : data.isDone}"
+                                open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                                bindgetuserinfo="getAuthorize"
+                                disabled="{{data.isDone || data.roleType != 'member'}}"
+                                @tap.stop="getPoll">{{data.isDone || data.roleType != 'member' ? data.ballotTotal+'已投票' : '投票'}}</button>
                     </view>
                 </view>
             </view>
@@ -547,50 +529,48 @@ export default class teamDetail extends wepy.page {
                     })
                     break
                 case 'poll':
-                    if (data.isDone) {
-                        let ballotTotal = _.reduce(data.select, (memo, item) => {
-                            return memo + item.ballot
-                        }, 0) // 统计全部投票人数
-                        _.each(data.select, (item) => {
-                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
-                        })
-                        data.ballotTotal = ballotTotal
-                    }
+                    let ballotTotal = _.reduce(data.select, (memo, item) => {
+                        return memo + item.ballot
+                    }, 0) // 统计全部投票人数
+                    _.each(data.select, (item) => {
+                        item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                    })
+
+                    data.ballotTotal = ballotTotal || 0
                     break
             }
 
-            if (!data.title){
-                return respone
+            if (data.title) {
+                switch (data.contentType) {
+                    case 'text':
+                        data.title = ''
+                        data.icon = 'practice'
+                        break
+                    case 'discuss':
+                        data.title = 'discuss'
+                        data.icon = '疑问，求解答'
+                        break
+                    case 'notice':
+                        data.title = '通知，晚间讨论'
+                        data.icon = 'inform'
+                        break
+                    case 'practice':
+                        data.title = '小练习'
+                        data.icon = 'practice'
+                        break
+                    case 'lesson':
+                        data.title = 'practice'
+                        data.icon = '讨论'
+                        break
+                    case 'poll':
+                        data.title = '来投一下票，做下调查'
+                        data.icon = 'poll'
+                        break
+                }
             }
-
-            switch(data.contentType) {
-                case 'text':
-                    data.title = ''
-                    data.icon = 'practice'
-                    break
-                case 'discuss':
-                    data.title = 'discuss'
-                    data.icon = '疑问，求解答'
-                    break
-                case 'notice':
-                    data.title = '通知，晚间讨论'
-                    data.icon = 'inform'
-                    break
-                case 'practice':
-                    data.title = '小练习'
-                    data.icon = 'practice'
-                    break
-                case 'lesson':
-                    data.title = 'practice'
-                    data.icon = '讨论'
-                    break
-                case 'poll':
-                    data.title = '来投一下票，做下调查'
-                    data.icon = 'poll'
-                    break
-            }
-            return response
         })
+        console.log(response)
+        return response
     }
 
     methods= {
@@ -653,7 +633,7 @@ export default class teamDetail extends wepy.page {
             let self = this
             let {currentTarget: {dataset: {item, index}}} = event
 
-            if (item.isDone || !self.isTokenSet) {
+            if (!self.isTokenSet) {
                 return
             }
 

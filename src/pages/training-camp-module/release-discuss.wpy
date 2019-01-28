@@ -70,7 +70,7 @@
             </view>
         </repeat>
 
-        <view class="ui-tool">
+        <view class="ui-tool" :class="{'is-iphonex': isIphonex}">
             <view class="ui-container main-justify cross-center">
                 <view class="ui-list flex-box-1">
                     <button class="cell-item"
