@@ -1,6 +1,6 @@
 const NODE_ENV = 'develop'
 export default {
-    gaTracker: 'UA-124925915-2', // 用你的 Tracking ID 代替 test：UA-124925915-2 product： UA-127840357-1
+    gaTracker: 'UA-127840357-1', // 用你的 Tracking ID 代替 test：UA-124925915-2 product： UA-127840357-1
     environment: NODE_ENV,
     baseUrl: NODE_ENV === 'release' ? 'https://wx-small.runwise.cn/release/api/' : 'https://wx-small.runwise.cn/develop/api/',
     appid: 'wx0fbaa0e617f19200',

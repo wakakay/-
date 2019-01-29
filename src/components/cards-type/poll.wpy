@@ -134,7 +134,7 @@
              */
             'broadcast-poll': (data) => {
                 let self = this
-                let index = data.index || self.cardIndex
+                let index = self.cardIndex
                 let cardItem = self.cardsList[index] || data
                 let optionList = data.select || cardItem.select || cardItem.optionList
 
@@ -146,6 +146,7 @@
                     data.ballot = data.ballot >= 0 ? data.ballot : data.count
                     return memo + data.ballot + data.add
                 }, 0)
+                cardItem.ballotTotal = ballotTotal || 0
 
                 // 计算每个投票的比例
                 _.each(optionList, (data) => {
@@ -156,7 +157,9 @@
                 cardItem.isDone = true
                 cardItem.isAnswerOver = true
                 self.oldIndex = _.clone(index)
-                self.$emit('on-interaction', cardItem)
+                setTimeout(() => {
+                    self.$emit('on-interaction', cardItem)
+                }, 300)
                 self.$apply()
             },
             /**

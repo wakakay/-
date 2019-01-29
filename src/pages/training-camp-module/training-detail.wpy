@@ -353,7 +353,7 @@
                                 open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                                 bindgetuserinfo="getAuthorize"
                                 disabled="{{data.isDone || role != 'member'}}"
-                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'已投票' : '投票'}}</button>
+                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'人已投票' : '投票'}}</button>
                     </view>
                 </view>
             </view>
@@ -538,8 +538,19 @@ export default class teamDetail extends wepy.page {
         let self = this
 
         _.each(response, (data) => {
+            data.isTopNumber = data.isTop ? 1 : 0
             switch (data.contentType) {
+                case 'discuss':
+                    data.title = data.title || '讨论'
+                    data.icon = 'discuss'
+                    break
+                case 'notice':
+                    data.title = data.title ||  '通知，晚间讨论'
+                    data.icon = 'inform'
+                    break
                 case 'practice':
+                    data.title = data.title ||  '小练习'
+                    data.icon = 'practice'
                     _.each(data.practiceList, (item) => {
                         item.role = self.role
                         _.each(item.select, (option) => {
@@ -552,7 +563,12 @@ export default class teamDetail extends wepy.page {
                     })
                     break
                 case 'poll':
+                    data.title = data.title ||  '来投一下票，做下调查'
+                    data.icon = 'poll'
                     data.role = self.role
+                    if ('member' !== data.role) {
+                        data.isDone = true
+                    }
                     let ballotTotal = _.reduce(data.select, (memo, item) => {
                         return memo + item.ballot
                     }, 0) // 统计全部投票人数
@@ -562,31 +578,15 @@ export default class teamDetail extends wepy.page {
 
                     data.ballotTotal = ballotTotal || 0
                     break
+                default:
+                    data.title = data.title ||  '讨论'
+                    data.icon = 'discuss'
             }
 
-            if (data.title) {
-                switch (data.contentType) {
-                    case 'discuss':
-                        data.title = '讨论'
-                        data.icon = 'discuss'
-                        break
-                    case 'notice':
-                        data.title = '通知，晚间讨论'
-                        data.icon = 'inform'
-                        break
-                    case 'practice':
-                        data.title = '小练习'
-                        data.icon = 'practice'
-                        break
-                    case 'poll':
-                        data.title = '来投一下票，做下调查'
-                        data.icon = 'poll'
-                        break
-                    default:
-                        data.title = '讨论'
-                        data.icon = 'discuss'
-                }
-            }
+        })
+
+        response = _.sortBy(response, (item) => {
+            return -item.isTopNumber
         })
 
         return response
@@ -641,7 +641,7 @@ export default class teamDetail extends wepy.page {
             if(self.role === 'member') {
                 self.$navigate(`/pages/training-camp-module/release-discuss`, {teamID: self.teamID})
             }else {
-                self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID})
+                self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID, role: self.role})
             }
         },
         /**
@@ -763,10 +763,16 @@ export default class teamDetail extends wepy.page {
                     }, 300)
                 })
             } else {
-                item = _.find(self.intereactList, {pollID: data.id})
+                let number = null
+                item = _.find(self.intereactList, (option, index) => {
+                    if (option.pollID === data.id || option.pollID === data.pollID) {
+                        number = index
+                        return option
+                    }
+                })
                 _.extend(item, data)
-                if (item) {
-                    self.intereactList.splice(0, 1, item)
+                if (-1 !== number) {
+                    self.intereactList.splice(number, 1, item)
                 }
             }
 

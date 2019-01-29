@@ -265,6 +265,7 @@
             self.currentTime = date.format('hh:mm')
             self.startDate = self.currentDate + ''
             self.startTime = self.currentTime + ''
+            self.sendData.roleType = self.paramsInfo.role
             self.$apply()
         }
 
