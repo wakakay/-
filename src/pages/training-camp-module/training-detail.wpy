@@ -182,7 +182,7 @@
             &.is-selected{color:@color-gray}
         }
     }
-    .cell-more{font-size:26rpx;color:@color-gray;text-align:center;margin:108rpx 0 218rpx;}
+    .cell-more{font-size:26rpx;color:@color-gray;text-align:center;padding:108rpx 0 218rpx;}
     .ui-add{width:88rpx;height:88rpx;border-radius:50%;background:@background-blue;color:@color-white;line-height:88rpx;text-align:center;position:fixed;bottom:194rpx;right:64rpx;z-index:@z-index-lower}
     .module-poll-box{box-sizing:border-box;padding:0 32rpx;}
 </style>
@@ -430,7 +430,6 @@ export default class teamDetail extends wepy.page {
         isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
         isLoaded:false,
         headerBackground: 'background-transparent',
-        backgroundHeight: 0,
         teamID:'',
         wxPushType:'',
         role:'',
@@ -457,18 +456,8 @@ export default class teamDetail extends wepy.page {
         self.teamID = params.teamID
         self.wxPushType = params.wxPushType
         self.$apply()
-
         wepy.$instance.globalData.getLoadHuilder() // ga统计
     }
-
-    onReady() {
-        let self = this
-        var query = wx.createSelectorQuery()
-        query.select('#bgBox').boundingClientRect((response) => {
-            self.backgroundHeight = response.top
-        }).exec()
-    }
-
     /**
      * 监听滚动条的位置
      * @param
@@ -476,7 +465,7 @@ export default class teamDetail extends wepy.page {
     onPageScroll(res) {
         let self = this
         let scrollTop = res.scrollTop
-        self.headerBackground =  self.backgroundHeight < -240 ? 'background-transparent-opacity' : 'background-transparent'
+        self.headerBackground =   scrollTop > 240 ? 'background-transparent-opacity' : 'background-transparent'
         self.$apply()
     }
 
