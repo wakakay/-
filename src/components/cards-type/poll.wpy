@@ -117,6 +117,7 @@
                     optionList: cardItem.optionList,
                     isFinish: selectedIds.length ? true : false,
                     id: cardItem.id || cardItem.pollID,
+                    pollID: cardItem.id || cardItem.pollID,
                     selectedId: item.id,
                     selectedItem: {id: selectedIds.join(',')},
                     select: selectList,

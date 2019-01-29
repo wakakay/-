@@ -314,7 +314,7 @@
                     <view class="ui-type main-justify cross-center">
                         <view>
                             <text class="icon-{{data.icon}}"></text>
-                            <text>{{data.title}}</text>
+                            <text>{{data.moduleTitle}}</text>
                         </view>
                         <view class="cell-status"
                               :class="{'cell-completed': data.isDone}"
@@ -505,7 +505,6 @@ export default class teamDetail extends wepy.page {
             postData.wxPushType = self.wxPushType
         }
         // 下拉刷新
-
         return fetch.getTeamDetail(postData).then((res)=>{
             res = res.data;
             self.imageUrl = res.imageUrl;
@@ -541,15 +540,15 @@ export default class teamDetail extends wepy.page {
             data.isTopNumber = data.isTop ? 1 : 0
             switch (data.contentType) {
                 case 'discuss':
-                    data.title = data.title || '讨论'
+                    data.moduleTitle = data.moduleTitle || '讨论'
                     data.icon = 'discuss'
                     break
                 case 'notice':
-                    data.title = data.title ||  '通知，晚间讨论'
+                    data.moduleTitle = data.moduleTitle ||  '通知，晚间讨论'
                     data.icon = 'inform'
                     break
                 case 'practice':
-                    data.title = data.title ||  '小练习'
+                    data.moduleTitle = data.moduleTitle ||  '小练习'
                     data.icon = 'practice'
                     _.each(data.practiceList, (item) => {
                         item.role = self.role
@@ -563,23 +562,24 @@ export default class teamDetail extends wepy.page {
                     })
                     break
                 case 'poll':
-                    data.title = data.title ||  '来投一下票，做下调查'
+                    data.moduleTitle = data.moduleTitle ||  '来投一下票，做下调查'
                     data.icon = 'poll'
                     data.role = self.role
                     if ('member' !== data.role) {
                         data.isDone = true
                     }
-                    let ballotTotal = _.reduce(data.select, (memo, item) => {
-                        return memo + item.ballot
-                    }, 0) // 统计全部投票人数
-                    _.each(data.select, (item) => {
-                        item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
-                    })
-
-                    data.ballotTotal = ballotTotal || 0
+                    if (data.isDone) {
+                        let ballotTotal = _.reduce(data.select, (memo, item) => {
+                            return memo + item.ballot
+                        }, 0) // 统计全部投票人数
+                        _.each(data.select, (item) => {
+                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                        })
+                        data.ballotTotal = ballotTotal || 0
+                    }
                     break
                 default:
-                    data.title = data.title ||  '讨论'
+                    data.moduleTitle = data.moduleTitle ||  '讨论'
                     data.icon = 'discuss'
             }
 
@@ -739,8 +739,8 @@ export default class teamDetail extends wepy.page {
 
             if (data.parentkey) {
                 item = self.intereactList[data.parentindex][data.parentkey][data.cardindex]
-                _.extend(item, data)
                 item && self.intereactList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
+                _.extend(item, data)
 
                 let postData = {
                     token: self.token,
@@ -755,17 +755,19 @@ export default class teamDetail extends wepy.page {
                     json: item.json // 选中选项的id或顺序
                 }
                 fetch.sendTeamPractice(postData).then(respone => {
+                    item.isAnswerOver = true // 已经答案，不能再次作答
+                    item.isDone = true
+                    self.intereactList[data.parentindex].isAnswerOver = true // 已经答案，不能再次作答
+                    self.intereactList[data.parentindex].isDone = true
+                    self.$apply()
                     setTimeout(() => {
-                        item.isAnswerOver = true // 已经答案，不能再次作答
-                        item.isDone = true
-                        self.$apply()
                         self.$broadcast('broadcast-single-choive', item)
                     }, 300)
                 })
             } else {
                 let number = null
                 item = _.find(self.intereactList, (option, index) => {
-                    if (option.pollID === data.id || option.pollID === data.pollID) {
+                    if (option.pollID && option.pollID === data.pollID) {
                         number = index
                         return option
                     }

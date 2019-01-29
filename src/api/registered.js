@@ -98,6 +98,13 @@ export default {
     todayTaskList(params) {
         return fetch({method: 'post', url: 'todayTask/tasks', params: params, isVisitor: true})
     },
+    /**
+     * 今日任务Tab→在学课程
+     * @param params
+     */
+    todaySkills(params) {
+        return fetch({method: 'post', url: 'todayTask/skills', params: params})
+    },
     //获取全部未学课程
     todayToLearnCourses(params) {
         return fetch({method: 'post', url: 'todayTask/toLearnCourses', params: params, isVisitor: true})

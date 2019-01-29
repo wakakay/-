@@ -372,7 +372,7 @@
             isShowEvaluate: false,
             isShowCourseStudying:false,
             courseStudyModalList:[],
-            recommendCourseList:[],
+            recommendCourseList:[], // 在学课程
             historicalSkillList:[],
             todaySkill:{},
             courseCount:'',
@@ -430,17 +430,22 @@
             let postData = {
                 token: params && params.token || self.token
             }
-            fetch.todayTaskList(postData).then((respone) => {
-                self.isLoaded = true
-                self.todayDate = respone.todayDate;
-                self.recommendCourseList = respone.recommendCourseList;
-                self.historicalSkillList = respone.historicalSkillList;
-                self.todaySkill = respone.todaySkill;
-                self.todaySenceList = respone.todaySenceList;
-                self.courseCount = respone.courseCount;
-                self.todayText = respone.todayText;
-                self.todayTitle = respone.todayTitle;
+
+            fetch.todaySkills(postData).then((respone) => {
+                self.historicalSkillList = respone.historicalSkillList
+                self.todaySkill = respone.todaySkill
                 self.$apply()
+            }).then(()=>{
+                fetch.todayTaskList(postData).then((respone) => {
+                    self.isLoaded = true
+                    self.recommendCourseList = respone.recommendCourseList
+                    self.todayDate = respone.todayDate
+                    self.todaySenceList = respone.todaySenceList
+                    self.courseCount = respone.courseCount
+                    self.todayText = respone.todayText
+                    self.todayTitle = respone.todayTitle
+                    self.$apply()
+                })
             }).catch(error => {
                 throw error
             })

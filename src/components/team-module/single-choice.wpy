@@ -141,6 +141,7 @@
              * @param data
              */
             'broadcast-single-choive': (data) => {
+                console.log(data)
                 let self = this
                 let cardData = !data.parentkey ? self.cardsList[self.cardIndex] : data.parentlist[data.parentindex][data.parentkey][data.cardindex]
                 let item = !self.isExercises
