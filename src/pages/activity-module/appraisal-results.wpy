@@ -134,22 +134,17 @@
             isLoaded: false,
             isTips: true,
             senceID: '',
-            course: {},
+            course: '',
             isShowShare: false,
             isShowShade: false,
             headerHeigth: 68,
             shareButtonMessage: '', // 弹窗的分享按钮文案
-<<<<<<< HEAD
             buttonAttr: '',
             buttonFebackImageURL: '',
             buttonMsg: '',
             resultImageURL: '',
             subjectHeading: '',
             shareImage: '',
-            course: ''
-=======
-            resultObj: {}
->>>>>>> MVP11.3
         }
 
         onLoad({senceID, examID}) {
