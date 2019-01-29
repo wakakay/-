@@ -604,7 +604,7 @@ export default class teamDetail extends wepy.page {
                 data: link,
                 success: function (res) {
                     wx.showToast({
-                        title: '链接已复制到剪贴板',
+                        title: '链接已复制',
                         icon: 'success'
                     })
                 }

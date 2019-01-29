@@ -9,7 +9,7 @@
               style="{{'top:'+headerHeigth+'px;'}}"
               data-type="1"
               @tap.stop="getShowStatus">
-            <text class="icon-comment1"></text>{{cardItem.viewsCount ? cardItem.viewsCount+'个想法' : '记想法'}}
+            <text class="icon-comment1"></text>{{cardItem.viewsCount ? cardItem.viewsCount+'个笔记' : '记笔记'}}
         </view>
 
         <view class="ui-mask"
