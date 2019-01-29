@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_6jw2rfxq82n.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_get8ote2lhn.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -152,3 +152,31 @@
 .icon-coursr-empty:before { content: "\e625"; }
 
 .icon-empty-review-list:before { content: "\e626"; }
+
+.icon-delete-select:before { content: "\e627"; }
+
+.icon-search:before { content: "\e62a"; }
+
+.icon-poll:before { content: "\e78a"; }
+
+.icon-course1:before { content: "\e78b"; }
+
+.icon-thumb:before { content: "\e78c"; }
+
+.icon-practice:before { content: "\e78d"; }
+
+.icon-add-btn:before { content: "\e78e"; }
+
+.icon-member:before { content: "\e629";}
+
+.icon-lesson:before { content: "\e62b";}
+
+.icon-stick:before {content: "\e62c";}
+
+.icon-inform:before {content: "\e62d";}
+  
+.icon-discuss:before {content: "\e62e";}
+  
+.icon-task:before {content: "\e62f";}
+  
+  

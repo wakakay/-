@@ -61,12 +61,14 @@
                 'pages/NoLogin/index',
                 'pages/Mistake/index',
                 /* 训练营 */
+                'pages/training-camp-module/release-discuss', // 发布谈论
                 'pages/training-camp-module/index', // 训练营-首页
                 'pages/training-camp-module/all-training', // 查看全部训练营
                 'pages/training-camp-module/introduce', // 训练营介绍
                 'pages/training-camp-module/registration', // 训练营-报名
                 'pages/training-camp-module/registration-info', // 训练营-报名信息
                 'pages/training-camp-module/coursr-list', // 训练营-课程列表
+                'pages/training-camp-module/training-detail', // 训练营-课程列表
                 'pages/training-camp-module/release-message', // 训练营-发布消息
                 'pages/training-camp-module/add-task', // 添加任务
                 'pages/training-camp-module/invite-friends', // 邀请好友
@@ -77,6 +79,7 @@
                 'pages/training-camp-module/learning-result', // 学习成果
                 'pages/training-camp-module/task-list', // 全部任务
                 'pages/training-camp-module/my/main', // 我管理-管理
+                'pages/training-camp-module/my/release-discuss', // 我管理-发布谈论
                 'pages/training-camp-module/my/edit', // 我管理-编辑训练营
                 'pages/training-camp-module/my/students-list', // 我管理-学员列表
                 'pages/training-camp-module/my/students-management', // 我管理-学员管理
@@ -290,7 +293,7 @@
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
-
+            console.log(option)
             wx.getStorage({
                 key: 'token',
                 complete(res) {

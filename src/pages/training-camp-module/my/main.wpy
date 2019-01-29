@@ -178,8 +178,9 @@
                 </view>
             </view>
             <view class="ui-bottom-btn" wx:if="{{isCustom!=='custom'}}">
-                <button class="cell-end" wx:if="{{teamStatus==='closeLearning'}}">训练营已结束</button>
-                <button class="cell-end-operate" @tap.stop="handleEndTeamLearning" wx:else>结束训练营</button>
+                <button :class="{'is-end' : teamStatus == 'closeLearning'}" @tap.stop="handleEndTeamLearning">
+                    {{teamStatus =='closeLearning' ? '训练营已结束' : '结束训练营'}}</button>
+                <button @tap.stop="getEditTeam">编辑训练营</button>
             </view>
         </view>
     </scroll-view>
@@ -213,9 +214,11 @@
         .ui-skill-board{padding: 0 32rpx;border-top: 20rpx solid @border-gray;}
     }
     .ui-bottom-btn{
-        width: 100%;background-color: @background-gray-F4;height: 220rpx;border-top: 120rpx solid @border-gray;
-        .cell-end{color: @background-gray;font-weight: bold;font-size: 32rpx;height: 100rpx;line-height: 100rpx;border-radius: @border-radius-20;background-color: @background-gray-hover;width: 702rpx;margin:auto;border:0}
-        .cell-end-operate{color: @color-white;font-weight: bold;font-size: 32rpx;height: 100rpx;line-height: 100rpx;border-radius: @border-radius-20;border: 0;background-color: @background-blue;width: 702rpx;margin:auto;}
+        width: 100%;background-color: @background-gray-F4;height: 220rpx;border-top: 120rpx solid @border-gray;display: flex;
+        button{
+            color: @color-white;font-weight: bold;font-size: 32rpx;height: 76rpx;line-height: 76rpx;border-radius: @border-radius-20;border: 0;background-color: @background-blue;width: 336rpx;margin:auto;
+            &.is-end{color: @background-gray;background-color: @background-gray-hover;}
+        }
     }
     .ui-manager{
         border-top: 20rpx solid @border-gray;padding: 0 36rpx;width: calc(~"100% - 72rpx");
@@ -238,7 +241,7 @@
         }
         .ui-content{
             display: flex;justify-content: space-between;width: 100%;height: 180rpx;border-bottom: 2rpx solid @border-gray;align-items: center;
-           
+
             .ui-right{
                 .ui-precent{
                     text-align:center;color: @color-black;
@@ -287,7 +290,7 @@
     import loadingMixin from "../../../mixins/loading"
     import header from '../../../components/common/header'
     import SkillSet from '../../../components/SkillSet/index'
-    import {team as teamApi} from '../../../api'
+    import {fetch, team as teamApi} from '../../../api'
     const store = getStore();
     const state = store.getState();
     @connect({
@@ -451,13 +454,20 @@
 
 
             },
+            getEditTeam() {
+                let self = this;
+                self.$navigate('/pages/training-camp-module/my/edit', {teamID: self.teamID})
+            },
             handleEndTeamLearning() {
-                let that = this
+                let self = this;
+                if(self.teamStatus === 'closeLearning'){
+                    return;
+                }
                 wx.showModal({
                     content: '一旦结束训练营，学员将无法进入课程学习',
                     success: function(res) {
                         if (res.confirm) {
-                            that.closeTeamLearning()
+                            self.closeTeamLearning()
                         } else if (res.cancel) {
                             console.log('用户点击取消')
                         }
@@ -569,7 +579,7 @@
                         shareFlag: mNow
                       })
                       .then(() =>
-                        shareApi.reportSharing({
+                        fetch.reportSharing({
                           token,
                           type: shareDictionary.SHARE_TEAM.type,
                       })) // 向后台上报分享行为
@@ -583,8 +593,8 @@
                         })) //分享事件上报
                       .then(() => {
                         let pages = getCurrentPages()
-                        let index = pages.findIndex(item => item.route === 'pages/training-camp-module/coursr-list')
-                        if (-1===index) return this.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+                        let index = pages.findIndex(item => item.route === 'pages/training-camp-module/training-detail')
+                        if (-1===index) return this.$redirect(`/pages/training-camp-module/training-detail`, { teamID })
                         let delta = pages.length - 1 - index
                         return wepy.navigateBack({
                           delta
@@ -611,8 +621,8 @@
                         })
                         .then(() => {
                           let pages = getCurrentPages()
-                          let index = pages.findIndex(item => item.route === 'pages/training-camp-module/coursr-list')
-                          if (-1===index) return this.$redirect(`/pages/training-camp-module/coursr-list`, { teamID })
+                          let index = pages.findIndex(item => item.route === 'pages/training-camp-module/training-detail')
+                          if (-1===index) return this.$redirect(`/pages/training-camp-module/training-detail`, { teamID })
                           let delta = pages.length - 1 - index
                           return wepy.navigateBack({
                             delta

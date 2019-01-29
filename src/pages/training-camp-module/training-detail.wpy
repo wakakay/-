@@ -1,0 +1,791 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    .ui-training-detail{
+        .ui-bg{
+            width:100%;height:480rpx;background-size:cover;position:relative;
+            &.is-iphonex{height:520rpx;}
+            &:before{content:' ';width:100%;height:100%;background-color:@background-mask-normal-4;position:absolute;left:0;top:0;}
+            .ui-content{
+                box-sizing:border-box;padding:0 26rpx 0 40rpx;color:@color-white;position:relative;z-index:@z-index-normal;
+                .ui-date{
+                    height:72rpx;margin-bottom:24rpx;
+                    .cell-time{opacity:0.7;font-size:26rpx;height:110rpx;display:flex;align-items:center;}
+                    .cell-manage{
+                        font-size:26rpx;display:flex;align-items:center;
+                        text{font-size:52rpx;margin-left:16rpx;}
+                    }
+                }
+                .ui-team-title{
+                    height:140rpx;
+                    .cell-title{
+                        font-size:48rpx;font-weight:700;line-height:70rpx;
+                        text{margin-left:16rpx;}
+                    }
+                    button{
+                        height:70rpx;margin-left:44rpx;background:none;line-height:70rpx;
+                        text{font-size:52rpx;color:@color-white;}
+                    }
+                }
+                .ui-team-msg{
+                    display:flex;justify-content:space-between;padding-right:26rpx;margin-top:28rpx;font-size:26rpx;color:rgba(255,255,255,0.60);
+                    text{
+                        font-size:28rpx;margin-right:11rpx;
+                    }
+                    view{&:nth-of-type(2){text{font-size:32rpx;}}}
+                }
+            }
+        }
+        .ui-rank{
+            height:208rpx;display:flex;align-items:center;padding-left:30rpx;border-bottom:1rpx solid @border-gray;
+            .ui-member{
+                display:flex;width:332rpx;
+                .ui-item{
+                    margin-right:20rpx;width:90rpx;display:flex;align-items:center;flex-direction:column;position:relative;
+                    &:first-child .cell-num{background:#FFB400;}
+                    &:nth-child(2) .cell-num{background:#B9C8CE;}
+                    &:nth-child(3) .cell-num{background:#D8B07A;}
+                    &:first-child .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageIDb3ec50f7091431b62d7fd42f7ef0.png');}
+                    &:nth-child(2) .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageID74a525ad27542e8557e82e66b2d3.png');}
+                    &:nth-child(3) .ui-brand{background-image:url('http://wx-small.runwise.cn/image/imageID23819cddd694e58c35fbae09b3f8.png');}
+                    .ui-brand{
+                        width:42rpx;height:46rpx;background-size:100% 100%;position:absolute;top:-20rpx;
+                    }
+                    .ui-avatar{
+                        display:flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width:88rpx;height:88rpx;
+                        image{width:88rpx;height:88rpx;border-radius:50%;}
+                    }
+                    .cell-num{
+                        width:76rpx;height:32rpx;border-radius:16rpx;font-family:PingFangSC-Semibold;font-size:20rpx;color:@color-white;display:flex;align-items:center;justify-content:center;margin-top:10rpx;
+                    }
+
+                }
+            }
+            .ui-oneself{
+                display:flex;flex:1;height:100%;align-items:center;justify-content:flex-end;padding-right:28rpx;
+                .ui-member{
+                    display:flex;justify-content:flex-end;align-items:center;
+                    .ui-num{
+                        font-family:PingFangSC-Regular;font-size:24rpx;color:@color-gray;height:88rpx;margin-right:20rpx;
+                        text{color:@color-red}
+                    }
+                    .ui-item{
+                        margin-right:20rpx;width:90rpx;display:flex;align-items:center;flex-direction:column;
+                        .ui-avatar{
+                            display:flex;align-items:center;border:3rpx solid @border-white;border-radius:50%;width:88rpx;height:88rpx;
+                            image{width:88rpx;height:88rpx;border-radius:50%;}
+                        }
+                        .cell-num{
+                            width:76rpx;height:32rpx;border-radius:16rpx;font-family:PingFangSC-Semibold;font-size:20rpx;color:@color-white;display:flex;align-items:center;justify-content:center;margin-top:10rpx;background:@background-mask-slightly
+                        }
+                    }
+                }
+                .cell-teacher{color:@color-blue;font-size:32rpx;display:flex;justify-content:flex-end;height:102rpx;margin-right:20rpx;align-items:flex-start}
+                .icon-details{color:@color-blue;height:88rpx;display:flex;}
+            }
+        }
+        .ui-today-task{
+            .ui-title{
+                display:flex;height:88rpx;justify-content:space-between;align-items:center;box-sizing:border-box;padding:0 28rpx 0 32rpx;
+                .cell-tip{font-size:44rpx;font-weight:bold;}
+                .cell-plan{color:@color-blue;font-size:34rpx;}
+            }
+            .ui-offline-image{
+                margin-top:16rpx;text-align:center;
+                image{width:622rpx;}
+            }
+            .ui-offline-detail{
+                display:flex;margin-top:16rpx;
+                .ui-portrait{
+                    margin-right:22rpx;
+                    image{width:160rpx;height:192rpx;border-radius:@border-radius-20}
+                }
+                .ui-message{
+                    color:@color-gray;font-size:26rpx;
+                    .ui-name{font-size:40rpx;color:@color-black}
+                    .ui-teacher{
+                        display:flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                    .ui-time{
+                        display:flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                    .ui-address{
+                        display:flex;margin-top:12rpx;
+                        .cell-key{width:142rpx;text-align:left}
+                        .cell-value{color:@color-black}
+                    }
+                }
+            }
+            .ui-item-false{margin:0 32rpx;font-size:30rpx;color:@color-gray;text-align:center;border-bottom:2rpx solid border-gray;padding:84rpx 0;}
+        }
+
+    }
+    .ui-box{
+        position:fixed;bottom:0;width:100%;transition:all .3s ease-in;background:@background-white;z-index:@z-index-highest;transform:translateY(100%);
+        &.active{transform:translateY(0);}
+        .ui-top{
+            width:100%;
+            text{width:24px;height:24px;display:block;margin:0 10px 0 auto;padding:8px 0;color:@color-gray;}
+        }
+        .ui-scroll{
+            width:100%;box-sizing:border-box;padding:0 30rpx;overflow-y:scroll;height:463px;color:@color-black;background:@background-white;
+            .cell-title{padding:36rpx 0 46rpx;font-size:48rpx;font-weight:bold;border-top:2rpx solid @border-gray}
+            .cell-li{width:598rpx;margin-bottom:32rpx;font-size:32rpx;color:@color-gray;}
+            .cell-poster{width:686rpx;margin-bottom:43rpx;}
+            .cell-teacher-image{width:100%;padding-bottom:136rpx;}
+
+        }
+    }
+    .cell-mask{background:@background-mask-normal;z-index:@z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
+    .ui-interact-item{
+        background:@background-gray-F4;padding-top:20rpx;
+        .ui-content{background:@background-white;padding-bottom:20rpx;}
+        .ui-user{
+            background:@background-white;padding:0 32rpx;height:128rpx;border-bottom:1rpx solid @border-gray;box-sizing:border-box;
+            image{width:80rpx;height:80rpx;border-radius:50%;margin-right:16rpx;}
+            .ui-stand{
+                .cell-name{font-size:32rpx;max-width:360rpx;}
+                .cell-role{border:1rpx solid @background-gray-cc;border-radius:32rpx;padding:0 6rpx;color:@color-gray;margin-left:8rpx;font-size:24rpx;height:32rpx;}
+            }
+            .cell-date{color:@color-gray-c7;font-size:24rpx;}
+            .ui-stick{
+                color:@color-gray;font-size:24rpx;
+                &.is-sticked{
+                    color:@color-blue;
+                    text{color:@color-blue;}
+                }
+                text{color:@color-gray-c7;margin-right:10rpx;}
+            }
+        }
+        .ui-type{
+            height:88rpx;line-height:88rpx;padding:0 32rpx;box-sizing:border-box;
+            text{
+                &:nth-of-type(1){font-size:48rpx;font-weight:700;color:@color-gray-E5;margin-right:14rpx;position:relative;top:6rpx;}
+                &:nth-of-type(2){font-size:34rpx;font-weight:700;color:@color-black;}
+            }
+            .cell-status{
+                background:#ffeae8;color:@color-red;font-size:24rpx;width:96rpx;height:40rpx;text-align:center;line-height:40rpx;
+                &.cell-completed{background:#f4fdf7;color:#07AD23;}
+            }
+        }
+        .cell-title{padding:16rpx 32rpx;font-size:32rpx}
+        .cell-image{
+            padding:16rpx 32rpx 32rpx;
+            image{width:100%;}
+        }
+        .cell-link{padding:16rpx 32rpx;font-size:32rpx;color:@color-blue;text-decoration: underline;}
+        .cell-poll-btn{
+            width:266rpx;height:56rpx;background:@background-gray-F4;border-radius:32rpx;color:@color-blue;text-align:center;line-height:56rpx;margin:52rpx auto 62rpx;font-size:30rpx;
+            &.is-selected{color:@color-gray}
+        }
+    }
+    .cell-more{font-size:26rpx;color:@color-gray;text-align:center;margin:108rpx 0 218rpx;}
+    .ui-add{width:88rpx;height:88rpx;border-radius:50%;background:@background-blue;color:@color-white;line-height:88rpx;text-align:center;position:fixed;bottom:194rpx;right:64rpx;z-index:@z-index-lower}
+    .module-poll-box{box-sizing:border-box;padding:0 32rpx;}
+</style>
+<template>
+    <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
+    <view class="ui-training-detail">
+        <view class="ui-bg" id="bgBox"
+              :class="{'is-iphonex': isIphonex}"
+              style="background-image: url('{{imageUrl}}');">
+            <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
+            <view class="ui-content">
+                <view class="ui-date main-justify cross-center">
+                    <view class="cell-time">{{teamTime}}</view>
+                    <view class="cell-manage"
+                          wx:if="{{role != 'member'}}"
+                          @tap.stop="getManageTeam">
+                        管理 <text class="icon-setting"></text>
+                    </view>
+                </view>
+                <view class="ui-team-title main-justify">
+                    <view class="cell-title">{{teamName}}<text class="icon-question" @tap.stop="getToggleQuestion"></text></view>
+                    <button class="flex-box-0" open-type="share"><text class="icon-share"></text></button>
+                </view>
+                <view class="ui-team-msg">
+                    <view>
+                        <text class="icon-member"></text>{{signUpUserCount}}人参与
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="ui-rank" @tap.stop="getRankList">
+            <view class="ui-member">
+                <view class="ui-item" wx:for="{{teamDetail.teamRankUserList}}" wx:key="{{ index }}" wx:key="{{index}}">
+                    <view class="ui-brand"></view>
+                    <view class="ui-avatar">
+                        <image src="{{item.avatarUrl}}"/>
+                    </view>
+                    <view class="cell-num">{{item.activeness}}</view>
+                </view>
+            </view>
+            <view class="ui-oneself">
+                <view wx:if="{{role === 'member'}}" class="ui-member">
+                    <view class="ui-num">
+                        第 <text class="cell-num"> {{teamDetail.myTeamRank.index}} </text> 名
+                    </view>
+                    <view class="ui-item">
+                        <view class="ui-avatar">
+                            <image src="{{teamDetail.myTeamRank.avatarUrl}}" />
+                        </view>
+                        <view class="cell-num">{{teamDetail.myTeamRank.activeness}}</view>
+                    </view>
+                </view>
+                <view wx:else class="cell-teacher">查看排行榜</view>
+                <text class="icon-details"></text>
+            </view>
+        </view>
+
+        <view class="ui-today-task">
+            <view class="ui-title">
+                <view class="cell-tip">今日任务</view>
+                <view class="cell-plan" @tap.stop="getAllToadyTask">全部任务<text class="icon-details"></text></view>
+            </view>
+            <repeat wx:if="{{todayTask.length}}" for="{{todayTask}}" key="index" index="index" item="item">
+                <view class="module-lesson-box" @tap.stop="getLesson" data-item="{{item}}">
+                    <view class="ui-item" wx:if="{{item.taskType == 'online'}}">
+                        <view class="ui-content">
+                            <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
+                            <view class="ui-detail">
+                                <view class="cell-name">{{item.senceName}}</view>
+                                <view class="cell-dec" wx:if="{{item.skillGroup}}">#{{item.skillGroup}}</view>
+                            </view>
+                        </view>
+                        <button class="ui-btn">{{item.buttonMsg}}</button>
+                    </view>
+                </view>
+
+                <view class="ui-offline-image" wx:if="{{'offline' == item.taskType &&  '图片' == item.contentType}}">
+                    <image  mode="widthFix"  src="{{item.image}}"/>
+                </view>
+                <view  wx:if="{{'offline' == item.taskType &&  '列表' == item.contentType}}" class="ui-offline-detail">
+                    <view class="ui-portrait">
+                        <image  mode="aspectFill"  src="{{item.portrait}}"/>
+                    </view>
+                    <view class="ui-message">
+                        <view class="ui-name">
+                            <view>{{item.offlineTaskName}}</view>
+                        </view>
+                        <view class="ui-time">
+                            <text class="cell-key">主持人：</text>
+                            <text class="cell-value">{{item.teacherName}}</text>
+                        </view>
+                        <view class="ui-time">
+                            <text class="cell-key">授课时间：</text>
+                            <text class="cell-value">{{item.offlineTime}}</text>
+                        </view>
+                        <view class="ui-address">
+                            <text class="cell-key">授课地点：</text>
+                            <text class="cell-value">{{item.address}}</text>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+            <view class="ui-item-false"   wx:if="{{!todayTask.length}}" >
+                今日没有学习任务，与其他学员交流下吧
+            </view>
+        </view>
+
+        <repeat for="{{intereactList}}" key="index" index="index" item="data">
+            <view class="ui-interact-item">
+                <view class="ui-user main-justify cross-center">
+                    <image src="{{data.avatar}}"/>
+                    <view class="flex-width-1 flex-start-column">
+                        <view class="ui-stand cross-center">
+                            <view class="cell-name text-overflow">{{data.nickName}}</view>
+                            <view class="cell-role">{{data.roleTypeText}}</view>
+
+                        </view>
+                        <view class="cell-date">{{data.createTime}}</view>
+                    </view>
+                    <view class="ui-stick"
+                          :class="{'is-sticked': data.isTop}"
+                          wx:if="{{(role=='teacher' && data.roleType=='teacher') || (role=='admin' && data.roleType!='member')}}"
+                          data-item="{{data}}"
+                          @tap.stop="getStick" >
+                        <text class="icon-stick"></text>置顶
+                    </view>
+                </view>
+                <view class="ui-content">
+                    <view class="ui-type main-justify cross-center">
+                        <view>
+                            <text class="icon-{{data.icon}}"></text>
+                            <text>{{data.title}}</text>
+                        </view>
+                        <view class="cell-status"
+                              :class="{'cell-completed': data.isDone}"
+                              wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  role == 'member'}}">
+                            {{data.isDone ? '已完成' : '未参与'}}</view>
+                    </view>
+                    <view class="cell-title" wx:if="{{data.content}}">{{data.content}}</view>
+                    <view wx:if="{{data.linkLoaction}}" @tap.stop="getCopyLink" data-link="{{data.linkLoaction}}" class="cell-link">{{data.linkName}}</view>
+                    <view class="cell-image" wx:if="{{data.img}}">
+                        <image mode="widthFix" src="{{data.img}}"></image>
+                    </view>
+                    <repeat wx:if="{{data.lessonList}}" for="{{data.lessonList}}" key="lessonIndex" index="lessonIndex" item="item">
+                        <view class="module-lesson-box" @tap.stop="getLesson" data-item="{{data.lessonList[lessonIndex]}}">
+                            <view class="ui-item">
+                                <view class="ui-content">
+                                    <image class="cell-thumb" mode="aspectFill"  src="{{item.imageUrl}}"/>
+                                    <view class="ui-detail">
+                                        <view class="cell-name">{{item.senceName}}</view>
+                                        <view class="cell-dec" wx:if="{{item.senceTarget}}"># {{item.senceTarget}}</view>
+                                    </view>
+                                </view>
+                                <button class="ui-btn">{{item.buttonMsg}}</button>
+                            </view>
+                        </view>
+                    </repeat>
+                    <repeat for="{{data.practiceList}}" key="practiceIndex" index="practiceIndex" item="item">
+                        <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="intereactList"
+                                          :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiceList" isExercises></jn-single-choice>
+                    </repeat>
+                    <view wx:if="{{data.contentType=='poll'}}">
+                        <jn-poll :cardIndex.sync="index" :cardsList.sync="intereactList" isLearning></jn-poll>
+                        <button class="cell-poll-btn"
+                                data-index="{{index}}"
+                                data-item="{{data}}"
+                                :class="{'is-selected' : data.isDone}"
+                                open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
+                                bindgetuserinfo="getAuthorize"
+                                disabled="{{data.isDone || role != 'member'}}"
+                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'人已投票' : '投票'}}</button>
+                    </view>
+                </view>
+            </view>
+        </repeat>
+        <view class="cell-more">没有更多内容了</view>
+    </view>
+
+	<!-- 加号 -->
+	<view class="ui-add" @tap.stop="getAddTask">
+		<text wx:if="{{'member'===teamRole}}" class="icon-message"></text>
+		<text wx:else class="icon-add"></text>
+	</view>
+    <!-- 点击 标题 弹窗 -->
+    <view class="ui-box" :class="{'active':isShowQuestion}">
+        <view class="ui-top" @tap.stop="getToggleQuestion">
+            <text class="icon-back-close"></text>
+        </view>
+        <scroll-view class="ui-scroll" scroll-y>
+            <view wx:if="{{ targetList.length&&targetList[0]}}" >
+                <view class="cell-title">学习目标</view>
+                <view wx:for="{{ targetList }}" wx:key="{{ index }}" wx:key="{{ index }}" class="cell-li">{{ item }}</view>
+            </view>
+            <view wx:if="{{ courseImageList.length }}">
+                <view class="cell-title">训练营介绍</view>
+                <image wx:for="{{ courseImageList }}" wx:key="{{ index }}" class="cell-poster" src="{{item}}" mode="widthFix"></image>
+            </view>
+            <view wx:if="{{ teacherImage }}" >
+                <view class="cell-title">导师介绍</view>
+                <image class="cell-teacher-image" src="{{ teacherImage }}" mode="widthFix" />
+            </view>
+        </scroll-view>
+    </view>
+    <view class="cell-mask" hidden="{{ !isShowQuestion }}" ></view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import {getStore, connect} from "wepy-redux"
+import Loading from '../../components/common/loading'
+import header from '../../components/common/header'
+import poll from '../../components/cards-type/poll'
+import singleChoice from '../../components/team-module/single-choice'
+import {initializationDeligate, navigateToLesson} from "../../utils"
+import {team as teamApi, share as shareApi , fetch} from '../../api'
+import _ from 'underscore'
+
+const store = getStore();
+
+@connect({
+    token(state) {
+        return state.user.token
+    },
+    isTokenSet(state) {
+        return state.user.token.startsWith('userID')
+    },
+})
+
+export default class teamDetail extends wepy.page {
+
+    config = {
+        navigationBarTitleText: "下拉刷新",
+        enablePullDownRefresh: true,
+        backgroundTextStyle: "dark"
+    }
+
+    components = {
+        'jn-header': header,
+        'jn-loading': Loading,
+        'jn-poll': poll,
+        'jn-single-choice': singleChoice
+    };
+
+    data={
+        isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+        isLoaded:false,
+        headerBackground: 'background-transparent',
+        backgroundHeight: 0,
+        teamID:'',
+        wxPushType:'',
+        role:'',
+        teamTime:null,
+        teamName:null,
+        signUpUserCount:0,
+        imageUrl:'',
+        isShowQuestion:false,
+        targetList: [],
+        courseImageList: [], // 课程介绍海报
+        teacherImage:'',
+        todayTask:[],
+        isShowManagerButton:false,
+        managerButtonStatus:'',
+        teamDetail:{},
+        senceID:null,
+        intereactList:[],
+        taskList:{}
+
+    }
+
+    onLoad(params) {
+        let self = this;
+        self.teamID = params.teamID
+        self.wxPushType = params.wxPushType
+        self.$apply()
+
+        wepy.$instance.globalData.getLoadHuilder() // ga统计
+    }
+
+    onReady() {
+        let self = this
+        var query = wx.createSelectorQuery()
+        query.select('#bgBox').boundingClientRect((response) => {
+            self.backgroundHeight = response.top
+        }).exec()
+    }
+
+    /**
+     * 监听滚动条的位置
+     * @param
+     */
+    onPageScroll(res) {
+        let self = this
+        let scrollTop = res.scrollTop
+        self.headerBackground =  self.backgroundHeight < -240 ? 'background-transparent-opacity' : 'background-transparent'
+        self.$apply()
+    }
+
+    onShow() {
+        let self = this
+        initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+    }
+
+    onPullDownRefresh() {
+        let self = this
+        self.initialize().then(()=>{
+            wx.stopPullDownRefresh()
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+
+    initialize() {
+        let self = this
+        let postData = {
+            token: self.token,
+            teamID : self.teamID
+        }
+
+        if (self.wxPushType) {
+            postData.wxPushType = self.wxPushType
+        }
+        // 下拉刷新
+
+        return fetch.getTeamDetail(postData).then((res)=>{
+            res = res.data;
+            self.imageUrl = res.imageUrl;
+            self.teamName = res.name;
+            self.signUpUserCount = res.signUpUserCount;
+            self.teamTime = res.time;
+            self.todayTask = res.taskList.TaskContentList;
+            self.role = res.role;
+            self.targetList = res.targetList;
+            self.courseImageList = res.courseImageList;
+            self.teacherImage = res.teacherImage;
+            self.isShowManagerButton = res.isShowManagerButton
+            self.managerButtonStatus = res.managerButtonStatus
+            self.teamDetail = res.teamDetail;
+            self.isLoaded = true;
+            self.$apply()
+        }).then(()=>{
+            fetch.getActivityfeedList(postData).then((response) => {
+                self.intereactList = self.__dataRegroup(response)
+                self.$apply()
+            })
+        }).catch((error) => {
+        })
+    }
+    /**
+     * 数组重组
+     * respone 接口返回的数据
+     */
+    __dataRegroup(response) {
+        let self = this
+
+        _.each(response, (data) => {
+            data.isTopNumber = data.isTop ? 1 : 0
+            switch (data.contentType) {
+                case 'discuss':
+                    data.title = data.title || '讨论'
+                    data.icon = 'discuss'
+                    break
+                case 'notice':
+                    data.title = data.title ||  '通知，晚间讨论'
+                    data.icon = 'inform'
+                    break
+                case 'practice':
+                    data.title = data.title ||  '小练习'
+                    data.icon = 'practice'
+                    _.each(data.practiceList, (item) => {
+                        item.role = self.role
+                        _.each(item.select, (option) => {
+                            option.sId = _.clone(option.id)
+                            option.id = item.id + option.id
+                            if (option.isSelected) {
+                                item.answerDescription = option.feedback && option.feedback.description
+                            }
+                        })
+                    })
+                    break
+                case 'poll':
+                    data.title = data.title ||  '来投一下票，做下调查'
+                    data.icon = 'poll'
+                    data.role = self.role
+                    if ('member' !== data.role) {
+                        data.isDone = true
+                    }
+                    let ballotTotal = _.reduce(data.select, (memo, item) => {
+                        return memo + item.ballot
+                    }, 0) // 统计全部投票人数
+                    _.each(data.select, (item) => {
+                        item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                    })
+
+                    data.ballotTotal = ballotTotal || 0
+                    break
+                default:
+                    data.title = data.title ||  '讨论'
+                    data.icon = 'discuss'
+            }
+
+        })
+
+        response = _.sortBy(response, (item) => {
+            return -item.isTopNumber
+        })
+
+        return response
+    }
+
+    methods= {
+        /**
+         * 复制
+         * @param event
+         */
+        getCopyLink(event){
+            let self = this;
+            let {currentTarget: {dataset: {link}}} = event;
+            wx.setClipboardData({
+                data: link,
+                success: function (res) {
+                    wx.showToast({
+                        title: '链接已复制到剪贴板',
+                        icon: 'success'
+                    })
+                }
+            })
+        },
+        /**
+         * 置顶
+         * @param event
+         */
+        getStick(event) {
+            let self = this;
+            let {currentTarget: {dataset: {item}}} = event
+            let postID = item.postID;
+            let isTop = item.isTop ? 'notTop' : 'top'
+            let postData = {
+                token: self.token,
+                teamID : self.teamID,
+                postID : postID,
+                type : isTop
+            }
+            fetch.teamSetTop(postData).then(respone => {
+                self.initialize()
+            })
+        },
+        // 标题 问好
+        getToggleQuestion(){
+            let self = this;
+            self.isShowQuestion = !self.isShowQuestion
+            self.$apply()
+        },
+        getAddTask() {
+            let self = this;
+
+            if(self.role === 'member') {
+                self.$navigate(`/pages/training-camp-module/release-discuss`, {teamID: self.teamID})
+            }else {
+                self.$navigate(`/pages/training-camp-module/my/release-discuss`, {teamID: self.teamID, role: self.role})
+            }
+        },
+        /**
+         * 投票
+         * @param event
+         */
+        getPoll(event) {
+            let self = this
+            let {currentTarget: {dataset: {item, index}}} = event
+
+            if (!self.isTokenSet) {
+                return
+            }
+
+            wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
+            let postData = {
+                token: self.token,
+                pollID: item.pollID,
+                optionList: item.selectedItem.id
+            }
+
+            teamApi.vote(postData).then(respone => {
+                item.isDone = true
+                self.$apply()
+                setTimeout(()=>{
+                    self.$broadcast('broadcast-poll', item)
+                }, 300)
+            })
+        },
+        /*
+            管理训练营
+        */
+        getManageTeam() {
+            let self = this;
+            if ('showManager' === self.managerButtonStatus) {
+                return self.$navigate(`/pages/training-camp-module/my/main`, {teamID: self.teamID})
+            }else if ('showMenberComplete' === self.managerButtonStatus) {
+                return self.$navigate(`/pages/training-camp-module/learning-result`, {teamID: self.teamID})
+            }else {
+                return console.log(`未定义与该状态${self.managerButtonStatus}对应的行为`)
+            }
+        },
+        // 排行榜
+        getRankList(){
+            let self = this;
+            self.$navigate('/pages/training-camp-module/ranking-list', {teamID: self.teamID,teamName: self.teamName})
+        },
+        // 查看今日的全部任务
+        getAllToadyTask() {
+            let self = this;
+            self.$navigate(`/pages/training-camp-module/task-list`, {teamID: self.teamID})
+        },
+        // 跳去微课
+        getLesson(event) {
+            let self = this
+
+            // 没有登录
+            if (!self.isTokenSet){
+                return ;
+            }
+            let {currentTarget: {dataset: {item}}} = event
+
+            let buttonStatus = item.buttonStatus
+            let senceName = item.name
+            let resume = item.resume ? item.resume : ''
+            self.senceID = item.senceID ? item.senceID : item.id
+            self.courseID = item.courseID
+
+            if ('needPay' === buttonStatus) {
+                self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID,courseID: self.courseID})
+                return
+            }
+            if ('finish' === buttonStatus) {
+                self.$navigate(`/pages/course-module/course-review`, {senceID: self.senceID,courseID: self.courseID})
+                return
+            }
+
+            navigateToLesson({
+                senceID:self.senceID,
+                courseID: self.courseID,
+                teamID : self.teamID,
+                resumeLastRead: resume,
+            })
+        }
+    }
+
+    events = {
+        /**
+         * 投票，选择
+         * @param data
+         */
+        'on-interaction': (data) => {
+            let self = this
+            let item = null
+
+            if (data.parentkey) {
+                item = self.intereactList[data.parentindex][data.parentkey][data.cardindex]
+                _.extend(item, data)
+                item && self.intereactList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
+
+                let postData = {
+                    token: self.token,
+                    teamID: self.teamID,
+                    senceID: item.senceID,
+                    cardID: item.id,
+                    score: item.score || 0,
+                    message: item.selectedItem.option, // 选中选项的name
+                    weight: item.selectedItem.weight, // 选中选项的权重
+                    questionIndex: 0,
+                    skillID: item.skillID,
+                    json: item.json // 选中选项的id或顺序
+                }
+                fetch.sendTeamPractice(postData).then(respone => {
+                    setTimeout(() => {
+                        item.isAnswerOver = true // 已经答案，不能再次作答
+                        item.isDone = true
+                        self.$apply()
+                        self.$broadcast('broadcast-single-choive', item)
+                    }, 300)
+                })
+            } else {
+                let number = null
+                item = _.find(self.intereactList, (option, index) => {
+                    if (option.pollID === data.id || option.pollID === data.pollID) {
+                        number = index
+                        return option
+                    }
+                })
+                _.extend(item, data)
+                if (-1 !== number) {
+                    self.intereactList.splice(number, 1, item)
+                }
+            }
+
+            self.$apply()
+        }
+    }
+
+    onShareAppMessage(event) {
+        let self = this
+        return {
+            title: self.teamName,
+            path: `/pages/training-camp-module/registration?teamID=${self.teamID}`
+        }
+    }
+}
+</script>

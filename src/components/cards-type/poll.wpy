@@ -10,15 +10,15 @@
             </view>
             <view class="ui-title">{{cardsList[cardIndex].title}}</view>
             <view class="ui-description">{{cardsList[cardIndex].pollDesc}}</view>
-            <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' ? '单选' : '多选'}}】</view>
+            <view class="ui-type">【{{cardsList[cardIndex].cardStatus === 'single' || cardsList[cardIndex].pollType === 'single' ? '单选' : '多选'}}】</view>
 
             <view class="ui-answer-list">
                 <repeat for="{{cardsList[cardIndex].select || cardsList[cardIndex].optionList}}" key="index" index="index" item="item">
                     <view class="ui-item"
                           hover-class="{{!cardsList[cardIndex].isAnswerOver && !cardsList[cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
                           :class="{'is-selected': item.selected, 'is-selected-over': (cardsList[cardIndex].isAnswerOver || cardsList[cardIndex].isDone) && item.selected}"
-                          data-item="{{ item }}"
-                          data-index="{{ index }}"
+                          data-item="{{item}}"
+                          data-index="{{index}}"
                           @tap.stop="getSelected">
                         <view class="ui-prop"
                               style="width: {{ballotInfo[item.id] || item.prop}}%"></view>
@@ -84,17 +84,22 @@
              */
             getSelected(event) {
                 let self = this
+                let {currentTarget: {dataset: {item, index}}} = event
                 let cardItem = self.cardsList[self.cardIndex]
+
+                if ((!item.id && !self.cardsList) || (cardItem.role && 'member' !== cardItem.role)) {
+                    return
+                }
+
                 // poll只能投一次
                 if (cardItem.isDone
                     || (cardItem.isAnswerOver && self.oldIndex === self.cardIndex)) {
                     return false
                 }
 
-                let {currentTarget: {dataset: {item, index}}} = event
                 let selectList = cardItem.select || cardItem.optionList
                 let selectedIds = []
-                if ('single' === cardItem.cardStatus) {
+                if ('single' === cardItem.cardStatus || 'single' === cardItem.pollType) {
                     _.each(selectList, (data) => {
                         data.selected = item.id === data.id ? true : false
                     })
@@ -109,6 +114,7 @@
                 })
 
                 let data = {
+                    optionList: cardItem.optionList,
                     isFinish: selectedIds.length ? true : false,
                     id: cardItem.id || cardItem.pollID,
                     selectedId: item.id,
@@ -128,9 +134,9 @@
              */
             'broadcast-poll': (data) => {
                 let self = this
-                let index = data.index || self.cardIndex
-                let cardItem = self.cardsList[index]
-                let optionList = cardItem.select || cardItem.optionList
+                let index = self.cardIndex
+                let cardItem = self.cardsList[index] || data
+                let optionList = data.select || cardItem.select || cardItem.optionList
 
                 let item = _.find(optionList, {id: data.selectedId})
                 self.resultId = item.id
@@ -140,6 +146,7 @@
                     data.ballot = data.ballot >= 0 ? data.ballot : data.count
                     return memo + data.ballot + data.add
                 }, 0)
+                cardItem.ballotTotal = ballotTotal || 0
 
                 // 计算每个投票的比例
                 _.each(optionList, (data) => {
@@ -150,6 +157,9 @@
                 cardItem.isDone = true
                 cardItem.isAnswerOver = true
                 self.oldIndex = _.clone(index)
+                setTimeout(() => {
+                    self.$emit('on-interaction', cardItem)
+                }, 300)
                 self.$apply()
             },
             /**

@@ -41,11 +41,16 @@ export const ROUTERS = {
     'pages/other-module/community':  {screenName: '专属社群', isVisitor: true},
     /*-------------------训练营-----------------------*/
     'pages/training-camp-module/index': {screenName: '训练营', isLevel: true, isVisitor: true},
+    'pages/training-camp-module/release-discuss': {screenName: '发布谈论'},
+    'pages/training-camp-module/my/release-discuss': {screenName: '我管理-发布谈论'},
+
+
     'pages/training-camp-module/all-training': {screenName: '训练营-查看全部训练营'},
     'pages/training-camp-module/introduce': {screenName: '训练营-训练营介绍'},
     'pages/training-camp-module/registration': {screenName: '训练营-报名'},
     'pages/training-camp-module/registration-info': {screenName: '训练营-报名信息'},
     'pages/training-camp-module/coursr-list': {screenName: '训练营-课程列表', sence: 'teamLearShare'},
+    'pages/training-camp-module/training-detail': {screenName: '训练营-课程列表', sence: 'teamLearShare'},
     'pages/training-camp-module/release-message': {screenName: '训练营-发布消息'},
     'pages/training-camp-module/add-task': {screenName: '训练营-添加任务'},
     'pages/training-camp-module/invite-friends': {screenName: '训练营-邀请好友'},

@@ -98,7 +98,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import shareAppraisal from '../../components/shareImages/share-appraisal'
-    import {practice as practiceApi, fetch} from '../../api'
+    import {fetch} from '../../api'
     import {redirectToLesson} from '../../utils'
 
     const store = getStore()
@@ -117,12 +117,6 @@
         },
         windowHeight(state) {
             return state.user.screenHeight
-        },
-        courseID(state) {
-            return state.practices.courseID
-        },
-        senceID(state) {
-            return state.practices.senceID
         },
         entrance(state) {//全局场景值
             return state.entrance
@@ -145,6 +139,7 @@
             isShowShade: false,
             headerHeigth: 68,
             shareButtonMessage: '', // 弹窗的分享按钮文案
+<<<<<<< HEAD
             buttonAttr: '',
             buttonFebackImageURL: '',
             buttonMsg: '',
@@ -152,6 +147,9 @@
             subjectHeading: '',
             shareImage: '',
             course: ''
+=======
+            resultObj: {}
+>>>>>>> MVP11.3
         }
 
         onLoad({senceID, examID}) {
@@ -163,10 +161,7 @@
 
         onShow() {
             let self = this
-            this.initialize().catch(error => {
-                this.showErrorPage = true
-                this.$apply()
-            })
+            self.initialize()
 
             let postData = {
                 token: self.token,
@@ -203,6 +198,7 @@
 
         initialize() {
             let self = this
+<<<<<<< HEAD
             return practiceApi.getUserExamScore({
                 token: self.token, examID: self.examID
             }).then(data => {
@@ -213,6 +209,11 @@
                 self.subjectHeading = data.subjectHeading
                 self.shareImage = data.shareImage
                 self.course = data.course
+=======
+            fetch.getUserExamScore({token: self.token, examID: self.examID}).then(data => {
+                self.isLoaded = true
+                self.resultObj = data
+>>>>>>> MVP11.3
                 self.$apply()
 
                 setTimeout(() => {
@@ -230,6 +231,9 @@
                     examid: self.examID,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
+            }).catch(error => {
+                self.showErrorPage = true
+                self.$apply()
             })
         }
 

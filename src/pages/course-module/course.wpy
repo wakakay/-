@@ -287,7 +287,7 @@
     import CourseSeries from '../../components/course-module/course-series'
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {auth as authApi, share as shareApi, fetch} from '../../api'
+    import {auth as authApi, fetch} from '../../api'
     import {shareDictionary, getStorageAsync} from '../../utils'
     import _ from 'underscore'
 
@@ -628,7 +628,7 @@
                     }).catch(error => error)
 
                     getStorageAsync({key: 'token'}).then(token => {
-                        shareApi.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
 
                     }).catch(error => error)
                 },

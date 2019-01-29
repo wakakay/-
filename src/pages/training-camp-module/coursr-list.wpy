@@ -833,7 +833,7 @@
     import wepy from 'wepy'
     import {getStore, connect} from "wepy-redux"
     import {navigateToLesson, sleep, parsePercentageForPoll, shareDictionary} from "../../utils"
-    import {team as teamApi, share as shareApi} from '../../api'
+    import {fetch, team as teamApi} from '../../api'
     import Loading from '../../components/common/loading'
     import PushMixin from "../../mixins/push";
     import loadingMixin from '../../mixins/loading'
@@ -852,30 +852,18 @@
         avatar(state) {
             return state.user.avatar
         },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
-        },
         token(state) {
-            return state.user.token
+			return state.user.token
         },
         role(state) {
             return state.user.role
         },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
-        },
-        code(state) {
-            return state.user.code
-        },
-        windowHeight(state) {
-            return state.user.windowHeight
         },
         phone(state) {
             // return '13536641408'
             return state.user.phone
-        },
-        learningMap(state) {
-            return state.learning
         },
         platform(state) {
             return state.user.platform === 'android'
@@ -1260,7 +1248,10 @@
             },
             // 点击悬浮 加号
             handleToggleBtnOpeartion() {
-                if(this.teamRole === 'member') return this.$navigate('/pages/training-camp-module/release-message', {teamID: this.teamID, action:'question'})
+                if(this.teamRole === 'member') {
+                    //return this.$navigate('/pages/training-camp-module/release-message', {teamID: this.teamID, action:'question'})
+                    return this.$navigate('/pages/training-camp-module/release-discuss', {teamID: this.teamID, action:'question'})
+				}
                 this.toggleOperations()
             },
             // 标题提示弹窗
@@ -1544,7 +1535,7 @@
                         shareFlag: mNow
                     })
                         .then(() =>
-                            shareApi.reportSharing({
+                            fetch.reportSharing({
                                 token: self.token,
                                 type: shareDictionary.SHARE_TEAM.type,
                             })) // 向后台上报分享行为

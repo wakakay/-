@@ -76,35 +76,6 @@ export default {
         return fetch({method: 'post', url: 'discover/v1/discoverPage', params: params, isVisitor: true})
     },
 
-    /*--------------------测评-----------------------*/
-    /**
-     * 获取测评卷封面信息
-     * @param  examID: 测评ID
-     */
-    getExamFront(params) {
-        return fetch({method: 'post', url: 'userExam/getExamFront', params: params, isVisitor: true})
-    },
-    /**
-     * 获取测评卷题目列表
-     * @param  examID: 测评ID
-     */
-    getExamPracticeList(params) {
-        return fetch({method: 'post', url: 'userExam/getExamPracticeList', params: params, isVisitor: true})
-    },
-    /**
-     * 提交测评答题信息
-     * @param  examID: 测评ID
-     */
-    sendUserDoExam(params) {
-        return fetch({method: 'post', url: 'userExam/sendUserDoExam', params: params, isVisitor: true})
-    },
-    /**
-     * 获取测评卷结果
-     * @param  examID: 测评ID
-     */
-    getUserExamScore(params) {
-        return fetch({method: 'post', url: 'userExam/getUserExamScore', params: params, isVisitor: true})
-    },
 
     // 获得专题详情
     getNewSpecialCourse(params) {
@@ -159,5 +130,83 @@ export default {
      */
     getMyLearningPageBySkillgetDetail(params) {
         return fetch({method: 'post', url: 'myLearning/getMyLearningPageBySkillgetDetail', params: params})
+    },
+    /**
+     * 团队学习
+     * @param  queryText: 搜索的名字
+     */
+    querySenceList(params) {
+        return fetch({method: 'post', url: 'team/querySenceList', params: params})
+    },
+    /**
+     * 团队学习
+     * @param  queryText: 搜索的名字
+     */
+    queryPracticeList(params) {
+        return fetch({method: 'post', url: 'team/queryPracticeList', params: params})
+    },
+    /**
+     * 团读书学习→发起讨论
+     * @param  teamID: 团队ID
+     */
+    saveTeamPost(params) {
+        return fetch({method: 'post', url: 'team/saveTeamPost', params: params})
+    },
+    /**
+     * 团读书学习→发起讨论
+     * @param  teamID: 团队ID
+     */
+    getActivityfeedList(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getActivityfeedList', params: params})
+    },
+    /**
+     * 团队学习→获取训练营详情
+     * @param  teamID: 团队ID
+     */
+    getTeamDetail(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamDetail', params: params})
+    },
+    /**
+     * 团队学习→单选题提交答案
+     * @param  teamID: 团队ID
+     * @param  senceID: 微课ID
+     * @param  cardID: 练习卡片ID
+     * @param  score: 练习卡片总分
+     * @param  weight: 权重
+     * @param  questionIndex: 选题选项权重
+     * @param  message: 选项文本内容
+     * @param  skillID: 练习所属技能
+     * @param  json: 记录JSON格式
+     */
+    sendTeamPractice(params) {
+        let data = Object.assign({
+            message: 'defaultMessage',
+            json: 'defaultJson'
+        }, params)
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPractice', params: data})
+    },
+    /**
+     * 团队学习→导师，管理员设置置顶
+     * @param  teamID: 团队ID
+     * @param  postID: 排名任务id
+     * @param  type: {top: 置顶, notTop: 取消置顶}
+     */
+    teamSetTop(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/setTop', params: params})
+    },
+    /**
+     * 团队学习→排名列表
+     * @param  teamID: 团队ID
+     */
+    getTeamRankList(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/getTeamRankList', params: params})
+    },
+    /**
+     * 团队学习→排名列表→喜欢
+     * @param  teamID: 团队ID
+     * @param  rankUserID: 排名任务id
+     */
+    tickTeamRankLike(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/tickTeamRankLike', params: params})
     }
 }

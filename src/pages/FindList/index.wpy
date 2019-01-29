@@ -193,7 +193,7 @@
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {share as shareApi, fetch} from '../../api'
+    import {fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -309,7 +309,7 @@
                 self.isMoreLoaded = false
             }
 
-            fetch.discoverPage(postData).then((respone) => {
+            return fetch.discoverPage(postData).then((respone) => {
                 self.isLoaded = true
                 self.discoverPageTitle = respone.discoverPageTitle
                 // 返回跟新微课状态
@@ -533,9 +533,7 @@
                     type: type,
                     id: examID
                 })
-
-                // ga
-                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`)
+                wepy.$instance.globalData.getHuilder('发现页/测一测','click', `${item.name}`) // ga
 
                 let postData = {
                     token: self.token,
@@ -585,7 +583,7 @@
                     }).catch(error => error)
 
                     getStorageAsync({key: 'token'}).then(token => {
-                        shareApi.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
 
                     }).catch(error => error)
                 },
@@ -594,13 +592,14 @@
                 }
             }
         }
+
         onPullDownRefresh() {
-            let self = this
+            let self =this;
             self.page = 1
-            self.__fetchCourses({
-                callBack: ()=>{
-                    wx.stopPullDownRefresh()
-                }
+            self.__fetchCourses().then(()=>{
+                wx.stopPullDownRefresh()
+            }).catch((error)=>{
+                console.log(error)
             })
         }
         onReachBottom() {

@@ -1,72 +1,87 @@
-import wepy from 'wepy'
-import { getStore } from 'wepy-redux'
-import config from './config'
-import { UnAuthenticationError, LessonPermissionDenyError } from '../errors'
+/**
+ * @file
+ * @author: lzb
+ * @params: 参数说明
+ * @history:
+ * Date      Version Remarks
+ * ========= ======= ==================================
+ * 2018/12/24      1.0     First version
+ *
+ */
+import {fetch} from './fetch-utils'
 
-export const getPracticeList = ({ token = 'defaultToken', cardID = 'defaultCardID', senceID = 'defaultSenceID', courseID = 'defaultCourseID', requestFlag, teamID = 'defaultTeamID' }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}MVP3/getSenceCardListByPractice?token=${token}&cardID=${cardID}&senceID=${senceID}&courseID=${courseID}&requestFlag=${requestFlag}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
-            if (200 !== status) throw new Error(message)
-            return {...data, requestFlag }
-        })
+/**
+ * 卡片
+ */
+export default {
+    /**
+     * 课后练习题
+     * @param senceID 微课ID
+     * @param courseID 课程ID
+     * @param cardID 微课卡片ID
+     * @param requestFlag
+     * @param teamID 训练营ID
+     */
+    getPracticeList(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceCardListByPractice', params: params, isVisitor: true})
+    },
+    /**
+     * 微课即练卡片列表
+     * @param params senceID 微课ID
+     * @param params courseID 课程ID
+     * @param params requestFlag
+     * @param params teamID 训练营ID
+     */
+    getCardList(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceCardListByGoPracticeLink', params: params, isVisitor: true})
+    },
+    /**
+     * 微课即练卡片列表
+     * @param senceID 微课ID
+     * @param courseID 课程ID
+     * @param cardID 微课卡片ID
+     * @param requestFlag
+     * @param teamID 训练营ID
+     * @param params source 渠道来源
+     */
+    getCardListWithPreview(params) {
+        return fetch({method: 'post', url: 'MVP3/getSenceCardListByGoPracticeLinkByNeedPayToTry', params: params, isVisitor: true})
+    },
+    /**
+     * 记录学习到第几张卡片
+     * @param senceID 微课ID
+     * @param courseID 课程ID
+     * @param cardID 微课卡片ID
+     * @param requestFlag
+     * @param teamID 训练营ID
+     */
+    markCard(params) {
+        return fetch({method: 'post', url: 'courseV2/sendCard', params: params, isVisitor: true})
+    },
+    /**
+     * 提交做题答案
+     * @param senceID 微课ID
+     * @param cardID 微课卡片ID
+     * @param score 选中答案的分值
+     * @param weight 选中答案的权重比
+     * @param message 【可选】 选中答案的文案提示
+     * @param abilityGroup 【可选】 技能标签组
+     * @param abilitySkill 【可选】 技能标签
+     * @param questionIndex 题目的索引
+     * @param json 【可选】 多选，排序题目，等选中集合
+     */
+    sendCardScore(params) {
+        let data = Object.assign({
+            cardID: '',
+            weight: 0,
+            questionIndex: 0,
+            message: 'defaultMessage',
+            abilityGroup: 'defaultAbilityGroup',
+            abilitySkill: 'defaultAbiitySkill',
+            json: 'defaultJson'
+
+        }, params)
+        return fetch({method: 'post', url: 'practice/sendPracticeCard', params: data, isVisitor: true})
+    }
 }
 
-export const getCardList = ({ token = 'defaultToken', senceID = 'defaultSenceID', courseID = 'defaultCourseID', requestFlag, teamID = 'defaultTeamID' }) => {
-    if ('' === token || 'defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}MVP3/getSenceCardListByGoPracticeLink?token=${token}&senceID=${senceID}&courseID=${courseID}&requestFlag=${requestFlag}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
-            if (200 !== status) throw new Error(message)
-            return {...data, requestFlag }
-        })
-}
-
-//8/28
-export const getCardListWithPreview = ({ token = 'defaultToken', senceID = 'defaultSenceID', courseID = 'defaultCourseID', requestFlag, teamID = 'defaultTeamID', source='' }) => {
-    if ('' === token || 'defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}MVP3/getSenceCardListByGoPracticeLinkByNeedPayToTry?token=${token}&senceID=${senceID}&courseID=${courseID}&requestFlag=${requestFlag}&teamID=${teamID}&source=${source}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (-99991 === status) throw new LessonPermissionDenyError({senceID, courseID})
-            if (200 !== status) throw new Error(message)
-            return {...data, requestFlag }
-        })
-}
-
-export const markCard = ({ token = 'defaultToken', courseID = 'defaultCourseID', senceID = 'defaultSenceID', cardID, requestFlag, teamID = 'defaultTeamID' }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-            url: `${config.baseUrl}courseV2/sendCard?token=${token}&courseID=${courseID}&senceID=${senceID}&cardID=${cardID}&requestFlag=${requestFlag}&teamID=${teamID}`,
-            method: 'POST'
-        })
-        .then(({ data: { data, status, message } }) => {
-            if (200 !== status) throw new Error(message)
-            return data
-        })
-}
-
-export const sendCardScore = ({ token = 'defaultToken', senceID = 'defaultSenceID', cardID = 'defaultCardID', score, weight = 0, message = 'defaultMessage', abilityGroup = 'defaultAbilityGroup', abilitySkill = 'defaultAbiitySkill', questionIndex = 0, json = 'defaultJson' }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}practice/sendPracticeCard?token=${token}&senceID=${senceID}&cardID=${cardID}&message=${message}&abilityGroup=${abilityGroup}&abilitySkill=${abilitySkill}&score=${score}&weight=${weight}&questionIndex=${questionIndex}&json=${encodeURIComponent(json)}`,
-        method: 'POST'
-    })
-}
-
-export const getStudyConclusion = ({ token = 'defaultToken', senceID = 'defaultSenceID', cardID = 'defaultCardID' }) => {
-    if ('defaultToken' === token || null == token) throw new UnAuthenticationError()
-    return wepy.request({
-        url: `${config.baseUrl}practice/getPracticeTotalScore?token=${token}&senceID=${senceID}&cardID=${cardID}`,
-        method: 'POST'
-    })
-}

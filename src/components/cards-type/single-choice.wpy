@@ -150,8 +150,8 @@
                 let self = this
                 let cardData = self.cardsList[self.cardIndex]
                 let item = !self.isExercises
-                        ? _.find(cardData.select, {isanswer: true})
-                        : _.find(cardData.select, {id: data.selectedId})
+                    ? _.find(cardData.select, {isanswer: true})
+                    : _.find(cardData.select, {id: data.selectedId})
                 self.resultId = item.id
 
                 self.isAnswerOver = true

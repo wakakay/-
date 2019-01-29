@@ -75,7 +75,7 @@
             </repeat>
             <view class="ui-bottom">
                 <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
-                <view class="ui-share-box" wx:if="{{floatBox.type === 'share'}}">
+                <view class="module-floax-box" wx:if="{{floatBox.type === 'share'}}">
                     <view class="ui-share">
                         <text class="icon-share"></text>
                         <text>分享给好友</text>
@@ -84,7 +84,7 @@
                             bindgetuserinfo="getAuthorize"></button>
                     </view>
                 </view>
-                <button class="ui-share-box"
+                <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
                         open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                         bindgetuserinfo="getAuthorize"
@@ -103,7 +103,7 @@
                         <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
                     </view>
                 </button>
-                <button class="ui-share-box"
+                <button class="module-floax-box"
                         :class="{'is-phonex': isIphonex}"
                         wx:if="{{floatBox.type === 'course'}}"
                         @tap.stop="getCourseDetail"
@@ -145,7 +145,7 @@
     import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
     import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
-    import {auth as authApi, share as shareApi, fetch} from "../../api"
+    import {auth as authApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
     import {getStore, connect} from "wepy-redux"
     import {renewWechatCode, login} from "../../redux/models/user"
@@ -443,7 +443,7 @@
         onShareAppMessage(res) {
             let self = this
             wepy.$instance.globalData.getHuilder(`${self.screenName}分享`, 'click', `${self.courseName}`)
-            shareApi.reportSharing({
+            fetch.reportSharing({
                 token:self.token,
                 type: shareDictionary.SHARE_SPECIAL_COURSE.type,
                 courseID:self.courseID,
@@ -532,33 +532,13 @@
         }
         .ui-bottom{
             .cell-margin{width: 100%;height: 200rpx;}
-            .ui-share-box{
-                position:fixed;width:100%;bottom:0;left:0;right:0;background:none;background-image:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,1));z-index:@z-index-lower;
-                .ui-share{
-                    width: 702rpx;height: 100rpx;line-height: 100rpx;color: @color-white;font-size: 30rpx;text-align: center;margin: 28rpx auto;background-color: @background-blue;border-radius: @border-radius-20;display: flex;justify-content: center;position: relative;font-weight: 700;
-                    .icon-share{font-size:44rpx;margin-right:10rpx;font-weight: normal}
-                    .cell-btn {
-                        position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
-                    }
+            .ui-share{
+                width: 702rpx;height: 100rpx;line-height: 100rpx;color: @color-white;font-size: 30rpx;text-align: center;margin: 28rpx auto;background-color: @background-blue;border-radius: @border-radius-20;display: flex;justify-content: center;position: relative;font-weight: 700;
+                .icon-share{font-size:44rpx;margin-right:10rpx;font-weight: normal}
+                .cell-btn {
+                    position: absolute;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0);border: 0;
+                }
 
-                }
-                .ui-share-course{
-                    width: 702rpx;height: 136rpx;background: rgba(239,239,244,0.90);border-radius: @border-radius-20;display: flex;justify-content: space-between;margin: 28rpx auto;align-items: center;padding:0 20rpx 0 12rpx;
-                    .ui-left{
-                        display: flex;
-                        .ui-img {
-                            display: flex;align-items: center;
-                            image{width: 112rpx;height: 112rpx;border-radius: 28rpx;}
-                        }
-                        .ui-content{
-                            margin-left: 20rpx;display: flex;flex-direction: column;justify-content: center;text-align:left;line-height:1.5;
-                            .cell-title{font-size: 32rpx;color: @color-black;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;font-weight: 700;}
-                            .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:12rpx;width: 396rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
-                        }
-                    }
-                    .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700;}
-                }
-                .ui-share-course.is-phonex{margin: 68rpx auto;}
             }
             .ui-share-font{
                 z-index:@z-index-slightly;
