@@ -199,7 +199,7 @@ export default {
      * @param  type: {top: 置顶, notTop: 取消置顶}
      */
     teamSetTop(params) {
-        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/setTop', params: params})
+        return fetch({method: 'post', url: 'teamByTaskOneDate/v1/setTop', params: params, isUnFilter: true})
     },
     /**
      * 团队学习→排名列表

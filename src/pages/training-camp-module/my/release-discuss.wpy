@@ -15,7 +15,7 @@
         box-sizing:border-box;height:140rpx;padding:16rpx 32rpx;background-color:@background-color-F3;border-bottom:2rpx solid @border-color;
         picker:nth-of-type(1){margin-right:28rpx;}
         .cell-unit{width:36rpx;margin:0 18rpx 0 28rpx;padding-top:48rpx;text-align:center;font-size:24rpx;color:@color-blue;text-align:center;line-height:56rpx;}
-        .cell-label{padding-bottom:8rpx;font-size:24rpx;color:@color-gray;line-height:40rpx;}
+        .cell-label{height:40rpx;padding-bottom:8rpx;font-size:24rpx;color:@color-gray;line-height:40rpx;}
         .cell-time{
             height:56rpx;padding:0 20rpx;background-color:@background-white;font-size:24rpx;color:@color-blue;line-height:56rpx;border-radius:@border-radius-32;
             text{display:block;font-size:24rpx;transform:rotate(90deg);}
@@ -25,7 +25,7 @@
 
 <template>
     <view hidden="{{isShowFullComponent}}">
-        <jn-header></jn-header>
+        <jn-header title="讨论"></jn-header>
         <view class="ui-select-list">
             <view class="ui-radio dir-left">
                 <view class="cell-radio cross-center" data-type="important" @tap.stop="getRadio">
@@ -60,7 +60,7 @@
                     value="{{currentTime}}"
                     start="{{startTime}}"
                     bindchange="getDateChange">
-                <view class="cell-label">具体时间</view>
+                <view class="cell-label"></view>
                 <view class="cell-time main-justify">{{currentTime}}<text class="icon-right-arrow"></text></view>
             </picker>
         </view>

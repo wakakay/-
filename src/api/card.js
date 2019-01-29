@@ -63,7 +63,7 @@ export default {
      * @param senceID 微课ID
      * @param cardID 微课卡片ID
      * @param score 选中答案的分值
-     * @param weight 选中答案的权重比
+     * @param weight 选中答案的权重比f
      * @param message 【可选】 选中答案的文案提示
      * @param abilityGroup 【可选】 技能标签组
      * @param abilitySkill 【可选】 技能标签

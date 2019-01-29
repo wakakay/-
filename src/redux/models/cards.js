@@ -204,7 +204,6 @@ export const fetchCardsWithPreview = ({token, senceID, courseID, teamID, source}
                 response: mArr
             }))
             dispatch(setCurrentCourseID(courseID))
-            console.log(mArr)
             return {
                 isTryAllowStatus,
                 isTryAllow,

@@ -4,7 +4,7 @@
 
 <template>
     <view class="module-team-discuss-edit" hidden="{{isShowFullComponent}}">
-        <jn-header></jn-header>
+        <jn-header title="讨论"></jn-header>
         <view class="ui-title">
             <textarea placeholder="输入标题（选填）"
                       maxlength="-1"

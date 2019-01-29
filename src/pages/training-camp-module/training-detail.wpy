@@ -626,6 +626,7 @@ export default class teamDetail extends wepy.page {
                 type : isTop
             }
             fetch.teamSetTop(postData).then(respone => {
+                wx.showToast({title: respone.message})
                 self.initialize()
             })
         },

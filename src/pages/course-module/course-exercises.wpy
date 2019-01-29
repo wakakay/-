@@ -218,6 +218,7 @@
             if (!type) {
                 postData = {
                     token: self.systemInfo.token,
+                    teamID: self.paramsInfo.teamID,
                     senceID: self.paramsInfo.senceID,
                     cardID: current.id,
                     score: current.score,
@@ -235,6 +236,9 @@
                     weight: 0,
                     questionIndex: -1
                 }
+            }
+            if (self.paramsInfo.teamID) {
+                postData.teamID = self.paramsInfo.teamID
             }
 
             fetch.sendCardScore(postData).then((respone) => {
