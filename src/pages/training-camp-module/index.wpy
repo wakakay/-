@@ -196,7 +196,7 @@
     import header from '../../components/common/header'
     import TeamLearningCourse from '../../components/TeamLearningCourse/index'
     import studyingBar from '../../components/common/studying-bar'
-    import {practice as practiceApi,fetch } from '../../api'
+    import {team as teamApi, fetch } from '../../api'
     import {initializationDeligate} from '../../utils'
 
     const store = getStore();
@@ -372,7 +372,7 @@
             this.$broadcast('studying-bar')
             teamApi.getMyTeamListByTabByCommend({token: this.token})
 			.then(res => {
-				
+
 				this.teamDoingList = res.memberTeam.memberTeamDoingList //正在学习的 课程
 				this.teamCommendList = res.memberTeam.memberTeamCommendList //为你推荐的 课程
 				this.teamBeforList = res.memberTeam.memberTeamBeforList || res.memberTeam.memberTeamBeforeList || [] //还没开始的 课程
@@ -398,7 +398,7 @@
 
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
 			})
-			
+
 			.then(()=>{
 
 			})

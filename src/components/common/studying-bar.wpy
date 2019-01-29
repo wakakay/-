@@ -241,7 +241,7 @@
                 self.$emit('on-is-studying-bar', {isShowBar: self.isShowBar})
 
                 // 获取列表的高度区域
-                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect(function(rect){
+                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect((rect) => {
                     self.scrollBoxHeight = Math.floor(rect.height) - 40
                     self.$apply()
                 }).exec()
