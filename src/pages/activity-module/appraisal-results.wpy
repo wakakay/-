@@ -61,15 +61,15 @@
             <view class="cell-name">Hi， {{userName}}</view>
         </view>
         <view class="ui-content-box">
-            <image mode="widthFix" src="{{resultImageURL}}" />
+            <image mode="widthFix" src="{{resultObj.resultImageURL}}" />
         </view>
         <view class="ui-bottom-btn main-justify">
-            <view class="ui-tips" wx:if="{{isTips}}">生成测评结果图片<text class="icon-arrow"></text></view>
+            <view class="ui-tips" wx:if="{{isTips}}">立即保存你的专属卡~<text class="icon-arrow"></text></view>
             <button class="flex-box-0 main-center" @tap.stop="getSaveImage"><text class="icon-down"></text></button>
             <button class="flex-box-1 main-center"
-                    open-type="{{buttonAttr === '分享' ? 'share' : ''}}"
-                    data-status="{{buttonAttr}}"
-                    @tap.stop="getToShare">{{buttonMsg}}</button>
+                    open-type="{{resultObj.buttonAttr === '分享' ? 'share' : ''}}"
+                    data-status="{{resultObj.buttonAttr}}"
+                    @tap.stop="getToShare">{{resultObj.buttonMsg}}</button>
         </view>
     </view>
     <view class="ui-shade" wx:if="{{isShowShade}}">
@@ -81,7 +81,7 @@
                     </view>
                 </view>
                 <view class="ui-content">
-                    <image src="{{buttonFebackImageURL}}" />
+                    <image src="{{resultObj.buttonFebackImageURL}}" />
                 </view>
                 <view class="ui-btn">
                     <view class="cell-item-btn" hover-class="cell-hover" @tap.stop="getImg">{{shareButtonMessage || '保存图片并学课'}}</view>
@@ -134,17 +134,12 @@
             isLoaded: false,
             isTips: true,
             senceID: '',
-            course: '',
+            course: {},
             isShowShare: false,
             isShowShade: false,
             headerHeigth: 68,
             shareButtonMessage: '', // 弹窗的分享按钮文案
-            buttonAttr: '',
-            buttonFebackImageURL: '',
-            buttonMsg: '',
-            resultImageURL: '',
-            subjectHeading: '',
-            shareImage: '',
+            resultObj: {}
         }
 
         onLoad({senceID, examID}) {
@@ -172,7 +167,7 @@
         onShareAppMessage(res) {
             let self = this
 
-            wepy.$instance.globalData.getHuilder('测评/分享', 'click', `${self.subjectHeading}`)
+            wepy.$instance.globalData.getHuilder('测评/分享', 'click', `${self.resultObj.subjectHeading}`)
 
             wx.reportAnalytics('pre_result_share', {
                 username: self.userName,
@@ -181,9 +176,9 @@
             })
 
             return {
-                title: self.subjectHeading,
+                title: self.resultObj.subjectHeading,
                 path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,
-                imageUrl: self.shareImage,
+                imageUrl: self.resultObj.shareImage,
                 complete: function (res) {
                     self.isShowShade = true
                     self.$apply()
@@ -193,32 +188,15 @@
 
         initialize() {
             let self = this
-<<<<<<< HEAD
-            return practiceApi.getUserExamScore({
-                token: self.token, examID: self.examID
-            }).then(data => {
-                self.buttonAttr = data.buttonAttr
-                self.buttonFebackImageURL = data.buttonFebackImageURL
-                self.buttonMsg = data.buttonMsg
-                self.resultImageURL = data.resultImageURL
-                self.subjectHeading = data.subjectHeading
-                self.shareImage = data.shareImage
-                self.course = data.course
-=======
             fetch.getUserExamScore({token: self.token, examID: self.examID}).then(data => {
                 self.isLoaded = true
                 self.resultObj = data
->>>>>>> MVP11.3
                 self.$apply()
 
                 setTimeout(() => {
                     self.isTips = false
                     self.$apply()
                 }, 5000)
-
-                self.isLoaded = true
-                self.$apply()
-
 
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: data.subjectHeading}) // ga统计
                 wx.reportAnalytics('pre_test_end', {
@@ -234,9 +212,9 @@
 
         getCourseDetail() {
             let self = this
-            if (!self.course) return;
-            let courseID = self.course.courseID;
-            let courseName = self.course.courseName;
+            if (!self.resultObj || !self.resultObj.course) return;
+            let courseID = self.resultObj.course.courseID;
+            let courseName = self.resultObj.course.courseName;
 
             wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
         }
@@ -277,7 +255,7 @@
             },
             getImg() {
                 let self = this;
-                let url = self.buttonFebackImageURL
+                let url = self.resultObj.buttonFebackImageURL
                 let urlReplace = ''
                 if (-1 !== url.toString().indexOf('http://image.runwise.cn/')) {
                     urlReplace = url.replace('http://image.runwise.cn/', 'https://wx-small.runwise.cn/')
@@ -329,7 +307,7 @@
                 });
 
                 let shareImages = {
-                    shareImage: self.resultImageURL
+                    shareImage: self.resultObj.resultImageURL
                 }
                 // 通知组件，生成图片预览
                 self.$broadcast('share-appraisal-images', shareImages)
