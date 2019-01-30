@@ -176,11 +176,13 @@
                    hover-class="none"
                    url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
     </view>
-    <view class="ui-special-subject" hover-stay-time="100"
-                wx:if="{{todaySkill.coverImageURL}}"
-                @tap.stop="getItem" data-item="{{todaySkill}}">
+    <button class="ui-special-subject"
+            hover-stay-time="100"
+            form-type="submit"
+            wx:if="{{todaySkill.coverImageURL}}"
+            @tap.stop="getItem" data-item="{{todaySkill}}">
             <image mode="aspectFit" src="{{todaySkill.coverImageURL}}" />
-    </view>
+    </button>
     <view class="ui-studying">
         <view class="ui-top">
             <view class="cell-title">在学课程</view>
@@ -323,7 +325,6 @@
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
-    import ga from 'wxapp-ga/ga'
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
