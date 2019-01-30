@@ -152,7 +152,7 @@
             }
             .cell-date{color:@color-gray-c7;font-size:24rpx;}
             .ui-stick{
-                margin-left:32rpx;color:@color-gray;font-size:24rpx;
+                padding:20rpx 0;margin-left:32rpx;color:@color-gray;font-size:24rpx;
                 &.is-sticked{
                     color:@color-blue;
                     text{color:@color-blue;}

@@ -195,44 +195,43 @@
 		}
 
 		onShow() {
-			initializationDeligate({ initializeFunc: this.initialize.bind(this, this.teamID), callWhatever: true })
+		    let self = this
+            self.initialize()
 		}
 		initialize(teamID) {
 			let self = this
         	let postData = {
-                token: this.token,
-                shareFlag: this.shareFlag,
-                roleType: this.shareTarget,
-                teamID
+                token: self.token,
+                shareFlag: self.shareFlag,
+                roleType: self.shareTarget,
+                teamID: self.teamID
 			}
 
-            if (this.wxPushType) {
-                postData.wxPushType = this.wxPushType
+            if (self.wxPushType) {
+                postData.wxPushType = self.wxPushType
 			}
 
             teamApi.getMyTeamIntroduction(postData).then(({ name, buttonStatus, buttonTip, isGotoTeamDetailPage, courseImageList, teacherImage, imageUrl, signUpUserCount, time, targetList,isClose }) => {
 				// 已经报名了 直接跳转详情页
 				if (isGotoTeamDetailPage) {
-					return this.$redirect(`/pages/training-camp-module/training-detail`, { teamID })
+					return self.$redirect(`/pages/training-camp-module/training-detail`, {teamID: self.teamID})
 				}
 				// 未报名 获取初始值
-				this.isLoaded = true
-				this.name = name
-				this.buttonStatus = buttonStatus
-				this.buttonTip = buttonTip
-				this.isGotoTeamDetailPage = isGotoTeamDetailPage
-				this.courseImageList = courseImageList
-				this.teacherImage = teacherImage
-				this.imageUrl = imageUrl
-				this.signUpUserCount = signUpUserCount
-				this.time = time
-				this.isClose = isClose ? isClose : false
-				this.targetList = targetList
-				this.$apply()
-
+				self.isLoaded = true
+				self.name = name
+				self.buttonStatus = buttonStatus
+				self.buttonTip = buttonTip
+				self.isGotoTeamDetailPage = isGotoTeamDetailPage
+				self.courseImageList = courseImageList
+				self.teacherImage = teacherImage
+				self.imageUrl = imageUrl
+				self.signUpUserCount = signUpUserCount
+				self.time = time
+				self.isClose = isClose ? isClose : false
+				self.targetList = targetList
+				self.$apply()
         	})
     	}
-
   	}
 </script>
 

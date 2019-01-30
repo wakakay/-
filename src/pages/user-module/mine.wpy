@@ -99,7 +99,7 @@
         </view>
         <view class="mine-bottom-view">
             <image class="mine-bottom-image"
-                   src="http://wx-small.runwise.cn/image/imageIDb6b51ba40084b3817965bfa6483f.png"/>
+                   src="http://wx-small.runwise.cn/image/imageIDc1dae5bc3b04e3af10ff40c16932.jpg"/>
             <view class="mine-officialaccount-btn" @tap.stop="handleOpenGuideImage" id="fallow_official_account">关注
             </view>
         </view>
