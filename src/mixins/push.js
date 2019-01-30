@@ -8,9 +8,15 @@ export default class PushMixin extends wepy.mixin {
     methods = {
         handleSavePushCode({detail: {formId}}) {
             console.log('mixin handle push code', formId)
-            fetch.savePushCode(store.getState().user.token, formId)
-                .then(flag => console.log('succed in saving push code'))
-                .catch(error => console.log('error', error))
+            let postData = {
+                token: store.getState().user.token,
+                code: formId
+            }
+            fetch.savePushCode(postData).then(respone => {
+                console.log('succed in saving push code')
+            }).catch(error => {
+                console.log('error', error)
+            })
         }
     }
 }

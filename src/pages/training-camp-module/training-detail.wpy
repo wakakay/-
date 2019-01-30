@@ -141,7 +141,7 @@
     }
     .cell-mask{background:@background-mask-normal;z-index:@z-index-mask;position:fixed;left:0;top:0;width:100%;height:100%;}
     .ui-interact-item{
-        background:@background-gray-F4;padding-top:20rpx;
+        background:@background-color-E5;padding-top:20rpx;
         .ui-content{background:@background-white;padding-bottom:20rpx;}
         .ui-user{
             background:@background-white;padding:0 32rpx;height:128rpx;border-bottom:1rpx solid @border-gray;box-sizing:border-box;
@@ -152,7 +152,7 @@
             }
             .cell-date{color:@color-gray-c7;font-size:24rpx;}
             .ui-stick{
-                color:@color-gray;font-size:24rpx;
+                margin-left:32rpx;color:@color-gray;font-size:24rpx;
                 &.is-sticked{
                     color:@color-blue;
                     text{color:@color-blue;}
@@ -298,14 +298,27 @@
                         <view class="ui-stand cross-center">
                             <view class="cell-name text-overflow">{{data.nickName}}</view>
                             <view class="cell-role">{{data.roleTypeText}}</view>
-
                         </view>
                         <view class="cell-date">{{data.createTime}}</view>
                     </view>
                     <view class="ui-stick"
+                          :class="{'is-sticked': data.likeIsMy}"
+                          data-data="{{data}}"
+                          data-index="{{index}}"
+                          @tap.stop="getTickLike">
+                        <text class="icon-praise"></text>{{data.likeUserCount || 0}}
+                    </view>
+                    <view class="ui-stick"
+                          :class="{'is-sticked': data.isParticipate}"
+                          data-data="{{data}}"
+                          data-index="{{index}}"
+                          @tap.stop="getReplyFocus">
+                        <text class="icon-comment"></text>{{data.replyCount || 0}}
+                    </view>
+                    <view class="ui-stick"
                           :class="{'is-sticked': data.isTop}"
                           wx:if="{{(role=='teacher' && data.roleType=='teacher') || (role=='admin' && data.roleType!='member')}}"
-                          data-item="{{data}}"
+                          data-data="{{data}}"
                           @tap.stop="getStick" >
                         <text class="icon-stick"></text>置顶
                     </view>
@@ -358,35 +371,51 @@
                 </view>
 
                 <view class="model-message-list-box">
+                    <text class="icon-arrow"></text>
                     <view class="ui-release cross-center">
-                        <image class="flex-box-0" mode="aspectFill" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132" />
-                        <view class="ui-input">
-                            <input placeholder="你有什么想法？" maxlength="-1" />
+                        <image class="flex-box-0" mode="aspectFill" src="{{avatar}}" />
+                        <view class="ui-input cross-center">
+                            <input value="{{data.replyValue}}" focus="{{data.isFocus}}"
+                                   placeholder="你有什么想法？"
+                                   maxlength="-1"
+                                   confirm-type="send"
+                                   data-data="{{data}}"
+                                   data-index="{{index}}"
+                                   bindinput="getReplyChange"
+                                   bindfocus="getReplyFocus"
+                                   bindblur="getReplyBlur"
+                                   bindconfirm="getSendReply" />
+                            <text class="icon-send"
+                                  wx:if="{{data.replyValue.length}}"
+                                  data-data="{{data}}"
+                                  data-index="{{index}}"
+                                  @tap.stop="getSendReply"></text>
                         </view>
                     </view>
                     <view class="ui-message-list">
-                        <view class="ui-item">
-                            <view class="ui-user-info flex">
-                                <image class="flex-box-0" mode="aspectFill" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132"/>
-                                <view class="cell-info dir-top main-justify">
-                                    <text>222</text>
-                                    <text>se</text>
+                        <repeat for="{{data.replyList}}" key="index" index="index" item="item">
+                            <view class="ui-item">
+                                <view class="ui-user-info cross-center">
+                                    <image class="flex-box-0" mode="aspectFill" src="{{item.replyUserAvatarUrl}}"/>
+                                    <view class="cell-info dir-top main-justify">
+                                        <text>{{item.replyUserNickName}}</text>
+                                        <text>{{item.replyCreateTime}}</text>
+                                    </view>
                                 </view>
+                                <view class="ui-content-box flex">{{item.replyContent}}</view>
                             </view>
-                            <view class="ui-content-box flex">
-                                项目中开始划分更短的制品交互周期，而不是以前那样等待产品开发完毕后发布各种测试版本。
-                            </view>
-                        </view>
+                        </repeat>
                     </view>
                 </view>
-
             </view>
         </repeat>
         <view class="cell-more">没有更多内容了</view>
     </view>
 
 	<!-- 加号 -->
-	<view class="ui-add" @tap.stop="getAddTask">
+	<view class="ui-add"
+          wx:if="{{isShowAddButton}}"
+          @tap.stop="getAddTask">
 		<text wx:if="{{'member'===teamRole}}" class="icon-message"></text>
 		<text wx:else class="icon-add"></text>
 	</view>
@@ -430,13 +459,15 @@ const store = getStore();
     token(state) {
         return state.user.token
     },
+    avatar(state) {
+        return state.user.avatar
+    },
     isTokenSet(state) {
         return state.user.token.startsWith('userID')
-    },
+    }
 })
 
 export default class teamDetail extends wepy.page {
-
     config = {
         navigationBarTitleText: "下拉刷新",
         enablePullDownRefresh: true,
@@ -454,6 +485,8 @@ export default class teamDetail extends wepy.page {
         isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
         isLoaded:false,
         headerBackground: 'background-transparent',
+        isShowAddButton: true,
+        replyValueDictionary: {},
         teamID:'',
         wxPushType:'',
         role:'',
@@ -472,7 +505,6 @@ export default class teamDetail extends wepy.page {
         senceID:null,
         intereactList:[],
         taskList:{}
-
     }
 
     onLoad(params) {
@@ -506,8 +538,10 @@ export default class teamDetail extends wepy.page {
             console.log(error)
         })
     }
-
-    initialize() {
+    /**
+     * 初始化数据
+     */
+    initialize(index) {
         let self = this
         let postData = {
             token: self.token,
@@ -518,20 +552,20 @@ export default class teamDetail extends wepy.page {
             postData.wxPushType = self.wxPushType
         }
         // 下拉刷新
-        return fetch.getTeamDetail(postData).then((res)=>{
-            res = res.data;
-            self.imageUrl = res.imageUrl;
-            self.teamName = res.name;
-            self.signUpUserCount = res.signUpUserCount;
-            self.teamTime = res.time;
-            self.todayTask = res.taskList.TaskContentList;
-            self.role = res.role;
-            self.targetList = res.targetList;
-            self.courseImageList = res.courseImageList;
-            self.teacherImage = res.teacherImage;
-            self.isShowManagerButton = res.isShowManagerButton
-            self.managerButtonStatus = res.managerButtonStatus
-            self.teamDetail = res.teamDetail;
+        return fetch.getTeamDetail(postData).then((respone)=>{
+            respone = respone.data;
+            self.imageUrl = respone.imageUrl;
+            self.teamName = respone.name;
+            self.signUpUserCount = respone.signUpUserCount;
+            self.teamTime = respone.time;
+            self.todayTask = respone.taskList.TaskContentList;
+            self.role = respone.role;
+            self.targetList = respone.targetList;
+            self.courseImageList = respone.courseImageList;
+            self.teacherImage = respone.teacherImage;
+            self.isShowManagerButton = respone.isShowManagerButton
+            self.managerButtonStatus = respone.managerButtonStatus
+            self.teamDetail = respone.teamDetail;
             self.isLoaded = true;
             self.$apply()
         }).then(()=>{
@@ -544,13 +578,14 @@ export default class teamDetail extends wepy.page {
     }
     /**
      * 数组重组
-     * respone 接口返回的数据
+     * @paramsrespone 接口返回的数据
      */
     __dataRegroup(response) {
         let self = this
 
         _.each(response, (data) => {
             data.isTopNumber = data.isTop ? 1 : 0
+            data.replyValue = ''
             switch (data.contentType) {
                 case 'discuss':
                     data.moduleTitle = data.moduleTitle || '讨论'
@@ -624,23 +659,46 @@ export default class teamDetail extends wepy.page {
             })
         },
         /**
+         * 点赞
+         * @param event
+         */
+        getTickLike(event) {
+            let self = this;
+            let {currentTarget: {dataset: {data, index}}} = event
+            let postData = {
+                token: self.token,
+                postID : data.postID
+            }
+
+            fetch.teamTickLike(postData).then(respone => {
+                wx.showToast({title: respone.likeIsMy ? '点赞成功' : '取消点赞成功'})
+                self.intereactList[index].likeIsMy = respone.likeIsMy
+                self.intereactList[index].likeUserCount = respone.likeUserCount
+                self.$apply()
+            }).catch(error => {
+                wx.showToast({icon: 'none', title: '网络错误'})
+            })
+
+        },
+        /**
          * 置顶
          * @param event
          */
         getStick(event) {
             let self = this;
-            let {currentTarget: {dataset: {item}}} = event
-            let postID = item.postID;
-            let isTop = item.isTop ? 'notTop' : 'top'
+            let {currentTarget: {dataset: {data}}} = event
+            let isTop = data.isTop ? 'notTop' : 'top'
             let postData = {
                 token: self.token,
                 teamID : self.teamID,
-                postID : postID,
+                postID : data.postID,
                 type : isTop
             }
             fetch.teamSetTop(postData).then(respone => {
                 wx.showToast({title: respone.message})
                 self.initialize()
+            }).catch(error => {
+                wx.showToast({icon: 'none', title: '网络错误'})
             })
         },
         // 标题 问好
@@ -738,6 +796,60 @@ export default class teamDetail extends wepy.page {
                 courseID: self.courseID,
                 teamID : self.teamID,
                 resumeLastRead: resume,
+            })
+        },
+
+        getReplyChange(event) {
+            let self = this
+            let {detail:{value}, currentTarget: {dataset: {data, index}}} = event
+            self.intereactList[index].replyValue = value
+        },
+
+        /**
+         * 聚焦留言输入框
+         * @param event
+         */
+        getReplyFocus(event) {
+            let self = this;
+            let {detail:{value}, currentTarget: {dataset: {data, index}}} = event
+            self.intereactList[index].isFocus = true
+            self.isShowAddButton = false
+            self.$apply()
+        },
+        /**
+         * 输入框的失去焦点
+         * @param event
+         */
+        getReplyBlur(event) {
+            let self = this
+            let {currentTarget: {dataset: {data, index}}} = event
+            self.intereactList[index].isFocus = false
+            self.isShowAddButton = true
+            self.$apply()
+        },
+        /**
+         * 提交留言
+         * @param data
+         */
+        getSendReply(event) {
+            let self = this
+            let {detail : {value}, currentTarget: {dataset: {data, index}}} = event
+            if ('' === data.replyValue || _.isUndefined(data.replyValue)) {
+                wx.showToast({icon: 'none', title: '请输入内容'})
+                return
+            }
+
+            let postData = {
+                token: self.token,
+                postID: data.postID,
+                replyContent: data.replyValue
+            }
+
+            fetch.sendTeamPostReply(postData).then(respone => {
+                wx.showToast({icon: 'success', title: '评论已发布'})
+                self.initialize()
+            }).catch(error => {
+                wx.showToast({icon: 'none', title: '网络错误'})
             })
         }
     }

@@ -202,6 +202,14 @@ export default {
         return fetch({method: 'post', url: 'teamByTaskOneDate/v1/setTop', params: params, isUnFilter: true})
     },
     /**
+     * 团队学习→导师，点赞
+     * @param  teamID: 团队ID
+     * @param  postID: 排名任务id
+     */
+    teamTickLike(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/tickLike', params: params, isUnFilter: true})
+    },
+    /**
      * 团队学习→排名列表
      * @param  teamID: 团队ID
      */
@@ -215,5 +223,13 @@ export default {
      */
     tickTeamRankLike(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/tickTeamRankLike', params: params})
+    },
+    /**
+     * 团队学习→发表留言
+     * @param  postID: 排名任务id
+     * @param  replyContent: 留言的内容
+     */
+    sendTeamPostReply(params) {
+        return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPostReply', params: params})
     }
 }
