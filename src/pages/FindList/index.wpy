@@ -29,7 +29,7 @@
         .ui-item{
             padding: 0 40rpx;margin-bottom:56rpx;
             .ui-special-subject{
-                width: 100%;height: 824rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
+                width: 100%;height: 824rpx;background:none;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
                 image{width: 100%;height: 824rpx;}
             }
             .ui-evaluation{
@@ -54,7 +54,7 @@
                 .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
                 .ui-subject{
                     .ui-subject-item{
-                        height: 176rpx;display: flex;align-items: center;
+                        height: 176rpx;display: flex;align-items: center;background:none;line-height:1;text-align:left;
                         .ui-img{
                             margin-right: 26rpx;width: 112rpx;
                             image{
@@ -63,10 +63,10 @@
                         }
                         &:last-of-type .ui-content{border-bottom: none;}
                         .ui-content{
-                            box-sizing:border-box;display: flex;align-items: center;justify-content: space-between;flex:1;height: 164rpx;border-bottom:2rpx solid @border-gray;padding-top:10rpx;
+                            box-sizing:border-box;display: flex;align-items: center;justify-content: space-between;flex:1;height: 164rpx;border-bottom:2rpx solid @border-gray;
                             .ui-detail{
-                                width:312rpx;height:120rpx;
-                                .cell-name{font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                                width:300rpx;
+                                .cell-name{padding-bottom:6rpx;font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
                                 .cell-dec{
                                     font-size: 26rpx;color:@color-gray;margin-top:12rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
                                     text{color:@color-black;font-size: 28rpx}
@@ -112,11 +112,14 @@
                 <view class="cell-find-dec">{{discoverPageTitle}}</view>
                 <view class="ui-content">
                     <view class="ui-item" wx:for="{{informationList}}" wx:key="{{index}}" wx:index="{{index}}" >
-                        <view wx:if="{{item.type == 'editor'}}" class="ui-special-subject"
-                              hover-stay-time="100"
-                              @tap.stop="getEditorItem" data-item="{{item}}">
+                        <button wx:if="{{item.type == 'editor'}}"
+                                class="ui-special-subject"
+                                form-type="submit"
+                                hover-stay-time="100"
+                                @tap.stop="getEditorItem"
+                                data-item="{{item}}">
                             <image mode="aspectFit" src="{{item.coverImageURL}}" />
-                        </view>
+                        </button>
                         <view wx:if="{{item.type == 'noSkill' || item.type == 'skill'}}"
                               class="ui-evaluation" style="background-image:url({{item.coverImageURL}})"
                               @tap.stop="getSkillItem" data-item="{{item}}">
@@ -136,29 +139,30 @@
                             <view class="cell-tip">{{item.sceneType}}</view>
                             <view class="cell-title">{{item.name}}</view>
                             <view class="ui-subject">
-                                <view wx:for="{{item.senceList}}" wx:for-item="courseItem" wx:key="{{index}}" wx:index="{{index}}"
-                                      hover-stay-time="100"
-                                      class="ui-subject-item"
-                                      data-item="{{item}}"
-                                      data-course-item="{{courseItem}}"
-                                      @tap.stop="handleStartLesson">
-                                    <view class="ui-img">
-                                        <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
-                                    </view>
-                                    <view class="ui-content">
-                                        <view class="ui-detail">
-                                            <view class="cell-name">{{courseItem.senceName}}</view>
-                                            <view class="cell-dec">{{courseItem.senceTarget}}</view>
+                                <repeat for="{{item.senceList}}" key="index" index="index" item="courseItem">
+                                    <button hover-stay-time="100"
+                                            class="ui-subject-item"
+                                            data-item="{{item}}"
+                                            form-type="submit"
+                                            data-course-item="{{courseItem}}"
+                                            @tap.stop="handleStartLesson">
+                                        <view class="ui-img">
+                                            <image mode="aspectFill" src="{{courseItem.imageUrl}}" />
                                         </view>
-                                        <view class="ui-btn">
-                                            <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
-                                            <view class="cell-btn-tip" wx:if="{{item.type == 'todayTask'}}" >
-                                                {{courseItem.giftStatus}}
+                                        <view class="ui-content">
+                                            <view class="ui-detail">
+                                                <view class="cell-name">{{courseItem.senceName}}</view>
+                                                <view class="cell-dec">{{courseItem.senceTarget}}</view>
+                                            </view>
+                                            <view class="ui-btn">
+                                                <view class="cell-btn">{{courseItem.buttonStatusMsg}}</view>
+                                                <view class="cell-btn-tip" wx:if="{{item.type == 'todayTask'}}" >
+                                                    {{courseItem.giftStatus}}
+                                                </view>
                                             </view>
                                         </view>
-                                    </view>
-
-                                </view>
+                                    </button>
+                                </repeat>
                             </view>
                         </view>
 

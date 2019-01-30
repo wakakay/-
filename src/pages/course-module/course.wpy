@@ -21,7 +21,7 @@
         }
         .ui-content{
             .ui-item{
-                display: flex;height: 100rpx;align-items: center;padding:0 40rpx;box-sizing:border-box;
+                display: flex;height: 100rpx;align-items: center;padding:0 40rpx;box-sizing:border-box;background:none;
                 .ui-img{
                     margin-right: 32rpx;display: flex;align-items: center;height: 100rpx;
                     image{width: 60rpx;height: 60rpx;border-radius: @border-radius-8;}
@@ -131,15 +131,17 @@
                         previous-margin="34rpx"
                         next-margin="24rpx">
                     <block wx:for="{{recommendCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}">
-                        <swiper-item class="ui-item" form-type="submit" hover-stay-time="100"
-                             @tap.stop="getCourseDetail" data-item="{{item}}" data-type="1">
-                            <view class="ui-content-box" style="background-image:url('{{item.image}}')">
+                        <swiper-item class="ui-item">
+                            <button class="ui-content-box"
+                                    form-type="submit" hover-stay-time="100"
+                                    @tap.stop="getCourseDetail" data-item="{{item}}" data-type="1"
+                                    style="background-image:url('{{item.image}}')">
                                 <view class="ui-shadow">
                                     <view class="cell-tip">{{item.sceneType}}</view>
                                     <view class="cell-name">{{item.name}}</view>
                                     <view class="cell-dec">{{item.showPoint}}</view>
                                 </view>
-                            </view>
+                            </button>
                             <view class="cell-margin"></view>
                         </swiper-item>
                     </block>
@@ -155,10 +157,12 @@
                     <repeat for="{{limitedTimeGiftCourseList}}" key="index" index="index" item="data">
                         <swiper-item class="module-course-box size-small">
                             <repeat for="{{data}}" key="number" index="number" item="item">
-                                <view class="ui-item flex" hover-stay-time="100"
-                                      data-item="{{item}}"
-                                      data-type="4"
-                                      @tap.stop="getCourseDetail">
+                                <button class="ui-item flex"
+                                        hover-stay-time="100"
+                                        data-item="{{item}}"
+                                        form-type="submit"
+                                        data-type="4"
+                                        @tap.stop="getCourseDetail">
                                     <view class="cell-thumb flex-box-0">
                                         <image mode="aspectFit" src="{{item.image}}"></image>
                                     </view>
@@ -171,7 +175,7 @@
                                             <button>免费领</button>
                                         </view>
                                     </view>
-                                </view>
+                                </button>
                             </repeat>
                             <view class="cell-border"></view>
                         </swiper-item>
@@ -187,10 +191,12 @@
                     <repeat for="{{hotCourseList}}" key="index" index="index" item="data">
                         <swiper-item class="module-course-box">
                             <repeat for="{{data}}" key="number" index="number" item="item">
-                                <view class="ui-item flex" hover-stay-time="100"
-                                      data-item="{{item}}"
-                                      data-type="3"
-                                      @tap.stop="getCourseDetail">
+                                <button class="ui-item flex"
+                                        hover-stay-time="100"
+                                        form-type="submit"
+                                        data-item="{{item}}"
+                                        data-type="3"
+                                        @tap.stop="getCourseDetail">
                                     <view class="cell-thumb flex-box-0">
                                         <image mode="aspectFit" src="{{item.image}}"></image>
                                     </view>
@@ -201,7 +207,7 @@
                                             <button>免费领</button><text>{{item.userCount}}人已学</text>
                                         </view>
                                     </view>
-                                </view>
+                                </button>
                             </repeat>
                             <view class="cell-border"></view>
                         </swiper-item>
@@ -215,15 +221,21 @@
                     <view class="cell-all" @tap.stop="getAllSeries" data-item="{{courseSeriesList}}">查看全部</view>
                 </view>
                 <view class="ui-content">
-                    <view class="ui-item" hover-class="ui-item-hover"  hover-stay-time="100"
-                    wx:for="{{courseSeriesList}}"  wx:for-item="item" wx:index="{{index}}"
-                    wx:key="{{index}}" data-index="{{index}}"  data-item="{{item}}"
-                    @tap.stop="getCategory" wx:if="{{index <= 4}}">
-                        <view class="ui-img">
-                            <image src="{{item.icon}}" mode="scaleToFill"></image>
-                        </view>
-                        <view class="cell-name">{{item.seriesName}}</view>
-                    </view>
+                    <repeat for="{{courseSeriesList}}" key="index" index="index" item="item">
+                        <button class="ui-item"
+                                hover-class="ui-item-hover"
+                                hover-stay-time="100"
+                                data-index="{{index}}"
+                                data-item="{{item}}"
+                                form-type="submit"
+                                @tap.stop="getCategory"
+                                wx:if="{{index <= 4}}">
+                            <view class="ui-img">
+                                <image src="{{item.icon}}" mode="scaleToFill"></image>
+                            </view>
+                            <view class="cell-name">{{item.seriesName}}</view>
+                        </button>
+                    </repeat>
                 </view>
                 <view class="cell-border"></view>
             </view>
@@ -233,13 +245,14 @@
                 <swiper class="ui-swiper-list"
                         previous-margin="40rpx"
                         next-margin="20rpx">
-
                     <repeat for="{{newCourseList}}" key="index" index="index" item="data">
                         <swiper-item class="module-course-box size-small">
                             <repeat for="{{data}}" key="number" index="number" item="item">
-                                <view class="ui-item flex" hover-stay-time="100"
+                                <button class="ui-item flex"
+                                      hover-stay-time="100"
                                       data-item="{{item}}"
                                       data-type="2"
+                                      form-type="submit"
                                       @tap.stop="getCourseDetail">
                                     <view class="cell-thumb flex-box-0">
                                         <image mode="aspectFit" src="{{item.image}}"></image>
@@ -253,7 +266,7 @@
                                             <button>获取</button>
                                         </view>
                                     </view>
-                                </view>
+                                </button>
                             </repeat>
                         </swiper-item>
                     </repeat>

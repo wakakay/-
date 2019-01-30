@@ -26,11 +26,6 @@
 		<view wx:if="{{ teacherImage }}" class="cell-title">导师介绍</view>
 		<image wx:if="{{ teacherImage }}" class="cell-poster" src="{{ teacherImage }}" mode="widthFix"></image>
 
-		<view class="ui-company">
-			<image class="cell-img"
-				src="http://wx-small.runwise.cn/image/imageID8e72549be764a9bca9fe8ca95973.png" mode="widthFix"></image>
-			<text class="cell-content">提供技术支持</text>
-		</view>
 		<view class="ui-empty"></view>
 		<view class="ui-button">
 			<!-- <button wx:if="{{ !isTokenSet && 'allowSignUp'===buttonStatus }}" plain="{{ true }}"

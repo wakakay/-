@@ -42,13 +42,13 @@
         .ui-swiper-list{
             height: 671rpx;
             .ui-item{
-                box-sizing:border-box;
+                box-sizing:border-box;background:none;line-height:1;text-align:left;
                 .ui-course-image{
                     height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
                     .ui-bg-content{
                         position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
-                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;margin-bottom: 10rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
-                        .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;}
+                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
+                        .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;line-height:80rpx;}
                     }
                     .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
                     .ui-progress{
@@ -73,9 +73,9 @@
                         display: flex;align-items: center;
                         .ui-lesson-image image{width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 28rpx;border-radius: 28rpx;}
                         .ui-detail{
-                            height: 96rpx;
-                            .cell-title{font-size: 32rpx;font-weight: bold;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
-                            .cell-dec{font-size: 26rpx;color:@color-gray;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 324rpx;}
+                            height: 96rpx;padding:10rpx 0;box-sizing: border-box;
+                            .cell-title{font-size: 32rpx;font-weight: bold;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 300rpx;}
+                            .cell-dec{font-size: 26rpx;color:@color-gray;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width: 300rpx;}
                         }
                     }
                     .ui-btn{width: 148rpx;height: 60rpx;border-radius: 30rpx;background-color: @background-white;color: @color-blue;font-weight: bold;font-size: 30rpx;line-height: 60rpx;text-align: center}
@@ -151,7 +151,7 @@
         }
     }
     .ui-before-subject{
-        padding: 60rpx 40rpx 0;
+        padding: 60rpx 40rpx 0;background:none;
         .cell-date{font-size: 44rpx;font-weight: bold;margin-bottom: 20rpx;color: @color-black}
         .ui-content{
             width: 670rpx;height: 670rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
@@ -196,44 +196,46 @@
                 previous-margin="38rpx"
                 next-margin="22rpx">
             <repeat for="{{recommendCourseList}}" index="{{ index }}" key="{{ index }}">
-                <swiper-item class="ui-item" form-type="submit" hover-stay-time="100">
-                    <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
-                        @tap.stop="getCourseDetail" data-item="{{item}}">
-                        <view class="ui-bg-content">
-                            <view class="cell-title">{{item.courseName}}</view>
-                            <view class="cell-dec">{{item.courseDec}}</view>
-                        </view>
-                        <view class="ui-shadow"></view>
-                        <view class="ui-progress">
-                            <view class="ui-circular-progress">
-                                <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
-                                <view class="ui-wrapper ui-right">
-                                    <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                <swiper-item>
+                    <button class="ui-item" form-type="submit" hover-stay-time="100">
+                        <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
+                            @tap.stop="getCourseDetail" data-item="{{item}}">
+                            <view class="ui-bg-content">
+                                <view class="cell-title">{{item.courseName}}</view>
+                                <view class="cell-dec">{{item.courseDec}}</view>
+                            </view>
+                            <view class="ui-shadow"></view>
+                            <view class="ui-progress">
+                                <view class="ui-circular-progress">
+                                    <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                                    <view class="ui-wrapper ui-right">
+                                        <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                                    </view>
+                                    <view class="ui-wrapper ui-left">
+                                        <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                                    </view>
                                 </view>
-                                <view class="ui-wrapper ui-left">
-                                    <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                            </view>
+                        </view>
+                        <view class="ui-content"
+                            wx:for="{{item.senceList}}"
+                            wx:for-item="senceItem"
+                            wx:key="senceIndex"
+                            @tap.stop="handleStartLesson"
+                            data-item="{{item.senceList[0]}}"
+                            data-click-source="course">
+                            <view class="ui-left">
+                                <view class="ui-lesson-image">
+                                    <image src="{{senceItem.imageUrl}}" />
+                                </view>
+                                <view class="ui-detail dir-top main-justify">
+                                    <view class="cell-title">{{senceItem.senceName}}</view>
+                                    <view class="cell-dec">{{senceItem.senceTarget}}</view>
                                 </view>
                             </view>
+                            <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
                         </view>
-                    </view>
-                    <view class="ui-content"
-                        wx:for="{{item.senceList}}"
-                        wx:for-item="senceItem"
-                        wx:key="senceIndex"
-                        @tap.stop="handleStartLesson"
-                        data-item="{{item.senceList[0]}}"
-                        data-click-source="course">
-                        <view class="ui-left">
-                            <view class="ui-lesson-image">
-                                <image src="{{senceItem.imageUrl}}" />
-                            </view>
-                            <view class="ui-detail">
-                                <view class="cell-title">{{senceItem.senceName}}</view>
-                                <view class="cell-dec">{{senceItem.senceTarget}}</view>
-                            </view>
-                        </view>
-                        <view class="ui-btn">{{senceItem.buttonStatusMsg}}</view>
-                    </view>
+                    </button>
                 </swiper-item>
             </repeat>
         </swiper>
@@ -287,7 +289,7 @@
 
                         </view>
                         <view class="ui-btn">
-                            <view class="cell-btn">{{item.buttonStatusMsg}}</view>
+                            <button class="cell-btn" form-type="submit">{{item.buttonStatusMsg}}</button>
                             <view class="cell-btn-tip">{{item.giftStatus}}</view>
                         </view>
                     </view>
@@ -297,12 +299,12 @@
         </view>
     </view>
     <repeat for="{{historicalSkillList}}" key="index" index="index" item="item">
-        <view class="ui-before-subject" @tap.stop="getItem" data-item="{{item}}">
+        <button class="ui-before-subject" form-type="submit" @tap.stop="getItem" data-item="{{item}}">
             <view class="cell-date">{{item.dateTips}}</view>
             <view class="ui-content">
                 <image mode="aspectFit" src="{{item.coverImageURL}}" />
             </view>
-        </view>
+        </button>
     </repeat>
 </form>
 <view class="ui-clear"></view>
