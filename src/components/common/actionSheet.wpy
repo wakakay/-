@@ -11,7 +11,7 @@
                     <view class="cell-content">{{contentInfo}}</view>
                 </view>
                 <view class="ui-botton-box main-center">
-                    <button formType="submit"
+                    <button form-type="submit"
                             @tap.shop="getConfirm">{{buttonConfirm}}</button>
                 </view>
             </view>

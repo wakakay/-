@@ -2,7 +2,7 @@
   	<form catchsubmit="handleSavePushCode" report-submit>
 		<!-- 若角色为学员 -->
     	<view class="ui-item-box" wx:if="{{role==='学员'}}">
-      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"></button>
+      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" form-type="submit"></button>
       		<view>
 				<view class="ui-image" :class="{'image-loading': !imageLoaded}">
 					<image class="cell-item"
@@ -13,7 +13,7 @@
 						data-team-i-d="{{id}}"
 						data-status="{{status}}"
 						data-name="{{name}}"
-						formType="submit">
+						   form-type="submit">
 					</image>
 				</view>
       		</view>
@@ -53,11 +53,11 @@
 
 		<!-- 若角色不为学员 -->
     	<view class="ui-item-box" wx:else>
-      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"></button>
+      		<button class="cell-shade" @tap.stop="handleTendToAttendTeamLearning" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" form-type="submit"></button>
 
       		<view>
         		<view class="ui-image" :class="{'image-loading': !imageLoaded}">
-          			<image class="cell-item" src="{{ image }}" mode="aspectFill" hidden="{{!imageLoaded}}" @load="handleImageLoaded" @tap.stop="handleTendToAttendClassC" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" formType="submit"/>
+          			<image class="cell-item" src="{{ image }}" mode="aspectFill" hidden="{{!imageLoaded}}" @load="handleImageLoaded" @tap.stop="handleTendToAttendClassC" data-team-i-d="{{id}}" data-status="{{status}}" data-name="{{name}}" form-type="submit"/>
         		</view>
       		</view>
 
@@ -89,7 +89,7 @@
 			</view>
       	</view>
 
-      
+
 
     </view>
   </form>
@@ -211,7 +211,7 @@
 </script>
 
 <style lang="less" scoped>
-	@import "../../assets/style/theme"; 
+	@import "../../assets/style/theme";
   	.color-flag{color:  #FE417B;}
   	.ui-item-box {
 		width: 100%;min-width: 670rpx;height: 100%;box-sizing: border-box;position: relative;text-align: left;

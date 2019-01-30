@@ -2,7 +2,7 @@
   <form bindsubmit="handleSavePushCode" report-submit>
     <view class="favourite-course-copy-article" hover-class="active">
       <image wx:if="{{label && 'new'===label}}" class="favourite-course-copy-article__fixed-tag" src="http://wx-small.runwise.cn/image/imageID3b2bc1e45be427830c14555c1ba3.svg" mode="scaleToFill" ></image>
-      <button class="btn-diaphane whole-from-wrapper favourite-course-copy-article__shade" @tap.stop="handleTendToAttendClass" data-course-i-d="{{id}}" data-course-type="{{courseType}}" data-course-name="{{courseName}}"  data-name ="{{name}}" formType="submit"></button><!-- shade -->
+      <button class="btn-diaphane whole-from-wrapper favourite-course-copy-article__shade" @tap.stop="handleTendToAttendClass" data-course-i-d="{{id}}" data-course-type="{{courseType}}" data-course-name="{{courseName}}"  data-name ="{{name}}" form-type="submit"></button><!-- shade -->
 
       <view class="favourite-course-copy-article__body__icon-wrapper" :class="{'image-loading': !imageLoaded}">
         <image class="favourite-course-copy-article__body__icon" src="{{ image }}" mode="aspectFill" hidden="{{!imageLoaded}}" @load="handleImageLoaded"  data-course-type="{{courseType}}"  data-course-name="{{courseName}}" @tap.stop="handleTendToAttendClassC" data-course-i-d="{{id}}" formType="submit">

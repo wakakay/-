@@ -131,7 +131,7 @@
                         previous-margin="34rpx"
                         next-margin="24rpx">
                     <block wx:for="{{recommendCourseList}}" wx:index="{{ index }}" wx:key="{{ index }}">
-                        <swiper-item class="ui-item" formType="submit" hover-stay-time="100"
+                        <swiper-item class="ui-item" form-type="submit" hover-stay-time="100"
                              @tap.stop="getCourseDetail" data-item="{{item}}" data-type="1">
                             <view class="ui-content-box" style="background-image:url('{{item.image}}')">
                                 <view class="ui-shadow">
@@ -270,7 +270,7 @@
     <form bindsubmit="handleSavePushCode" report-submit>
         <view class="ui-gift" wx:if="{{isShowGift}}">
             <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
-            <button formType="submit" hover-stay-time="100" @tap.stop="getGift">
+            <button form-type="submit" hover-stay-time="100" @tap.stop="getGift">
                 <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
             </button>
         </view>

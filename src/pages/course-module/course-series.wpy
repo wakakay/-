@@ -119,7 +119,7 @@
                     <view class="cell-name ">{{courseInfo.seriesName}}</view>
                     <view class="cell-sub-title">{{courseInfo.subTitle}}</view>
                 </view>
-                <button class="cell-share" formType="submit" open-type="share">
+                <button class="cell-share" form-type="submit" open-type="share">
                     <text class="icon-share"></text>
                 </button>
             </view>

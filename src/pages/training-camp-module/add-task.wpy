@@ -8,7 +8,7 @@
                        mode="scaleToFill"></image>
                 <input bindinput="handleKeyInput" placeholder="请输入微课/课程名称" class="assignment-article__header__input"
                        placeholder-style="font-family: PingFangSC-Regular;font-size: 32rpx;color: #A1A9AB;"/>
-                <button formType="reset" class="assignment-article__header__clear" catchtap="handleClearInput"></button>
+                <button form-type="reset" class="assignment-article__header__clear" catchtap="handleClearInput"></button>
                 <!-- clear -->
                 <button class="assignment-article__header__btn" @tap.stop="handleSearch">搜索</button>
             </view><!-- header -->

@@ -89,7 +89,7 @@
                 <text class="ui-text">{{courseInfo.seseriesUserCount || 0}}人已学</text>
             </view>
             <view class="ui-button">
-                <button formType="submit" open-type="share">
+                <button form-type="submit" open-type="share">
                     <text class="icon-share"></text>
                 </button>
             </view>

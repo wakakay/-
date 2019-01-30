@@ -71,7 +71,7 @@
                     <view class="title">专属礼包</view>
 
                     <form bindsubmit="handleSavePushCode" report-submit>
-                        <button class="cell-button" formType="submit" @tap.stop="getGift">
+                        <button class="cell-button" form-type="submit" @tap.stop="getGift">
                             领取
                         </button>
                     </form>
@@ -354,7 +354,7 @@
                     image{width: 32rpx;height: 28rpx;margin-right: 8rpx}
                 }
             }
-        } 
+        }
         .ui-edit{
             width: 164rpx;height: 100%;;font-size: 28rpx;color: @color-gray;font-family: PingFangSC-Regular;display:flex;align-items:center;justify-content: flex-end;line-height: 200rpx;
             text{font-size: 28rpx}
@@ -372,7 +372,7 @@
             .icon-details {color:@color-gray-c7}
         }
         .ui-mine-skill-down{background: @background-mask-normal-2;}
-        
+
     }
     .mine-funtion-rows{
         width: 100%;box-sizing: border-box;background-color: #fff;
@@ -395,7 +395,7 @@
 	    .mine-bottom-image{width: 100%;height: 100%;}
 	    .mine-officialaccount-btn{border-radius: @border-radius-12;background-color: @background-blue;display: flex;align-items: center;justify-content: center;font-family: PingFangSC-Medium;font-size: 30rpx;color: @color-white;margin-left: 266rpx;position: absolute;width: 128rpx;height: 72rpx;right: 24rpx;top: 94rpx;}
     }
-  
+
 	.__body {height: 100%;background-color: @background-gray-F4;position: relative;overflow-x: hidden;}
 	::-webkit-scrollbar{width: 0 !important;height: 0 !important;background: transparent !important;}
 
