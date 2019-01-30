@@ -356,6 +356,30 @@
                                 @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'人已投票' : '投票'}}</button>
                     </view>
                 </view>
+
+                <view class="model-message-list-box">
+                    <view class="ui-release cross-center">
+                        <image class="flex-box-0" mode="aspectFill" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132" />
+                        <view class="ui-input">
+                            <input placeholder="你有什么想法？" maxlength="-1" />
+                        </view>
+                    </view>
+                    <view class="ui-message-list">
+                        <view class="ui-item">
+                            <view class="ui-user-info flex">
+                                <image class="flex-box-0" mode="aspectFill" src="https://wx.qlogo.cn/mmopen/vi_32/I5JsiadYicsWN4C1UPaqHh2PDyUDs2ArVNrbOA39PUHKwrKKAK5aofsODBQmUz2GCIXicsxS4f12HayDMsF4st2dw/132"/>
+                                <view class="cell-info dir-top main-justify">
+                                    <text>222</text>
+                                    <text>se</text>
+                                </view>
+                            </view>
+                            <view class="ui-content-box flex">
+                                项目中开始划分更短的制品交互周期，而不是以前那样等待产品开发完毕后发布各种测试版本。
+                            </view>
+                        </view>
+                    </view>
+                </view>
+
             </view>
         </repeat>
         <view class="cell-more">没有更多内容了</view>

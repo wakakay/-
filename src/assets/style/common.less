@@ -596,7 +596,32 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
 }
 
 
-
+.model-message-list-box{
+    box-sizing:border-box;padding-left:32rpx;background-color:@background-color-F3;
+    view{box-sizing:border-box;}
+    .ui-release{
+        height:104rpx;
+        image{width:64rpx;height:64rpx;margin-right:16rpx;border-radius:50%;overflow:hidden;}
+        .ui-input{
+            width:606rpx;heihgt:72rpx;padding:0 34rpx;background-color:@background-color-E5;border-radius:@border-radius-32;
+            input{font-size:28rpx;color:@color-gray;}
+        }
+    }
+    .ui-message-list{
+        .ui-item{padding-bottom:14rpx;border-top:2rpx solid @border-gray;}
+        .ui-user-info{
+            heigt:104rpx;padding:24rpx 0 16rpx;
+            image{width:64rpx;height:64rpx;margin-right:16rpx;border-radius:50%;overflow:hidden;}
+            .cell-info{
+                text:nth-of-type(1){font-size:28rpx;color:@color-gray;}
+                text:nth-of-type(2){font-size:22rpx;color:@color-gray-c7;}
+            }
+        }
+        .ui-content-box{
+            padding:16rpx 16rpx 16rpx 80rpx;font-size:32rpx;color:@color-black;line-height:52rpx;
+        }
+    }
+}
 
 
 

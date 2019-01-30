@@ -36,7 +36,7 @@ export const getUserInfo = () => {
                 wepy.$instance.globalData.getShareHuilder(entr, sourceName) // ga统计
                 console.log('scope.code', scope.code)
                 return wepy.request({
-                    url: `${config.baseUrl}user/login?code=${scope.code}${urlEnd}`,
+                    url: `${config.baseUrl}user/login?code=${scope.code}${urlEnd}&sceneName=${entr}`,
                     method: 'POST',
                 })
             })
