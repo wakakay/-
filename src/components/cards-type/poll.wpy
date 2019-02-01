@@ -142,18 +142,26 @@
                 let item = _.find(optionList, {id: data.selectedId})
                 self.resultId = item.id
                 // 统计全部投票人数
-                let ballotTotal = _.reduce(optionList, (memo, data) => {
-                    data.add = data.selected ? 1 : 0
-                    data.ballot = data.ballot >= 0 ? data.ballot : data.count
-                    return memo + data.ballot + data.add
-                }, 0)
-                cardItem.ballotTotal = ballotTotal || 0
+                if (_.isUndefined(data.ballotTotal)) {
+                    let ballotTotal = _.reduce(optionList, (memo, data) => {
+                        data.add = data.selected ? 1 : 0
+                        data.ballot = data.ballot >= 0 ? data.ballot : data.count
+                        return memo + data.ballot + data.add
+                    }, 0)
+                    cardItem.ballotTotal = ballotTotal || 0
 
-                // 计算每个投票的比例
-                _.each(optionList, (data) => {
-                    let add = data.id === item.id ? 1 : 0
-                    self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
-                })
+                    // 计算每个投票的比例
+                    _.each(optionList, (data) => {
+                        let add = data.id === item.id ? 1 : 0
+                        self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
+                    })
+                } else {
+                    // 计算每个投票的比例
+                    _.each(optionList, (data) => {
+                        let add = data.selected ? 1 : 0
+                        self.ballotInfo[data.id] = Math.floor((data.ballot + add) / data.ballotTotal * 1000) / 10
+                    })
+                }
 
                 cardItem.isDone = true
                 cardItem.isAnswerOver = true

@@ -161,13 +161,13 @@
             }
         }
         .ui-type{
-            height:88rpx;line-height:88rpx;padding:0 32rpx;box-sizing:border-box;
+            line-height:52rpx;padding:18rpx 32rpx;box-sizing:border-box;
             text{
                 &:nth-of-type(1){font-size:48rpx;font-weight:700;color:@color-gray-E5;margin-right:14rpx;position:relative;top:6rpx;}
                 &:nth-of-type(2){font-size:34rpx;font-weight:700;color:@color-black;}
             }
             .cell-status{
-                background:#ffeae8;color:@color-red;font-size:24rpx;width:96rpx;height:40rpx;text-align:center;line-height:40rpx;
+                margin-left:20rpx;background:#ffeae8;color:@color-red;font-size:24rpx;width:96rpx;height:40rpx;text-align:center;
                 &.cell-completed{background:#f4fdf7;color:#07AD23;}
             }
         }
@@ -325,11 +325,11 @@
                 </view>
                 <view class="ui-content">
                     <view class="ui-type main-justify cross-center">
-                        <view>
+                        <view class="flex">
                             <text class="icon-{{data.icon}}"></text>
                             <text>{{data.moduleTitle}}</text>
                         </view>
-                        <view class="cell-status"
+                        <view class="cell-status flex-box-0 main-justify cross-center"
                               :class="{'cell-completed': data.isDone}"
                               wx:if="{{(data.contentType=='poll' || data.contentType=='practice') &&  role == 'member'}}">
                             {{data.isDone ? '已完成' : '未参与'}}</view>
@@ -366,7 +366,7 @@
                                 open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
                                 bindgetuserinfo="getAuthorize"
                                 disabled="{{data.isDone || role != 'member'}}"
-                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.ballotTotal+'人已投票' : '投票'}}</button>
+                                @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.pollCount+'人已投票' : '投票'}}</button>
                     </view>
                 </view>
 
@@ -617,13 +617,9 @@ export default class teamDetail extends wepy.page {
                         data.isDone = true
                     }
                     if (data.isDone) {
-                        let ballotTotal = _.reduce(data.select, (memo, item) => {
-                            return memo + item.ballot
-                        }, 0) // 统计全部投票人数
                         _.each(data.select, (item) => {
-                            item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                            item.prop = Math.floor(item.ballot / data.pollCount * 1000) / 10
                         })
-                        data.ballotTotal = ballotTotal || 0
                     }
                     break
                 default:

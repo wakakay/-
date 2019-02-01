@@ -775,7 +775,8 @@
                 let postData = {
                     token: self.systemInfo.token,
                     courseID: self.courseID,
-                    senceID: self.senceID
+                    senceID: self.senceID,
+                    width: 750
                 }
 
                 fetch.getCourseQrCode(postData).then(({imageUrl: shareImage}) => {

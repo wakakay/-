@@ -41,7 +41,7 @@
 </style>
 
 <template>
-    <view class="ui-add-poll-box router-translate {{isShow ? 'router-enter' : 'router-leave'}}">
+    <scroll-view scroll-y class="ui-add-poll-box router-translate {{isShow ? 'router-enter' : 'router-leave'}}">
         <jn-header hiddenButton title="添加投票">
             <button slot="cursor-button" class="cell-back ui-header-button" @tap.stop="getClose">
                 <text class="icon-back-close"></text>
@@ -65,10 +65,10 @@
             <repeat for="{{seleteInfo.list}}" key="index" index="index" item="item">
                 <view class="ui-item flex cross-center">
                     <text class="icon-delete-select" data-index="{{index}}" @tap.stop="getDelete"></text>
-                    <input placeholder="选项（限14个字）"
+                    <input placeholder="选项（限28个字）"
                            data-type="{{index}}"
                            value="{{item.option}}"
-                           maxlength="14"
+                           maxlength="28"
                            bindblur="getBlur" />
                 </view>
             </repeat>
@@ -84,7 +84,7 @@
                         @tap.stop="getConfirm">确认</button>
             </view>
         </view>
-    </view>
+    </scroll-view>
 </template>
 
 <script>
