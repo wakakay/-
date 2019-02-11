@@ -136,7 +136,7 @@
             'broadcast-poll': (data) => {
                 let self = this
                 let index = self.cardIndex
-                let cardItem = self.cardsList[index] || data
+                let cardItem = data || self.cardsList[index]
                 let optionList = data.select || cardItem.select || cardItem.optionList
 
                 let item = _.find(optionList, {id: data.selectedId})
