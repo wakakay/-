@@ -29,6 +29,9 @@
     export default class extends wepy.app {
         config = {
             pages: [
+                /* 今日模板 */
+                'pages/today-module/index',
+                'pages/today-module/all-course',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -43,9 +46,7 @@
                 'pages/course-module/course-pay', // 微课支付
                 'pages/course-module/course-series', // 课程系列页
                 'pages/course-module/course-review', // 微课回顾回顾页
-                /* 今日模板 */
-                'pages/today-module/index',
-                'pages/today-module/all-course',
+                
 
                 /* 发现模板 */
                 'pages/FindList/index',
