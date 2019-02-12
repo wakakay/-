@@ -58,25 +58,6 @@
 
         onLoad() {
             let self = this
-
-            //调用微信登录接口
-            wx.login({
-                success(loginCode) {
-                    console.log(11, loginCode)
-
-                    fetch.loginInfo({code: loginCode.code}).then((respone) => {
-                        console.log(76, respone)
-                        wepy.getUserInfo({
-                            success(da) {
-                                console.log(89, da)
-                            }
-                        })
-                    }).catch(error => {
-
-                    })
-                }
-            })
-
             let postData = {
                 token: 'defaultToken',
                 imageType: 'useronboarding'
