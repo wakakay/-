@@ -48,7 +48,7 @@
                     .ui-bg-content{
                         position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
                         .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
-                        .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;line-height:80rpx;}
+                        .cell-dec{padding:20rpx 0;color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;line-height:40rpx;}
                     }
                     .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
                     .ui-progress{
