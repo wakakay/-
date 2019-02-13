@@ -82,13 +82,21 @@
                 }
             }
         }
+        .ui-new-role{
+            width: 670rpx;height: 640rpx;border-radius: @border-radius-32;margin:14rpx auto 0;color: @color-white;padding:48rpx 40rpx 0;box-sizing: border-box;background-size:100% 100%;
+            .cell-dec{font-size: 28rpx;margin-bottom:24rpx;}
+            .cell-title{font-size: 56rpx;height: 160rpx;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;}
+            .cell-num{font-size: 24rpx;text-align:center;margin:156rpx 0 16rpx;}
+            .cell-btn{width: 526rpx;height: 100rpx;border-radius: 20rpx;background: @background-white;text-align: center;font-size: 34rpx;color:@color-blue;font-weight: bold;line-height: 100rpx;margin: auto}
+            .cell-price{font-size: 28rpx;text-decoration: line-through;text-align: center;margin-top:16rpx;}
+        }
         .ui-studying-empty{
             width: 670rpx;height: 670rpx;background: #F5F5F7;border-radius: 16px;margin:auto;display: flex;flex-direction: column;align-items: center;padding-top:144rpx;box-sizing:border-box;
             .cell-icon{
                 margin-bottom: 36rpx;
                 text{font-size: 110rpx;color: @background-gray-cc;}
             }
-            .cell-content{font-size: 34rpx;color: @color-gray}
+            .cell-content{font-size: 34rpx;color: @color-gray;margin:0 32rpx;text-align: center}
             .cell-btn{width: 478rpx;height: 100rpx;border-radius: @border-radius-16;text-align: center;line-height: 100rpx;color: @color-white;font-weight: bold;background: @background-blue;margin-top: 106rpx;}
             .cell-hover{background: @background-blue-hover;}
         }
@@ -185,14 +193,14 @@
     </button>
     <view class="ui-studying">
         <view class="ui-top">
-            <view class="cell-title">在学课程</view>
+            <view class="cell-title">{{1 == roleStatus ? '在学课程' : '即能第一课'}}</view>
             <view class="cell-all" @tap.stop="getAllStudyingCourse">
-                查看全部({{courseCount}})
+                换一个
                 <text class="icon-right-arrow"></text>
             </view>
         </view>
         <swiper class="ui-swiper-list"
-                wx:if="{{recommendCourseList.length}}"
+                wx:if="{{recommendCourseList.length && 1 == roleStatus}}"
                 interval="7000"
                 duration="300"
                 previous-margin="38rpx"
@@ -241,11 +249,20 @@
                 </swiper-item>
             </repeat>
         </swiper>
-        <view wx:else class="ui-studying-empty">
+        <view  class="ui-new-role" @tap.stop="getCourseDetail" data-item="{{newRoleRecommend}}"
+            wx:if="{{ 0 == roleStatus && newRoleRecommend.courseName}}"
+            style="background-image: url('{{newRoleRecommend.bgImg}}');">
+            <view class="cell-dec text-overflow">{{newRoleRecommend.courseDec}}</view>
+            <view class="cell-title">{{newRoleRecommend.courseName}}</view>
+            <view class="cell-num">已有{{newRoleRecommend.userCount}}人体验学习</view>
+            <view class="cell-btn">限时免费领</view>
+            <view class="cell-price">原价¥258</view>
+        </view>
+        <view wx:if="{{!recommendCourseList.length && 1 == roleStatus}}" class="ui-studying-empty">
             <view class="cell-icon">
                 <text class="icon-coursr-empty"></text>
             </view>
-            <view class="cell-content">你还没有在学课程哦，马上去学习吧</view>
+            <view class="cell-content">你已经学完所有在学课程哦，马上去发现更多好课吧~</view>
             <view class="cell-btn" hover-class="cell-hover" @tap.stop="getCoursePage">
                 去看看
             </view>
@@ -347,7 +364,8 @@
             return state.user.token.startsWith('userID')
         },
         token(state) {
-            return state.user.token
+            // return state.user.token
+            return 'userID3900b2dc783445b7ad3e8a28a978db33-1550047610678-f733f1a89e239c724b1f16d9ac13f2e9'
         },
         role(state) {
             return state.user.role
@@ -387,7 +405,9 @@
             senceID: null,
             sencePage: null,
             todayDate:'',
-            headerHeigth:''
+            headerHeigth:'',
+            roleStatus:0,
+            newRoleRecommend:{}
         }
 
         onLoad() {
@@ -404,7 +424,7 @@
 
         onShow() {
             let self = this
-            self.__fetchCourses({token: self.token})
+            self.__fetchCourses()
             if (self.isTokenSet) {
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
             }
@@ -428,10 +448,10 @@
          * 列表数据
          * @private
          */
-        __fetchCourses(params) {
+        __fetchCourses() {
             let self = this
             let postData = {
-                token: params && params.token || self.token
+                token: self.token
             }
 
             fetch.todaySkills(postData).then((respone) => {
@@ -447,6 +467,9 @@
                     self.courseCount = respone.courseCount
                     self.todayText = respone.todayText
                     self.todayTitle = respone.todayTitle
+                    self.roleStatus = respone.roleStatus
+                    self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
+                    
                     self.$apply()
                 })
             }).catch(error => {
