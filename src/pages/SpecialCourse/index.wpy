@@ -135,7 +135,6 @@
             </view>
         </view>
     </view>
-    <view></view>
 </template>
 
 <script>
@@ -405,6 +404,7 @@
                     optionList:item.selectedItem.id
                 }
 
+                item.isDone = true
                 fetch.sendUserPoll(postData).then((respone) => {
                     item.isDone = true
                     self.$broadcast('broadcast-poll', item)

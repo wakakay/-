@@ -15,6 +15,10 @@ import {fetch} from './fetch-utils'
  */
 export default {
     // 通用公共功能
+    loginInfo(params) {
+        return fetch({method: 'post', url: 'user/login', params: params, isVisitor: true})
+    },
+    // 通用公共功能
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})
     },
