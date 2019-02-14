@@ -51,15 +51,16 @@ const updateUserLogin = ((token) => {
 
 export const fetch = ((actionObj) => {
     let rounter = getCurrentPages()
-    let page = rounter[rounter.length - 1]
+    let size = rounter.length ? rounter.length : 1
+    let page = rounter[size - 1]
 
     if (('defaultToken' === actionObj.params.token || !actionObj.params.token)
-        && !(ROUTERS[page.route] && ROUTERS[page.route].isVisitor)) {
+        && page && !(ROUTERS[page.route] && ROUTERS[page.route].isVisitor)) {
         throw new UnAuthenticationError()
     }
 
     if ('defaultToken' !== actionObj.params.token
-        && wepy.$instance.globalData.oldRounter !== page.route) {
+        && page && wepy.$instance.globalData.oldRounter !== page.route) {
         wepy.$instance.globalData.oldRounter = page.route
         updateUserLogin(actionObj.params.token )
     }

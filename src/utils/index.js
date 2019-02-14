@@ -387,8 +387,11 @@ const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' })
         user.firstAccess = 0
     }) // 至此initialState的firstAccess值确定
     // 首先校验firstAccess和entrancePath 两个先决条件
-    .then(() => Promise.all(['token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'unionID', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
-    .then(([token, name, equipmentModel, code, phone, avatar, role, unionID, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
+    .then(() => Promise.all(['firstLogin', 'hasGift', 'hasUserProfile', 'token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'unionID', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
+    .then(([firstLogin, hasGift, hasUserProfile, token, name, equipmentModel, code, phone, avatar, role, unionID, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
+        user.firstLogin = firstLogin
+        user.hasGift = hasGift
+        user.hasUserProfile = hasUserProfile
         user.token = token
         user.name = name
         user.code = code
@@ -582,10 +585,6 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
 
             return initializeFunc() // 剩余条件即login:already login:online
         })
-}
-
-export const preloadState = () => {
-    return synchronize(initialState)
 }
 
 /**

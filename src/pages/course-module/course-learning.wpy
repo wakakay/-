@@ -291,11 +291,7 @@
                 source: params.source || 'continueList'
             }
 
-            initializationDeligate({
-                initializeFunc: self.initialize.bind(self, postData)
-            }).catch(error => {
-                'login:no' === error && new UnAuthenticationError()
-            })
+            initializationDeligate({initializeFunc: self.initialize.bind(self, postData)})
         }
 
         onShow() {

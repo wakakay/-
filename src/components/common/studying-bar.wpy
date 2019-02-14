@@ -465,7 +465,7 @@
             // 监听页面加载结束，启动刷新数据
             'studying-bar': () => {
                 let self = this
-                initializationDeligate({initializeFunc: self.__learningSenceList.bind(self)})
+                self.__learningSenceList()
             }
         }
     }

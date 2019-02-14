@@ -22,6 +22,7 @@
     import envConfig from './api/config'
     import {ROUTERS, SCENE} from './utils/dictionary'
     import ga from 'wxapp-ga/ga'
+    import {getLoginToken} from './redux/models/user'
 
     const GoogleAnalytics = ga.GoogleAnalytics
     const HitBuilders = ga.HitBuilders
@@ -29,9 +30,7 @@
     export default class extends wepy.app {
         config = {
             pages: [
-                /* 今日模板 */
-                'pages/today-module/index',
-                'pages/today-module/all-course',
+                'pages/registered-module/weclome',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情
@@ -46,8 +45,9 @@
                 'pages/course-module/course-pay', // 微课支付
                 'pages/course-module/course-series', // 课程系列页
                 'pages/course-module/course-review', // 微课回顾回顾页
-                
-
+                /* 今日模板 */
+                'pages/today-module/index',
+                'pages/today-module/all-course',
                 /* 发现模板 */
                 'pages/FindList/index',
                 'pages/SpecialCourse/index',
@@ -107,7 +107,7 @@
                 /* 注册模块 */
                 'pages/registered-module/interest-select',
                 'pages/registered-module/recommend',
-                'pages/registered-module/weclome',
+
                 /* 其他模板 */
                 'pages/other-module/work-template',
                 'pages/other-module/job-skills',
@@ -294,6 +294,10 @@
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
+
+
+            store.dispatch(getLoginToken())
+
             console.log(option)
             wx.getStorage({
                 key: 'token',
@@ -302,6 +306,8 @@
                     self.reportSence(sceneID, path, query)
                 }
             })
+
+
 
             // 强制更新
             const updateManager = wx.getUpdateManager()

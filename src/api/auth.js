@@ -98,12 +98,12 @@ export const doAuthorization = () => {
         })
 }
 
-export const setOnlineStatu = ({ token }) => {
-    let mPlatform = getStore().getState().user.platform
+export const setOnlineStatu = () => {
+    let {user: {token, platform}}= getStore().getState()
     return wepy.request({
-            url: `${config.baseUrl}user/updateUserLogin?token=${token}&platform=${mPlatform}`,
-            method: 'POST'
-        }).then(({ data: { data, status, message } }) => data)
+        url: `${config.baseUrl}user/updateUserLogin?token=${token}&platform=${platform}`,
+        method: 'POST'
+    }).then(({ data: { data, status, message } }) => data)
 }
 
 export const sendPhoneNumber = ({ token, code, encryptedData, iv }) => {
@@ -113,7 +113,7 @@ export const sendPhoneNumber = ({ token, code, encryptedData, iv }) => {
             method: 'POST',
             header: {
                 'content-type': 'application/json'
-            }, // end header
+            },
             data: { token, code, encryptedData, iv }
         })
         .then(({ data: { data, status, message } }) => {

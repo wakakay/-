@@ -301,11 +301,15 @@
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
     import {auth as authApi, fetch} from '../../api'
-    import {shareDictionary, getStorageAsync} from '../../utils'
+    import {shareDictionary, getStorageAsync, initializationDeligate} from '../../utils'
+    import {renewUserGiftBox} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
     @connect({
+        isShowGift(state) {
+            return state.user.isShowGift
+        },
         avatar(state) {
             return state.user.avatar
         },
@@ -317,7 +321,6 @@
         },
         token(state) {
             return state.user.token
-
         },
         role(state) {
             return state.user.role
@@ -358,7 +361,6 @@
             hotCourseList: [],
             personalInfo: {}, // 头部用户信息
             recommendCourseList:[],
-            isShowGift: false,
             isShowEvaluate:false,
             isShowCourseSeries:false,
             courseSeriesModalList:[],
@@ -370,13 +372,9 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            self.isShowToast = data.isShowToast ? true : false;
-            let storageToken = wx.getStorageSync("token") || 'defaultToken'
-            if ('defaultToken' !== self.token || 'defaultToken' !== storageToken) {
-                self.initialize(storageToken)
-            } else {
-                wx.redirectTo({url: '/pages/registered-module/weclome'})
-            }
+            self.isShowToast = data.isShowToast ? true : false
+
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {
@@ -395,8 +393,8 @@
             let self = this
             // 通知组件
             self.$broadcast('studying-bar')
-            self.__isGetGift(token)
             self.__fetchCourses(token)
+            self.__isGetGift()
         }
 
         __fetchCourses(token) {
@@ -432,9 +430,11 @@
          * 是否领取过新手礼包
          * @private
          */
-        __isGetGift(token) {
+        __isGetGift() {
             let self = this
-            let analyticsInfo = {
+
+
+            /*let analyticsInfo = {
                 username: self.userName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 role: self.role
@@ -463,7 +463,7 @@
                 self.$apply()
             }).catch(error => {
 
-            })
+            })*/
         }
 
         methods = {
@@ -555,14 +555,7 @@
              */
             getCloseGift() {
                 let self = this
-                self.isShowGift = false
-                wx.setStorage({
-                    key: "giftStatus",
-                    data: {
-                        isShow: false,
-                        isReceive: false
-                    }
-                })
+                store.dispatch(renewUserGiftBox(false))
             },
             /**
              * 去领取新人礼包
