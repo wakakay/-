@@ -127,10 +127,16 @@ export const getLoginToken = () => (dispatch, getState) => {
 }
 
 export const getLoginInfo = () => (dispatch, getState) => {
-    wepy.getUserInfo({
-        success(respone) {
-            console.log('getLoginInfo', respone)
-        }
+    getStorageAsync({key: 'account'}).then((respone) => {
+        debugger
+        return respone
+    }).then(respone => {
+        debugger
+        wepy.getUserInfo({
+            success(userInfo) {
+                console.log('getLoginInfo', userInfo)
+            }
+        })
     })
 }
 
