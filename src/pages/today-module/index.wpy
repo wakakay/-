@@ -141,7 +141,7 @@
                         }
                         .ui-btn{
                             display: flex;align-items:center;height: 100%;flex-direction: column;justify-content:center;
-                            .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 30rpx;font-weight: 700;}
+                            .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;text-align: center;line-height: 60rpx;font-size: 28rpx;font-weight: 700;}
                             .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
                         }
                     }
@@ -291,7 +291,7 @@
 
                         </view>
                         <view class="ui-btn">
-                            <button class="cell-btn" form-type="submit">{{item.buttonStatusMsg}}</button>
+                            <button class="cell-btn" form-type="submit">马上强化</button>
                             <view class="cell-btn-tip">{{item.giftStatus}}</view>
                         </view>
                     </view>

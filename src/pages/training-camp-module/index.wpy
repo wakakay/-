@@ -155,11 +155,6 @@
 					<!-- 我参与的 当列表为空时-->
 					<view class="ui-empty-list"
 						  wx:if="{{ !teamDoingList.length && !teamBeforList.length}}">
-						<view class="cell-title">暂无进行中的团队学习哦</view>
-						<view class="cell-dec">
-							<view>请加入即能核心用户群，</view>
-							<view>有新的团队学习我们将第一时间通知你~</view>
-						</view>
 						<image class="cell-wecan" mode="widthFix" src="{{wetCanImg}}"/>
 						<view class="cell-btn" @tap.stop="getWetCan">复制微信号</view>
 					</view>
@@ -460,9 +455,7 @@
 			}
 			.ui-empty-list{
 				text-align: center;
-				.cell-title{margin-top: 152rpx;font-size: 48rpx;font-weight: bold}
-				.cell-dec{font-size: 34rpx;color: @color-gray;margin: 90rpx 0 32rpx;}
-				.cell-wecan{width: 376rpx;}
+				.cell-wecan{width: 750rpx;}
 				.cell-btn{width: 442rpx;height:96rpx;background: @background-gray-F4;border-radius: 20rpx;line-height: 96rpx;color:@color-blue;font-weight: bold;margin: 16rpx auto 96rpx;}
 			}
 		}
