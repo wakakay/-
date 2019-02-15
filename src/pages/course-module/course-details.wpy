@@ -537,11 +537,9 @@
             let postData = {
                 token: params && params.token || self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source
+                source: self.paramsInfo.wxPushType || self.paramsInfo.source
             }
-            if (self.paramsInfo.wxPushType) {
-                postData.wxPushType = self.paramsInfo.wxPushType
-            }
+
             if (self.paramsInfo.giftID) {
                 postData.giftID = self.paramsInfo.giftID
                 self.isGifter = true

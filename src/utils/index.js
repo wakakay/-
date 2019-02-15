@@ -385,77 +385,11 @@ const synchronizeUser = store => user => getStorageAsync({ key: 'firstAccess' })
         user.firstAccess = ++firstAccess
     }).catch(error => {
         user.firstAccess = 0
-    }) // 至此initialState的firstAccess值确定
-    // 首先校验firstAccess和entrancePath 两个先决条件
-    .then(() => Promise.all(['firstLogin', 'hasGift', 'hasUserProfile', 'token', 'name', 'equipmentModel', 'code', 'phone', 'avatar', 'role', 'unionID', 'platform', 'windowWidth', 'windowHeight', 'screenHeight', 'statusHeight'].map(item => getStorageAsync({ key: item }))))
-    .then(([firstLogin, hasGift, hasUserProfile, token, name, equipmentModel, code, phone, avatar, role, unionID, platform, pixelRatio, windowWidth, windowHeight, screenHeight, statusHeight]) => {
-        user.firstLogin = firstLogin
-        user.hasGift = hasGift
-        user.hasUserProfile = hasUserProfile
-        user.token = token
-        user.name = name
-        user.code = code
-        user.phone = phone
-        user.avatar = avatar
-        user.role = role
-        user.unionID = unionID
-        user.pixelRatio = pixelRatio
-        user.platform = platform
-        user.windowWidth = windowWidth
-        user.windowHeight = windowHeight
-        user.equipmentModel = equipmentModel
-        user.screenHeight = screenHeight
-        user.statusHeight = statusHeight
-        return new Promise((resolve, reject) => {
-            wx.getSystemInfo({
-                success: ({ errMsg, pixelRatio: syncPixelRatio, windowWidth: syncWindowWidth, windowHeight: syncWindowHeight, model: syncEquipmentModel, screenHeight: syncScreenHeight, platform, statusBarHeight: syncStatusHeight }) => {
-                    user.pixelRatio = 'getSystemInfo:ok' === errMsg ? syncPixelRatio : pixelRatio
-                    user.windowWidth = 'getSystemInfo:ok' === errMsg ? syncWindowWidth : windowWidth
-                    user.windowHeight = 'getSystemInfo:ok' === errMsg ? syncWindowHeight : windowHeight
-                    user.equipmentModel = 'getSystemInfo:ok' === errMsg ? syncEquipmentModel : equipmentModel
-                    user.screenHeight = 'getSystemInfo:ok' === errMsg ? syncScreenHeight : screenHeight
-                    user.statusHeight = 'getSystemInfo:ok' === errMsg ? syncStatusHeight : statusHeight;
-                    'getSystemInfo:ok' === errMsg && (user.platform = platform)
-                    resolve()
-                },
-                fail: error => {
-                    resolve()
-                }
-            })
-        })
-    }).catch(error => {
-        console.log('storage: user获取失败', error)
-    }).then(() => {
+    }).then((respone) => {
         store.dispatch(refreshUserInformations(user))
     })
 
-const synchronize = initialState => Promise.all([
-    synchronizeActivity(getStore())(initialState.activity),
-    synchronizeLearning(getStore())(initialState.learning),
-    synchronizeUser(getStore())(initialState.user)]).then(() => {
-    // console.log('---------------------------== synchronize all sotrage:ok ==------------------------------')
-}).catch(error => {
-    throw error
-})
-
 const initialState = {
-    user: {
-        firstAccess: 0,
-        name: 'GUEST',
-        avatar: '../../assets/img/icon-info.svg',
-        equipmentModel: '未知',
-        platform: 'defaultPlatform',
-        phone: 'deadNumber',
-        code: 'xxx',
-        token: 'defaultToken',
-        role: '普通用户',
-        unionID: null,
-        pixelRatio: 2,
-        windowHeight: 0,
-        windowWidth: 0,
-        screenHeight: 0,
-        statusHeight: 0,
-    },
     sences: {
         currentID: '',
         currentName: '',
@@ -565,26 +499,38 @@ const initialState = {
     }
 }
 
+const synchronize = (initData) => Promise.all([
+    synchronizeActivity(getStore())(initialState.activity),
+    synchronizeLearning(getStore())(initialState.learning),
+    synchronizeUser(getStore())(initData)]).then(() => {
+}).catch(error => {
+    throw error
+})
+
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
     if (!initializeFunc instanceof Promise) {
         throw 'initializeFunc must be Promise'
     }
     const store = getStore()
-    return synchronize(initialState).then(() => {
+
+    getStorageAsync({key: 'account'}).then((data) => {
+        return data
+    }).then(respone => {
+        return synchronize(respone).then(() => {
             if (callWhatever) return initializeFunc() // 如果callWhatever，那么不校验登录状态，直接initialize初始化页面
             return store.dispatch(checkLoginStatus())
         }).then(status => {
-            let {user: {token}} = store.getState()
             if ('login:online' === status) { // 后台刷新登录态
-                authApi.setOnlineStatu({token}).then(response => {
+                authApi.setOnlineStatu().then(response => {
                     if (!response) return
                     let {role} = response
                     store.dispatch(renewUserRole(role))
                 })
-            }
 
-            return initializeFunc() // 剩余条件即login:already login:online
+                return initializeFunc() // 剩余条件即login:already login:online
+            }
         })
+    })
 }
 
 /**

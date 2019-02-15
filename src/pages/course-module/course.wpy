@@ -5,11 +5,8 @@
     .ui-clear{width:100%;height:120rpx;}
     /* 头部 */
     .ui-course-header{
-        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
-        .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
-        .ui-avatar{
-            image{width: 72rpx;height: 72rpx;border-radius: 50%;}
-        }
+        height:72rpx;padding:0 32rpx;box-sizing:border-box;
+        .cell-title{font-size:68rpx;font-weight:700;}
     }
     /* 课程系列入口 */
     .ui-course-series{
@@ -113,16 +110,14 @@
         enable-back-to-top
         scroll-y="{{isScroll}}"
         bindscroll="getScroll">
-        <!-- <image class="activity__banner" wx:if="{{ activityBundle.imageTop}}" src="{{ activityBundle.imageTop }}"
-               mode="scaleToFill"></image> -->
         <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
 
         <form bindsubmit="handleSavePushCode" report-submit>
-            <view class="ui-course-header">
-                <view class="cell-title">课程</view>
-                <navigator class="ui-avatar"
-                           hover-class="none"
-                           url="/pages/user-module/mine?type=1"><image src="{{avatar}}"></image></navigator>
+            <view class="ui-course-header main-justify cross-center">
+                <view class="cell-title">课程-{{isTokenSet}}</view>
+                <button class="module-avatar flex-box-0"
+                        open-type="getUserInfo"
+                        bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
             </view>
             <view wx:if="{{recommendCourseList.length}}" class="ui-recommend">
                 <swiper class="ui-swiper-list"
@@ -301,15 +296,12 @@
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
     import {auth as authApi, fetch} from '../../api'
-    import {shareDictionary, getStorageAsync, initializationDeligate} from '../../utils'
-    import {renewUserGiftBox} from '../../redux/models/user'
+    import {shareDictionary, getStorageAsync} from '../../utils'
+    import {renewUserGiftBox, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
     @connect({
-        isShowGift(state) {
-            return state.user.isShowGift
-        },
         avatar(state) {
             return state.user.avatar
         },
@@ -322,6 +314,9 @@
         token(state) {
             return state.user.token
         },
+        isShowGift(state) {
+            return state.user.isShowGift
+        },
         role(state) {
             return state.user.role
         },
@@ -329,7 +324,7 @@
             return state.entrance
         }
     })
-    export default class Home extends wepy.page {
+    export default class CourseHome extends wepy.page {
         mixins = [PushMixin]
 
         components = {
@@ -346,13 +341,8 @@
             courseType:['recommend','newcourse','hotcourse'],
             courseName:['为你推荐','最新上线','热门课程'],
             isScroll: true, // 是否能滚动
-            activityBundle: {
-                freeCourseID: 'defaultFreeCourseID',
-                imageBox: 'defaultImageBox',
-                imageTop: 'defaultImageTop',
-                isShowFreeCourse: 'defaultIsSHowFreeCourse'
-            },
             scrollTop: 0,
+            paramsInfo: {},
             swiperList: [],
             swiperCurrent: 0,
             courseSeriesList: [],
@@ -364,17 +354,22 @@
             isShowEvaluate:false,
             isShowCourseSeries:false,
             courseSeriesModalList:[],
-            isShowToast:false,
-
+            isShowToast:false
         }
 
-        onLoad(data) {
+        onLoad(params) {
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
+            self.paramsInfo = params
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            self.isShowToast = data.isShowToast ? true : false
+            self.isShowToast = self.paramsInfo.isShowToast ? true : false
 
-            initializationDeligate({initializeFunc: self.initialize.bind(self)})
+            getStorageAsync({key: 'account'}).then((respone) => {
+                store.dispatch(refreshUserInformations(respone))
+                self.initialize()
+            }).catch((error) => {
+                self.initialize()
+            })
         }
 
         onShow() {
@@ -389,81 +384,46 @@
             })
         }
 
-        initialize(token) {
+        initialize() {
             let self = this
             // 通知组件
             self.$broadcast('studying-bar')
-            self.__fetchCourses(token)
-            self.__isGetGift()
+            self.__fetchCourses()
         }
 
-        __fetchCourses(token) {
+        __fetchCourses() {
             let self = this
-            fetch.coursePageList({token: token || self.token})
-                .then((respone) => {
-                    self.isLoaded = true
-
-                    let number = 0
-                    _.each(respone.limitedTimeGiftCourseList, (item, index) => {
-                        if(0 !== (index+1)% 4) {
-                            if (!self.limitedTimeGiftCourseList[number]) {
-                                self.limitedTimeGiftCourseList[number] = []
-                            }
-                            self.limitedTimeGiftCourseList[number].push(item)
-                        } else {
-                            number++
-                        }
-                    })
-
-                    self.hotCourseList = respone.hotCourseList
-                    self.courseSeriesList = respone.courseSeriesList
-                    self.newCourseList = respone.newCourseList
-                    self.recommendCourseList = respone.recommendCourseList
-                    self.$apply()
-                }) .catch(error => {
-                    console.log('home fetch courses error', error)
-                    throw error
-                })
-        }
-
-        /**
-         * 是否领取过新手礼包
-         * @private
-         */
-        __isGetGift() {
-            let self = this
-
-
-            /*let analyticsInfo = {
-                username: self.userName,
-                channel: self.entrance.mappers[self.entrance.scenceID],
-                role: self.role
-            }
             let postData = {
-                token: token || self.token
+                token: self.token,
             }
 
-            fetch.userInfo(postData).then((respone) => {
-                let giftStatus = wx.getStorageSync('giftStatus')
-                // 没有记录缓存
-                if (!giftStatus) {
-                    self.isShowGift = !respone.hasGift
-                    wx.setStorageSync("giftStatus", {
-                        isShow: self.isShowGift,
-                        isReceive: respone.hasGift
-                    })
-                } else {
-                    if (!respone.hasGift) {
-                        self.isShowGift = giftStatus.isShow ? true : false
-                    } else {
-                        self.isShowGift = false
-                    }
-                }
-                self.isShowGift && wx.reportAnalytics('exclusive_gift', analyticsInfo)
-                self.$apply()
-            }).catch(error => {
+            if (self.paramsInfo.wxPushType) {
+                postData.wxPushType = self.paramsInfo.wxPushType
+            }
 
-            })*/
+            fetch.coursePageList(postData).then((respone) => {
+                self.isLoaded = true
+                let number = 0
+                _.each(respone.limitedTimeGiftCourseList, (item, index) => {
+                    if(0 !== (index+1)% 4) {
+                        if (!self.limitedTimeGiftCourseList[number]) {
+                            self.limitedTimeGiftCourseList[number] = []
+                        }
+                        self.limitedTimeGiftCourseList[number].push(item)
+                    } else {
+                        number++
+                    }
+                })
+
+                self.hotCourseList = respone.hotCourseList
+                self.courseSeriesList = respone.courseSeriesList
+                self.newCourseList = respone.newCourseList
+                self.recommendCourseList = respone.recommendCourseList
+                self.$apply()
+            }) .catch(error => {
+                console.log('home fetch courses error', error)
+                throw error
+            })
         }
 
         methods = {
@@ -533,12 +493,6 @@
                     courseSeriesID: dataset.item.courseSeriesID,
                     seriesName: dataset.item.seriesName
                 }
-
-                // 设置
-                wx.setStorage({
-                    key: "isAssortmentFirstLoad",
-                    data: 1
-                })
 
                 wepy.$instance.globalData.getHuilder('课程页/热门系列', 'click', `${dataset.item.seriesName}`)
                 wx.reportAnalytics('tap_discover_series', {
@@ -620,23 +574,18 @@
          * @returns {{title: string, path: string, success: success, fail: fail}}
          */
         onShareAppMessage(options) {
+            let self = this
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/course-module/course?source=TopAppShare',
                 success(res) {
                     console.log('转发成功')
-                    getStorageAsync({key: 'name'}).then(name => {
-                        wx.reportAnalytics('share_event', {
-                            nickname: name,
-                            type: shareDictionary.SHARE_WE_APP.type,
-                        })
+                    wx.reportAnalytics('share_event', {
+                        nickname: self.userName,
+                        type: shareDictionary.SHARE_WE_APP.type,
+                    })
 
-                    }).catch(error => error)
-
-                    getStorageAsync({key: 'token'}).then(token => {
-                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
-
-                    }).catch(error => error)
+                    fetch.reportSharing({token: self.token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
                 },
                 fail(res) {
                     console.log('转发失败')

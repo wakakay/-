@@ -43,7 +43,7 @@ const customErrActionBundle = {
 const initialState = {
     firstAccess: 0,
     name: 'GUEST',
-    avatar: '../../assets/img/icon-info.svg',
+    avatar: '../../assets/img/icon-avatar.svg',
     equipmentModel: '未知',
     pixelRatio: 2,
     platform: 'defaultPlatform',
@@ -202,7 +202,7 @@ export const checkLoginStatus = () => (dispatch, getState) => {
                     throw 'login:no'
                 })
         }).then(flag => {
-            if ('GUEST' === name || '../../assets/img/icon-info.svg' === avatar || 'xxx' === code || 'deadNumber' === phone || 'defaultToken' === token || 0 === windowWidth || 0 === windowHeight || 0 === screenHeight) {
+            if ('GUEST' === name || '../../assets/img/icon-avatar.svg' === avatar || 'xxx' === code || 'deadNumber' === phone || 'defaultToken' === token || 0 === windowWidth || 0 === windowHeight || 0 === screenHeight) {
                 // 当前这个页面是否是访客页面
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]

@@ -12,19 +12,20 @@ import wepy from 'wepy'
 import {store} from '../store'
 import { getStore, connect } from "wepy-redux"
 import {ROUTERS, SCENE} from '../../utils/dictionary'
-import {fetch} from '../../api'
+import {fetch, report as reportApi} from '../../api'
 import {CancelAuthenticationError, RejectAuthenticationError, CustomError, UnAuthenticationError} from '../../errors'
+import {getStorageAsync, setStorageAsync} from './helper'
 import _ from 'underscore'
 
 const initialState = {
     firstAccess: 0,
     name: 'GUEST',
-    avatar: '../../assets/img/icon-info.svg',
+    avatar: '../../assets/img/icon-avatar.svg',
     equipmentModel: '未知',
     pixelRatio: 2,
     platform: 'defaultPlatform',
     phone: 'deadNumber',
-    code: 'xxx',
+    code: null,
     token: 'defaultToken',
     role: '普通用户',
     unionID: null,
@@ -34,20 +35,21 @@ const initialState = {
 }
 
 const setStorage = (storeInfo) => {
-    _.mapObject(storeInfo, (value, key) => {
-        wepy.setStorage({
-            key: key,
-            data: value
-        })
+    getStorageAsync({key: 'account'}).then((respone) => {
+        // 是否有手动关闭专属礼包
+        storeInfo.isShowGift = _.isBoolean(storeInfo.hasGift) && !storeInfo.hasGift ? true : false
 
-        if ('hasGift' === key && _.isBoolean(value) && !value) {
-            storeInfo.isShowGift = true
-            wepy.setStorage({
-                key: 'isShowGift',
-                data: true
-            })
-        }
+        setStorageAsync({
+            key: 'account',
+            value: _.extend(respone, storeInfo)
+        })
+    }).catch(error => {
+        setStorageAsync({
+            key: 'account',
+            value: storeInfo
+        })
     })
+
     _.extend(initialState, storeInfo)
 }
 
@@ -60,13 +62,13 @@ export const getLoginToken = () => (dispatch, getState) => {
     let entr = getStore().getState().entrance.scenceID
     let path = getStore().getState().entrance.path
     let query = getStore().getState().entrance.query // 二维码进来的参数
-
+    let rounterPath = ROUTERS[path]
     if (query.source) { // 地址栏的source有带直接给
         sourceName = query.source
     } else if (SCENE[entr]) { // 是否又在场景值中
         sourceName = SCENE[entr]
-    } else if (ROUTERS[path]) { // 匹配路由中的sence
-        sourceName = ROUTERS[path].sence
+    } else if (rounterPath) { // 匹配路由中的sence
+        sourceName = rounterPath.sence
     }
 
     sourceName = sourceName || 'other'
@@ -100,7 +102,35 @@ export const getLoginToken = () => (dispatch, getState) => {
             delete storeInfo.nickName
             setStorage(storeInfo)
             return getState()['user']
+        }).catch(error => {
+            console.log('登录失败')
+        }).then(respone => {
+            let postData = {
+                token: storeInfo.token,
+                body: {
+                    json: {
+                        pageType: rounterPath.pageType,
+                        eventType: `${sourceName}/${entr}`,
+                        componentName: rounterPath.screenName,
+                        cpnPresentName: query.pageName || query.giftID,
+                        courseID: query.courseID || query.id || query.courseSeriesID || null,
+                        senceID: query.senceID || null
+                    }
+                }
+            }
+            console.log('落地页', postData)
+            reportApi.doUserBehaviourLog(postData)
+        }).then(() => {
+            return resolve(storeInfo)
         })
+    })
+}
+
+export const getLoginInfo = () => (dispatch, getState) => {
+    wepy.getUserInfo({
+        success(respone) {
+            console.log('getLoginInfo', respone)
+        }
     })
 }
 
@@ -122,12 +152,11 @@ export const renewWechatCode = dispatch => {
  * @returns {function(*, *)}
  */
 export const renewUserGiftBox = isShowGift => (dispatch, getState) => {
-    debugger
     wepy.setStorage({
         key: 'isShowGift',
         data: isShowGift
     })
-    return isShowGift && setStorage({isShowGift: isShowGift})
+    return setStorage({isShowGift: isShowGift})
 }
 
 /**
@@ -146,8 +175,7 @@ export const renewUserRole = role => (dispatch, getState) => {
 export const checkLoginStatus = () => (dispatch, getState) => {
     let { name, avatar, code, phone, token, windowWidth, windowHeight, screenHeight } = getState && getState().user
     // wx.clearStorage()
-    return wepy.checkSession()
-        .then(({ errMsg }) => {
+    return wepy.checkSession().then(({ errMsg }) => {
             if ('checkSession:ok' !== errMsg) {
                 throw errMsg // session失效
             } else {

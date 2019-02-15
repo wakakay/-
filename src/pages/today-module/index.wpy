@@ -332,7 +332,8 @@
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
-    import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
+    import {shareDictionary, getStorageAsync ,navigateToLesson} from '../../utils'
+    import {renewUserGiftBox, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
@@ -348,6 +349,9 @@
         },
         token(state) {
             return state.user.token
+        },
+        isShowGift(state) {
+            return state.user.isShowGift
         },
         role(state) {
             return state.user.role
@@ -371,7 +375,6 @@
             hasStudyingBar: false, // 是否有学习bar
             isScroll: true, // 是否能滚动
             scrollTop: 0,
-            isShowGift: false,
             isShowEvaluate: false,
             isShowCourseStudying:false,
             courseStudyModalList:[],
@@ -394,17 +397,17 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            let storageToken = wx.getStorageSync("token") || 'defaultToken'
-            if (self.isTokenSet || 'defaultToken' !== storageToken) {
-                self.initialize(storageToken)
-            } else {
-                wx.redirectTo({url: 'pages/today-module/index'})
-            }
+            getStorageAsync({key: 'account'}).then((respone) => {
+                store.dispatch(refreshUserInformations(respone))
+                self.initialize()
+            }).catch((error) => {
+                self.initialize()
+            })
         }
 
         onShow() {
             let self = this
-            self.__fetchCourses({token: self.token})
+            self.__fetchCourses()
             if (self.isTokenSet) {
                 wepy.$instance.globalData.getLoadHuilder() // ga统计
             }
@@ -418,11 +421,10 @@
             self.scrollTop = res.scrollTop
             self.$apply()
         }
-        initialize(token) {
+        initialize() {
             let self = this
             // 通知组件
             self.$broadcast('studying-bar')
-            !self.senceID && self.__isGetGift(token)
         }
         /**
          * 列表数据
@@ -431,7 +433,7 @@
         __fetchCourses(params) {
             let self = this
             let postData = {
-                token: params && params.token || self.token
+                token: self.token
             }
 
             fetch.todaySkills(postData).then((respone) => {
@@ -451,43 +453,6 @@
                 })
             }).catch(error => {
                 throw error
-            })
-        }
-        /**
-         * 是否领取过新手礼包
-         * @private
-         */
-        __isGetGift(token) {
-            let self = this
-            let analyticsInfo = {
-                username: self.userName,
-                channel: self.entrance.mappers[self.entrance.scenceID],
-                role: self.role
-            }
-            let postData = {
-                token: token || self.token
-            }
-
-            fetch.userInfo(postData).then((respone) => {
-                let giftStatus = wx.getStorageSync('giftStatus')
-                // 没有记录缓存
-                if (!giftStatus) {
-                    self.isShowGift = !respone.hasGift
-                    wx.setStorageSync("giftStatus", {
-                        isShow: self.isShowGift,
-                        isReceive: respone.hasGift
-                    })
-                } else {
-                    if (!respone.hasGift) {
-                        self.isShowGift = giftStatus.isShow ? true : false
-                    } else {
-                        self.isShowGift = false
-                    }
-                }
-                self.isShowGift && wx.reportAnalytics('exclusive_gift', analyticsInfo)
-                self.$apply()
-            }).catch(error => {
-
             })
         }
         methods = {
@@ -578,14 +543,7 @@
              */
             getCloseGift() {
                 let self = this
-                self.isShowGift = false
-                wx.setStorage({
-                    key: "giftStatus",
-                    data: {
-                        isShow: false,
-                        isReceive: false
-                    }
-                })
+                store.dispatch(renewUserGiftBox(false))
             },
             /**
              * 去领取新人礼包
@@ -628,6 +586,7 @@
          * @returns {{title: string, path: string, success: success, fail: fail}}
          */
         onShareAppMessage(options) {
+            let self = this
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/today-module/index',
@@ -640,10 +599,7 @@
 
                     }).catch(error => error)
 
-                    getStorageAsync({key: 'token'}).then(token => {
-                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
-
-                    }).catch(error => error)
+                    fetch.reportSharing({token: self.token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
                 },
                 fail(res) {
                     console.log('转发失败')

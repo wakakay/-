@@ -106,10 +106,6 @@ export default {
         return fetch({method: 'post', url: 'weixinPay/payByJinengBin', params: params})
     },
     /*--------------------微课-----------------------*/
-    // 微课信息
-    courseLearning(params) {
-        return fetch({method: 'post', url: 'MVP3/getSenceCardListByGoPracticeLinkByNeedPayToTry', params: params})
-    },
     /**
      * 提交反馈信息
      * @param courseID String 课程ID
