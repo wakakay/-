@@ -973,7 +973,7 @@
                 reportType = shareDictionary.RECEIVE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/赠一得一', 'click', `${self.courseDetail.name}`)
             } else {
-                title = self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.courseDetail.name}》`
+                title = self.courseDetail.shareCoverTitle ? self.courseDetail.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.courseDetail.name}》`  
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&shareID=${self.shareID}`
                 reportType = shareDictionary.SHARE_COURSE.type
                 wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
