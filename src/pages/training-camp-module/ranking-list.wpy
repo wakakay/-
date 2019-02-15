@@ -69,10 +69,10 @@
     const state = store.getState();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         },
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         role(state) {
             return state.user.role;

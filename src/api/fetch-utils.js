@@ -44,8 +44,12 @@ export const paramsData = ((data) => {
  * 更新登录的用户信息，暂时后台今日tab list缓存使用
  * @param params mPlatform
  */
-const updateUserLogin = ((token) => {
+const updateUserLogin = (() => {
+    let token = getStore().getState().user.token
     let platform = getStore().getState().user.platform
+    if ('defaultToken' === token) {
+        return
+    }
     fetch({method: 'post', url: 'user/updateUserLogin', params: {token: token, platform: platform}})
 })
 
@@ -62,7 +66,7 @@ export const fetch = ((actionObj) => {
     if ('defaultToken' !== actionObj.params.token
         && page && wepy.$instance.globalData.oldRounter !== page.route) {
         wepy.$instance.globalData.oldRounter = page.route
-        updateUserLogin(actionObj.params.token )
+        updateUserLogin()
     }
 
     let params = paramsData(actionObj.params)

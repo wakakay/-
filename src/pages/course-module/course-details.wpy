@@ -251,9 +251,7 @@
                     <button class="ui-item"
                             style="background-image:url({{item.coverImageURL}})"
                             hover-stay-time="100"
-                            form-type="{{isTokenSet ? 'submit': ''}}"
-                            open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                            bindgetuserinfo="getAuthorize"
+                            form-type="submit"
                             data-item="{{item}}"
                             @tap.stop="getCourseLearning">
                         <view class="cell-title">{{item.senceName}}</view>
@@ -347,8 +345,6 @@
         </view>
 
         <button class="ui-pay-button"
-                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                bindgetuserinfo="getAuthorize"
                 hover-stay-time="100"
                 @tap.stop="getAllPay"
                 wx:if="{{courseDetail.price>0}}">{{courseDetail.price}} 即能币购买 <text class="icon-details"></text></button>
@@ -362,10 +358,7 @@
                     <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
                 </view>
                 <view class="ui-button-list ui-column">
-                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                        bindgetuserinfo="getAuthorize"
-                        hover-stay-time="100"
-                        @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                    <button hover-stay-time="100" @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
                 </view>
             </view>
         </view>
@@ -375,7 +368,7 @@
                 <view class="ui-container is-fixed">
                     <view class="ui-text main-center"></view>
                     <view class="ui-button-list ui-column">
-                        <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
+                        <button open-type="share"
                                 data-role="1"
                                 bindgetuserinfo="getAuthorize"
                                 hover-stay-time="100">分享免费领</button>
@@ -389,9 +382,7 @@
                         <text>{{countDown ? '3天内学完所有微课，你将获得此课程。' : '领取后，你的好友将获得此课程。你只能通过此途径领取1个课程。'}}</text>
                     </view>
                     <view class="ui-button-list ui-column">
-                        <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                data-role="2"
-                                bindgetuserinfo="getAuthorize"
+                        <button data-role="2"
                                 hover-stay-time="100"
                                 @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
                     </view>

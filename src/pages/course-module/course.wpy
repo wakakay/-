@@ -114,11 +114,10 @@
 
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-course-header main-justify cross-center">
-                <view class="cell-title">课程-{{isTokenSet}}</view>
+                <view class="cell-title">课程-{{userName}}</view>
                 <button class="module-avatar flex-box-0"
-                        open-type="{{!userName ? 'getUserInfo' : ''}}"
-                        bindgetuserinfo="getAuthorize"
-                        @tap.stop="getMine"><image src="{{avatar}}"></image></button>
+                        open-type="getUserInfo"
+                        bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
             </view>
             <view wx:if="{{recommendCourseList.length}}" class="ui-recommend">
                 <swiper class="ui-swiper-list"
@@ -297,18 +296,17 @@
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
     import {auth as authApi, fetch} from '../../api'
-    import {shareDictionary, getStorageAsync} from '../../utils'
+    import {shareDictionary, getStorageAsync, initializationDeligate} from '../../utils'
     import {getLoginInfo, renewUserGiftBox, refreshUserInformations} from '../../redux/models/user'
-    import {CustomError} from '../../errors'
     import _ from 'underscore'
 
     const store = getStore()
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
@@ -366,12 +364,7 @@
             self.isShowEvaluate = pageNum !== 2 ? false : true
             self.isShowToast = self.paramsInfo.isShowToast ? true : false
 
-            getStorageAsync({key: 'account'}).then((respone) => {
-                store.dispatch(refreshUserInformations(respone))
-                self.initialize()
-            }).catch((error) => {
-                self.initialize()
-            })
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {
@@ -434,27 +427,19 @@
              */
             getAuthorize(event) {
                 let self = this
-                let {detail: {errMsg}} = event
+                let {detail: {errMsg, userInfo, rawData}} = event
 
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    getLoginInfo()
-                }).then((respone) => { // 授权成功
-
-                }).catch(error => { // 拒接授权
-
-                })
-            },
-            getMine() {
-                let self = this
-                if (!self.userName) {
+                if ('getUserInfo:ok' !== errMsg) {
                     return
                 }
-                wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
+
+                if (self.userName) {
+                    return wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
+                }
+
+                store.dispatch(getLoginInfo({errMsg, userInfo})).then(repsone => {
+                    wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
+                })
             },
             // 隐藏 toast
             getCloseToast(){

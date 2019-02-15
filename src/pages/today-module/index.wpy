@@ -196,8 +196,8 @@
         <view class="ui-top">
             <view class="cell-title">{{1 == roleStatus ? '在学课程' : '即能第一课'}}</view>
             <button form-type="submit"
-                    hover-stay-time="100" 
-                    class="cell-all" 
+                    hover-stay-time="100"
+                    class="cell-all"
                     @tap.stop="getAllStudyingCourse">
                 {{1 == roleStatus ? '查看全部' : '换一个'}} <text wx:if="{{1 == roleStatus}}">({{taskNum}})</text>
                 <text class="icon-right-arrow cell-icon"></text>
@@ -239,7 +239,7 @@
                             @tap.stop="handleStartLesson"
                             data-item="{{item.senceList[0]}}"
                             data-click-source="course"
-                            form-type="submit" 
+                            form-type="submit"
                             hover-stay-time="100">
                             <view class="ui-left">
                                 <view class="ui-lesson-image">
@@ -258,8 +258,8 @@
         </swiper>
         <button form-type="submit"
                 hover-stay-time="100"
-                class="ui-new-role" 
-                @tap.stop="getCourseDetail" 
+                class="ui-new-role"
+                @tap.stop="getCourseDetail"
                 data-item="{{newRoleRecommend}}"
                 wx:if="{{ 0 == roleStatus && newRoleRecommend.courseName}}"
                 style="background-image: url('{{newRoleRecommend.bgImg}}');">
@@ -362,17 +362,17 @@
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
-    import {shareDictionary, getStorageAsync ,navigateToLesson} from '../../utils'
+    import {initializationDeligate, shareDictionary, getStorageAsync, navigateToLesson} from '../../utils'
     import {renewUserGiftBox, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
@@ -430,12 +430,7 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            getStorageAsync({key: 'account'}).then((respone) => {
-                store.dispatch(refreshUserInformations(respone))
-                self.initialize()
-            }).catch((error) => {
-                self.initialize()
-            })
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {
@@ -485,8 +480,7 @@
                     self.roleStatus = respone.roleStatus;
                     self.taskNum = respone.taskNum;
                     self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
-                    console.log(self.newRoleRecommend,1)
-                    
+
                     self.$apply()
                 })
             }).catch(error => {
@@ -526,7 +520,7 @@
                 }else {
                     self.$navigate('/pages/registered-module/weclome');
                 }
-                
+
             },
             getAvatar() {
                 let self = this

@@ -54,7 +54,7 @@
             return state.user.token.startsWith('userID')
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         entrance(state) {
             return state.entrance

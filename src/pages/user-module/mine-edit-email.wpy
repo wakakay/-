@@ -9,7 +9,7 @@
         <view class="ui-edit-email">
             <view class="ui-form">
                 <view class="ui-email">
-                    <input  
+                    <input
                     type="text" bindinput="getEditEmail" placeholder="输入自己常用邮箱"  placeholder-class="cell-email" value="{{emailInput}}"/>
                 </view>
             </view>
@@ -18,7 +18,7 @@
             </view>
         </view>
     </scroll-view>
-    
+
 </template>
 
 <script>
@@ -30,10 +30,10 @@
     const store = getStore();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         }, // mapState 即getters
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         token(state) {
             //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
@@ -75,7 +75,7 @@
                 let self = this
                 if(!this.isEmail){
                     return wepy.showToast({
-                        title: '请输入正确的邮箱地址', 
+                        title: '请输入正确的邮箱地址',
                         icon:'none'
                     })
                 }else{
@@ -88,14 +88,14 @@
                     })
                 }
             }
-           
+
         };
-        
+
         onLoad(options) {
             let self = this
             wepy.$instance.globalData.getLoadHuilder() // ga统计
             if( !options.email)  return
-            self.emailInput = options.email 
+            self.emailInput = options.email
             self.isEmail = true
             self.$apply()
         }
@@ -125,5 +125,5 @@
             .cell-sure.cell-sure-false{opacity: 0.2;}
         }
     }
-    
+
 </style>

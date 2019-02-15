@@ -207,10 +207,10 @@
     const store = getStore()
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         isTokenSet(state) {
             return state.user.token.startsWith('userID')
@@ -265,12 +265,7 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            getStorageAsync({key: 'account'}).then((respone) => {
-                store.dispatch(refreshUserInformations(respone))
-                self.initialize()
-            }).catch((error) => {
-                self.initialize()
-            })
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {

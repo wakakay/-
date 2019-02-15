@@ -507,6 +507,11 @@ const synchronize = (initData) => Promise.all([
     throw error
 })
 
+/**
+ * 监听
+ * @param initializeFunc
+ * @param callWhatever
+ */
 export const initializationDeligate = ({initializeFunc, callWhatever = false}) => {
     if (!initializeFunc instanceof Promise) {
         throw 'initializeFunc must be Promise'
@@ -521,7 +526,7 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
             return store.dispatch(checkLoginStatus())
         }).then(status => {
             if ('login:online' === status) { // 后台刷新登录态
-                authApi.setOnlineStatu().then(response => {
+                authApi.setOnlineStatu(respone).then(response => {
                     if (!response) return
                     let {role} = response
                     store.dispatch(renewUserRole(role))
@@ -530,6 +535,8 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
                 return initializeFunc() // 剩余条件即login:already login:online
             }
         })
+    }).catch(()=>{
+        initializationDeligate({initializeFunc, callWhatever})
     })
 }
 

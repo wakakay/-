@@ -104,10 +104,10 @@
     const store = getStore()
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         token(state) {
             return state.user.token

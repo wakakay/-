@@ -98,10 +98,10 @@
 
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         }, // mapState 即getters
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         token(state) {
             return state.user.token;
@@ -286,7 +286,7 @@
                         .cell-angle{border-bottom:20rpx solid @color-blue;border-left:10rpx solid transparent;border-right:10rpx solid transparent;width:0;height:0;}
                     }
                 }
-                
+
                 .ui-top{
                     margin-bottom:50rpx;width:100%;display:flex;justify-content:center;align-items:center;padding-top:38rpx;
                     text{color:#d1d1d6;font-size:24rpx;}

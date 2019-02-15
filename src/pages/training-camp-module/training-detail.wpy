@@ -460,7 +460,7 @@ const store = getStore();
         return state.user.token
     },
     avatar(state) {
-        return state.user.avatar
+        return state.user.avatarUrl
     },
     isTokenSet(state) {
         return state.user.token.startsWith('userID')

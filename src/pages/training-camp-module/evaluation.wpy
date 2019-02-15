@@ -135,10 +135,10 @@
 
   @connect({
     avatar(state) {
-      return state.user.avatar
+      return state.user.avatarUrl
     },
     userName(state) {
-      return state.user.name
+      return state.user.nickName
     }, // mapState 即getters
     token(state) {
       // return 'userID1aeb73d66d56435399563a17a0119663-1527047327533-171c09f2913ad9d723d70aceb046a4a7'
@@ -403,7 +403,7 @@
 </script>
 
 <style lang="less">
-  	@import "../../assets/style/theme"; 
+  	@import "../../assets/style/theme";
   .trangle-active{width: 0;height: 0;margin-top: 20rpx;border-left: transparent solid 18rpx;border-right: transparent solid 18rpx;border-bottom: #2db7b5 solid 30rpx;}
   .trangle{width: 10rpx;height: 10rpx;}
   .color-no0{background-color: #99A6A6 !important;color: #FFF !important;}

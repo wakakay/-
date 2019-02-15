@@ -98,10 +98,9 @@ export const doAuthorization = () => {
         })
 }
 
-export const setOnlineStatu = () => {
-    let {user: {token, platform}}= getStore().getState()
+export const setOnlineStatu = (userInfo) => {
     return wepy.request({
-        url: `${config.baseUrl}user/updateUserLogin?token=${token}&platform=${platform}`,
+        url: `${config.baseUrl}user/updateUserLogin?token=${userInfo.token}&platform=${userInfo.platform}`,
         method: 'POST'
     }).then(({ data: { data, status, message } }) => data)
 }

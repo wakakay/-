@@ -13,7 +13,7 @@
                 bindinput="handleCommentInput"
                 value="{{inputValue}}"
                 placeholder-class="cell-placeholder"
-                class="cell-input" focus="{{true}}" 
+                class="cell-input" focus="{{true}}"
                 placeholder="{{action==='question'?'请输入你的问题或想法':'请输入消息内容'}}" />
             <view class="cell-tip">还可以输入{{computeStrLength}}个字</view>
         </view>
@@ -36,7 +36,7 @@
     const state = store.getState();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         },
         token(state) {
             // return 'userID67eaa3af1eca4c5e99d90ef07c8b0353-1529130257419-29071e22805ed65d7aba43ad3fc07aad'
@@ -121,7 +121,7 @@
 </script>
 
 <style lang="less" scoped>
-    @import "../../assets/style/theme";     
+    @import "../../assets/style/theme";
     .ui-team-announce{
         width: 100%;height: 100%;background-color: @background-gray-F4;overflow:hidden;
         .ui-announce-top{

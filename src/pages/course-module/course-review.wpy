@@ -266,14 +266,14 @@
 
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         token(state) {
             // return 'userID26b17a206c9e4009bc44335001587b50-1545877886464-2ecc7ec4f965f0d9ffef2a2a6ee1917e'
             return state.user.token
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         role(state) {
             return state.user.role

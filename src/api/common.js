@@ -14,10 +14,18 @@ import {fetch} from './fetch-utils'
  * 公共接口
  */
 export default {
-    // 通用公共功能
+    // 登录获取openID
     getLogin(params) {
-        return fetch({method: 'post', url: 'user/login', params: params, isVisitor: true})
+        return fetch({method: 'post', url: 'user/login', params: params})
     },
+    /**
+     * 提交授权的用户信息
+     * @param jsonObject: [Object] 用户的信息
+     */
+    getUserInfo(params) {
+        return fetch({method: 'post', url: 'user/sendUserInfo', params: params})
+    },
+
     // 通用公共功能
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})

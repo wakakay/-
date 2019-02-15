@@ -16,11 +16,12 @@ import {fetch, report as reportApi} from '../../api'
 import {CancelAuthenticationError, RejectAuthenticationError, CustomError, UnAuthenticationError} from '../../errors'
 import {getStorageAsync, setStorageAsync} from './helper'
 import _ from 'underscore'
+import config from "../../api/config";
 
 const initialState = {
     firstAccess: 0,
-    name: 'GUEST',
-    avatar: '../../assets/img/icon-avatar.svg',
+    nickName: null,
+    avatarUrl: '../../assets/img/icon-avatar.svg',
     equipmentModel: '未知',
     pixelRatio: 2,
     platform: 'defaultPlatform',
@@ -35,6 +36,7 @@ const initialState = {
 }
 
 const setStorage = (storeInfo) => {
+
     getStorageAsync({key: 'account'}).then((respone) => {
         // 是否有手动关闭专属礼包
         storeInfo.isShowGift = _.isBoolean(storeInfo.hasGift) && !storeInfo.hasGift ? true : false
@@ -97,9 +99,7 @@ export const getLoginToken = () => (dispatch, getState) => {
             }
             return fetch.getLogin(postData)
         }).then(respone => {
-            respone.name = respone.nickName
             _.extend(storeInfo, respone)
-            delete storeInfo.nickName
             setStorage(storeInfo)
             return getState()['user']
         }).catch(error => {
@@ -126,17 +126,21 @@ export const getLoginToken = () => (dispatch, getState) => {
     })
 }
 
-export const getLoginInfo = () => (dispatch, getState) => {
-    getStorageAsync({key: 'account'}).then((respone) => {
-        debugger
-        return respone
-    }).then(respone => {
-        debugger
-        wepy.getUserInfo({
-            success(userInfo) {
-                console.log('getLoginInfo', userInfo)
-            }
-        })
+/**
+ * 获取用户we微信信息
+ * @returns {function(*, *)}
+ */
+export const getLoginInfo = (userInfo) => (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+        resolve(userInfo)
+    }).then(userInfo => { // 确定授权
+        console.log(556, userInfo)
+        let postData = {
+            token: initialState.token,
+            body: {jsonObject: {...initialState, ...userInfo}}
+        }
+        fetch.getUserInfo(postData)
+        return setStorage(userInfo)
     })
 }
 

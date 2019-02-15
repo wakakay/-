@@ -72,10 +72,10 @@
     const state = store.getState();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         }, // mapState 即getters
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         token(state) {
             return state.user.token;
@@ -216,7 +216,7 @@
                 .catch(error => {
                   renewWechatCode(store.dispatch) // 更新登录code
                 })
-                
+
             },
             handleDescryptPhoneFail(error) {
                 console.log('fail to descrypt', error)
