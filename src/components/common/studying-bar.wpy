@@ -13,15 +13,18 @@
                 width:72rpx;height:72rpx;background-color:@background-white;border-radius:@border-radius-20;
                 text{font-size:48rpx;color:@color-gray-44;}
             }
-            .ui-title{
-                padding-left:24rpx;text-align:left;position:relative;
-                text{line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
-                .cell-title{font-size:32rpx;color:@color-black;}
-                .cell-subtitle{font-size:22rpx;color:@color-gray;}
-            }
-            .ui-button{
-                width:100rpx;height:100%;
-                text{color:@color-blue;}
+            .ui-text-box{
+                background: none;
+                .ui-title{
+                    padding-left:24rpx;text-align:left;position:relative;
+                    text{line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                    .cell-title{font-size:32rpx;color:@color-black;}
+                    .cell-subtitle{font-size:22rpx;color:@color-gray;}
+                }
+                .ui-button{
+                    width:100rpx;height:100%;
+                    text{color:@color-blue;}
+                }
             }
         }
     }
@@ -70,32 +73,37 @@
 </style>
 
 <template>
-    <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
-        <view class="ui-content-box dir-left main-justify" :class="{'active': !isAndroid && !direction}">
-            <view class="ui-marquee lightSpeedOut">
-                <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
-            </view>
-
-            <view class="cell-list main-center cross-center flex-box-0"
-                  @tap.stop="getShowList" >
-                <text class="icon-list"></text>
-            </view>
-
-            <view class="ui-text-box flex flex-box-1"
-                  data-name="{{continueSenceInfo.senceName}}"
-                  data-source="{{source}}"
-                  @tap.stop="getContinue">
-                <view class="ui-title dir-top main-justify">
-                    <text class="cell-title">{{continueSenceInfo.senceName}}</text>
-                    <text class="cell-subtitle">{{continueSenceInfo.senceSkillName}}</text>
+    <form bindsubmit="handleSavePushCode" report-submit>
+        <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
+            <view class="ui-content-box dir-left main-justify" :class="{'active': !isAndroid && !direction}">
+                <view class="ui-marquee lightSpeedOut">
+                    <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
                 </view>
 
-                <view class="ui-button main-center cross-center">
-                    <text class="icon-right-arrow"></text>
-                </view>
+                <button hover-stay-time="100" form-type="submit"
+                        class="cell-list main-center cross-center flex-box-0"
+                        @tap.stop="getShowList" >
+                    <text class="icon-list"></text>
+                </button>
+
+                <button hover-stay-time="100" form-type="submit"
+                    class="ui-text-box flex flex-box-1"
+                    data-name="{{continueSenceInfo.senceName}}"
+                    data-source="{{source}}"
+                    @tap.stop="getContinue">
+                    <view class="ui-title dir-top main-justify">
+                        <text class="cell-title">{{continueSenceInfo.senceName}}</text>
+                        <text class="cell-subtitle">{{continueSenceInfo.senceSkillName}}</text>
+                    </view>
+
+                    <view class="ui-button main-center cross-center">
+                        <text class="icon-right-arrow"></text>
+                    </view>
+                </button>
             </view>
         </view>
-    </view>
+    </form>
+    
 
     <view class="ui-study-list-box" :class="{'is-show-list': isShowList}">
         <view class="ui-mask" @tap.stop="getHideList"></view>
@@ -153,6 +161,7 @@
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import {fetch} from '../../api'
+    import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -166,6 +175,7 @@
         }
     })
     export default class studyingBar extends wepy.component {
+        mixins = [PushMixin]
         props = {
             scrollTop: {
                 type: Number,
