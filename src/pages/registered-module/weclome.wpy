@@ -86,7 +86,7 @@
                 let {detail: {errMsg}} = event
 
                 wx.reportAnalytics('welcome_register', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
                 })
@@ -121,7 +121,7 @@
                 token: self.systemInfo.token
             }
             fetch.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/course-module/course'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
+                respone.hasGift ? wx.reLaunch({url: '/pages/today-module/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
                 self.$apply()
             }).catch(error => {
                 wx.showToast({

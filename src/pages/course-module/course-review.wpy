@@ -263,7 +263,6 @@
     import {navigateToLesson,trim} from "../../utils/index";
     import _ from 'underscore'
 
-
     @connect({
         avatar(state) {
             return state.user.avatarUrl

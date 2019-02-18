@@ -114,7 +114,7 @@
 
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-course-header main-justify cross-center">
-                <view class="cell-title">课程-{{userName}}</view>
+                <view class="cell-title">课程</view>
                 <button class="module-avatar flex-box-0"
                         open-type="getUserInfo"
                         bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
@@ -199,7 +199,7 @@
                                         <view class="cell-title">{{item.name}}</view>
                                         <view class="cell-description">{{item.showPoint}}…</view>
                                         <view class="cell-button flex">
-                                            <button>免费领</button><text>{{item.userCount}}人已学</text>
+                                            <button>获取</button><text>{{item.userCount}}人已学</text>
                                         </view>
                                     </view>
                                 </button>
@@ -307,9 +307,6 @@
         },
         userName(state) {
             return state.user.nickName
-        },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
         },
         token(state) {
             return state.user.token
@@ -437,7 +434,7 @@
                     return wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
                 }
 
-                store.dispatch(getLoginInfo({errMsg, userInfo})).then(repsone => {
+                store.dispatch(getLoginInfo(userInfo, errMsg)).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
                 })
             },

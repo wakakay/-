@@ -36,11 +36,11 @@ const initialState = {
 }
 
 const setStorage = (storeInfo) => {
-
     getStorageAsync({key: 'account'}).then((respone) => {
         // 是否有手动关闭专属礼包
-        storeInfo.isShowGift = _.isBoolean(storeInfo.hasGift) && !storeInfo.hasGift ? true : false
-
+        if (!_.isUndefined(storeInfo.hasGift)) {
+            storeInfo.isShowGift = _.isBoolean(storeInfo.hasGift) && !storeInfo.hasGift ? true : false
+        }
         setStorageAsync({
             key: 'account',
             value: _.extend(respone, storeInfo)
@@ -51,7 +51,6 @@ const setStorage = (storeInfo) => {
             value: storeInfo
         })
     })
-
     _.extend(initialState, storeInfo)
 }
 
@@ -76,7 +75,7 @@ export const getLoginToken = () => (dispatch, getState) => {
     sourceName = sourceName || 'other'
     let urlEnd = '&source=' + sourceName
 
-    let storeInfo = {}
+    const storeInfo = {}
     return new Promise((resolve, reject) => {
         return wepy.login().then(respone => {
             if ('login:ok' !== respone.errMsg) throw new CustomError('登录失败')
@@ -130,17 +129,52 @@ export const getLoginToken = () => (dispatch, getState) => {
  * 获取用户we微信信息
  * @returns {function(*, *)}
  */
-export const getLoginInfo = (userInfo) => (dispatch, getState) => {
+export const getLoginInfo = (userInfo, errMsg) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         resolve(userInfo)
-    }).then(userInfo => { // 确定授权
-        console.log(556, userInfo)
+    }).then((userInfo) => { // 确定授权
         let postData = {
             token: initialState.token,
-            body: {jsonObject: {...initialState, ...userInfo}}
+            body: {jsonObject: {...initialState, errMsg, ...userInfo}}
         }
-        fetch.getUserInfo(postData)
+
+        return fetch.getUserInfo(postData)
+    }).then(respone => {
         return setStorage(userInfo)
+    })
+}
+
+/**
+ * 更新当前用户的手机号码
+ * @param role
+ * @returns {function(*, *)}
+ */
+export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+        wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '授权手机号码弹窗')
+        resolve(encryptedData, iv)
+    }).then(respone => {
+        return renewWechatCode() // 必须重新更新code才能获取到手机号码
+    }).then((respone) => {
+        wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '授权手机号码成功')
+        let postData = {
+            token: initialState.token,
+            body: {
+                token: initialState.token,
+                code: initialState.code,
+                encryptedData,
+                iv
+            }
+        }
+        // 拿到手机加密的号码跟私钥，由后台解密
+        return fetch.getUserPhone(postData)
+    }).then(respone => {
+        let {phone} = respone
+        renewWechatCode(store.dispatch) // 更新登录code
+        setStorage({phone: phone})
+        return phone
+    }).catch(error => {
+        Promise.reject(error)
     })
 }
 
@@ -162,10 +196,6 @@ export const renewWechatCode = dispatch => {
  * @returns {function(*, *)}
  */
 export const renewUserGiftBox = isShowGift => (dispatch, getState) => {
-    wepy.setStorage({
-        key: 'isShowGift',
-        data: isShowGift
-    })
     return setStorage({isShowGift: isShowGift})
 }
 

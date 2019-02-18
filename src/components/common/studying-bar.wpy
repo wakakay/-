@@ -40,7 +40,7 @@
             width:100%;height:64rpx;background-color:@color-white;
             text{display:block;color:@background-gray-d6;font-size:24rpx;}
         }
-        .ui-container{width:100%;height:100%;}
+        .ui-container{width:100%;height:calc(~"100% - 80rpx");}
         .is-delete{height:0 !important;padding:0 !important;margin:0 !important;transition:all .5s ease-in-out;}
         .ui-sence-list{
             padding-bottom:20rpx;background-color:@background-gray-d6;
@@ -103,7 +103,7 @@
             </view>
         </view>
     </form>
-    
+
 
     <view class="ui-study-list-box" :class="{'is-show-list': isShowList}">
         <view class="ui-mask" @tap.stop="getHideList"></view>
@@ -111,9 +111,7 @@
             <view class="ui-pack-up-button cross-center main-center" @tap.stop="getHideList">
                 <text class="icon-down-arrow"></text>
             </view>
-            <scroll-view
-                    class="ui-container"
-                    style="height:{{scrollBoxHeight}}px"
+            <scroll-view class="ui-container"
                     scroll-y>
                 <repeat for="{{learningSenceList}}" key="dataIndex" index="dataIndex" item="data">
                     <view class="ui-sence-list" :class="{'fadeOutRight': data.isMove, 'is-delete': data.isDelete}">
@@ -204,7 +202,6 @@
             isShowBar: false,
             isShowList: false,
             isRefresh: false,
-            scrollBoxHeight: 0,
             oldScrollTop: 0,
             continueSenceInfo: {},
             learningSenceList: [],
@@ -212,10 +209,6 @@
             newLearningSenceList: [],
             source:'continueList',
             courseType:['button','list'],
-        }
-
-        onLoad() {
-            let self = this
         }
 
         /**
@@ -239,22 +232,8 @@
                     self.__animation(response)
                 }
 
-                // 是否有正在学习的课
-                /*if (response.learningSenceList.length) {
-                    self.isShowBar = true
-                }
-                if (!_.isEmpty(response.continueSence) && !response.learningSenceList.length
-                || _.isEmpty(response.continueSence) && response.learningSenceList.length) {
-                    self.isShowBar = false
-                }*/
                 self.isShowBar = response.learningSenceList.length ? true : false
                 self.$emit('on-is-studying-bar', {isShowBar: self.isShowBar})
-
-                // 获取列表的高度区域
-                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect((rect) => {
-                    self.scrollBoxHeight = Math.floor(rect.height) - 40
-                    self.$apply()
-                }).exec()
 
                 self.$apply()
             })
@@ -385,7 +364,7 @@
                 self.isShowList = true
                 self.__emit()
                 wx.reportAnalytics('study_bar_list_icon', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -410,7 +389,7 @@
                 }
                 // 学习bar数据统计
                 wx.reportAnalytics('study_bar_arrow', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -438,7 +417,7 @@
 
                 //学习bar数据统计
                 wx.reportAnalytics('study_bar_continue', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })

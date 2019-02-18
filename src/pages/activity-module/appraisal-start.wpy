@@ -27,10 +27,7 @@
                 <image mode="widthFix" src="{{imageBottomURL}}" />
             </view>
             <view class="ui-box">
-                <button wx:if="{{ !isTokenSet }}" hover-class="cell-hover" class="cell-btn"
-                        open-type="getUserInfo" bindgetuserinfo="handleAuthorize">开始测试
-                </button>
-                <button wx:if="{{ isTokenSet }}" hover-class="cell-hover" class="cell-btn"
+                <button hover-class="cell-hover" class="cell-btn"
                         @tap.stop="handleBeginPractice">开始测试
                 </button>
             </view>
@@ -50,9 +47,6 @@
     const store = getStore()
 
     @connect({
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
-        },
         userName(state) {
             return state.user.nickName
         },
@@ -157,48 +151,6 @@
         }
 
         methods = {
-            handleAuthorize({detail: {errMsg}}) {
-                let self = this;
-                /*
-                微信埋点事件
-                 */
-                wx.reportAnalytics('nicknamegive_show', {
-                    username: self.userName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    examid: self.examID,
-                    routeurl: '',
-                });
-
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny'){
-                        wx.reportAnalytics('nicknamegive_refuse', {
-                            username: self.userName,
-                            channel: self.entrance.mappers[self.entrance.scenceID],
-                            examid: self.examID,
-                            routeurl: '',
-                        });
-                        throw new CustomError('用户拒绝授权')
-                    }
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => {
-                    this.isLoaded = false
-                    this.$apply()
-                    return store.dispatch(login())
-                }).then(() => {
-                    wx.reportAnalytics('nicknamegive_agree', {
-                        username: self.userName,
-                        channel: self.entrance.mappers[self.entrance.scenceID],
-                        examid: self.examID,
-                        routeurl: '',
-                    });
-
-                    return this.$redirect('/pages/activity-module/appraisal-questions',  {examID: this.examID,})
-                }).catch(error => {
-
-                })
-            },
             handleBeginPractice() {
                 let self = this
                 // 服务通知进来的才上报

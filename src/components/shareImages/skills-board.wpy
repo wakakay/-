@@ -264,7 +264,7 @@
             self.shareCanvas.beginPath()
             self.shareCanvas.setTextAlign('left')
             self.shareCanvas.setFillStyle('#32EDFF')
-            self.shareCanvas.fillText(self.systemInfo.name, 70, 38)
+            self.shareCanvas.fillText(self.systemInfo.nickName, 70, 38)
             // 用户头像
             self.shareCanvas.setStrokeStyle('#fff')
             self.shareCanvas.setFillStyle('#fff')

@@ -52,9 +52,7 @@
                             <button class="ui-item-course flex"
                                     data-courseID="{{data.courseID}}"
                                     data-item="{{item}}"
-                                    form-type="{{isTokenSet ? 'submit': ''}}"
-                                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                    bindgetuserinfo="getAuthorize"
+                                    form-type="submit"
                                     hover-stay-time="100"
                                     @tap.stop="getSence">
                                 <view class="cell-thumb flex-box-0">
@@ -147,31 +145,6 @@
                     index: index
                 }
                 self.$emit('onShowCourse', data)
-            },
-            /**
-             * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
-             */
-            getAuthorize(event) {
-                let self = this
-                let {detail: {errMsg}, currentTarget: {dataset}} = event
-
-                if ('defaultToken' !== self.systemInfo.token) {
-                    return
-                }
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    self.__emit(dataset, 1)
-                }).catch(error => { // 拒接授权
-
-                })
             },
             /**
              * 点击某节课，通知父级处理

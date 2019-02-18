@@ -67,9 +67,6 @@
 		avatar(state) {
 			return state.user.avatarUrl;
 		},
-		isTokenSet(state) {
-			return state.user.token.startsWith('userID')
-		},
 		token(state) {
 			return state.user.token;
 		},

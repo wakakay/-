@@ -112,9 +112,6 @@
         token(state) {
             return state.user.token
         },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
-        },
         windowHeight(state) {
             return state.user.screenHeight
         },

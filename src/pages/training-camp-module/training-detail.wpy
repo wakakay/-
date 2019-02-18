@@ -363,8 +363,6 @@
                                 data-index="{{index}}"
                                 data-item="{{data}}"
                                 :class="{'is-selected' : data.isDone}"
-                                open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                                bindgetuserinfo="getAuthorize"
                                 disabled="{{data.isDone || role != 'member'}}"
                                 @tap.stop="getPoll">{{data.isDone || role != 'member' ? data.pollCount+'人已投票' : '投票'}}</button>
                     </view>
@@ -461,9 +459,6 @@ const store = getStore();
     },
     avatar(state) {
         return state.user.avatarUrl
-    },
-    isTokenSet(state) {
-        return state.user.token.startsWith('userID')
     }
 })
 
@@ -720,10 +715,6 @@ export default class teamDetail extends wepy.page {
             let self = this
             let {currentTarget: {dataset: {item, index}}} = event
 
-            if (!self.isTokenSet) {
-                return
-            }
-
             wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
             let postData = {
                 token: self.token,
@@ -765,11 +756,6 @@ export default class teamDetail extends wepy.page {
         // 跳去微课
         getLesson(event) {
             let self = this
-
-            // 没有登录
-            if (!self.isTokenSet){
-                return ;
-            }
             let {currentTarget: {dataset: {item}}} = event
 
             let buttonStatus = item.buttonStatus

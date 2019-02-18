@@ -517,7 +517,6 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
         throw 'initializeFunc must be Promise'
     }
     const store = getStore()
-
     getStorageAsync({key: 'account'}).then((data) => {
         return data
     }).then(respone => {
@@ -530,13 +529,14 @@ export const initializationDeligate = ({initializeFunc, callWhatever = false}) =
                     if (!response) return
                     let {role} = response
                     store.dispatch(renewUserRole(role))
+                    return initializeFunc() // 剩余条件即login:already login:online
                 })
-
-                return initializeFunc() // 剩余条件即login:already login:online
             }
         })
     }).catch(()=>{
-        initializationDeligate({initializeFunc, callWhatever})
+        setTimeout(()=>{
+            initializationDeligate({initializeFunc, callWhatever})
+        }, 200)
     })
 }
 

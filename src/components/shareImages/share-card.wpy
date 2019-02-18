@@ -323,7 +323,7 @@
             let x = Math.ceil(88 * cardShareInfo.prop)
             let y1 = Math.ceil(12 * cardShareInfo.prop) + fontsize1
             let y2 = Math.ceil(39 * cardShareInfo.prop) + fontsize2
-            let text = self.systemInfo.name
+            let text = self.systemInfo.nickName
             if (8 < text.length) {
                 text = text.substr(0, 8)
             }

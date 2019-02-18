@@ -21,7 +21,7 @@
                     <navigator wx:if="{{!isHiddenButton && isSrcShare}}"
                                class="cell-back main-center cross-center"
                                open-type="switchTab"
-                               url="/pages/course-module/course">
+                               url="/pages/today-module/index">
                         <view class="cell-after main-center cross-center">
                             <text class="icon-home"
                                   style="{{(buttonColor ? 'color:'+buttonColor+';' : '')}}"></text>
@@ -196,7 +196,7 @@
             if (title) {
                 // 微信统计
                 title.enName && wx.reportAnalytics(title.enName, {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
                 })

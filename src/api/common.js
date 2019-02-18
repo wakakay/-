@@ -25,7 +25,13 @@ export default {
     getUserInfo(params) {
         return fetch({method: 'post', url: 'user/sendUserInfo', params: params})
     },
-
+    /**
+     * 提交授权的用户信息
+     * @param jsonObject: [Object] 用户的信息
+     */
+    getUserPhone(params) {
+        return fetch({method: 'post', url: 'user/sendUserPhoneNumber2', params: params})
+    },
     // 通用公共功能
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})

@@ -339,7 +339,7 @@
                 // 进入微课事件上报埋点
                 wx.reportAnalytics('opensence', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.name,
+                    nickname: self.systemInfo.nickName,
                     coursename: self.currentCourseName,
                     sencename: respone.senceName,
                     channel: self.entrance.mappers[self.entrance.scenceID]
