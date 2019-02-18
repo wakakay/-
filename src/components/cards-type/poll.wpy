@@ -153,13 +153,13 @@
                     // 计算每个投票的比例
                     _.each(optionList, (data) => {
                         let add = data.id === item.id ? 1 : 0
-                        self.ballotInfo[data.id] = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
+                        self.ballotInfo[data.id] = data.prop = Math.floor((data.ballot + data.add) / ballotTotal * 1000) / 10
                     })
                 } else {
                     // 计算每个投票的比例
                     _.each(optionList, (data) => {
                         let add = data.selected ? 1 : 0
-                        self.ballotInfo[data.id] = Math.floor((data.ballot + add) / data.ballotTotal * 1000) / 10
+                        self.ballotInfo[data.id] = data.prop = Math.floor((data.ballot + add) / data.ballotTotal * 1000) / 10
                     })
                 }
 
