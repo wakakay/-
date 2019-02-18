@@ -141,8 +141,6 @@
                     :class="{'is-finish': isInterest}"
                     wx:if="{{step == 0}}"
                     hover-class="cell-hover"
-                    open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                    bindgetuserinfo="getAuthorize"
                     @tap.stop="getNext">
                     {{isInterest ? textInfo[step].buttonText : '最多选择2个兴趣噢'}}
             </button>
@@ -172,9 +170,6 @@
     @connect({
         systemInfo(state) {
             return state.user
-        },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
         },
         entrance(state) { // 全局场景值
             return state.entrance
@@ -279,7 +274,7 @@
                 token: self.systemInfo.token
             }
             fetch.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/course-module/course'}) : self.initialize()
+                respone.hasGift ? wx.reLaunch({url: '/pages/today-module/index'}) : self.initialize()
                 self.$apply()
             }).catch(error => {
             })
@@ -317,7 +312,7 @@
 
                     wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-能力选择页', pageTheme: ''})
                     wx.reportAnalytics('interest_select_next', {
-                        username: self.systemInfo.name,
+                        username: self.systemInfo.nickName,
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         role: self.systemInfo.role
                     })
@@ -340,38 +335,10 @@
 
         methods = {
             /**
-             * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
-             */
-            getAuthorize(event) {
-                let self = this
-                let {detail: {errMsg}} = event
-
-                if (self.isTokenSet) {
-                    return
-                }
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    self.__nextStep()
-                }).catch(error => { // 拒接授权
-
-                })
-            },
-            /**
              * 底部按钮
              */
             getNext() {
                 let self = this
-                if (!self.isTokenSet) {
-                    return
-                }
                 self.__nextStep()
             },
             /**
@@ -449,7 +416,7 @@
 
             wepy.$instance.globalData.getLoadHuilder() // ga统计
             wx.reportAnalytics('capability_select_complete', {
-                username: self.systemInfo.name,
+                username: self.systemInfo.nickName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 role: self.systemInfo.role
             })

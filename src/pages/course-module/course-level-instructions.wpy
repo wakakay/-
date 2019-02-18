@@ -56,14 +56,6 @@
             wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
 
-        onShow() {
-
-        }
-
-        onReady() {
-
-        }
-
         methods = {}
 
         events = {}

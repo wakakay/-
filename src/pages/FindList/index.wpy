@@ -5,11 +5,8 @@
     .ui-clear{width:100%;height:70rpx;}
     /* 头部 */
     .ui-course-header{
-        display: flex;align-items: center;justify-content: space-between;margin:0 32rpx;box-sizing: border-box;
-        .cell-title{font-size: 68rpx;font-weight: bold;text-align: left;justify-content: flex-start}
-        .ui-avatar{
-            image{width:72rpx;height:72rpx;border-radius:50%;}
-        }
+        height:72rpx;padding:0 32rpx;box-sizing:border-box;
+        .cell-title{font-size:68rpx;font-weight:700;}
     }
     .ui-empty{width:100%;margin:22rpx auto 120rpx;color:#14292c;font-family:PingFangSC-Regular;font-size:24rpx;opacity:.7;}
     /* 新人礼包  */
@@ -103,11 +100,11 @@
             <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
 
             <form bindsubmit="handleSavePushCode" report-submit>
-                <view class="ui-course-header">
+                <view class="ui-course-header main-justify cross-center">
                     <view class="cell-title">发现</view>
-                    <navigator class="ui-avatar"
-                               hover-class="none"
-                               url="/pages/user-module/mine?type=2" @tap.stop="getAvatar"><image src="{{avatar}}"></image></navigator>
+                    <button class="module-avatar flex-box-0"
+                            open-type="getUserInfo"
+                            bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
                 </view>
                 <view class="cell-find-dec">{{discoverPageTitle}}</view>
                 <view class="ui-content">
@@ -199,6 +196,7 @@
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
+    import {getLoginInfo, renewUserGiftBox, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     const GoogleAnalytics = ga.GoogleAnalytics
@@ -206,16 +204,16 @@
     const store = getStore()
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
-        },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
+            return state.user.nickName
         },
         token(state) {
             return state.user.token
+        },
+        isShowGift(state) {
+            return state.user.isShowGift
         },
         role(state) {
             return state.user.role
@@ -249,7 +247,6 @@
             pageSize: 10,
             isScroll: true, // 是否能滚动
             scrollTop: 0,
-            isShowGift: false,
             isShowEvaluate: false,
             informationList: [],
             discoverPageTitle: '',
@@ -262,12 +259,7 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            let storageToken = wx.getStorageSync("token") || 'defaultToken'
-            if (self.isTokenSet || 'defaultToken' !== storageToken) {
-                self.initialize(storageToken)
-            } else {
-                wx.redirectTo({url: '/pages/registered-module/weclome'})
-            }
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {
@@ -277,9 +269,7 @@
             if (self.senceID) {
                 self.initialize()
             }
-            if (self.isTokenSet) {
-                wepy.$instance.globalData.getLoadHuilder() // ga统计
-            }
+            wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
         /**
          * 监听滚动条的位置
@@ -294,7 +284,6 @@
             let self = this
             // 通知组件
             self.$broadcast('studying-bar')
-            !self.senceID && self.__isGetGift(token)
             self.__fetchCourses({token: token})
         }
         /**
@@ -374,54 +363,33 @@
                 }
             })
         }
-        /**
-         * 是否领取过新手礼包
-         * @private
-         */
-        __isGetGift(token) {
-            let self = this
-            let analyticsInfo = {
-                username: self.userName,
-                channel: self.entrance.mappers[self.entrance.scenceID],
-                role: self.role
-            }
-            let postData = {
-                token: token || self.token
-            }
 
-            fetch.userInfo(postData).then((respone) => {
-                let giftStatus = wx.getStorageSync('giftStatus')
-                // 没有记录缓存
-                if (!giftStatus) {
-                    self.isShowGift = !respone.hasGift
-                    wx.setStorageSync("giftStatus", {
-                        isShow: self.isShowGift,
-                        isReceive: respone.hasGift
-                    })
-                } else {
-                    if (!respone.hasGift) {
-                        self.isShowGift = giftStatus.isShow ? true : false
-                    } else {
-                        self.isShowGift = false
-                    }
-                }
-                self.isShowGift && wx.reportAnalytics('exclusive_gift', analyticsInfo)
-                self.$apply()
-            }).catch(error => {
-
-            })
-        }
         methods = {
+            /**
+             * 微信授权登录
+             */
+            getAuthorize(event) {
+                let self = this
+                let {detail: {errMsg, userInfo, rawData}} = event
+
+                if ('getUserInfo:ok' !== errMsg) {
+                    return
+                }
+
+                if (self.userName) {
+                    return wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
+                }
+
+                store.dispatch(getLoginInfo(userInfo, errMsg)).then(repsone => {
+                    wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
+                })
+            },
             getAvatar() {
                 let self = this
                 wepy.$instance.globalData.getHuilder('发现页/头像', 'click', '我的页面')
             },
             handleStartLesson(event) {
                 let self = this
-                if (!self.isTokenSet) {
-                    return
-                }
-
                 let {currentTarget: {dataset: {item, courseItem}}} = event
                 let buttonStatus = courseItem.buttonStatus
                 let lessonType = courseItem.lessonType
@@ -484,14 +452,7 @@
              */
             getCloseGift() {
                 let self = this
-                self.isShowGift = false
-                wx.setStorage({
-                    key: "giftStatus",
-                    data: {
-                        isShow: false,
-                        isReceive: false
-                    }
-                })
+                store.dispatch(renewUserGiftBox(false))
             },
             /**
              * 去领取新人礼包

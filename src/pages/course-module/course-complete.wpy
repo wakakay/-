@@ -276,7 +276,7 @@
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.finishResultInfo.skillName}) // ga统计
                 wx.reportAnalytics('finishsence', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.name,
+                    nickname: self.systemInfo.nickName,
                     coursename: self.currentCourseName,
                     sencename: self.currentSencesName,
                     channel: self.entrance.mappers[self.entrance.scenceID]
@@ -338,7 +338,7 @@
                 if (self.finishResultInfo.senceStar > 0) {
                     wepy.$instance.globalData.getHuilder('微课完成页/点评', 'click', self.finishResultInfo.name)
                     wx.reportAnalytics('lessonfinish_evaluate_click', {
-                        username: self.systemInfo.name,
+                        username: self.systemInfo.nickName,
                         channel: self.entrance.mappers[self.entrance.scenceID],
                         role: self.systemInfo.role
                     })
@@ -403,7 +403,7 @@
             }
 
             return {
-                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.name} 邀请你一起学习《${self.finishResultInfo.courseName}》`,
+                title: self.finishResultInfo.shareCoverTitle ? self.finishResultInfo.shareCoverTitle : `${self.systemInfo.nickName} 邀请你一起学习《${self.finishResultInfo.courseName}》`,
                 path: path,
                 imageUrl: self.finishResultInfo.shareCoverImageUrl || self.finishResultInfo.image || ''
             }

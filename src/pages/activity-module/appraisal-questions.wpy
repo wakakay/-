@@ -109,7 +109,7 @@
     const store = getStore();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         },
         token(state) {
             return state.user.token;
@@ -176,7 +176,7 @@
                 let optionIndex = dataset.optionIndex;
                 let tempList = self.tempList;
 
-                
+
                 tempList = _.each(tempList,(item,sindex)=>{
                     if(sindex === tempIndex) {
                         _.each(item.optionList,(optionItem) => {

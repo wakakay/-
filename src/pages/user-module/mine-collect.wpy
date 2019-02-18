@@ -82,10 +82,10 @@
 	const store = getStore();
 	@connect({
 		userName(state) {
-			return state.user.name;
+			return state.user.nickName;
 		},
 		avatar(state) {
-			return state.user.avatar;
+			return state.user.avatarUrl;
 		},
 		token(state) {
             // return 'userID4456e4e22b584ce5907d5c96e0ef247a-1541068218630-83241001d91ea28129df345c6094f3b5'

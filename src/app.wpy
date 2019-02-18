@@ -18,10 +18,12 @@
     import {store} from './redux/store'
     import {setStore} from 'wepy-redux'
     import {setSceneID, setPath, setQuery} from './redux/models/entrance'
-    import {fetch, report as reportApi} from './api'
+    import {fetch, auth as authApi} from './api'
     import envConfig from './api/config'
     import {ROUTERS, SCENE} from './utils/dictionary'
     import ga from 'wxapp-ga/ga'
+    import {getLoginToken, refreshUserInformations} from './redux/models/user'
+    import {getStorageAsync} from './redux/models/helper'
 
     const GoogleAnalytics = ga.GoogleAnalytics
     const HitBuilders = ga.HitBuilders
@@ -46,8 +48,6 @@
                 'pages/course-module/course-pay', // 微课支付
                 'pages/course-module/course-series', // 课程系列页
                 'pages/course-module/course-review', // 微课回顾回顾页
-                
-
                 /* 发现模板 */
                 'pages/FindList/index',
                 'pages/SpecialCourse/index',
@@ -160,7 +160,6 @@
 
         globalData = {
             staffList: [],
-            token: null,
             unionID: null,
             newCourseDetailTempele: {},
             allOpenIDHash(token) {
@@ -248,60 +247,14 @@
             this.use('promisify')
         }
 
-        /**
-         *
-         * @param sceneID
-         * @param path
-         * @param query
-         */
-        reportSence(sceneID, path, query) {
-            let self = this
-            let sourceName = ''
-            let routerItem = ROUTERS[path]
-
-            if (!routerItem.pageType) {
-                return
-            }
-            console.log('落地页', query, path)
-            if (query.source) { // 是否又在场景值中
-                sourceName = query.source
-            } else if (SCENE[sceneID]) { // 地址栏的source有带直接给
-                sourceName = SCENE[sceneID]
-            } else if (routerItem) { // 匹配路由中的sence
-                sourceName = routerItem.sence
-            }
-
-            let postData = {
-                token: self.globalData.token || 'defaultToken',
-                body: {
-                    json: {
-                        pageType: routerItem.pageType,
-                        eventType: `${sourceName || 'other'}/${sceneID}`,
-                        componentName: routerItem.screenName,
-                        cpnPresentName: query.pageName || query.giftID,
-                        courseID: query.courseID || query.id || query.courseSeriesID || null,
-                        senceID: query.senceID || null
-                    }
-                }
-            }
-            console.log('落地页', postData)
-            reportApi.doUserBehaviourLog(postData)
-        }
-
         onLaunch(option) {
             let self = this
             let {scene: sceneID, path, query} = option
+            console.log(option)
             store.dispatch(setSceneID(sceneID))
             store.dispatch(setPath(path))
             store.dispatch(setQuery(query))
-            console.log(option)
-            wx.getStorage({
-                key: 'token',
-                complete(res) {
-                    self.globalData.token = res.data || null
-                    self.reportSence(sceneID, path, query)
-                }
-            })
+            store.dispatch(getLoginToken()) // 默认登录
 
             // 强制更新
             const updateManager = wx.getUpdateManager()

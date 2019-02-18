@@ -19,8 +19,6 @@
                 <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'sence'}}">
                     <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <button class="ui-item"
-                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                bindgetuserinfo="getAuthorize"
                                 @tap.stop="handleStartLesson"
                                 data-item="{{lessonItem}}" >
                             <view class="ui-img">
@@ -41,8 +39,6 @@
                     <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <button class="ui-item"
                                 @tap.stop="getCourseDetail"
-                                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                bindgetuserinfo="getAuthorize"
                                 data-item="{{courseItem}}"
                                 data-type="4">
                             <view class="ui-img">
@@ -67,8 +63,6 @@
                             :class="{'cell-seleted' : item.isDone}"
                             data-index="{{index}}"
                             data-item="{{item}}"
-                            open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                            bindgetuserinfo="getAuthorize"
                             @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
                 </view>
                 <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'border'}}"></view>
@@ -80,14 +74,11 @@
                         <text class="icon-share"></text>
                         <text>分享给好友</text>
                         <button class="cell-btn"
-                            open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
-                            bindgetuserinfo="getAuthorize"></button>
+                            open-type="share"></button>
                     </view>
                 </view>
                 <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
-                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                        bindgetuserinfo="getAuthorize"
                         @tap.stop="handleStartLesson"
                         data-item="{{floatBox.sence}}">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
@@ -107,8 +98,6 @@
                         :class="{'is-phonex': isIphonex}"
                         wx:if="{{floatBox.type === 'course'}}"
                         @tap.stop="getCourseDetail"
-                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                        bindgetuserinfo="getAuthorize"
                         data-item="{{floatBox.course}}"
                         data-type="4">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
@@ -126,8 +115,7 @@
                 </button>
                 <view class="ui-share-font"  wx:if="{{floatBox.type !== 'share'}}">
                     <button class="cell-btn"
-                        open-type="{{ isTokenSet? 'share': 'getUserInfo' }}"
-                        bindgetuserinfo="getAuthorize">
+                        open-type="share">
                         <text class="icon-share cell-icon"></text>分享
                     </button>
                     <view class="cell-btn-margin"></view>
@@ -153,10 +141,7 @@
     const store = getStore();
     @connect({
         userName(state) {
-            return state.user.name;
-        },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
+            return state.user.nickName;
         },
         token(state) {
             return state.user.token;
@@ -303,11 +288,6 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
-
-                // 没有登录
-                if (!self.isTokenSet){
-                    return ;
-                }
                 let {currentTarget: {dataset: {item}}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
@@ -337,12 +317,6 @@
             // 跳去 课程详情页
             getCourseDetail({currentTarget: {dataset: {item, type}}}) {
                 let self = this
-
-                // 没有登录
-                if (!self.isTokenSet){
-                    return ;
-                }
-
                 let courseID = item.id;
                 let courseType = item.buttonMsg ? item.buttonMsg : '专题';
                 let name = item.name;
@@ -360,31 +334,6 @@
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${courseType}`})
             },
             /**
-             * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
-             */
-            getAuthorize(event) {
-                let self = this
-                let {detail: {errMsg}, currentTarget: {dataset}} = event
-
-                if ('defaultToken' !== self.token) {
-                    return
-                }
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login());
-                }).then((respone) => { // 授权成功
-                    self.initialize();
-                }).catch(error => { // 拒接授权
-
-                })
-            },
-            /**
              * 投票
              * @param event
              */
@@ -392,7 +341,7 @@
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
 
-                if (item.isDone || !self.isTokenSet) {
+                if (item.isDone) {
                     return
                 }
 

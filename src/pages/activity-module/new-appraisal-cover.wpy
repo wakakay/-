@@ -69,8 +69,6 @@
                         :class="{'cell-seleted' : data.isDone}"
                         data-index="{{index}}"
                         data-item="{{data}}"
-                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                        bindgetuserinfo="getAuthorize"
                         @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
             </view>
         </repeat>
@@ -83,8 +81,6 @@
         <view class="ui-button-box" :class="{'is-iphonex': isIphonex}">
             <view class="cell-button">
                 <button data-role="2"
-                        open-type="{{ !isTokenSet? 'getUserInfo' : '' }}"
-                        bindgetuserinfo="getAuthorize"
                         @tap.stop="getStartAppraisal">开始测试</button>
             </view>
         </view>
@@ -107,9 +103,6 @@
     @connect({
         systemInfo(state) {
             return state.user
-        },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
         },
         entrance(state) {//全局场景值
             return state.entrance
@@ -166,7 +159,7 @@
                 self.$apply()
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.detailsInfo.subjectHeading}) // ga统计
                 wx.reportAnalytics('pre_test_cover', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     examid: self.paramsInfo.examID,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     role: self.systemInfo.role
@@ -180,12 +173,9 @@
          */
         __gotoAppraisalSubject() {
             let self = this
-            if (!self.isTokenSet) {
-                return
-            }
             wepy.$instance.globalData.getHuilder('开始测评', 'click', `${self.detailsInfo.subjectHeading}`)
             wx.reportAnalytics('examstart_click', {
-                username: self.systemInfo.name,
+                username: self.systemInfo.nickName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 examid: self.paramsInfo.examID
             });
@@ -202,7 +192,7 @@
                 let self = this
                 let {currentTarget: {dataset: {item, index}}} = event
 
-                if (item.isDone || !self.isTokenSet) {
+                if (item.isDone) {
                     return
                 }
 
@@ -223,33 +213,6 @@
             getStartAppraisal() {
                 let self = this
                 self.__gotoAppraisalSubject()
-            },
-            /**
-             * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
-             */
-            getAuthorize(event) {
-                let self = this
-                let {detail: {errMsg}, currentTarget: {dataset:{item, role}}} = event
-
-                if (self.isTokenSet) {
-                    return
-                }
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    if (2 == role) {
-                        self.__gotoAppraisalSubject()
-                    }
-                }).catch(error => { // 拒接授权
-
-                })
             }
         }
 

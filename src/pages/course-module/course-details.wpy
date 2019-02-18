@@ -251,9 +251,7 @@
                     <button class="ui-item"
                             style="background-image:url({{item.coverImageURL}})"
                             hover-stay-time="100"
-                            form-type="{{isTokenSet ? 'submit': ''}}"
-                            open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                            bindgetuserinfo="getAuthorize"
+                            form-type="submit"
                             data-item="{{item}}"
                             @tap.stop="getCourseLearning">
                         <view class="cell-title">{{item.senceName}}</view>
@@ -347,37 +345,43 @@
         </view>
 
         <button class="ui-pay-button"
-                open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                bindgetuserinfo="getAuthorize"
                 hover-stay-time="100"
                 @tap.stop="getAllPay"
                 wx:if="{{courseDetail.price>0}}">{{courseDetail.price}} 即能币购买 <text class="icon-details"></text></button>
 
         <view class="ui-clear"></view>
 
-        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!courseDetail.isLimitedTimeGiftCourse && courseDetail.price>0}}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{hasGift && !courseDetail.isLimitedTimeGiftCourse && courseDetail.price>0}}">
             <view class="ui-container" :class="{'is-fixed': isFixed}">
                 <view class="ui-text main-justify">
                     <text>获取整个课程</text>
                     <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
                 </view>
                 <view class="ui-button-list ui-column">
-                    <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                        bindgetuserinfo="getAuthorize"
-                        hover-stay-time="100"
-                        @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                    <button hover-stay-time="100" @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
                 </view>
             </view>
         </view>
 
-        <view wx:if="{{courseDetail.isLimitedTimeGiftCourse}}">
+        <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{!hasGift}}">
+            <view class="ui-container is-fixed">
+                <view class="ui-text main-center"></view>
+                <view class="ui-button-list ui-column">
+                    <button hover-stay-time="100"
+                            form-type="submit"
+                            open-type="getPhoneNumber"
+                            @getphonenumber.stop="getFirstReceive">首课免费领取</button>
+                </view>
+            </view>
+        </view>
+
+        <view wx:if="{{hasGift && courseDetail.isLimitedTimeGiftCourse}}">
             <view class="ui-button-box" :class="{'is-phonex': isIphonex}" wx:if="{{courseDetail.coursePayStatus!='hidden' && ((courseDetail.hasGiftState && courseDetail.roleType=='gifter' && courseDetail.price>0) || (courseDetail.hasGiftState && courseDetail.roleType=='receiver' && courseDetail.giftButtonMsg=='赠一得一') || (courseDetail.roleType=='normal' && courseDetail.price>0))}}">
                 <view class="ui-container is-fixed">
                     <view class="ui-text main-center"></view>
                     <view class="ui-button-list ui-column">
-                        <button open-type="{{!isTokenSet ? 'getUserInfo': 'share'}}"
+                        <button open-type="share"
                                 data-role="1"
-                                bindgetuserinfo="getAuthorize"
                                 hover-stay-time="100">分享免费领</button>
                     </view>
                 </view>
@@ -389,9 +393,7 @@
                         <text>{{countDown ? '3天内学完所有微课，你将获得此课程。' : '领取后，你的好友将获得此课程。你只能通过此途径领取1个课程。'}}</text>
                     </view>
                     <view class="ui-button-list ui-column">
-                        <button open-type="{{!isTokenSet ? 'getUserInfo': ''}}"
-                                data-role="2"
-                                bindgetuserinfo="getAuthorize"
+                        <button data-role="2"
                                 hover-stay-time="100"
                                 @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
                     </view>
@@ -415,7 +417,7 @@
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary, getStorageAsync} from '../../utils'
     import {CustomError} from '../../errors'
-    import {login} from '../../redux/models/user'
+    import {getUserPhone, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     /*
@@ -441,8 +443,8 @@
         systemInfo(state) {
             return state.user
         },
-        isTokenSet(state) {
-            return state.user.token.startsWith('userID')
+        hasGift(state) {
+            return state.user.hasGift
         },
         entrance(state) {//全局场景值
             return state.entrance
@@ -494,7 +496,7 @@
             if (-1 !== isCode && params.senceID) {
                 self.shareSenceID = params.senceID
             }
-            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
         onShow() {
             let self = this
@@ -537,11 +539,9 @@
             let postData = {
                 token: params && params.token || self.systemInfo.token,
                 courseID: self.paramsInfo.id,
-                source: self.paramsInfo.source
+                source: self.paramsInfo.wxPushType || self.paramsInfo.source
             }
-            if (self.paramsInfo.wxPushType) {
-                postData.wxPushType = self.paramsInfo.wxPushType
-            }
+
             if (self.paramsInfo.giftID) {
                 postData.giftID = self.paramsInfo.giftID
                 self.isGifter = true
@@ -556,9 +556,7 @@
                 }
                 self.courseDetail = respone
                 _.each(self.courseDetail.senceList, (item) => {
-                    if (!self.isTokenSet) {
-                        item.buttonStatusMsg = '即学'
-                    } else if ('needPay' === item.buttonStatus) {
+                    if ('needPay' === item.buttonStatus) {
                         item.buttonStatusMsg = item.sencePrice
                     }
                 })
@@ -621,7 +619,7 @@
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.courseDetail.name}) // ga统计
                 wx.reportAnalytics('coursedetail_pageload', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.name,
+                    nickname: self.systemInfo.nickName,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     courseid: self.paramsInfo.id,
                     source: self.paramsInfo.source
@@ -785,7 +783,7 @@
             let self = this
             wx.reportAnalytics('tap_to_lesson', {
                 role: self.systemInfo.role,
-                nickname: self.systemInfo.name,
+                nickname: self.systemInfo.nickName,
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 courseid: self.paramsInfo.id,
                 senceid: senceID,
@@ -811,7 +809,49 @@
             }
             fetch.sendCoursePageTime(postData).then(response => {})
         }
+        /** 领取课程结果
+         * @param phone 手机号码
+         * @param item 当前点击的哪个推荐课程
+         */
+        __receiveResult(phone) {
+            let self = this
+            let postData = {
+                token: self.systemInfo.token,
+                mobile: phone,
+                verCode: null,
+                courseID: self.paramsInfo.id
+            }
+
+            fetch.savePhone(postData).then((respone) => {
+                wx.showToast({
+                    title: '领取成功'
+                })
+                store.dispatch(refreshUserInformations({hasGift: true}))
+                self.initialize()
+            }).catch(error => {
+                wx.showToast({
+                    icon: 'none',
+                    title: '网络错误'
+                })
+            })
+        }
         methods = {
+            /**
+             * 首页免费课程
+             * @param event
+             */
+            getFirstReceive(event) {
+                let self = this
+                let {detail: {encryptedData, errMsg, iv}} = event
+                // 拒绝授权手机号码
+                if ('getPhoneNumber:ok' !== errMsg) {
+                    wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '拒绝授权手机号码')
+                    return
+                }
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    self.__receiveResult(respone)
+                })
+            },
             /**
              * 你将获得
              * @param event
@@ -857,10 +897,6 @@
              */
             getCourseLearning(event) {
                 let self = this
-                if (!self.isTokenSet) {
-                    return
-                }
-
                 let {currentTarget: {dataset:{item}}} = event
                 wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
                 self.reportButtonTap(item.senceID, item.buttonStatus)
@@ -872,52 +908,11 @@
              */
             getAllPay() {
                 let self = this
-                if (!self.isTokenSet) {
-                    return
-                }
-
                 wepy.$instance.globalData.getHuilder('课程详情页/一键获取', 'click', `${self.courseDetail.name}`)
                 self.$navigate(`/pages/course-module/course-pay`, {
                     courseID: self.paramsInfo.id,
                     isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
                     giftID: self.giftID || self.paramsInfo.giftID})
-            },
-            /**
-             * 授权登录信息
-             * @param event
-             * @returns {Promise<any>}
-             */
-            getAuthorize(event) {
-                let self = this
-                let {detail: {errMsg}, currentTarget: {dataset:{item, role}}} = event
-
-                if (self.isTokenSet) {
-                    return
-                }
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    self.__receiveCourseShare()
-                    if (1 == role) { // 赠送者：赠一得一
-                        self.initialize()
-                        return
-                    }
-                    if (2 == role) {// 受赠者：领取课程
-                        self.initialize()
-                        return
-                    }
-                    item ? self.__goToCourseLearning(item) : self.$navigate(`/pages/course-module/course-pay`, {
-                        courseID: self.paramsInfo.id,
-                        isLimitedTimeGiftCourse: self.courseDetail.isLimitedTimeGiftCourse,
-                        giftID: self.giftID || self.paramsInfo.giftID})
-                }).catch(error => { // 拒接授权
-
-                })
             },
             /**
              * 接受赠一得一，马上学习
@@ -926,7 +921,7 @@
              */
             getReceiveCourse() {
                 let self = this
-                if (!self.isTokenSet || !self.isReceive) {
+                if ( !self.isReceive) {
                     return
                 }
                 self.__receiveCourse()
@@ -961,7 +956,7 @@
             let reportType = ''
 
             if (dataset && dataset.role) {
-                title = `${self.systemInfo.name} 赠送你一个好课，点击免费领`
+                title = `${self.systemInfo.nickName} 赠送你一个好课，点击免费领`
                 path = `/pages/course-module/course-details?id=${self.paramsInfo.id}&giftID=${self.giftID}&source=GiftShare`
                 if (self.giftID) {
                     let postData = {
@@ -981,7 +976,7 @@
                 wepy.$instance.globalData.getHuilder('课程详情页/分享', 'click', `${self.courseDetail.name}`)
                 wx.reportAnalytics('share_event', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.name,
+                    nickname: self.systemInfo.nickName,
                     coursename: self.courseDetail.name,
                     sencename: '/',
                     channel: self.entrance.mappers[self.entrance.scenceID],

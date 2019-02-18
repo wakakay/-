@@ -847,10 +847,10 @@
 
     @connect({
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         token(state) {
 			return state.user.token

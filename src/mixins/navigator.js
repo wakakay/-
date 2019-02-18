@@ -9,7 +9,7 @@ export default class Navigator extends wepy.mixin {
             handleBackHome(event) {
                 return new Promise((resolve, reject) => {
                     wx.reLaunch({
-                            url: '/pages/course-module/course',
+                            url: '/pages/today-module/index',
                             success: response => resolve(response),
                             fail: error => reject(error)
                         }) // end reLaunch

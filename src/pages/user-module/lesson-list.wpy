@@ -62,13 +62,10 @@
 	const store = getStore()
 	@connect({
 		userName(state) {
-			return state.user.name;
+			return state.user.nickName;
 		}, // mapState 即getters
 		avatar(state) {
-			return state.user.avatar;
-		},
-		isTokenSet(state) {
-			return state.user.token.startsWith('userID')
+			return state.user.avatarUrl;
 		},
 		token(state) {
 			return state.user.token;

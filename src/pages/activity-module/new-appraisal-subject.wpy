@@ -147,7 +147,7 @@
                 wepy.$instance.globalData.getLoadHuilder({pageTheme: self.pageName})
                 // 微信统计
                 wx.reportAnalytics('pre_test_ing', {
-                    username: self.systemInfo.name,
+                    username: self.systemInfo.nickName,
                     examid: self.paramsInfo.examID,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                 })

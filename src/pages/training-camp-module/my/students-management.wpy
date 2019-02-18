@@ -274,10 +274,10 @@
     const state = store.getState();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         }, // mapState 即getters
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         token(state) {
             // return 'userIDa17893b9d893483ab6cd9108b77714fe-1523802021681-90096bde7b9b3902ff6bbe596f0bd55d'

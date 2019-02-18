@@ -273,10 +273,10 @@
 
     @connect({
         avatar(state) {
-            return state.user.avatar
+            return state.user.avatarUrl
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         }, // mapState 即getters
         token(state) {
             return state.user.token

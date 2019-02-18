@@ -25,10 +25,10 @@
     const store = getStore();
     @connect({
         userName(state) {
-            return state.user.name;
+            return state.user.nickName;
         }, // mapState 即getters
         avatar(state) {
-            return state.user.avatar;
+            return state.user.avatarUrl;
         },
         token(state) {
             //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
@@ -75,7 +75,7 @@
                     .catch((err) => {
                         console.log(err)
                     })
-                
+
             },
             getItem({currentTarget: {dataset: {item}}}){
                 // this.targetList.map(item => item.isActive = false)
@@ -87,8 +87,8 @@
                     }
                 })
             }
-           
-           
+
+
         }
 
         onLoad() {

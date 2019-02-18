@@ -293,7 +293,7 @@
 
                 wx.reportAnalytics('paycourse', {
                     role: self.systemInfo.role,
-                    nickname: self.systemInfo.name,
+                    nickname: self.systemInfo.nickName,
                     coursename: self.payInfo.name,
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     paytype: '即能币支付',
@@ -347,7 +347,7 @@
                         })
                         wx.reportAnalytics('paycourse', {
                             role: self.systemInfo.role,
-                            nickname: self.systemInfo.name,
+                            nickname: self.systemInfo.nickName,
                             coursename: '/',
                             channel: self.entrance.mappers[this.entrance.scenceID],
                             paytype: '微信支付',
@@ -380,7 +380,7 @@
             }, 2500)
 
             return {
-                title: `${self.systemInfo.name} 赠送你一个好课，立即领取`,
+                title: `${self.systemInfo.nickName} 赠送你一个好课，立即领取`,
                 path: `/pages/course-module/course-details?id=${self.paramsInfo.courseID}&giftID=${self.paramsInfo.giftID}`,
                 imageUrl: self.payInfo.image || ''
             }

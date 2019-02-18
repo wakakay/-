@@ -237,7 +237,7 @@
             return state.user
         },
         userName(state) {
-            return state.user.name
+            return state.user.nickName
         },
         role(state) {
             return state.user.role
