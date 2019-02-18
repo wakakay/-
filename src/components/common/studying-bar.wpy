@@ -13,18 +13,15 @@
                 width:72rpx;height:72rpx;background-color:@background-white;border-radius:@border-radius-20;
                 text{font-size:48rpx;color:@color-blue;}
             }
-            .ui-text-box{
-                background: none;
-                .ui-title{
-                    padding-left:24rpx;text-align:left;position:relative;
-                    text{line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
-                    .cell-title{font-size:32rpx;color:@color-black;}
-                    .cell-subtitle{font-size:22rpx;color:@color-gray;}
-                }
-                .ui-button{
-                    width:100rpx;height:100%;
-                    text{color:@color-blue;}
-                }
+            .ui-title{
+                padding-left:24rpx;text-align:left;position:relative;
+                text{line-height:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+                .cell-title{font-size:32rpx;color:@color-black;}
+                .cell-subtitle{font-size:22rpx;color:@color-gray;}
+            }
+            .ui-button{
+                width:100rpx;height:100%;
+                text{color:@color-blue;}
             }
         }
     }
@@ -40,7 +37,7 @@
             width:100%;height:64rpx;background-color:@color-white;
             text{display:block;color:@background-gray-d6;font-size:24rpx;}
         }
-        .ui-container{width:100%;height:calc(~"100% - 80rpx");}
+        .ui-container{width:100%;height:100%;}
         .is-delete{height:0 !important;padding:0 !important;margin:0 !important;transition:all .5s ease-in-out;}
         .ui-sence-list{
             padding-bottom:20rpx;background-color:@background-gray-d6;
@@ -73,37 +70,32 @@
 </style>
 
 <template>
-    <form bindsubmit="handleSavePushCode" report-submit>
-        <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
-            <view class="ui-content-box dir-left main-justify" style="background:linear-gradient(to right, rgba(201, 218, 245, 0.95) {{continueSenceInfo.progress}}% , rgba(239, 239, 244, 0.95) 0);" :class="{'active': !isAndroid && !direction}">
-                <view class="ui-marquee lightSpeedOut">
-                    <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
+    <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
+        <view class="ui-content-box dir-left main-justify" style="background:linear-gradient(to right, rgba(201, 218, 245, 0.95) {{continueSenceInfo.progress}}% , rgba(239, 239, 244, 0.95) 0);" :class="{'active': !isAndroid && !direction}">
+            <view class="ui-marquee lightSpeedOut">
+                <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
+            </view>
+
+            <view class="cell-list main-center cross-center flex-box-0"
+                  @tap.stop="getShowList" >
+                <text class="icon-list"></text>
+            </view>
+
+            <view class="ui-text-box flex flex-box-1"
+                  data-name="{{continueSenceInfo.senceName}}"
+                  data-source="{{source}}"
+                  @tap.stop="getContinue">
+                <view class="ui-title dir-top main-justify">
+                    <text class="cell-title">{{continueSenceInfo.senceName}}</text>
+                    <text class="cell-subtitle">{{continueSenceInfo.senceSkillName}}</text>
                 </view>
 
-                <button hover-stay-time="100" form-type="submit"
-                        class="cell-list main-center cross-center flex-box-0"
-                        @tap.stop="getShowList" >
-                    <text class="icon-list"></text>
-                </button>
-
-                <button hover-stay-time="100" form-type="submit"
-                    class="ui-text-box flex flex-box-1"
-                    data-name="{{continueSenceInfo.senceName}}"
-                    data-source="{{source}}"
-                    @tap.stop="getContinue">
-                    <view class="ui-title dir-top main-justify">
-                        <text class="cell-title">{{continueSenceInfo.senceName}}</text>
-                        <text class="cell-subtitle">{{continueSenceInfo.senceSkillName}}</text>
-                    </view>
-
-                    <view class="ui-button main-center cross-center">
-                        <text class="icon-right-arrow"></text>
-                    </view>
-                </button>
+                <view class="ui-button main-center cross-center">
+                    <text class="icon-right-arrow"></text>
+                </view>
             </view>
         </view>
-    </form>
-
+    </view>
 
     <view class="ui-study-list-box" :class="{'is-show-list': isShowList}">
         <view class="ui-mask" @tap.stop="getHideList"></view>
@@ -111,7 +103,9 @@
             <view class="ui-pack-up-button cross-center main-center" @tap.stop="getHideList">
                 <text class="icon-down-arrow"></text>
             </view>
-            <scroll-view class="ui-container"
+            <scroll-view
+                    class="ui-container"
+                    style="height:{{scrollBoxHeight}}px"
                     scroll-y>
                 <repeat for="{{learningSenceList}}" key="dataIndex" index="dataIndex" item="data">
                     <view class="ui-sence-list" :class="{'fadeOutRight': data.isMove, 'is-delete': data.isDelete}">
@@ -151,15 +145,12 @@
             </scroll-view>
         </view>
     </view>
-
-
 </template>
 
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import {fetch} from '../../api'
-    import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson} from '../../utils'
     import _ from 'underscore'
 
@@ -173,7 +164,6 @@
         }
     })
     export default class studyingBar extends wepy.component {
-        mixins = [PushMixin]
         props = {
             scrollTop: {
                 type: Number,
@@ -202,6 +192,7 @@
             isShowBar: false,
             isShowList: false,
             isRefresh: false,
+            scrollBoxHeight: 0,
             oldScrollTop: 0,
             continueSenceInfo: {},
             learningSenceList: [],
@@ -209,6 +200,10 @@
             newLearningSenceList: [],
             source:'continueList',
             courseType:['button','list'],
+        }
+
+        onLoad() {
+            let self = this
         }
 
         /**
@@ -232,8 +227,22 @@
                     self.__animation(response)
                 }
 
+                // 是否有正在学习的课
+                /*if (response.learningSenceList.length) {
+                    self.isShowBar = true
+                }
+                if (!_.isEmpty(response.continueSence) && !response.learningSenceList.length
+                || _.isEmpty(response.continueSence) && response.learningSenceList.length) {
+                    self.isShowBar = false
+                }*/
                 self.isShowBar = response.learningSenceList.length ? true : false
                 self.$emit('on-is-studying-bar', {isShowBar: self.isShowBar})
+
+                // 获取列表的高度区域
+                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect((rect) => {
+                    self.scrollBoxHeight = Math.floor(rect.height) - 40
+                    self.$apply()
+                }).exec()
 
                 self.$apply()
             })
@@ -364,7 +373,7 @@
                 self.isShowList = true
                 self.__emit()
                 wx.reportAnalytics('study_bar_list_icon', {
-                    username: self.systemInfo.nickName,
+                    username: self.systemInfo.name,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -389,7 +398,7 @@
                 }
                 // 学习bar数据统计
                 wx.reportAnalytics('study_bar_arrow', {
-                    username: self.systemInfo.nickName,
+                    username: self.systemInfo.name,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -417,7 +426,7 @@
 
                 //学习bar数据统计
                 wx.reportAnalytics('study_bar_continue', {
-                    username: self.systemInfo.nickName,
+                    username: self.systemInfo.name,
                     role: self.systemInfo.role,
                     channel: self.entrance.mappers[self.entrance.scenceID]
                 })
@@ -454,7 +463,7 @@
             // 监听页面加载结束，启动刷新数据
             'studying-bar': () => {
                 let self = this
-                self.__learningSenceList()
+                initializationDeligate({initializeFunc: self.__learningSenceList.bind(self)})
             }
         }
     }
