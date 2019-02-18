@@ -46,9 +46,10 @@
                 .ui-course-image{
                     height: 480rpx;width: 670rpx;border-top-left-radius: 32rpx;border-top-right-radius: 32rpx;overflow: hidden;position: relative;background-position:center center;background-size:100% auto;
                     .ui-bg-content{
-                        position: absolute;bottom:74rpx;left: 32rpx;z-index: 1;
-                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:600rpx;}
+                        padding:58rpx 60px 0 32rpx;
+                        .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:520rpx;}
                         .cell-dec{padding:20rpx 0;color: @color-white;opacity: 0.7;font-size: 28rpx;width: 442rpx;min-height: 80rpx;line-height:40rpx;}
+                        .cell-btn{width: 208rpx;height: 72rpx;border-radius: 39rpx;background: @background-mask-white;color:@color-white;text-align:center;line-height:72rpx;font-size:32rpx;margin-top: 118rpx;}
                     }
                     .ui-shadow{position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);}
                     .ui-progress{
@@ -202,19 +203,21 @@
                     <button class="ui-item" form-type="submit" hover-stay-time="100">
                         <view class="ui-course-image" style="background-image:url('{{item.bgImg}}')"
                             @tap.stop="getCourseDetail" data-item="{{item}}">
-                            <view class="ui-bg-content">
-                                <view class="cell-title">{{item.courseName}}</view>
-                                <view class="cell-dec">{{item.courseDec}}</view>
-                            </view>
-                            <view class="ui-shadow"></view>
-                            <view class="ui-progress">
-                                <view class="ui-circular-progress">
-                                    <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
-                                    <view class="ui-wrapper ui-right">
-                                        <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
-                                    </view>
-                                    <view class="ui-wrapper ui-left">
-                                        <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                            <view class="ui-shadow">
+                                <view class="ui-bg-content">
+                                    <view class="cell-title">{{item.courseName}}</view>
+                                    <view class="cell-dec">{{item.courseDec}}</view>
+                                    <view class="cell-btn">选择微课</view>
+                                </view>
+                                <view class="ui-progress">
+                                    <view class="ui-circular-progress">
+                                        <view class="cell-progress-number">{{item.finishLesson}}/{{item.allLesson}}</view>
+                                        <view class="ui-wrapper ui-right">
+                                            <view class="cell-circle-right" style="transform:rotate({{item.percent <= 50 ? (-135 + 3.6 * item.percent) : 45}}deg);"></view>
+                                        </view>
+                                        <view class="ui-wrapper ui-left">
+                                            <view class="cell-circle-left" style="transform:rotate({{item.percent > 50 ? (-135 + 3.6 * (item.percent - 50)) : -135}}deg);"></view>
+                                        </view>
                                     </view>
                                 </view>
                             </view>

@@ -3,7 +3,7 @@
     .module-study-bar{
         width:700rpx;height:24rpx;margin:0 auto;
         .ui-content-box{
-            box-sizing:border-box;width:700rpx;height:100rpx;padding:14rpx 10rpx 14rpx 16rpx;background-color:rgba(239, 239, 244, 0.95);border-radius:@border-radius-20;position:fixed;left:25rpx;bottom:16rpx;z-index:@z-index-header;overflow:hidden;transform:translateY(0);transition:all .1s ease-in;
+            box-sizing:border-box;width:700rpx;height:100rpx;padding:14rpx 10rpx 14rpx 16rpx;border-radius:@border-radius-20;position:fixed;left:25rpx;bottom:16rpx;z-index:@z-index-header;overflow:hidden;transform:translateY(0);transition:all .1s ease-in;
             &.active{transform:translateY(80px);}
             .ui-marquee{
                 width:136rpx;height:100rpx;position:absolute;left:-116rpx;top:0;
@@ -11,7 +11,7 @@
             }
             .cell-list{
                 width:72rpx;height:72rpx;background-color:@background-white;border-radius:@border-radius-20;
-                text{font-size:48rpx;color:@color-gray-44;}
+                text{font-size:48rpx;color:@color-blue;}
             }
             .ui-title{
                 padding-left:24rpx;text-align:left;position:relative;
@@ -71,7 +71,7 @@
 
 <template>
     <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
-        <view class="ui-content-box dir-left main-justify" :class="{'active': !isAndroid && !direction}">
+        <view class="ui-content-box dir-left main-justify" style="background:linear-gradient(to right, rgba(201, 218, 245, 0.95) {{continueSenceInfo.progress}}% , rgba(239, 239, 244, 0.95) 0);" :class="{'active': !isAndroid && !direction}">
             <view class="ui-marquee lightSpeedOut">
                 <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
             </view>
