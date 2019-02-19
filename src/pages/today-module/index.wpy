@@ -198,7 +198,7 @@
                     hover-stay-time="100"
                     class="cell-all"
                     @tap.stop="getAllStudyingCourse">
-                {{1 == roleStatus ? '查看全部' : '换一个'}} <text wx:if="{{1 == roleStatus}}">({{taskNum}})</text>
+                {{1 == roleStatus ? '查看全部' : '换一个'}} <text wx:if="{{1 == roleStatus}}">({{courseCount}})</text>
                 <text class="icon-right-arrow cell-icon"></text>
             </button>
         </view>
@@ -396,7 +396,6 @@
             recommendCourseList:[], // 在学课程
             historicalSkillList:[],
             todaySkill:{},
-            courseCount:'',
             todayText:'',
             todayTitle:'',
             todaySenceList:[],
@@ -408,7 +407,7 @@
             headerHeigth:'',
             roleStatus:0,
             newRoleRecommend:{},
-            taskNum:0
+            courseCount: 0 // 全部有多少个课程
         }
 
         onLoad() {
@@ -466,7 +465,6 @@
                 self.todayText = respone.todayText
                 self.todayTitle = respone.todayTitle
                 self.roleStatus = respone.roleStatus;
-                self.taskNum = respone.taskNum;
                 self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
 
                 self.$apply()
@@ -524,7 +522,7 @@
                     wepy.$instance.globalData.getHuilder('今日页/在学课程/查看全部', 'click', '')
                     self.$navigate('/pages/today-module/all-course');
                 }else {
-                    self.$navigate('/pages/registered-module/weclome');
+                    self.$navigate('/pages/registered-module/interest-select');
                 }
 
             },
