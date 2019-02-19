@@ -37,7 +37,7 @@
             width:100%;height:64rpx;background-color:@color-white;
             text{display:block;color:@background-gray-d6;font-size:24rpx;}
         }
-        .ui-container{width:100%;height:100%;}
+        .ui-container{width:100%;height:calc(~"100% - 80rpx");}
         .is-delete{height:0 !important;padding:0 !important;margin:0 !important;transition:all .5s ease-in-out;}
         .ui-sence-list{
             padding-bottom:20rpx;background-color:@background-gray-d6;
@@ -60,7 +60,7 @@
                     width:100%;padding:0 24rpx;
                     .cell-title{width:384rpx;padding-bottom:20rpx;font-size:32rpx;color:@color-black;text-align:left;line-height:44rpx;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
                     .cell-subtitle{
-                        width:324rpx;font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;
+                        width:324rpx; font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;
                         text:nth-of-type(1){padding-right:12rpx;color:@color-black;line-height:20rpx;}
                     }
                 }
@@ -71,7 +71,7 @@
 
 <template>
     <view class="module-study-bar cross-center" wx:if="{{isShowBar}}">
-        <view class="ui-content-box dir-left main-justify" style="background:linear-gradient(to right, rgba(201, 218, 245, 0.95) {{continueSenceInfo.progress}}% , rgba(239, 239, 244, 0.95) 0);" :class="{'active': !isAndroid && !direction}">
+        <view class="ui-content-box dir-left main-justify" style="background:linear-gradient(to right, rgba(201, 218, 245, 0.95) {{continueSenceInfo.progress ? continueSenceInfo.progress : 0}}% , rgba(239, 239, 244, 0.95) 0);" :class="{'active': !isAndroid && !direction}">
             <view class="ui-marquee lightSpeedOut">
                 <image mode="scaleToFill" src="http://wx-small.runwise.cn/image/imageID7cf1707d2de40c8d4c03cbfc26df.png"></image>
             </view>
@@ -103,10 +103,7 @@
             <view class="ui-pack-up-button cross-center main-center" @tap.stop="getHideList">
                 <text class="icon-down-arrow"></text>
             </view>
-            <scroll-view
-                    class="ui-container"
-                    style="height:{{scrollBoxHeight}}px"
-                    scroll-y>
+            <scroll-view class="ui-container" scroll-y>
                 <repeat for="{{learningSenceList}}" key="dataIndex" index="dataIndex" item="data">
                     <view class="ui-sence-list" :class="{'fadeOutRight': data.isMove, 'is-delete': data.isDelete}">
                         <view class="cell-sence-title cross-center"
@@ -192,7 +189,6 @@
             isShowBar: false,
             isShowList: false,
             isRefresh: false,
-            scrollBoxHeight: 0,
             oldScrollTop: 0,
             continueSenceInfo: {},
             learningSenceList: [],
@@ -227,23 +223,8 @@
                     self.__animation(response)
                 }
 
-                // 是否有正在学习的课
-                /*if (response.learningSenceList.length) {
-                    self.isShowBar = true
-                }
-                if (!_.isEmpty(response.continueSence) && !response.learningSenceList.length
-                || _.isEmpty(response.continueSence) && response.learningSenceList.length) {
-                    self.isShowBar = false
-                }*/
                 self.isShowBar = response.learningSenceList.length ? true : false
                 self.$emit('on-is-studying-bar', {isShowBar: self.isShowBar})
-
-                // 获取列表的高度区域
-                !self.scrollBoxHeight && wx.createSelectorQuery().select('.ui-scroll-box').boundingClientRect((rect) => {
-                    self.scrollBoxHeight = Math.floor(rect.height) - 40
-                    self.$apply()
-                }).exec()
-
                 self.$apply()
             })
         }
