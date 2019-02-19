@@ -40,7 +40,6 @@
                             </view>
                         </button>
                     </repeat>
-
                 </view>
                 <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'course'}}">
                     <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
