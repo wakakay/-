@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 793641 */
-    src: url('//at.alicdn.com/t/font_793641_get8ote2lhn.ttf') format('truetype');
+    src: url('//at.alicdn.com/t/font_793641_45ifah5nh4t.ttf') format('truetype');
   }
 
 [class^='icon-'], .iconfont {
@@ -178,5 +178,7 @@
 .icon-discuss:before {content: "\e62e";}
   
 .icon-task:before {content: "\e62f";}
+
+.icon-eyes:before {content: "\e630";}
   
   
