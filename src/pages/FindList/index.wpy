@@ -172,15 +172,6 @@
 
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
-
-        <form bindsubmit="handleSavePushCode" report-submit>
-            <view class="ui-gift" wx:if="{{isShowGift}}">
-                <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
-                <button form-type="submit" hover-stay-time="100" @tap.stop="getGift">
-                    <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
-                </button>
-            </view>
-        </form>
     </view>
 </template>
 
@@ -211,9 +202,6 @@
         },
         token(state) {
             return state.user.token
-        },
-        isShowGift(state) {
-            return state.user.isShowGift
         },
         role(state) {
             return state.user.role
@@ -380,7 +368,7 @@
                     return wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
                 }
 
-                store.dispatch(getLoginInfo(userInfo, errMsg)).then(repsone => {
+                store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
                 })
             },
@@ -445,27 +433,6 @@
              */
             getScrollMore(event) {
                 let self = this
-            },
-            /**
-             * 关闭新人礼包
-             * @param
-             */
-            getCloseGift() {
-                let self = this
-                store.dispatch(renewUserGiftBox(false))
-            },
-            /**
-             * 去领取新人礼包
-             * @param
-             */
-            getGift() {
-                let self = this
-                wx.reportAnalytics('exclusive_gift_click', {
-                    username: self.userName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    role: self.role
-                })
-                wx.navigateTo({url: '/pages/registered-module/interest-select'})
             },
             getEditorItem({currentTarget: {dataset: {item}}}) {
                 let self = this

@@ -43,9 +43,9 @@
     import {login} from "../../redux/models/user"
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
+    import {initializationDeligate} from "../../utils"
 
     const store = getStore()
-
     @connect({
         userName(state) {
             return state.user.nickName
@@ -93,7 +93,8 @@
         }
 
         onShow() {
-            this.initialize()
+            let self = this
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         initialize() {

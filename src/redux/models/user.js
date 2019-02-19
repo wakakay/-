@@ -37,10 +37,6 @@ const initialState = {
 
 const setStorage = (storeInfo) => {
     getStorageAsync({key: 'account'}).then((respone) => {
-        // 是否有手动关闭专属礼包
-        if (!_.isUndefined(storeInfo.hasGift)) {
-            storeInfo.isShowGift = _.isBoolean(storeInfo.hasGift) && !storeInfo.hasGift ? true : false
-        }
         setStorageAsync({
             key: 'account',
             value: _.extend(respone, storeInfo)
@@ -129,18 +125,19 @@ export const getLoginToken = () => (dispatch, getState) => {
  * 获取用户we微信信息
  * @returns {function(*, *)}
  */
-export const getLoginInfo = (userInfo, errMsg) => (dispatch, getState) => {
+export const getLoginInfo = (respone) => (dispatch, getState) => {
+    let userInfo = respone
+    let errMsg = respone.errMsg
     return new Promise((resolve, reject) => {
         resolve(userInfo)
-    }).then((userInfo) => { // 确定授权
+    }).then((user) => { // 确定授权
         let postData = {
             token: initialState.token,
             body: {jsonObject: {...initialState, errMsg, ...userInfo}}
         }
-
         return fetch.getUserInfo(postData)
     }).then(respone => {
-        return setStorage(userInfo)
+        return setStorage(userInfo.userInfo)
     })
 }
 
@@ -188,15 +185,6 @@ export const renewWechatCode = dispatch => {
         code && setStorage({code: code}) || new Error(false)
         return { errMsg, code }
     }).catch(error => Promise.reject(error))
-}
-
-/**
- * 更新当前是否显示专属礼包
- * @param role
- * @returns {function(*, *)}
- */
-export const renewUserGiftBox = isShowGift => (dispatch, getState) => {
-    return setStorage({isShowGift: isShowGift})
 }
 
 /**

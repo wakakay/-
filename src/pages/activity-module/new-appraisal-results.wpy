@@ -191,7 +191,7 @@
         onLoad(parmas) {
             let self = this
             self.paramsInfo = parmas
-            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {

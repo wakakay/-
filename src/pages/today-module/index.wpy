@@ -171,8 +171,7 @@
 </style>
 
 <template>
-<jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-<jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
+<jn-evaluate :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
 
 <jn-header hiddenButton class="ui-today-header">
     <view slot="cursor-button" class="cell-header-date">{{todayDate}}</view>
@@ -345,15 +344,6 @@
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
-
-<form bindsubmit="handleSavePushCode" report-submit>
-    <view class="ui-gift" wx:if="{{isShowGift}}">
-        <view class="cell-icon" hover-stay-time="100" @tap.stop="getCloseGift"><text class="icon-close"></text></view>
-        <button form-type="submit" hover-stay-time="100" @tap.stop="getGift">
-            <image mode="aspectFit" src="http://wx-small.runwise.cn/image/imageID378f2f5947d4fdbb5786f0c7ba55.png"></image>
-        </button>
-    </view>
-</form>
 </template>
 
 <script>
@@ -362,7 +352,6 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
@@ -381,9 +370,6 @@
         token(state) {
             return state.user.token
         },
-        isShowGift(state) {
-            return state.user.isShowGift
-        },
         role(state) {
             return state.user.role
         },
@@ -396,13 +382,11 @@
 
         components = {
             'jn-header': header,
-            'jn-loading': Loading,
             'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
         }
 
         data = {
-            isLoaded: false,
             hasStudyingBar: false, // 是否有学习bar
             isScroll: true, // 是否能滚动
             scrollTop: 0,
@@ -436,7 +420,8 @@
 
         onShow() {
             let self = this
-            initializationDeligate({initializeFunc: self.todaySkills.bind(self)})
+            self.__todaySkills()
+            initializationDeligate({initializeFunc: self.__todayTaskList.bind(self)})
             wepy.$instance.globalData.getLoadHuilder() // ga统计
         }
 
@@ -467,21 +452,28 @@
                 self.historicalSkillList = respone.historicalSkillList
                 self.todaySkill = respone.todaySkill
                 self.$apply()
-            }).then(()=>{
-                fetch.todayTaskList(postData).then((respone) => {
-                    self.isLoaded = true
-                    self.recommendCourseList = respone.recommendCourseList
-                    self.todayDate = respone.todayDate
-                    self.todaySenceList = respone.todaySenceList
-                    self.courseCount = respone.courseCount
-                    self.todayText = respone.todayText
-                    self.todayTitle = respone.todayTitle
-                    self.roleStatus = respone.roleStatus;
-                    self.taskNum = respone.taskNum;
-                    self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
+            }).catch(error => {
+                throw error
+            })
+        }
 
-                    self.$apply()
-                })
+        __todayTaskList() {
+            let self = this
+            let postData = {
+                token: self.token
+            }
+            fetch.todayTaskList(postData).then((respone) => {
+                self.recommendCourseList = respone.recommendCourseList
+                self.todayDate = respone.todayDate
+                self.todaySenceList = respone.todaySenceList
+                self.courseCount = respone.courseCount
+                self.todayText = respone.todayText
+                self.todayTitle = respone.todayTitle
+                self.roleStatus = respone.roleStatus;
+                self.taskNum = respone.taskNum;
+                self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
+
+                self.$apply()
             }).catch(error => {
                 throw error
             })
@@ -502,7 +494,7 @@
                     return wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
                 }
 
-                store.dispatch(getLoginInfo(userInfo, errMsg)).then(repsone => {
+                store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
                 })
             },
@@ -587,30 +579,7 @@
                     resumeLastRead: resume,
                     source
                 })
-            },
-
-
-            /**
-             * 关闭新人礼包
-             * @param
-             */
-            getCloseGift() {
-                let self = this
-                store.dispatch(renewUserGiftBox(false))
-            },
-            /**
-             * 去领取新人礼包
-             * @param
-             */
-            getGift() {
-                let self = this
-                wx.reportAnalytics('exclusive_gift_click', {
-                    username: self.userName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    role: self.role
-                })
-                wx.navigateTo({url: '/pages/registered-module/interest-select'})
-            },
+            }
         }
 
         events = {

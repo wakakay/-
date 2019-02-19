@@ -95,7 +95,6 @@
     import poll from '../../components/cards-type/poll'
     import {fetch} from '../../api'
     import {initializationDeligate} from "../../utils"
-    import {CustomError} from '../../errors'
     import {login} from '../../redux/models/user'
     import _ from 'underscore'
 
@@ -127,7 +126,7 @@
         onLoad(parmas) {
             let self = this
             self.paramsInfo = parmas
-            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         onShow() {

@@ -18,12 +18,12 @@
  */
 export const ROUTERS = {
     /*-------------------今日-----------------------*/
-    'pages/today-module/index': {screenName: '今日页', isLevel: true, isVisitor: true},
+    'pages/today-module/index': {screenName: '今日页', sence: 'TodayTabShare', isLevel: true, isVisitor: true},
     'pages/today-module/all-course': {screenName: '今日页-全部在学课程', isVisitor: true},
     /*-------------------发现页-----------------------*/
-    'pages/FindList/index': {screenName: '发现页', isLevel: true, isVisitor: true},
+    'pages/FindList/index': {screenName: '发现页', sence: 'FindTabShare', isLevel: true, isVisitor: true},
     /*-------------------课程-----------------------*/
-    'pages/course-module/course': {screenName: '课程页', isLevel: true, isVisitor: true},
+    'pages/course-module/course': {screenName: '课程页', sence: 'CourseTabShare', isLevel: true, isVisitor: true},
     'pages/course-module/course-details': {screenName: '课程详情页', sence: 'CourseShare', pageType:'CourseDetail', isVisitor: true}, // 需要记录哪门子课程详情
     'pages/course-module/course-series': {screenName: '系列详情页', sence: 'seriesShare', isVisitor: true}, // 需要记录哪门子的系列课程
     'pages/course-module/course-learning': {screenName: '微课学习', sence: 'CardsShare', pageType: 'Lesson'}, // 需要记录哪门子的微课
@@ -75,7 +75,7 @@ export const ROUTERS = {
     'pages/activity-module/appraisal-start': {screenName: '测评页面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/appraisal-questions': {screenName: '测评答题'},
     'pages/activity-module/appraisal-results': {screenName: '测评结果'},
-    'pages/activity-module/new-appraisal-cover': {screenName: '新版测评封面', isVisitor: true},
+    'pages/activity-module/new-appraisal-cover': {screenName: '新版测评封面', sence: 'preTestShare', isVisitor: true},
     'pages/activity-module/new-appraisal-subject': {screenName: '新版测评答题'},
     'pages/activity-module/new-appraisal-results': {screenName: '新版测评结果'},
     'pages/activity-module/custom-plan': {screenName: '专属学习计划'},

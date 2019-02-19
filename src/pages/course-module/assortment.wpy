@@ -232,7 +232,7 @@
 
         onShow() {
             let self = this
-            initializationDeligate({initializeFunc: self.initialize.bind(self, true)})
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         initialize(AuthorizeData) {
