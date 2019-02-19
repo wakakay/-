@@ -1,6 +1,6 @@
 <template>
     <mloading wx:if="{{ !isLoaded }}"/>
-    <view class="ui-special-course">
+    <form class="ui-special-course" bindsubmit="handleSavePushCode" report-submit>
         <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
         <view class="ui-course-content">
             <repeat for="{{moduleList}}" key="index" index="index" item="item">
@@ -9,16 +9,23 @@
                         <image mode="widthFix" src="{{item.img}}" />
                     </view>
                 </view>
-                <view class="ui-img-type flex" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'image' && index !== 0}}" >
+                <button class="ui-img-type flex"
+                        form-type="submit"
+                        id="{{index == 1 ? 'ui-id' : ''}}"
+                        wx:if="{{item.type == 'image' && index !== 0}}" >
                     <image mode="widthFix" src="{{item.img}}" />
-                </view>
-                <view class="ui-doc" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'text'}}">
+                </button>
+                <button class="ui-doc"
+                        form-type="submit"
+                        id="{{index == 1 ? 'ui-id' : ''}}"
+                        wx:if="{{item.type == 'text'}}">
                     <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
                     <text class="cell-content" wx:if="{{item.content}}">{{item.content}}</text>
-                </view>
+                </button>
                 <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'sence'}}">
                     <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <button class="ui-item"
+                                form-type="submit"
                                 @tap.stop="handleStartLesson"
                                 data-item="{{lessonItem}}" >
                             <view class="ui-img">
@@ -38,6 +45,7 @@
                 <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'course'}}">
                     <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <button class="ui-item"
+                                form-type="submit"
                                 @tap.stop="getCourseDetail"
                                 data-item="{{courseItem}}"
                                 data-type="4">
@@ -74,14 +82,15 @@
                         <text class="icon-share"></text>
                         <text>分享给好友</text>
                         <button class="cell-btn"
-                            open-type="share"></button>
+                                form-type="submit"
+                                open-type="share"></button>
                     </view>
                 </view>
                 <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
                         @tap.stop="handleStartLesson"
                         data-item="{{floatBox.sence}}">
-                    <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
+                    <button class="ui-share-course" form-type="submit" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
                                 <image src="{{floatBox.sence.imageUrl}}" />
@@ -92,7 +101,7 @@
                             </view>
                         </view>
                         <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
-                    </view>
+                    </button>
                 </button>
                 <button class="module-floax-box"
                         :class="{'is-phonex': isIphonex}"
@@ -115,14 +124,14 @@
                 </button>
                 <view class="ui-share-font"  wx:if="{{floatBox.type !== 'share'}}">
                     <button class="cell-btn"
-                        open-type="share">
+                        open-type="share" form-type="submit">
                         <text class="icon-share cell-icon"></text>分享
                     </button>
                     <view class="cell-btn-margin"></view>
                 </view>
             </view>
         </view>
-    </view>
+    </form>
 </template>
 
 <script>
@@ -130,7 +139,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
-    import NavigatorMixin from '../../mixins/navigator'
+    import PushMixin from '../../mixins/push'
     import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
     import {auth as authApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
@@ -157,12 +166,10 @@
         },
         entrance(state) {
             return state.entrance
-        },
-        platform(state) {
-            return state.user.platform === 'android'
-        },
+        }
     })
     export default class Alllessen extends wepy.page {
+        mixins = [PushMixin]
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             headerHeigth: 68,
@@ -429,8 +436,8 @@
                 image{width: 100%;}
             }
             .ui-doc{
-                padding:4rpx 0 24rpx;box-sizing:border-box;
-                .cell-title{font-size: 40rpx;color: @color-black;padding-top:20rpx;margin-bottom: 24rpx;font-weight: 700;margin:0 32rpx;box-sizing:border-box;}
+                padding:4rpx 0 24rpx;background:none;text-align:left;box-sizing:border-box;line-height:1;
+                .cell-title{font-size: 40rpx;color: @color-black;line-height:54rpx;padding-top:20rpx;margin-bottom: 24rpx;font-weight: 700;margin:0 32rpx;box-sizing:border-box;}
                 .cell-content{font-size: 34rpx;color:@color-gray;line-height:54rpx;display:flex;flex-wrap:wrap;margin:8rpx 24rpx 0 32rpx;box-sizing:border-box;}
             }
             .ui-lesson{
@@ -462,13 +469,13 @@
             .ui-course{
                 padding: 0 32rpx;
                 .ui-item{
-                    display: flex;height: 240rpx;align-items: center;background:none;
+                    display: flex;height: 240rpx;align-items: center;background:none;line-height:1;
                     .ui-img image{width: 176rpx;height: 176rpx;border-radius: @border-radius-44;}
                     &:first-child .ui-content{border-top: none}
                     .ui-content{
-                        margin-left: 36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;text-align:left;
-                        .cell-title{font-size: 32rpx;color: @color-black;}
-                        .cell-dec{font-size: 26rpx;color:@color-gray;margin-top:4rpx;}
+                        margin-left:36rpx;display: flex;flex:1;border-top:2rpx solid @border-gray;flex-direction: column;height:100%;justify-content:center;text-align:left;box-sizing:border-box;
+                        .cell-title{padding-bottom:4rpx;width:474rpx;font-size:32rpx;font-weight:700;color:@color-black;text-align:left;line-height:44rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+                        .cell-dec{width:474rpx;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
                         .ui-btn-bottom{
                             height:84rpx;display:flex;align-items:flex-end;
                             .cell-btn{width: 128rpx;height: 60rpx;border-radius: 200rpx;color: @color-blue;background: @background-gray-F4;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-right: 20rpx;}
