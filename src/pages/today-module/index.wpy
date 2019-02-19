@@ -415,7 +415,6 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.isShowEvaluate = pageNum !== 2 ? false : true
-            self.initialize()
         }
 
         onShow() {
@@ -423,6 +422,7 @@
             self.__todaySkills()
             initializationDeligate({initializeFunc: self.__todayTaskList.bind(self)})
             wepy.$instance.globalData.getLoadHuilder() // ga统计
+            self.$broadcast('studying-bar')
         }
 
         /**
@@ -433,10 +433,6 @@
             let self = this
             self.scrollTop = res.scrollTop
             self.$apply()
-        }
-        initialize() {
-            let self = this
-            self.$broadcast('studying-bar') // 通知组件
         }
         /**
          * 列表数据
