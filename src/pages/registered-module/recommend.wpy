@@ -112,7 +112,8 @@
     import fetchPhoneMixin from "../../mixins/fetchPhone";
     import PushMixin from '../../mixins/push'
     import {auth as authApi, fetch} from '../../api'
-    import {setPhone, renewWechatCode} from '../../redux/models/user'
+    //import {setPhone, renewWechatCode} from '../../redux/models/user'
+    import {getUserPhone, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
@@ -229,6 +230,7 @@
             getReceive(event) {
                 let self = this
                 let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
+
                 let analyticsInfo = {
                     username: self.systemInfo.nickName,
                     channel: self.entrance.mappers[self.entrance.scenceID],
@@ -237,34 +239,14 @@
                 }
                 // 点击的微信统计
                 wx.reportAnalytics('free_collect', analyticsInfo)
-
                 // 拒绝授权手机号码
                 if ('getPhoneNumber:ok' !== errMsg) {
-                    wx.reportAnalytics('agreephonenumber_cancel', analyticsInfo)
-                    return console.log(errMsg)
+                    wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '拒绝授权手机号码')
+                    return
                 }
-
-                wepy.$instance.globalData.getLoadHuilder({screenName: 'user onboarding-保存号码'}) // ga统计
                 wx.reportAnalytics('agreephonenumber_confirm', analyticsInfo) // wx统计
-
-                let postData = {
-                    token: self.systemInfo.token,
-                    code: self.systemInfo.code,
-                    encryptedData,
-                    iv
-                }
-                // 拿到手机加密的号码跟私钥，由后台解密
-                authApi.sendPhoneNumber(postData).then((respone) => {
-                    let {phone} = respone
-                    renewWechatCode(store.dispatch) // 更新登录code
-                    phone && store.dispatch(setPhone({
-                        status: "success",
-                        response: {phone: phone}
-                    }))
-                    self.__receiveResult(phone, item)
-                    self.$apply()
-                }).catch(error => {
-                    renewWechatCode(store.dispatch) // 更新登录code
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    self.__receiveResult(respone, item)
                 })
             },
 

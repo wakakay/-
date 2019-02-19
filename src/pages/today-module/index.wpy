@@ -22,12 +22,8 @@
         image{width:160rpx;height:160rpx;}
     }
     .ui-special-subject{
-        width: 670rpx;height: 670rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;background-size:cover;line-height:1;color:@color-white;
-        &.ui-today-subject{margin:44rpx auto 30rpx;}
-        .ui-top{display: flex;padding:38rpx 56rpx 36rpx 40rpx;justify-content: space-between;font-size: 28rpx;}
-        .cell-title{font-size: 56rpx;font-weight: bold;width: 550rpx;}
-
-        
+        width: 670rpx;height: 670rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;margin:44rpx 40rpx 30rpx;
+        image{width: 100%;height: 670rpx;}
     }
     /* 最新推荐 */
     .ui-studying{
@@ -166,6 +162,10 @@
     .ui-before-subject{
         padding: 60rpx 40rpx 0;background:none;overflow:visible;
         .cell-date{font-size: 44rpx;font-weight: bold;margin-bottom: 20rpx;color: @color-black;text-align: left;}
+        .ui-content{
+            width: 670rpx;height: 670rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;
+            image{width: 100%;height: 670rpx;}
+        }
     }
 
 </style>
@@ -184,20 +184,12 @@
                 open-type="getUserInfo"
                 bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
     </view>
-    <button class="ui-special-subject ui-today-subject"
+    <button class="ui-special-subject"
             hover-stay-time="100"
             form-type="submit"
-            wx:if="{{todaySkill.id}}"
-            @tap.stop="getItem" data-item="{{todaySkill}}" style="background:blue;" >
-            <!--  style="background-image: url('{{todaySkill.coverImageURL}}');" -->
-            <view class="ui-top">
-                <view class="cell-tips">每日技能</view>
-                <view class="ui-count">
-                    <text class="icon-eyes"></text>
-                    233
-                </view>
-            </view>
-            <view class="cell-title">{{todaySkill.name}}</view>
+            wx:if="{{todaySkill.coverImageURL}}"
+            @tap.stop="getItem" data-item="{{todaySkill}}">
+            <image mode="aspectFit" src="{{todaySkill.coverImageURL}}" />
     </button>
     <view class="ui-studying">
         <view class="ui-top">
@@ -344,7 +336,7 @@
     <repeat for="{{historicalSkillList}}" key="index" index="index" item="item">
         <button class="ui-before-subject" form-type="submit" @tap.stop="getItem" data-item="{{item}}">
             <view class="cell-date">{{item.dateTips}}</view>
-            <view class="ui-special-subject">
+            <view class="ui-content">
                 <image mode="aspectFit" src="{{item.coverImageURL}}" />
             </view>
         </button>
@@ -404,7 +396,6 @@
             recommendCourseList:[], // 在学课程
             historicalSkillList:[],
             todaySkill:{},
-            courseCount:'',
             todayText:'',
             todayTitle:'',
             todaySenceList:[],
@@ -416,6 +407,7 @@
             headerHeigth:'',
             roleStatus:0,
             newRoleRecommend:{},
+            courseCount: 0 // 全部有多少个课程
         }
 
         onLoad() {
@@ -474,6 +466,7 @@
                 self.todayTitle = respone.todayTitle
                 self.roleStatus = respone.roleStatus;
                 self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
+
                 self.$apply()
             }).catch(error => {
                 throw error
@@ -529,7 +522,7 @@
                     wepy.$instance.globalData.getHuilder('今日页/在学课程/查看全部', 'click', '')
                     self.$navigate('/pages/today-module/all-course');
                 }else {
-                    self.$navigate('/pages/registered-module/weclome');
+                    self.$navigate('/pages/registered-module/interest-select');
                 }
 
             },
