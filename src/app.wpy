@@ -34,6 +34,7 @@
                 /* 今日模板 */
                 'pages/today-module/index',
                 'pages/today-module/all-course',
+                'pages/today-module/today-task',
                 /* 课程模板 */
                 'pages/course-module/course', // 课程首页
                 'pages/course-module/assortment', // 系列详情

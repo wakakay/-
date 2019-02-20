@@ -1,0 +1,202 @@
+<style lang="less" scoped>
+    @import "../../assets/style/theme";
+    @keyframes fadeInLeft{
+        0%{left:100%}
+        100%{left:0}
+    }
+    .ui-today-task{
+        position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: @z-index-mask;width: 100%;height: 100%;background: @background-white;animation: fadeInLeft 200ms ease-out;
+        .cell-tip{font-size: 68rpx;font-weight: bold;margin:16rpx 0 52rpx 32rpx;}
+        .ui-item{
+            height: 176rpx;display: flex;align-items: center;background:none;line-height:1;text-align:left;padding:0 32rpx;
+            .cell-image{
+                width: 112rpx;height: 112rpx;border-radius: 28rpx;margin-right: 26rpx;
+            }
+            .ui-content{
+                box-sizing:border-box;display: flex;align-items: center;justify-content: space-between;flex:1;height: 164rpx;border-bottom:2rpx solid @border-gray;padding-top:20rpx;
+                .ui-detail{
+                    width:380rpx;height:120rpx;
+                    .cell-name{font-size: 32rpx;color:@color-black;font-weight: bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                    .cell-subtitle{
+                        font-size:26rpx;color:@color-gray;line-height:26rpx;text-align:left;position:relative;display:flex;margin:10rpx 0;
+                        .cell-target{width: 210rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;}
+                        text:nth-of-type(1){font-size: 28rpx;}
+                        text:nth-of-type(2){position:absolute;right:102rpx;}
+                    }
+                    .ui-progress{
+                        width:324rpx;height:8rpx;margin-top:8rpx;background-color:#D8D8D8;border-radius:16rpx;position:relative;margin-left: 20rpx;
+                        >view{position:absolute;left:0;top:0;}
+                        .cell-line{
+                            width:100%;height:100%;z-index:3;
+                            view{width:20%;height:100%;border-left:4rpx solid @background-white;}
+                            view:first-child{border-left:0;}
+                        }
+                        .cell-percent{width:50%;height:100%;background-color:#FF9500;z-index:2;transition:width .2s;border-top-left-radius: 16rpx;border-bottom-left-radius: 16rpx;}
+                        .ui-average {
+                            color:@color-gray;position:absolute;left:0%;top:12rpx;font-size:20rpx;
+                            .icon-triangle{font-size:20rpx;}
+                        }
+                        
+                        
+                    }
+                }
+                .ui-btn{
+                   height: 100%;text-align:center;padding-top:20rpx;
+                    .cell-btn{height: 60rpx;width: 148rpx;border-radius: @border-radius-32;background-color: @background-gray-F4;color:@color-blue;line-height: 60rpx;font-size: 28rpx;font-weight: 700;}
+                    .cell-btn-tip{color:@color-gray;font-size: 24rpx;margin-top: 8rpx;}
+                }
+            }
+        }
+       
+    }
+</style>
+
+<template>
+    <view class="ui-today-task">
+        <jn-header hiddenButton title="">
+            <button slot="cursor-button" class="cell-back" @tap.stop="getBackStep">
+                <text class="icon-back"></text>
+            </button>
+        </jn-header>
+        <form bindsubmit="handleSavePushCode" report-submit>
+            <view class="cell-tip">今日任务</view>
+            <repeat for="{{todaySenceList}}" key="{{index}}" index="{{index}}">
+            <button class="ui-item">
+                    <image class="cell-image" mode="aspectFill" src="{{item.imageUrl}}" />
+                    <view class="ui-content">
+                    <view class="ui-detail">
+                            <view class="cell-name">{{item.senceName}}</view>
+                            <view class="cell-subtitle">
+                                <text>#</text>
+                                <view class="cell-target">{{item.senceTarget}}</view>
+                                <text>{{item.mySenceScore || 0}}</text>
+                            </view>
+                            <view class="ui-progress">
+                                <view class="cell-line box-mean">
+                                    <view></view><view></view><view></view><view></view><view></view>
+                                </view>
+                                <view class="cell-percent" style="width: {{item.mySenceScore * 10}}%;"></view>
+                                <view class="ui-average" style="left:{{item.averageScore * 10}}%;">
+                                    <text class="icon-triangle"></text>
+                                    {{item.averageScore}}
+                                </view>
+                            </view>
+                        </view>
+                        <view class="ui-btn">
+                            <button class="cell-btn" form-type="submit">马上强化</button>
+                            <view class="cell-btn-tip">{{item.giftStatus}}</view>
+                        </view>
+                </view>
+            </button>
+            </repeat>
+        </form>
+    </view>
+    
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+    import header from '../../components/common/header'
+    import PushMixin from '../../mixins/push'
+    import {fetch} from '../../api'
+    
+    const store = getStore()
+    @connect({
+        token(state) {
+            return state.user.token
+        }
+    })
+    export default class todayModule extends wepy.page {
+        mixins = [PushMixin]
+        components = {
+            'jn-header': header,
+        }
+
+        data = {
+            headerHeigth: 68,
+            todaySenceList:[
+                {
+                    averageScore:3.2,
+                    buttonStatus:"continue",
+                    buttonStatusMsg:"测练",
+                    courseID:"courseID828c9df925b49d9094f57b8f183e",
+                    giftStatus:"+1即能币",
+                    id:"senceIDc513056df3448aac07f6fbec608f",
+                    imageUrl:"http://image.runwise.cn/image/imageIDd2993f5025c4c5bd2b136f19d453.png",
+                    mySenceScore:6,
+                    progress:88,
+                    resume:23,
+                    senceName:"访谈用户，寻找痛点和需求",
+                    senceTarget:"迭代产品方案",
+                    lessonType:"lesson"
+                },
+                {
+                    averageScore:3.2,
+                    buttonStatus:"continue",
+                    buttonStatusMsg:"测练",
+                    courseID:"courseID828c9df925b49d9094f57b8f183e",
+                    giftStatus:"+1即能币",
+                    id:"senceIDc513056df3448aac07f6fbec608f",
+                    imageUrl:"http://image.runwise.cn/image/imageIDd2993f5025c4c5bd2b136f19d453.png",
+                    mySenceScore:0,
+                    progress:88,
+                    resume:23,
+                    senceName:"访谈用户，寻找痛点和需求",
+                    senceTarget:"迭代产品方案",
+                    lessonType:"lesson"
+                }
+            ]
+        }
+
+        onLoad(){
+            let self = this;
+            wepy.$instance.globalData.getLoadHuilder()
+            self.initialize()
+        }
+
+        methods = {
+            getBackStep() {
+                wepy.switchTab({ url: '/pages/today-module/index'})
+            },
+            getCourseDetail(event){
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                let courseID = item.courseID;
+                let name = item.courseName;
+                let resume = item.resume ? item.resume : ''
+                wepy.$instance.globalData.getHuilder('今日页/全部在学课程/进入课程','click',`${name}`)
+                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
+
+            }
+        }
+        initialize() {
+            let self = this
+            self.__fetchCourses()
+        }
+        /**
+         * 列表数据
+         * @private
+         */
+        __fetchCourses() {
+            let self = this
+            let postData = {
+                token: self.token
+            }
+            fetch.todayToLearnCourses(postData).then((respone) => {
+                self.recommendCourseList = respone.recommendCourseList
+                self.$apply()
+            }).catch(error => {
+                throw error
+            })
+        }
+
+        events = {
+            'header-info': (data) => {
+                let self = this
+                self.headerHeigth = data.headerHeigth
+                self.$apply()
+            }
+        }
+    }
+</script>

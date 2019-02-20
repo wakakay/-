@@ -20,6 +20,7 @@ export const ROUTERS = {
     /*-------------------今日-----------------------*/
     'pages/today-module/index': {screenName: '今日页', sence: 'TodayTabShare', isLevel: true, isVisitor: true},
     'pages/today-module/all-course': {screenName: '今日页-全部在学课程', isVisitor: true},
+    'pages/today-module/today-task': {screenName: '今日页-全部今日任务', isVisitor: true},
     /*-------------------发现页-----------------------*/
     'pages/FindList/index': {screenName: '发现页', sence: 'FindTabShare', isLevel: true, isVisitor: true},
     /*-------------------课程-----------------------*/

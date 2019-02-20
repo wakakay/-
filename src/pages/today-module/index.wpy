@@ -126,19 +126,23 @@
     .ui-today-box{
         padding: 0  40rpx;margin-top:56rpx;
         .ui-tody-subject{
-            width: 100%;border-radius: @border-radius-32;padding:28rpx 0 28rpx 40rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
-            .cell-tip{font-size: 32rpx;color:@color-gray;}
-            .ui-title-dec{
-                display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
-                .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
-                .cell-num{
-                    font-size: 24rpx;color: @color-gray;
-                    text{font-size:20rpx;}
+            width: 100%;border-radius: @border-radius-32;padding-bottom:28rpx;box-sizing: border-box;background: @background-white;box-shadow:@box-shadow-hight;text-align: left;
+            .ui-today-top{
+                text-align: left;background: none;padding:28rpx 40rpx 0;
+                .cell-tip{font-size: 32rpx;color:@color-gray;}
+                .ui-title-dec{
+                    display: flex;justify-content:space-between;align-items: center;padding-right:32rpx;
+                    .cell-title{font-size: 52rpx;color: @color-black;margin: 16rpx 0;font-weight: bold;}
+                    .cell-num{
+                        font-size: 24rpx;color: @color-gray;
+                        text{font-size:20rpx;}
+                    }
                 }
             }
+           
             .ui-subject{
                 .ui-subject-item{
-                    height: 176rpx;display: flex;align-items: center;background:none;line-height:1;text-align:left;
+                    height: 176rpx;display: flex;align-items: center;background:none;line-height:1;text-align:left;padding:0 40rpx;
                     .ui-img{
                         margin-right: 26rpx;width: 112rpx;
                         image{
@@ -324,15 +328,19 @@
     </view>
     <view class="ui-today-box" wx:if="{{todaySenceList.length}}">
         <view class="ui-tody-subject">
-            <view class="cell-tip">{{todayText}}</view>
-            <view class="ui-title-dec">
-                <view class="cell-title">{{todayTitle}}</view>
-                <view class="cell-num">
-                    <text class="icon-triangle"></text>
-                    平均水平
+            <button form-type="submit"
+                    class="ui-today-top"
+                    hover-stay-time="100"
+                    @tap.stop="getTodayTaskList">
+                <view class="cell-tip">{{todayText}}</view>
+                <view class="ui-title-dec">
+                    <view class="cell-title">{{todayTitle}}</view>
+                    <view class="cell-num">
+                        <text class="icon-triangle"></text>
+                        平均水平
+                    </view>
                 </view>
-            </view>
-
+            </button>
             <view class="ui-subject">
                 <button form-type="submit"
                         hover-stay-time="100"
@@ -580,6 +588,11 @@
                     self.$navigate('/pages/registered-module/interest-select');
                 }
 
+            },
+            // 点击今日任务头部 跳转今日任务列表
+            getTodayTaskList(){
+                let self = this
+                self.$navigate('/pages/today-module/today-task');
             },
             getAvatar() {
                 let self = this
