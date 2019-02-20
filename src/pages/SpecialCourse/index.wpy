@@ -63,6 +63,8 @@
                             :class="{'cell-seleted' : item.isDone}"
                             data-index="{{index}}"
                             data-item="{{item}}"
+                            open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                            @getphonenumber.stop="getPoll"
                             @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
                 </view>
                 <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'border'}}"></view>
@@ -79,8 +81,10 @@
                 </view>
                 <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
-                        @tap.stop="handleStartLesson"
-                        data-item="{{floatBox.sence}}">
+                        data-item="{{floatBox.sence}}"
+                        open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                        @getphonenumber.stop="handleStartLesson"
+                        @tap.stop="handleStartLesson">
                     <view class="ui-share-course" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -135,7 +139,7 @@
     import {auth as authApi, fetch} from "../../api"
     import {CustomError} from "../../errors"
     import {getStore, connect} from "wepy-redux"
-    import {renewWechatCode, login} from "../../redux/models/user"
+    import {getUserPhone} from "../../redux/models/user"
     import _ from 'underscore'
 
     const store = getStore();
@@ -288,30 +292,34 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
-                let {currentTarget: {dataset: {item}}} = event
+                let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
                 let senceName = item.name
                 let resume = item.resume
                 self.senceID = item.id
 
-                self.reportButtonTap()
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    self.reportButtonTap()
 
-                wepy.$instance.globalData.getHuilder(`${self.screenName}/${self.courseName}`,'click',`${senceName}`)
-                if ('needPay' === buttonStatus) {
-                    self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
-                    return
-                }
-                if ('finish' === buttonStatus) {
-                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
-                    return
-                }
+                    wepy.$instance.globalData.getHuilder(`${self.screenName}/${self.courseName}`,'click',`${senceName}`)
+                    if ('needPay' === buttonStatus) {
+                        self.$navigate(`/pages/course-module/course-pay`, {senceID: self.senceID})
+                        return
+                    }
+                    if ('finish' === buttonStatus) {
+                        self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
+                        return
+                    }
 
-                navigateToLesson({
-                    courseID:self.courseID,
-                    senceID:self.senceID,
-                    resumeLastRead: resume,
-                    source
+                    navigateToLesson({
+                        courseID:self.courseID,
+                        senceID:self.senceID,
+                        resumeLastRead: resume,
+                        source
+                    })
+                }).catch((error) => {
+
                 })
             },
             // 跳去 课程详情页
@@ -339,25 +347,28 @@
              */
             getPoll(event) {
                 let self = this
-                let {currentTarget: {dataset: {item, index}}} = event
+                let {currentTarget: {dataset: {item, index}}, detail: {encryptedData, errMsg, iv}} = event
 
                 if (item.isDone) {
                     return
                 }
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
+                    let postData = {
+                        token: self.token,
+                        pollID: item.pollID,
+                        courseID: self.courseID,
+                        optionList:item.selectedItem.id
+                    }
 
-                wepy.$instance.globalData.getHuilder(`${self.screenName}投票`, 'click', `${item.title}`)
-                let postData = {
-                    token: self.token,
-                    pollID: item.pollID,
-                    courseID: self.courseID,
-                    optionList:item.selectedItem.id
-                }
-
-                item.isDone = true
-                fetch.sendUserPoll(postData).then((respone) => {
                     item.isDone = true
-                    self.$broadcast('broadcast-poll', item)
-                }).catch(error => {
+                    fetch.sendUserPoll(postData).then((respone) => {
+                        item.isDone = true
+                        self.$broadcast('broadcast-poll', item)
+                    }).catch(error => {
+
+                    })
+                }).catch((error) => {
 
                 })
             }

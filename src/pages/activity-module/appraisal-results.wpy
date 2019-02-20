@@ -99,7 +99,7 @@
     import header from '../../components/common/header'
     import shareAppraisal from '../../components/shareImages/share-appraisal'
     import {fetch} from '../../api'
-    import {redirectToLesson} from '../../utils'
+    import {initializationDeligate} from "../../utils"
 
     const store = getStore()
     @connect({
@@ -148,39 +148,7 @@
 
         onShow() {
             let self = this
-            self.initialize()
-
-            let postData = {
-                token: self.token,
-                key: 'exam_result_buttonMsg',
-                kind: 'temp_config'
-            }
-            fetch.commonValue(postData).then((respone) => {
-                self.shareButtonMessage = respone.value
-                self.$apply()
-            })
-        }
-
-        onShareAppMessage(res) {
-            let self = this
-
-            wepy.$instance.globalData.getHuilder('测评/分享', 'click', `${self.resultObj.subjectHeading}`)
-
-            wx.reportAnalytics('pre_result_share', {
-                username: self.userName,
-                channel: self.entrance.mappers[self.entrance.scenceID],
-                examid: self.examID
-            })
-
-            return {
-                title: self.resultObj.subjectHeading,
-                path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,
-                imageUrl: self.resultObj.shareImage,
-                complete: function (res) {
-                    self.isShowShade = true
-                    self.$apply()
-                }
-            }
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
         initialize() {
@@ -205,6 +173,8 @@
                 self.showErrorPage = true
                 self.$apply()
             })
+
+
         }
 
         getCourseDetail() {
@@ -293,7 +263,6 @@
 
             getSaveImage() {
                 let self = this
-
                 /*
                 微信埋点事件
                  */
@@ -332,6 +301,29 @@
                 let self = this
                 self.headerHeigth = data.headerHeigth
                 self.$apply()
+            }
+        }
+
+
+        onShareAppMessage(res) {
+            let self = this
+
+            wepy.$instance.globalData.getHuilder('测评/分享', 'click', `${self.resultObj.subjectHeading}`)
+
+            wx.reportAnalytics('pre_result_share', {
+                username: self.userName,
+                channel: self.entrance.mappers[self.entrance.scenceID],
+                examid: self.examID
+            })
+
+            return {
+                title: self.resultObj.subjectHeading,
+                path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,
+                imageUrl: self.resultObj.shareImage,
+                complete: function (res) {
+                    self.isShowShade = true
+                    self.$apply()
+                }
             }
         }
     }

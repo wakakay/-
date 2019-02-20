@@ -179,7 +179,7 @@
 
 <form bindsubmit="handleSavePushCode" report-submit>
     <view class="ui-course-header main-justify cross-center">
-        <view class="cell-title">今日</view>
+        <view class="cell-title">{{todaySkill.coverImageURL ? '今日' : ''}}</view>
         <button class="module-avatar flex-box-0"
                 open-type="getUserInfo"
                 bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
@@ -465,7 +465,7 @@
                 self.todayText = respone.todayText
                 self.todayTitle = respone.todayTitle
                 self.roleStatus = respone.roleStatus;
-                self.newRoleRecommend = respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
+                self.newRoleRecommend = respone.recommendCourseList && respone.recommendCourseList.length ? respone.recommendCourseList[0] : {};
 
                 self.$apply()
             }).catch(error => {
