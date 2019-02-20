@@ -101,7 +101,7 @@ export const getLoginToken = () => (dispatch, getState) => {
                 token: storeInfo.token,
                 body: {
                     json: {
-                        pageType: rounterPath.pageType,
+                        pageType: rounterPath.pageType || sourceName,
                         eventType: `${sourceName}/${entr}`,
                         componentName: rounterPath.screenName,
                         cpnPresentName: query.pageName || query.giftID,
@@ -125,8 +125,20 @@ export const getLoginToken = () => (dispatch, getState) => {
 export const getLoginInfo = (respone) => (dispatch, getState) => {
     let userInfo = respone
     let errMsg = respone.errMsg
+    // 有用户名说明已经授权过用户信息了
+    if (initialState.nickName) {
+        return new Promise((resolve, reject) => {
+            return resolve(userInfo)
+        })
+    }
+
     return new Promise((resolve, reject) => {
-        resolve(userInfo)
+        if ('getUserInfo:ok' !== errMsg) {
+            console.log('授权用户信息失败')
+            return reject(errMsg) // 授权失败
+        } else {
+            return resolve(userInfo) // 授权成功
+        }
     }).then((user) => { // 确定授权
         let postData = {
             token: initialState.token,

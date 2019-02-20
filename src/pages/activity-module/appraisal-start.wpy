@@ -28,12 +28,12 @@
             </view>
             <view class="ui-box">
                 <button hover-class="cell-hover" class="cell-btn"
-                        @tap.stop="handleBeginPractice">开始测试
+                        open-type="getUserInfo"
+                        bindgetuserinfo="handleBeginPractice">开始测试
                 </button>
             </view>
         </view>
     </scroll-view>
-    <view></view>
 </template>
 
 <script>
@@ -44,6 +44,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import {initializationDeligate} from "../../utils"
+    import {getLoginInfo} from '../../redux/models/user'
 
     const store = getStore()
     @connect({
@@ -152,33 +153,36 @@
         }
 
         methods = {
-            handleBeginPractice() {
+            handleBeginPractice(event) {
                 let self = this
+                let {detail: {errMsg, userInfo, rawData}} = event
                 // 服务通知进来的才上报
                 if (self.wxPushType) {
                     self.__report()
                 }
 
-                /*
-                微信埋点事件
-                 */
-                wx.reportAnalytics('examstart_click', {
-                    username: self.userName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    examid: self.examID,
-                });
+                store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
+                    // 微信埋点事件
+                    wx.reportAnalytics('examstart_click', {
+                        username: self.userName,
+                        channel: self.entrance.mappers[self.entrance.scenceID],
+                        examid: self.examID,
+                    });
 
-                let params = {
-                    examID: self.examID,
-                    bgUrl: self.imageBottomURL,
-                    imagePracticeURL: self.imagePracticeURL,
-                    subjectHeading: self.subjectHeading
-                }
-                if (self.imageResultURL) {
-                    params.imageResultURL = self.imageResultURL
-                }
-                wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
-                self.$redirect('/pages/activity-module/appraisal-questions', params)
+                    let params = {
+                        examID: self.examID,
+                        bgUrl: self.imageBottomURL,
+                        imagePracticeURL: self.imagePracticeURL,
+                        subjectHeading: self.subjectHeading
+                    }
+                    if (self.imageResultURL) {
+                        params.imageResultURL = self.imageResultURL
+                    }
+                    wepy.$instance.globalData.getHuilder('测一测/开始测试','click', '开始测试')
+                    self.$redirect('/pages/activity-module/appraisal-questions', params)
+                }).catch(error => {
+
+                })
             }
         }
 

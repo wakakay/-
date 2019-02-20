@@ -50,9 +50,9 @@
 
         .ui-get-list{
             .ui-item{
-                height:184rpx;padding-top:40rpx;
+                height:184rpx;padding-top:40rpx;background:none;line-heihgt:1;text-align:left;
                 .ui-icon{
-                    width:80rpx;height:80rpx;margin:0 24rpx 0 32rpx;position:relative;
+                    width:80rpx;height:72rpx;margin:0 24rpx 0 32rpx;line-height:72rpx;position:relative;
                     text:nth-of-type(1){font-size:40rpx;color:@color-black;position:relative;z-index:@z-index-normal;}
                     text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:-6rpx;}
                     .cell-dot{position: absolute;top: -6rpx;right: -6rpx;width: 28rpx;height: 28rpx;background: @background-red;border:4rpx solid @border-white;border-radius: 50%;}
@@ -179,7 +179,7 @@
 
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
-    <view class="ui-course-details-box">
+    <form class="ui-course-details-box" bindsubmit="handleSavePushCode" report-submit>
         <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
 
         <view class="ui-board-box">
@@ -225,6 +225,26 @@
         <view class="ui-title" wx:if="{{courseDetail.receive.length}}">你将获得</view>
         <view class="ui-get-list">
             <repeat for="{{courseDetail.receive}}" key="index" index="index" item="item">
+                <button class="ui-item flex"
+                        hover-stay-time="100"
+                        data-type="{{index}}"
+                        form-type="submit"
+                        data-item="{{item}}"
+                        @tap.stop="getTemplate">
+                    <view class="ui-icon flex-box-0 main-center cross-center">
+                        <text class="{{index==0 ? 'icon-job-skills' : index==1 ? 'icon-work-template' : 'icon-community'}}"></text>
+                        <text class="icon-app-icon"></text>
+                        <view wx:if="{{2 == index}}" class="cell-dot"></view>
+                    </view>
+                    <view class="ui-content">
+                        <view class="cell-title">{{item.title}}</view>
+                        <view class="cell-subtitle">{{item.remark}}</view>
+                        <text class="icon-details"></text>
+                    </view>
+                </button>
+            </repeat>
+
+            <repeat for="{{courseDetail.receive}}" key="index" index="index" item="item">
                 <view class="ui-item flex"
                       hover-stay-time="100"
                       data-type="{{index}}"
@@ -246,37 +266,35 @@
 
         <view class="ui-title">微课列表</view>
         <view class="ui-course-list">
-            <form bindsubmit="handleSavePushCode" report-submit>
-                <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
-                    <button class="ui-item"
-                            style="background-image:url({{item.coverImageURL}})"
-                            hover-stay-time="100"
-                            form-type="submit"
-                            data-item="{{item}}"
-                            @tap.stop="getCourseLearning">
-                        <view class="cell-title">{{item.senceName}}</view>
-                        <view class="ui-skills">
-                            <text class="icon-study-bar"></text>{{item.labelName}}
-                        </view>
-                        <view class="cell-subtitle">{{item.senceTarget}}</view>
+            <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
+                <button class="ui-item"
+                        style="background-image:url({{item.coverImageURL}})"
+                        hover-stay-time="100"
+                        form-type="submit"
+                        data-item="{{item}}"
+                        @tap.stop="getCourseLearning">
+                    <view class="cell-title">{{item.senceName}}</view>
+                    <view class="ui-skills">
+                        <text class="icon-study-bar"></text>{{item.labelName}}
+                    </view>
+                    <view class="cell-subtitle">{{item.senceTarget}}</view>
 
-                        <view class="ui-status">
-                            <text class="icon-lock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
-                            <view class="cell-status" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</view>
-                            <view class="ui-circular-progress" wx:else>
-                                <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
-                                <view class="ui-wrapper ui-right">
-                                    <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
-                                </view>
-                                <view class="ui-wrapper ui-left">
-                                    <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
+                    <view class="ui-status">
+                        <text class="icon-lock cell-text" wx:if="{{item.buttonStatus=='needPay'}}"></text>
+                        <view class="cell-status" wx:elif="{{item.buttonStatus=='notBeginOrTry'}}">即学</view>
+                        <view class="ui-circular-progress" wx:else>
+                            <view class="cell-progress-number main-center cross-center">{{item.progress || 0}}%</view>
+                            <view class="ui-wrapper ui-right">
+                                <view class="cell-circle-right" style="transform:rotate({{item.progress <= 50 ? (-135 + 3.6 * item.progress) : 45}}deg);"></view>
                             </view>
+                            <view class="ui-wrapper ui-left">
+                                <view class="cell-circle-left" style="transform:rotate({{item.progress > 50 ? (-135 + 3.6 * (item.progress - 50)) : -135}}deg);"></view></view>
                         </view>
+                    </view>
 
-                        <image class="cell-thumb" mode="aspectFit" src="{{item.imageUrl}}"></image>
-                    </button>
-                </repeat>
-            </form>
+                    <image class="cell-thumb" mode="aspectFit" src="{{item.imageUrl}}"></image>
+                </button>
+            </repeat>
         </view>
 
         <view class="ui-title" wx:if="{{courseDetail.feedbackList.length}}">精选评价</view>
@@ -400,7 +418,7 @@
                 </view>
             </view>
         </view>
-    </view>
+    </form>
     <jn-actionSheet :isShow.sync="isShowActionSheet"
             :title.sync="actionSheetTitle"
             :content.sync="actionSheetContent"

@@ -310,7 +310,7 @@
             return state.entrance
         }
     })
-    export default class CourseHome extends wepy.page {
+    export default class SpecialCourse extends wepy.page {
         mixins = [PushMixin]
 
         components = {
@@ -414,14 +414,6 @@
             getAuthorize(event) {
                 let self = this
                 let {detail: {errMsg, userInfo, rawData}} = event
-
-                if ('getUserInfo:ok' !== errMsg) {
-                    return
-                }
-
-                if (self.userName) {
-                    return wepy.navigateTo({url: `/pages/user-module/mine?type=1`})
-                }
 
                 store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=1`})

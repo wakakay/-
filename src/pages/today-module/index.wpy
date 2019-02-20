@@ -419,7 +419,7 @@
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
     import {initializationDeligate, shareDictionary, getStorageAsync, navigateToLesson} from '../../utils'
-    import {getLoginInfo, renewUserGiftBox} from '../../redux/models/user'
+    import {getLoginInfo} from '../../redux/models/user'
     import _ from 'underscore'
 
     const store = getStore()
@@ -543,14 +543,6 @@
                 let self = this
                 let {detail: {errMsg, userInfo, rawData}} = event
 
-                if ('getUserInfo:ok' !== errMsg) {
-                    return
-                }
-
-                if (self.userName) {
-                    return wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
-                }
-
                 store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
                 })
@@ -673,7 +665,7 @@
             let self = this
             return {
                 title: '即能，互联网微学习',
-                path: '/pages/today-module/index',
+                path: '/pages/today-module/index?source=TodayTabShare',
                 success(res) {
                     getStorageAsync({key: 'name'}).then(name => {
                         wx.reportAnalytics('share_event', {
