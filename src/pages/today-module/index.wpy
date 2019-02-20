@@ -205,7 +205,7 @@
                 open-type="getUserInfo"
                 bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
     </view>
-    <button class="ui-special-subject"
+    <button class="ui-special-subject ui-today-subject"
             hover-stay-time="100"
             form-type="submit"
             wx:if="{{todaySkill.id}}"
