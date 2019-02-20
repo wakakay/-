@@ -21,8 +21,7 @@
                 circular
                 indicator-dots="{{true}}"
                 indicator-color="#D8D8D8"
-                current="{{swiperCurrent}}"
-                bindchange="getSwiperChange">
+                current="{{swiperCurrent}}">
             <repeat for="{{templateList}}" key="index" index="index" item="item">
                 <swiper-item>
                     <view class="ui-item">

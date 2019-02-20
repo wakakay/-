@@ -248,13 +248,13 @@
             this.use('promisify')
         }
 
-        onLaunch(option) {
+        onLaunch() {
             let self = this
-            let {scene: sceneID, path, query} = option
-            console.log(option)
-            store.dispatch(setSceneID(sceneID))
-            store.dispatch(setPath(path))
-            store.dispatch(setQuery(query))
+            let LaunchOptions = wx.getLaunchOptionsSync()
+            console.log('LaunchOptions', LaunchOptions)
+            store.dispatch(setSceneID(LaunchOptions.scene))
+            store.dispatch(setPath(LaunchOptions.path))
+            store.dispatch(setQuery(LaunchOptions.query))
             store.dispatch(getLoginToken()) // 默认登录
 
             // 强制更新
@@ -286,7 +286,7 @@
             })
         }
 
-        onShow(option) {
+        onShow() {
             // 设置缓存 第几次进入小程序
             let key = wx.getStorageSync('pageLoadNum')
             key = key ? key+1 : 1

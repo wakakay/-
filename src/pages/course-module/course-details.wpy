@@ -52,9 +52,9 @@
             .ui-item{
                 height:184rpx;padding-top:40rpx;background:none;line-heihgt:1;text-align:left;
                 .ui-icon{
-                    width:80rpx;height:72rpx;margin:0 24rpx 0 32rpx;line-height:72rpx;position:relative;
+                    width:80rpx;height:80rpx;margin:0 24rpx 0 32rpx;line-height:80rpx;position:relative;
                     text:nth-of-type(1){font-size:40rpx;color:@color-black;position:relative;z-index:@z-index-normal;}
-                    text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:-6rpx;}
+                    text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:0rpx;}
                     .cell-dot{position: absolute;top: -6rpx;right: -6rpx;width: 28rpx;height: 28rpx;background: @background-red;border:4rpx solid @border-white;border-radius: 50%;}
                 }
                 .ui-content{
@@ -125,7 +125,8 @@
         .ui-recommend-list{
             margin-left:42rpx;padding-bottom:40rpx;
             .ui-item{
-                height:220rpx;padding:20rpx 0;border-bottom:1rpx solid @border-gray;transform:translate(-12rpx, 0px) translateZ(0px);
+                height:220rpx;padding:20rpx 0;background:none;line-height:1;text-align:left;border-top:1rpx solid @border-gray;transform:translate(-12rpx, 0px) translateZ(0px);
+                &:first-child{border-top:0;}
                 .ui-thumb{
                     width:180rpx;height:180rpx;border-radius:@border-radius-44;overflow:hidden;
                     image{width:180rpx;height:180rpx;}
@@ -243,25 +244,6 @@
                     </view>
                 </button>
             </repeat>
-
-            <repeat for="{{courseDetail.receive}}" key="index" index="index" item="item">
-                <view class="ui-item flex"
-                      hover-stay-time="100"
-                      data-type="{{index}}"
-                      data-item="{{item}}"
-                      @tap.stop="getTemplate">
-                    <view class="ui-icon flex-box-0 main-center cross-center">
-                        <text class="{{index==0 ? 'icon-job-skills' : index==1 ? 'icon-work-template' : 'icon-community'}}"></text>
-                        <text class="icon-app-icon"></text>
-                        <view wx:if="{{2 == index}}" class="cell-dot"></view>
-                    </view>
-                    <view class="ui-content">
-                        <view class="cell-title">{{item.title}}</view>
-                        <view class="cell-subtitle">{{item.remark}}</view>
-                        <text class="icon-details"></text>
-                    </view>
-                </view>
-            </repeat>
         </view>
 
         <view class="ui-title">微课列表</view>
@@ -332,7 +314,7 @@
         <view class="ui-title" wx:if="{{courseDetail.courseLink.length}}">为你推荐</view>
         <view class="ui-recommend-list">
             <repeat for="{{courseDetail.courseLink}}" key="index" index="index" item="item">
-                <view class="ui-item dir-left" hover-stay-time="100" data-item="{{item}}" @tap.stop="getCourse">
+                <button class="ui-item dir-left" hover-stay-time="100" form-type="submit" data-item="{{item}}" @tap.stop="getCourse">
                     <view class="ui-thumb"><image mode="scaleToFill" src="{{item.courseImage}}"></image></view>
                     <view class="ui-content">
                         <view class="cell-title">{{item.courseName}}</view>
@@ -345,7 +327,7 @@
                             <text class="{{item.courseStar>=1 ? 'icon-selete-star' : 'icon-not-star'}}"></text>
                         </view>
                     </view>
-                </view>
+                </button>
             </repeat>
         </view>
 

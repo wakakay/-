@@ -112,7 +112,6 @@
     import fetchPhoneMixin from "../../mixins/fetchPhone";
     import PushMixin from '../../mixins/push'
     import {auth as authApi, fetch} from '../../api'
-    //import {setPhone, renewWechatCode} from '../../redux/models/user'
     import {getUserPhone, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 

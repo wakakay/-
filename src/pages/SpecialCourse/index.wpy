@@ -72,9 +72,8 @@
                             data-index="{{index}}"
                             data-item="{{data}}"
                             form-type="submit"
-                            open-type="{{!phone ? 'getPhoneNumber' : ''}}"
-                            @getphonenumber.stop="getPoll"
-                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
+                            open-type="getPhoneNumber"
+                            @getphonenumber.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
                 </view>
                 <view class="ui-poll" wx:if="{{data.type === 'practise'}}">
                     <repeat for="{{data.practiseList}}" key="practiceIndex" index="practiceIndex" item="item">
@@ -98,9 +97,8 @@
                 <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
                         data-item="{{floatBox.sence}}"
-                        open-type="{{!phone ? 'getPhoneNumber' : ''}}"
-                        @getphonenumber.stop="handleStartLesson"
-                        @tap.stop="handleStartLesson">
+                        open-type="getPhoneNumber"
+                        @getphonenumber.stop="handleStartLesson">
                     <button class="ui-share-course" form-type="submit" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -310,6 +308,7 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
+                console.log(34)
                 let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
