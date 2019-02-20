@@ -21,11 +21,11 @@ import config from "../../api/config";
 const initialState = {
     firstAccess: 0,
     nickName: null,
-    avatarUrl: '../../assets/img/icon-avatar.svg',
-    equipmentModel: '未知',
+    avatarUrl: 'https://wx-small.runwise.cn/image/imageID8b18e68a72944eb37b948cee005c.png',
+    model: '未知',
     pixelRatio: 2,
     platform: 'defaultPlatform',
-    phone: 'deadNumber',
+    phone: '',
     code: null,
     token: 'defaultToken',
     role: '普通用户',
@@ -47,7 +47,7 @@ const setStorage = (storeInfo) => {
             value: storeInfo
         })
     })
-    _.extend(initialState, storeInfo)
+     _.extend(initialState, storeInfo)
 }
 
 /**
@@ -86,7 +86,6 @@ export const getLoginToken = () => (dispatch, getState) => {
             delete storeInfo.errMsg
 
             wepy.$instance.globalData.getShareHuilder(entr, sourceName) // ga统计
-
             let postData = {
                 code: storeInfo.code,
                 source: sourceName,
@@ -97,8 +96,6 @@ export const getLoginToken = () => (dispatch, getState) => {
             _.extend(storeInfo, respone)
             setStorage(storeInfo)
             return getState()['user']
-        }).catch(error => {
-            console.log('登录失败')
         }).then(respone => {
             let postData = {
                 token: storeInfo.token,
@@ -122,7 +119,7 @@ export const getLoginToken = () => (dispatch, getState) => {
 }
 
 /**
- * 获取用户we微信信息
+ * 获取用户微信信息
  * @returns {function(*, *)}
  */
 export const getLoginInfo = (respone) => (dispatch, getState) => {
@@ -135,6 +132,7 @@ export const getLoginInfo = (respone) => (dispatch, getState) => {
             token: initialState.token,
             body: {jsonObject: {...initialState, errMsg, ...userInfo}}
         }
+        console.log('获取用户信息请求参数', postData)
         return fetch.getUserInfo(postData)
     }).then(respone => {
         return setStorage(userInfo.userInfo)
@@ -147,13 +145,28 @@ export const getLoginInfo = (respone) => (dispatch, getState) => {
  * @returns {function(*, *)}
  */
 export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) => {
+    let rounter = getCurrentPages()
+    let page = rounter[rounter.length ? rounter.length - 1 : 1].route
+    let rounterPath = ROUTERS[page].screenName || '未知页面'
+
+    // 已有手机号码不需要再次授权
+    if (initialState.phone) {
+        return new Promise((resolve, reject) => {
+            return resolve(initialState.phone)
+        })
+    }
     return new Promise((resolve, reject) => {
-        wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '授权手机号码弹窗')
-        resolve(encryptedData, iv)
+        wepy.$instance.globalData.getHuilder('授权手机号码弹窗', 'click', rounterPath)
+        if ('getPhoneNumber:ok' !== errMsg) {
+            wepy.$instance.globalData.getHuilder('拒绝授权手机号码', 'click', rounterPath)
+            return reject(errMsg)
+        } else {
+            return resolve(encryptedData, iv)
+        }
     }).then(respone => {
         return renewWechatCode() // 必须重新更新code才能获取到手机号码
     }).then((respone) => {
-        wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '授权手机号码成功')
+        wepy.$instance.globalData.getHuilder('授权手机号码成功', 'click', rounterPath)
         let postData = {
             token: initialState.token,
             body: {
@@ -166,12 +179,13 @@ export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) 
         // 拿到手机加密的号码跟私钥，由后台解密
         return fetch.getUserPhone(postData)
     }).then(respone => {
+        console.log('授权手机号码成功', respone)
         let {phone} = respone
         renewWechatCode(store.dispatch) // 更新登录code
         setStorage({phone: phone})
         return phone
     }).catch(error => {
-        Promise.reject(error)
+        return reject(error)
     })
 }
 

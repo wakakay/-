@@ -138,13 +138,15 @@
          */
         __loadingImages(image) {
             let self = this
+
             return new Promise((resolve, reject) => {
                 wx.getImageInfo({
                     src: image,
                     success(res) {
                         resolve(res)
                     },
-                    fail() {
+                    fail(error) {
+                        console.log(12, error)
                         self.isDrawStart = true
                         self.isDrawOver = true
                         wx.hideLoading()
@@ -163,7 +165,7 @@
         __initShareCard(images) {
             let self = this
             let shareImage = self.__loadingImages(images.shareImage) // 背景图片
-            let portraitImage = self.__loadingImages(self.systemInfo.avatar)
+            let portraitImage = self.__loadingImages(self.systemInfo.avatarUrl)
 
             Promise.all([shareImage, portraitImage]).then(res => {
                 self.shareImage = res

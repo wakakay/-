@@ -843,13 +843,11 @@
             getFirstReceive(event) {
                 let self = this
                 let {detail: {encryptedData, errMsg, iv}} = event
-                // 拒绝授权手机号码
-                if ('getPhoneNumber:ok' !== errMsg) {
-                    wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '拒绝授权手机号码')
-                    return
-                }
+
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
                     self.__receiveResult(respone)
+                }).catch((error) => {
+
                 })
             },
             /**
