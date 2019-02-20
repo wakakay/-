@@ -239,14 +239,10 @@
                 }
                 // 点击的微信统计
                 wx.reportAnalytics('free_collect', analyticsInfo)
-                // 拒绝授权手机号码
-                if ('getPhoneNumber:ok' !== errMsg) {
-                    wepy.$instance.globalData.getHuilder('授权手机号码', 'click', '拒绝授权手机号码')
-                    return
-                }
-                wx.reportAnalytics('agreephonenumber_confirm', analyticsInfo) // wx统计
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
                     self.__receiveResult(respone, item)
+                }).catch((error) => {
+
                 })
             },
 
