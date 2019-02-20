@@ -310,7 +310,7 @@
             return state.entrance
         }
     })
-    export default class CourseHome extends wepy.page {
+    export default class SpecialCourse extends wepy.page {
         mixins = [PushMixin]
 
         components = {

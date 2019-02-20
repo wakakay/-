@@ -3,27 +3,28 @@
     <form class="ui-special-course" bindsubmit="handleSavePushCode" report-submit>
         <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
         <view class="ui-course-content">
-            <repeat for="{{moduleList}}" key="index" index="index" item="item">
-                <view class="ui-first"  wx:if="{{item.type == 'image' && index == 0}}">
-                    <view class="flex">
-                        <image mode="widthFix" src="{{item.img}}" />
-                    </view>
+            <view class="ui-first flex">
+                <image mode="widthFix" src="{{imageCodeUrl}}" />
+            </view>
+            <repeat for="{{moduleList}}" key="index" index="index" item="data">
+                <view class="ui-first"  wx:if="{{data.type == 'image' && index == 0}}">
+                    <image mode="widthFix" src="{{data.img}}" />
                 </view>
                 <button class="ui-img-type flex"
                         form-type="submit"
                         id="{{index == 1 ? 'ui-id' : ''}}"
-                        wx:if="{{item.type == 'image' && index !== 0}}" >
-                    <image mode="widthFix" src="{{item.img}}" />
+                        wx:if="{{data.type == 'image' && index !== 0}}" >
+                    <image mode="widthFix" src="{{data.img}}" />
                 </button>
                 <button class="ui-doc"
                         form-type="submit"
                         id="{{index == 1 ? 'ui-id' : ''}}"
-                        wx:if="{{item.type == 'text'}}">
-                    <view class="cell-title" wx:if="{{item.title}}">{{item.title}}</view>
-                    <text class="cell-content" wx:if="{{item.content}}">{{item.content}}</text>
+                        wx:if="{{data.type == 'text'}}">
+                    <view class="cell-title" wx:if="{{data.title}}">{{data.title}}</view>
+                    <text class="cell-content" wx:if="{{data.content}}">{{data.content}}</text>
                 </button>
-                <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'sence'}}">
-                    <repeat wx:for="{{item.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
+                <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type == 'sence'}}">
+                    <repeat wx:for="{{data.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <button class="ui-item"
                                 form-type="submit"
                                 @tap.stop="handleStartLesson"
@@ -41,8 +42,8 @@
                         </button>
                     </repeat>
                 </view>
-                <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type == 'course'}}">
-                    <repeat wx:for="{{item.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
+                <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type == 'course'}}">
+                    <repeat wx:for="{{data.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <button class="ui-item"
                                 form-type="submit"
                                 @tap.stop="getCourseDetail"
@@ -63,19 +64,25 @@
                     </repeat>
 
                 </view>
-                <view class="ui-poll" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'poll'}}">
+                <view class="ui-poll" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
 
                     <button class="cell-poll-btn"
-                            :class="{'cell-seleted' : item.isDone}"
+                            :class="{'cell-seleted' : data.isDone}"
                             data-index="{{index}}"
-                            data-item="{{item}}"
+                            data-item="{{data}}"
                             form-type="submit"
                             open-type="{{!phone ? 'getPhoneNumber' : ''}}"
                             @getphonenumber.stop="getPoll"
-                            @tap.stop="getPoll">{{item.isDone ? '已投票' : '投票'}}</button>
+                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
                 </view>
-                <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{item.type === 'border'}}"></view>
+                <view class="ui-poll" wx:if="{{data.type === 'practise'}}">
+                    <repeat for="{{data.practiseList}}" key="practiceIndex" index="practiceIndex" item="item">
+                        <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="moduleList"
+                                          :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiceList" isExercises></jn-single-choice>
+                    </repeat>
+                </view>
+                <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type === 'border'}}"></view>
             </repeat>
             <view class="ui-bottom">
                 <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
@@ -143,6 +150,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
+    import singleChoice from '../../components/team-module/single-choice'
     import PushMixin from '../../mixins/push'
     import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
     import {auth as authApi, fetch} from "../../api"
@@ -196,13 +204,15 @@
             moduleList:[],
             floatBox:{},
             shareCoverTitle:'',
-            shareCoverImageUrl:'',
+            shareCoverImageUrl:'', // 分享图
+            imageCodeUrl: '', // 封面图
             courseName:''
         }
         components = {
             'jn-header': header,
             'mloading': Loading,
-            'jn-poll': poll
+            'jn-poll': poll,
+            'jn-single-choice': singleChoice
         };
         onLoad({courseID='', gift='', source='', wxPushType='newCoursePush'}) {
             let self = this
@@ -272,6 +282,7 @@
                 self.floatBox = res.floatBox
                 self.shareCoverTitle = res.shareCoverTitle
                 self.shareCoverImageUrl = res.shareCoverImageUrl
+                self.imageCodeUrl = res.carousel
                 self.courseName = res.name
                 self.isLoaded = true
                 self.moduleList = res.moduleList
@@ -380,7 +391,7 @@
                 })
             }
         }
-        }
+
         reportButtonTap(courseID, senceID, buttonStatus) {
             let self = this
             wx.reportAnalytics('tap_to_lesson', {
