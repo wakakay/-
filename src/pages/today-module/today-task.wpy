@@ -101,6 +101,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import PushMixin from '../../mixins/push'
+    import {navigateToLesson} from '../../utils'
     import {fetch} from '../../api'
     
     const store = getStore()
@@ -117,7 +118,9 @@
 
         data = {
             headerHeigth: 68,
-            todaySenceList:[]
+            todaySenceList:[],
+            courseID:'',
+            senceID:''
         }
 
         onLoad(){
@@ -133,28 +136,21 @@
             getItem(event){
                 let self = this
                 let {currentTarget: {dataset: {item}}} = event
+
                 let buttonStatus = item.buttonStatus
                 let lessonType = item.lessonType
                 let senceName = item.senceName
                 let resume = item.resume ? item.resume : ''
 
-                if(clickSource === 'course') {
-                    if('needPay' === buttonStatus) {
-                        wepy.$instance.globalData.getHuilder('今日页/在学课程/获取','click',`${senceName}`)
-                    }else{
-                        wepy.$instance.globalData.getHuilder('今日页/在学课程/微课学习','click',`${senceName}`)
-                    }
-                }else {
-                    wepy.$instance.globalData.getHuilder('今日页/今日任务','click',`${senceName}`)
-                }
 
                 self.courseID = item.courseID
                 self.senceID = item.id
+
                 if ('previewTest' === lessonType) {
                     return self.$navigate(`/pages/activity-module/appraisal-start`, {
                         courseID:self.courseID,
-                        senceID:self.senceID,
-                        source})
+                        senceID:self.senceID
+                    })
                 }
 
                 if ('needPay' === buttonStatus) {
@@ -170,20 +166,18 @@
                     courseID:self.courseID,
                     senceID:self.senceID,
                     resumeLastRead: resume,
-                    source
                 })
-
             }
         }
         initialize() {
             let self = this
-            self.__fetchCourses()
+            self.__fetchTaskList()
         }
         /**
          * 列表数据
          * @private
          */
-        __fetchCourses() {
+        __fetchTaskList() {
             let self = this
             let postData = {
                 token: self.token
