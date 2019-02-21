@@ -215,23 +215,23 @@
             wx:if="{{todaySkill.id}}"
             @tap.stop="getItem" data-item="{{todaySkill}}" style="background-image: url('{{todaySkill.coverImageURL}}');" >
             <view class="ui-top">
-                <view class="cell-tips">每日技能</view>
+                <view class="cell-tips">{{todaySkill.sceneTypeText}}</view>
                 <view class="ui-count">
                     <text class="icon-eyes"></text>
-                    233
+                    {{todaySkill.userCount}}
                 </view>
             </view>
             <view class="cell-title">{{todaySkill.subtitle}}</view>
             <view class="ui-bottom">
                 <view class="ui-skill main-justify">
-                    <view># 产品战略规划</view>
-                    <view class="cell-num">6</view>
+                    <view># {{todaySkill.senceTarget}}</view>
+                    <view class="cell-num">{{todaySkill.skillScore}}</view>
                 </view>
                 <view class="ui-progress">
                     <view class="cell-line box-mean">
                         <view></view><view></view><view></view><view></view><view></view>
                     </view>
-                    <view class="cell-percent" style="width: {{30}}%;"></view>
+                    <view class="cell-percent" style="width: {{todaySkill.progress}}%;"></view>
                 </view>
             </view>
 
@@ -382,23 +382,23 @@
             <view class="cell-date">{{item.dateTips}}</view>
             <view class="ui-special-subject"  style="background-image: url('{{item.coverImageURL}}');" >
                 <view class="ui-top">
-                    <view class="cell-tips">每日技能</view>
+                    <view class="cell-tips">{{item.sceneTypeText}}</view>
                     <view class="ui-count">
                         <text class="icon-eyes"></text>
-                        233
+                        {{item.userCount}}
                     </view>
                 </view>
                 <view class="cell-title">{{item.subtitle}}</view>
                 <view class="ui-bottom">
                     <view class="ui-skill main-justify">
-                        <view># 产品战略规划</view>
-                        <view class="cell-num">6</view>
+                        <view># {{item.senceTarget}}</view>
+                        <view class="cell-num">{{item.skillScore}}</view>
                     </view>
                     <view class="ui-progress">
                         <view class="cell-line box-mean">
                             <view></view><view></view><view></view><view></view><view></view>
                         </view>
-                        <view class="cell-percent" style="width: {{30}}%;"></view>
+                        <view class="cell-percent" style="width: {{item.progress}}%;"></view>
                     </view>
                 </view>
             </view>

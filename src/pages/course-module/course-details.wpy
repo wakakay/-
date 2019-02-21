@@ -223,28 +223,7 @@
         </view>
         <view class="cell-border"></view>
 
-        <view class="ui-title" wx:if="{{courseDetail.receive.length}}">你将获得</view>
-        <view class="ui-get-list">
-            <repeat for="{{courseDetail.receive}}" key="index" index="index" item="item">
-                <button class="ui-item flex"
-                        hover-stay-time="100"
-                        data-type="{{index}}"
-                        form-type="submit"
-                        data-item="{{item}}"
-                        @tap.stop="getTemplate">
-                    <view class="ui-icon flex-box-0 main-center cross-center">
-                        <text class="{{index==0 ? 'icon-job-skills' : index==1 ? 'icon-work-template' : 'icon-community'}}"></text>
-                        <text class="icon-app-icon"></text>
-                        <view wx:if="{{2 == index}}" class="cell-dot"></view>
-                    </view>
-                    <view class="ui-content">
-                        <view class="cell-title">{{item.title}}</view>
-                        <view class="cell-subtitle">{{item.remark}}</view>
-                        <text class="icon-details"></text>
-                    </view>
-                </button>
-            </repeat>
-        </view>
+        
 
         <view class="ui-title">微课列表</view>
         <view class="ui-course-list">
@@ -275,6 +254,29 @@
                     </view>
 
                     <image class="cell-thumb" mode="aspectFit" src="{{item.imageUrl}}"></image>
+                </button>
+            </repeat>
+        </view>
+
+        <view class="ui-title" wx:if="{{courseDetail.receive.length}}">技能强化</view>
+        <view class="ui-get-list">
+            <repeat for="{{courseDetail.receive}}" key="index" index="index" item="item">
+                <button class="ui-item flex"
+                        hover-stay-time="100"
+                        data-type="{{index}}"
+                        form-type="submit"
+                        data-item="{{item}}"
+                        @tap.stop="getTemplate">
+                    <view class="ui-icon flex-box-0 main-center cross-center">
+                        <text class="{{index==0 ? 'icon-job-skills' : index==1 ? 'icon-work-template' : 'icon-community'}}"></text>
+                        <text class="icon-app-icon"></text>
+                        <view wx:if="{{2 == index}}" class="cell-dot"></view>
+                    </view>
+                    <view class="ui-content">
+                        <view class="cell-title">{{item.title}}</view>
+                        <view class="cell-subtitle">{{item.remark}}</view>
+                        <text class="icon-details"></text>
+                    </view>
                 </button>
             </repeat>
         </view>
