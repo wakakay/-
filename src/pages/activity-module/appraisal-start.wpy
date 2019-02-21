@@ -28,8 +28,8 @@
             </view>
             <view class="ui-box">
                 <button hover-class="cell-hover" class="cell-btn"
-                        open-type="getUserInfo"
-                        bindgetuserinfo="handleBeginPractice">开始测试
+                        open-type="{{!userName ? 'getUserInfo' : ''}}"
+                        bindgetuserinfo="handleBeginPractice" @tap.stop="handleBeginPractice">开始测试
                 </button>
             </view>
         </view>

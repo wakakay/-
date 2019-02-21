@@ -103,8 +103,8 @@
                 <view class="ui-course-header main-justify cross-center">
                     <view class="cell-title">发现</view>
                     <button class="module-avatar flex-box-0"
-                            open-type="getUserInfo"
-                            bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
+                            open-type="{{!userName ? 'getUserInfo' : ''}}"
+                            bindgetuserinfo="getAuthorize" @tap.stop="getAuthorize"><image src="{{avatar}}"></image></button>
                 </view>
                 <view class="cell-find-dec">{{discoverPageTitle}}</view>
                 <view class="ui-content">
@@ -362,6 +362,8 @@
 
                 store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
+                }).catch(error => {
+
                 })
             },
             getAvatar() {

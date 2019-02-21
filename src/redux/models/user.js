@@ -132,6 +132,12 @@ export const getLoginInfo = (respone) => (dispatch, getState) => {
         })
     }
 
+    if (!errMsg) {
+        return new Promise((resolve, reject) => {
+            return reject(false)
+        })
+    }
+
     return new Promise((resolve, reject) => {
         if ('getUserInfo:ok' !== errMsg) {
             console.log('授权用户信息失败')
