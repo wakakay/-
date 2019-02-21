@@ -74,7 +74,7 @@
             </swiper>
         </view>
 
-        <view class="ui-button-box dir-left main-justify" :class="{'is-iphonex': isIphonex}">
+        <form bindsubmit="handleSavePushCode" report-submit class="ui-button-box dir-left main-justify" :class="{'is-iphonex': isIphonex}">
             <view class="dir-top main-justify">
                 <view class="cell-number">
                     <text>{{scoreInfo.showScore}}</text> {{scoreInfo.skillName}}
@@ -86,12 +86,13 @@
             <button class="cell-button main-center cross-center"
                     hover-class="cell-hover"
                     hover-stay-time="100"
+                    form-type="submit"
                     :class="{'is-selected': cardCurrentInfo[0].selectedId}"
                     disabled="{{!cardCurrentInfo[0].selectedId}}"
                     @tap.stop="getContinue">
                 {{cardCurrentInfo[0].fullImageBottomtText}}
             </button>
-        </view>
+        </form>
     </view>
 </template>
 
@@ -104,6 +105,7 @@
     import sort from '../../components/cards-type/sort'
     import {fetch, share as shareApi} from '../../api'
     import {initializationDeligate} from '../../utils'
+    import PushMixin from '../../mixins/push'
     import _ from 'underscore'
 
     const store = getStore()
@@ -116,6 +118,8 @@
         },
     })
     export default class courseExercises extends wepy.page {
+        mixins = [PushMixin]
+
         components = {
             'jn-header': header,
             'jn-loading': Loading,

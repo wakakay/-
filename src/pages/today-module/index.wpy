@@ -142,7 +142,7 @@
                     }
                 }
             }
-           
+
             .ui-subject{
                 .ui-subject-item{
                     height: 176rpx;display: flex;align-items: center;background:none;line-height:1;text-align:left;padding:0 40rpx;
@@ -209,8 +209,8 @@
     <view class="ui-course-header main-justify cross-center">
         <view class="cell-title">{{todaySkill.coverImageURL ? '今日' : ''}}</view>
         <button class="module-avatar flex-box-0"
-                open-type="getUserInfo"
-                bindgetuserinfo="getAuthorize"><image src="{{avatar}}"></image></button>
+                open-type="{{!userName ? 'getUserInfo' : ''}}"
+                bindgetuserinfo="getAuthorize" @tap.stop="getAuthorize"><image src="{{avatar}}"></image></button>
     </view>
     <button class="ui-special-subject ui-today-subject"
             hover-stay-time="100"
@@ -237,7 +237,7 @@
                     <view class="cell-percent" style="width: {{todaySkill.progress}}%;"></view>
                 </view>
             </view>
-            
+
     </button>
     <view class="ui-studying">
         <view class="ui-top">
@@ -548,6 +548,8 @@
 
                 store.dispatch(getLoginInfo({userInfo, errMsg})).then(repsone => {
                     wepy.navigateTo({url: `/pages/user-module/mine?type=2`})
+                }).catch(error => {
+
                 })
             },
             getItem(event) {

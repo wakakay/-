@@ -85,7 +85,8 @@ export const fetch = ((actionObj) => {
                 if (1 === data.success) {
                     return data.data
                 } else {
-                    wx.showToast({title: data.message})
+                    console.log('接口异常：', actionObj.url, data.message)
+                    throw new Error(data)
                 }
             }
         } else {
