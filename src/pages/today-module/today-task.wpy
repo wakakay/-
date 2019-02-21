@@ -61,7 +61,9 @@
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="cell-tip">今日任务</view>
             <repeat for="{{todaySenceList}}" key="{{index}}" index="{{index}}">
-            <button class="ui-item">
+            <button class="ui-item"  
+                    @tap.stop="getItem" data-item="{{item}}"
+                    form-type="submit" hover-stay-time="100">
                     <image class="cell-image" mode="aspectFill" src="{{item.imageUrl}}" />
                     <view class="ui-content">
                     <view class="ui-detail">
@@ -115,38 +117,7 @@
 
         data = {
             headerHeigth: 68,
-            todaySenceList:[
-                {
-                    averageScore:3.2,
-                    buttonStatus:"continue",
-                    buttonStatusMsg:"测练",
-                    courseID:"courseID828c9df925b49d9094f57b8f183e",
-                    giftStatus:"+1即能币",
-                    id:"senceIDc513056df3448aac07f6fbec608f",
-                    imageUrl:"http://image.runwise.cn/image/imageIDd2993f5025c4c5bd2b136f19d453.png",
-                    mySenceScore:6,
-                    progress:88,
-                    resume:23,
-                    senceName:"访谈用户，寻找痛点和需求",
-                    senceTarget:"迭代产品方案",
-                    lessonType:"lesson"
-                },
-                {
-                    averageScore:3.2,
-                    buttonStatus:"continue",
-                    buttonStatusMsg:"测练",
-                    courseID:"courseID828c9df925b49d9094f57b8f183e",
-                    giftStatus:"+1即能币",
-                    id:"senceIDc513056df3448aac07f6fbec608f",
-                    imageUrl:"http://image.runwise.cn/image/imageIDd2993f5025c4c5bd2b136f19d453.png",
-                    mySenceScore:0,
-                    progress:88,
-                    resume:23,
-                    senceName:"访谈用户，寻找痛点和需求",
-                    senceTarget:"迭代产品方案",
-                    lessonType:"lesson"
-                }
-            ]
+            todaySenceList:[]
         }
 
         onLoad(){
@@ -159,14 +130,48 @@
             getBackStep() {
                 wepy.switchTab({ url: '/pages/today-module/index'})
             },
-            getCourseDetail(event){
+            getItem(event){
                 let self = this
                 let {currentTarget: {dataset: {item}}} = event
-                let courseID = item.courseID;
-                let name = item.courseName;
+                let buttonStatus = item.buttonStatus
+                let lessonType = item.lessonType
+                let senceName = item.senceName
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('今日页/全部在学课程/进入课程','click',`${name}`)
-                wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
+
+                if(clickSource === 'course') {
+                    if('needPay' === buttonStatus) {
+                        wepy.$instance.globalData.getHuilder('今日页/在学课程/获取','click',`${senceName}`)
+                    }else{
+                        wepy.$instance.globalData.getHuilder('今日页/在学课程/微课学习','click',`${senceName}`)
+                    }
+                }else {
+                    wepy.$instance.globalData.getHuilder('今日页/今日任务','click',`${senceName}`)
+                }
+
+                self.courseID = item.courseID
+                self.senceID = item.id
+                if ('previewTest' === lessonType) {
+                    return self.$navigate(`/pages/activity-module/appraisal-start`, {
+                        courseID:self.courseID,
+                        senceID:self.senceID,
+                        source})
+                }
+
+                if ('needPay' === buttonStatus) {
+                    return wepy.navigateTo({url:`/pages/course-module/course-pay?courseID=${self.courseID}`})
+                }
+
+                if ('finish' === buttonStatus) {
+                    self.$navigate(`/pages/course-module/course-review`, {courseID: self.courseID, senceID: self.senceID})
+                    return
+                }
+
+                navigateToLesson({
+                    courseID:self.courseID,
+                    senceID:self.senceID,
+                    resumeLastRead: resume,
+                    source
+                })
 
             }
         }
@@ -183,11 +188,12 @@
             let postData = {
                 token: self.token
             }
-            fetch.todayToLearnCourses(postData).then((respone) => {
-                self.recommendCourseList = respone.recommendCourseList
+            fetch.tasksPage(postData).then((respone) => {
+                self.todaySenceList = respone.todaySenceList
                 self.$apply()
             }).catch(error => {
-                throw error
+                self.todaySenceList = []
+                console.log(error)
             })
         }
 

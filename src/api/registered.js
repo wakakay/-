@@ -231,5 +231,11 @@ export default {
      */
     sendTeamPostReply(params) {
         return fetch({method: 'post', url: 'teamByTaskOneDate/sendTeamPostReply', params: params})
+    },
+    /**
+     * 今日任务页
+     */
+    tasksPage(params) {
+        return fetch({method: 'post', url: 'todayTask/tasksPage', params: params})
     }
 }
