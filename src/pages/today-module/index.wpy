@@ -21,7 +21,7 @@
         button{background:none;}
         image{width:160rpx;height:160rpx;}
     }
-    .ui-special-subject{ 
+    .ui-special-subject{
         width: 670rpx;height: 670rpx;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;background-size:cover;line-height:1;color:@color-white;text-align:left;
         &.ui-today-subject{margin:44rpx auto 30rpx;}
         .ui-top{
@@ -484,7 +484,6 @@
 
         onShow() {
             let self = this
-            self.__todaySkills()
             initializationDeligate({initializeFunc: self.__todayTaskList.bind(self)})
             wepy.$instance.globalData.getLoadHuilder() // ga统计
             self.$broadcast('studying-bar')
@@ -523,6 +522,7 @@
             let postData = {
                 token: self.token
             }
+            self.__todaySkills()
             fetch.todayTaskList(postData).then((respone) => {
                 self.recommendCourseList = respone.recommendCourseList
                 self.todayDate = respone.todayDate

@@ -259,7 +259,7 @@
         <view class="ui-title">你将获得</view>
         <scroll-view class="ui-special-list flex" scroll-x scroll-with-animation>
             <repeat for="{{specialList}}" key="index" index="index" item="item">
-                <button form-type="submit" hover-stay-time="100" 
+                <button form-type="submit" hover-stay-time="100"
                         class="ui-item" style="background-image:url('{{item.coverImageURL}}')">
                         <view class="ui-top main-justify">
                             <view>{{item.sceneTypeText}}</view>
@@ -284,7 +284,7 @@
                 </button>
             </repeat>
         </scroll-view>
-        
+
 
         <view class="ui-title">微课列表</view>
         <view class="ui-course-list">
@@ -458,8 +458,9 @@
                 <view class="ui-button-list ui-column">
                     <button hover-stay-time="100"
                             form-type="submit"
-                            open-type="getPhoneNumber"
-                            @getphonenumber.stop="getFirstReceive">首课免费领取</button>
+                            open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                            @getphonenumber.stop="getFirstReceive"
+                            @tap.stop="getFirstReceive">首课免费领取</button>
                 </view>
             </view>
         </view>
