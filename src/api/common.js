@@ -36,7 +36,7 @@ export default {
      * 页面数据收集上报服务器
      *  @param
      *  pageLogs:{
-     *      arg: [Object] 【可选】 参数
+     *      args: [Object] 【可选】 参数
      *      event: [String] 【可选】 事件
      *      msg: [String] 【可选】 备注
      *      openID: [String] 【可选】 用户openID

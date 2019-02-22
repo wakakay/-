@@ -1,9 +1,10 @@
 <style lang="less" scoped>
     @import "../../assets/style/theme";
     .module-single-choice-box{
-        .ui-content{padding:40rpx 32rpx;}
+        .ui-content{padding:20rpx 32rpx;}
         .ui-answer-list{
             .cell-title{width:526rpx;}
+            .is-tip-success{background-color:#E6FFF0;}
             .is-success{
                 background-color:#E6FFF0;border-color:@border-green;
                 .cell-icon{
@@ -11,6 +12,7 @@
                     text{color:@color-green;}
                 }
             }
+            .is-tip-error{background-color:#FFE6E6;}
             .is-error{
                 background-color:#FFE6E6;border-color:@border-red;
                 .cell-icon{
@@ -26,7 +28,7 @@
                 &.is-yes{color:@color-green;}
             }
         }
-        .cell-sumbit{width:264rpx;height:64rpx;margin:0 auto;background-color:@background-blue;font-size:30rpx;color:@color-white;line-height:64rpx;border-radius:64rpx;}
+        .cell-sumbit{width:264rpx;height:64rpx;margin:44rpx auto 0;background-color:@background-blue;font-size:30rpx;color:@color-white;line-height:64rpx;border-radius:64rpx;}
     }
 </style>
 
@@ -44,7 +46,7 @@
             <view class="ui-answer-list">
                 <repeat for="{{parentList[parentIndex][parentKey][cardIndex].select}}" key="singleIndex" index="singleIndex" item="item">
                     <view class="ui-item main-justify cross-center"
-                          :class="{'is-selected': item.isSelected, 'is-success': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && !item.isanswer}"
+                          :class="{'is-selected': item.isSelected, 'is-success': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && !item.isanswer, 'is-tip-success': parentList[parentIndex][parentKey][cardIndex].isDone && item.isanswer}"
                           hover-class="{{!isAnswerOver &&'ui-item-hover'}}"
                           data-parentlist="{{parentList}}"
                           data-parentkey="{{parentKey}}"
@@ -70,24 +72,26 @@
                 </view>
                 <view class="ui-description">{{parentList[parentIndex][parentKey][cardIndex].answerDescription}}</view>
             </view>
+
+            <button class="cell-sumbit"
+                    wx:if="{{!parentList[parentIndex][parentKey][cardIndex].isDone}}"
+                    form-type="submit"
+                    disabled="{{!parentList[parentIndex][parentKey][cardIndex].selectedItem.option}}"
+                    data-parentkey="{{parentKey}}"
+                    data-parentindex="{{parentIndex}}"
+                    data-cardindex="{{cardIndex}}"
+                    open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                    @getphonenumber.stop="getSumbit"
+                    @tap.stop="getSumbit">提交</button>
+            <button class="cell-sumbit"
+                    wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
+                    form-type="submit"
+                    data-parentkey="{{parentKey}}"
+                    data-parentindex="{{parentIndex}}"
+                    data-cardindex="{{cardIndex}}"
+                    @tap.stop="getShowDescription">查看解释</button>
         </view>
-        <button class="cell-sumbit"
-                wx:if="{{!parentList[parentIndex][parentKey][cardIndex].isDone}}"
-                form-type="submit"
-                disabled="{{!parentList[parentIndex][parentKey][cardIndex].selectedItem.option}}"
-                data-parentkey="{{parentKey}}"
-                data-parentindex="{{parentIndex}}"
-                data-cardindex="{{cardIndex}}"
-                open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
-                @getphonenumber.stop="getSumbit"
-                @tap.stop="getSumbit">提交</button>
-        <button class="cell-sumbit"
-                wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
-                form-type="submit"
-                data-parentkey="{{parentKey}}"
-                data-parentindex="{{parentIndex}}"
-                data-cardindex="{{cardIndex}}"
-                @tap.stop="getShowDescription">查看解释</button>
+
     </view>
 </template>
 
@@ -183,7 +187,6 @@
                 let {currentTarget: {dataset: {parentindex, parentkey, cardindex}}, detail: {encryptedData, errMsg, iv}} = event
 
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
-                    console.log(55)
                     let data = {
                         parentindex: parentindex,
                         parentkey: parentkey,
@@ -193,7 +196,7 @@
 
                     self.$emit('on-interaction', data)
                 }).catch((error) => {
-                    console.log(32)
+
                 })
             },
 

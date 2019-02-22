@@ -224,7 +224,8 @@
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
-                self.getReportFlow(rounter)
+
+                //self.getReportFlow(rounter)
                 if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
@@ -239,26 +240,24 @@
             getReportFlow(rounter) {
                 let self = this
                 let stateInfo = store.getState()
+
                 let current = rounter[rounter.length - 1]
-                let prev = rounter[rounter.length - 2] || current
+                let prev = rounter[rounter.length - 2]
 
                 let postData = {
                     token: stateInfo.user.token,
                     body: {
-                        arg: current.options,
+                        args: current.options,
+                        previousArgs: prev && prev.options || '',
                         event: '',
                         msg: '',
                         source: stateInfo.entrance.scenceName,
-                        previousUrl: prev.route || current.route,
+                        previousUrl: prev && prev.route || current.route,
                         url: current.route
                     }
                 }
 
-                fetch.pageLogs(postData).then(respone => {
-                    console.log(32, respone)
-                }).catch(error => {
-                    console.log(65)
-                })
+                fetch.pageLogs(postData)
             },
             userInfo: null,
             firstAccessForUserProfile: true,
