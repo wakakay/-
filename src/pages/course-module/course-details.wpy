@@ -122,9 +122,9 @@
             }
         }
         .ui-special-list{
-            white-space:nowrap;box-sizing:border-box;margin:16rpx 0 46rpx;
+            white-space:nowrap;box-sizing:border-box;height:400rpx;display: flex;align-items: flex-start; width:100%;margin:16rpx 0 46rpx;
             .ui-item{
-                display:inline-block;box-sizing:border-box;width:516rpx;height:388rpx;margin-right:18rpx;border-radius:@border-radius-32;overflow: hidden;background-position: center;background-size:100%;color:@color-white;line-height: 1;text-align:left;
+                display:inline-block;box-sizing:border-box;width:516rpx;height:388rpx;margin-right:18rpx;border-radius:@border-radius-32;overflow: hidden;background-position: center;background-size:100%;color:@color-white;line-height: 1;text-align:left;vertical-align:top;
                 .ui-mask{width: 100%;height: 100%;background: rgba(0,0,0,0.2);}
                 &:first-of-type{margin-left:32rpx;}
                 &:last-of-type{margin-right:32rpx;}
@@ -153,6 +153,7 @@
                     }
                 }
                 .cell-subtitle{font-size:28rpx;margin-top:99rpx;padding:0 32rpx;}
+
             }
         }
 
@@ -258,7 +259,7 @@
         <view class="cell-border"></view>
 
         <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">你将获得</view>
-        <scroll-view class="ui-special-list flex" scroll-x scroll-with-animation>
+        <scroll-view class="ui-special-list" scroll-x scroll-with-animation>
             <repeat for="{{courseDetail.linkEditorList}}" key="index" index="index" item="item">
                 <button form-type="submit" hover-stay-time="100" 
                         class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
@@ -285,9 +286,8 @@
                                     <view class="cell-percent" style="width: {{item.progress}}%;"></view>
                                 </view>
                             </view>
-                            <view wx:else class="cell-subtitle text-overflow">{{item.subtitle}}</view>
+                            <view wx:if="{{'todaySkill' != item.sceneType}}" class="cell-subtitle text-overflow">{{item.subtitle}}</view>
                         </view>
-                       
                 </button>
             </repeat>
         </scroll-view>
