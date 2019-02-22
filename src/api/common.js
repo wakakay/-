@@ -32,7 +32,22 @@ export default {
     getUserPhone(params) {
         return fetch({method: 'post', url: 'user/sendUserPhoneNumber2', params: params})
     },
-    // 通用公共功能
+    /**
+     * 页面数据收集上报服务器
+     *  @param
+     *  pageLogs:{
+     *      arg: [Object] 【可选】 参数
+     *      event: [String] 【可选】 事件
+     *      msg: [String] 【可选】 备注
+     *      openID: [String] 【可选】 用户openID
+     *      previousUrl: [String] 【可选】 上一个页面路径
+     *      source: [String] 【可选】 渠道来源
+     *      url: [String] 【可选】 当前页面路径
+     *  }
+     */
+    pageLogs(params) {
+        return fetch({method: 'post', url: 'report/pageLogs', params: params, isVisitor: true})
+    },
     commonValue(params) {
         return fetch({method: 'post', url: 'common/value', params: params, isVisitor: true})
     },

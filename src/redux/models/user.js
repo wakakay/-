@@ -14,6 +14,7 @@ import { getStore, connect } from "wepy-redux"
 import {ROUTERS, SCENE} from '../../utils/dictionary'
 import {fetch, report as reportApi} from '../../api'
 import {CancelAuthenticationError, RejectAuthenticationError, CustomError, UnAuthenticationError} from '../../errors'
+import {setSceneID, setSceneName, setPath, setQuery} from './entrance'
 import {getStorageAsync, setStorageAsync} from './helper'
 import _ from 'underscore'
 import config from "../../api/config";
@@ -56,9 +57,12 @@ const setStorage = (storeInfo) => {
  */
 export const getLoginToken = () => (dispatch, getState) => {
     let sourceName = ''
-    let entr = getStore().getState().entrance.scenceID
-    let path = getStore().getState().entrance.path
-    let query = getStore().getState().entrance.query // 二维码进来的参数
+    let LaunchOptions = wx.getLaunchOptionsSync()
+    console.log('LaunchOptions', LaunchOptions)
+    let entr = LaunchOptions.scene
+    let path = LaunchOptions.path
+    let query = LaunchOptions.query
+
     let rounterPath = ROUTERS[path]
     if (query.source) { // 地址栏的source有带直接给
         sourceName = query.source
@@ -70,6 +74,11 @@ export const getLoginToken = () => (dispatch, getState) => {
 
     sourceName = sourceName || 'other'
     let urlEnd = '&source=' + sourceName
+
+    store.dispatch(setSceneID(entr))
+    store.dispatch(setSceneName(sourceName))
+    store.dispatch(setPath(path))
+    store.dispatch(setQuery(query))
 
     const storeInfo = {}
     return new Promise((resolve, reject) => {

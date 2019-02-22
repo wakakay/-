@@ -16,8 +16,7 @@
 <script>
     import wepy from 'wepy'
     import {store} from './redux/store'
-    import {setStore} from 'wepy-redux'
-    import {setSceneID, setPath, setQuery} from './redux/models/entrance'
+    import {setStore, getStore} from 'wepy-redux'
     import {fetch, auth as authApi} from './api'
     import envConfig from './api/config'
     import {ROUTERS, SCENE} from './utils/dictionary'
@@ -225,7 +224,7 @@
                 let rounter = getCurrentPages()
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
-
+                self.getReportFlow(rounter)
                 if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
@@ -235,6 +234,31 @@
                     builder = new HitBuilders.ScreenViewBuilder().setCustomDimension(1, params.pageTheme || '-').build()
                     trackerInfo.send(builder)
                 }
+            },
+            // 页面数据上报服务器
+            getReportFlow(rounter) {
+                let self = this
+                let stateInfo = store.getState()
+                let current = rounter[rounter.length - 1]
+                let prev = rounter[rounter.length - 2] || current
+
+                let postData = {
+                    token: stateInfo.user.token,
+                    body: {
+                        arg: current.options,
+                        event: '',
+                        msg: '',
+                        source: stateInfo.entrance.scenceName,
+                        previousUrl: prev.route || current.route,
+                        url: current.route
+                    }
+                }
+
+                fetch.pageLogs(postData).then(respone => {
+                    console.log(32, respone)
+                }).catch(error => {
+                    console.log(65)
+                })
             },
             userInfo: null,
             firstAccessForUserProfile: true,
@@ -250,11 +274,6 @@
 
         onLaunch() {
             let self = this
-            let LaunchOptions = wx.getLaunchOptionsSync()
-            console.log('LaunchOptions', LaunchOptions)
-            store.dispatch(setSceneID(LaunchOptions.scene))
-            store.dispatch(setPath(LaunchOptions.path))
-            store.dispatch(setQuery(LaunchOptions.query))
             store.dispatch(getLoginToken()) // 默认登录
 
             // 强制更新

@@ -1,5 +1,6 @@
 // content
 export const SET_ENTRANCE_SCENCE_ID = 'SET_ENTRANCE_SCENCE_ID'
+export const SET_ENTRANCE_SCENCE_NAME = 'SET_ENTRANCE_SCENCE_NAME'
 export const DROP_ENTRANCE_SCENCE_ID = 'DROP_ENTRANCE_SCENCE_ID'
 export const SET_ENTRANCE_QUERY = 'SET_ENTRANCE_QUERY'
 export const SET_ENTRANCE_PATH = 'SET_ENTRANCE_PATH'
@@ -22,6 +23,14 @@ export const setSceneID = id => ({
     }
 })
 
+// sync creators
+export const setSceneName = name => ({
+    type: SET_ENTRANCE_SCENCE_NAME,
+    payload: {
+        scenceName: name
+    }
+})
+
 export const setPath = path => ({
     type: SET_ENTRANCE_PATH,
     payload: {
@@ -41,6 +50,9 @@ export const setQuery = query => ({
 const ACTIONS_HANDLERS = {
     [SET_ENTRANCE_SCENCE_ID]: (entrance, { payload: scenceID }) => {
         return Object.assign({}, entrance, scenceID)
+    },
+    [SET_ENTRANCE_SCENCE_NAME]: (entrance, { payload: scenceName }) => {
+        return Object.assign({}, entrance, scenceName)
     },
     [DROP_ENTRANCE_SCENCE_ID]: (entrance, action) => Object.assign({}, entrance, { scenceID: '' }),
     [SET_ENTRANCE_PATH]: (entrance, { payload: path }) => {
