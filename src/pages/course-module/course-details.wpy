@@ -257,11 +257,13 @@
         </view>
         <view class="cell-border"></view>
 
-        <view class="ui-title">你将获得</view>
+        <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">你将获得</view>
         <scroll-view class="ui-special-list flex" scroll-x scroll-with-animation>
             <repeat for="{{courseDetail.linkEditorList}}" key="index" index="index" item="item">
                 <button form-type="submit" hover-stay-time="100" 
-                        class="ui-item" style="background-image:url('{{item.coverImageURL}}')">
+                        class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
+                        data-item="{{item}}"
+                        @tap.stop="getEditor">
                         <view class="ui-mask">
                             <view class="ui-top main-justify">
                                 <view>{{item.sceneTypeText}}</view>
@@ -291,7 +293,7 @@
         </scroll-view>
 
 
-        <view class="ui-title">微课列表</view>
+        <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
         <view class="ui-course-list">
             <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
                 <button class="ui-item"
@@ -968,6 +970,18 @@
                 wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
                 self.reportButtonTap(item.senceID, item.buttonStatus)
                 self.__goToCourseLearning(item)
+            },
+            /**
+             * 前往微课学习
+             * @param event
+             */
+            getEditor(event) {
+                let self = this
+                let {currentTarget: {dataset:{item}}} = event
+                let courseID = item.id;
+                let name = item.name
+                wepy.$instance.globalData.getHuilder('课程详情页/专题列表','click', `${name}`)
+                return self.$navigate('/pages/SpecialCourse/index', {courseID, source: 'CourseDetailPage'})
             },
             /**
              * 一键购买
