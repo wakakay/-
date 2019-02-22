@@ -64,7 +64,7 @@
                 </repeat>
             </view>
 
-            <view class="module-exercises-result" :class="{'is-show': parentList[parentIndex][parentKey][cardIndex].isShowDescription}">
+            <view class="module-exercises-result" :class="{'is-show': parentList[parentIndex][parentKey][cardIndex].isDone}">
                 <view class="main-justify">
                     <view class="cell-exercises-title" :class="{'is-yes': parentList[parentIndex][parentKey][cardIndex].answerStatus}">
                         {{parentList[parentIndex][parentKey][cardIndex].answerStatus == 1 ? '回答正确' : '回答错误'}}
@@ -83,13 +83,13 @@
                     open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
                     @getphonenumber.stop="getSumbit"
                     @tap.stop="getSumbit">提交</button>
-            <button class="cell-sumbit"
+            <!--<button class="cell-sumbit"
                     wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
                     form-type="submit"
                     data-parentkey="{{parentKey}}"
                     data-parentindex="{{parentIndex}}"
                     data-cardindex="{{cardIndex}}"
-                    @tap.stop="getShowDescription">查看解释</button>
+                    @tap.stop="getShowDescription">查看解释</button>-->
         </view>
 
     </view>

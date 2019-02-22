@@ -240,9 +240,15 @@
             getReportFlow(rounter, eventType='') {
                 let self = this
                 let stateInfo = store.getState()
-
                 let current = rounter[rounter.length - 1]
                 let prev = rounter[rounter.length - 2]
+
+                if ('defaultToken' === stateInfo.user.token) {
+                    setTimeout(()=>{
+                        self.getReportFlow(rounter, eventType)
+                    }, 300)
+                    return
+                }
 
                 let postData = {
                     token: stateInfo.user.token,
