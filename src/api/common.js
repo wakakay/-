@@ -14,7 +14,13 @@ import {fetch} from './fetch-utils'
  * 公共接口
  */
 export default {
-    // 登录获取openID
+    /**
+     * 登录获取openID
+     * @param code: [String] 微信登录返回的code
+     * @param source: [String] 渠道来源code
+     * @param sceneName: [String] 渠道来源名称
+     * @param json: [Object] 设备信息
+     */
     getLogin(params) {
         return fetch({method: 'post', url: 'user/login', params: params})
     },
