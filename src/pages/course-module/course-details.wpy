@@ -258,8 +258,8 @@
         </view>
         <view class="cell-border"></view>
 
-        <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">你将获得</view>
-        <scroll-view class="ui-special-list" scroll-x scroll-with-animation>
+        <view class="ui-title" wx:if="{{courseDetail.linkEditorList.length}}">你将获得</view>
+        <scroll-view wx:if="{{courseDetail.linkEditorList.length}}" class="ui-special-list" scroll-x scroll-with-animation>
             <repeat for="{{courseDetail.linkEditorList}}" key="index" index="index" item="item">
                 <button form-type="submit" hover-stay-time="100" 
                         class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
@@ -294,7 +294,7 @@
 
 
         <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
-        <view class="ui-course-list">
+        <view class="ui-course-list" wx:if="{{courseDetail.senceList.length}}">
             <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
                 <button class="ui-item"
                         style="background-image:url({{item.coverImageURL}})"
