@@ -225,7 +225,7 @@
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                //self.getReportFlow(rounter)
+                self.getReportFlow(rounter)
                 if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
@@ -237,7 +237,7 @@
                 }
             },
             // 页面数据上报服务器
-            getReportFlow(rounter) {
+            getReportFlow(rounter, eventType='') {
                 let self = this
                 let stateInfo = store.getState()
 
@@ -249,7 +249,7 @@
                     body: {
                         args: current.options,
                         previousArgs: prev && prev.options || '',
-                        event: '',
+                        event: eventType,
                         msg: '',
                         source: stateInfo.entrance.scenceName,
                         previousUrl: prev && prev.route || current.route,
@@ -273,7 +273,11 @@
 
         onLaunch() {
             let self = this
-            store.dispatch(getLoginToken()) // 默认登录
+            store.dispatch(getLoginToken()).then(respone => {
+                let rounter = getCurrentPages()
+                let query = store.getState().entrance.query
+                query && query.wxPushType && self.globalData.getReportFlow(rounter, query.wxPushType)
+            }) // 默认登录
 
             // 强制更新
             const updateManager = wx.getUpdateManager()

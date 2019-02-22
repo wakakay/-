@@ -98,7 +98,8 @@ export const getLoginToken = () => (dispatch, getState) => {
             let postData = {
                 code: storeInfo.code,
                 source: sourceName,
-                sceneName: entr
+                sceneName: entr,
+                body: {json: respone}
             }
             return fetch.getLogin(postData)
         }).then(respone => {

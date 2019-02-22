@@ -5,17 +5,17 @@
         <from class="ui-course-content" bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-cover-thumb flex">
                 <image mode="widthFix" id="imageCodeUrl" src="{{imageCodeUrl}}" />
-                <view class="ui-skill-box dir-bottom">
+                <view class="ui-skill-box dir-bottom" wx:if="{{skillInfo.isShow}}">
                     <view class="ui-box">
                         <view class="ui-skill main-justify">
-                            <view># {{todaySkill.senceTarget}}</view>
-                            <view class="cell-num">{{todaySkill.skillScore}}</view>
+                            <view># {{skillInfo.senceTarget}}</view>
+                            <view class="cell-num">{{skillInfo.skillScore}}</view>
                         </view>
                         <view class="ui-progress">
                             <view class="cell-line box-mean">
                                 <view></view><view></view><view></view><view></view><view></view>
                             </view>
-                            <view class="cell-percent" style="width: {{todaySkill.progress}}%;"></view>
+                            <view class="cell-percent" style="{{'width: '+ skillInfo.progress +'%;'}}"></view>
                         </view>
                     </view>
                 </view>
@@ -206,23 +206,17 @@
             backgroundHeight: 0,
             timestamp: new Date().getTime(),
             isLoaded: false,
-            shareTitle: '分享标题',
-            specialCourseName: '',
-            dataSet: {},
-            sences: [],
             screenName: '课程专题页', // 来源，是今日还是发现页面过来的
             courseID: '',
-            operateLabel: '',
             wxPushType:'',
-            shareImg:'',
-            isNewCourseMap:[],
             senceID:'',
             moduleList:[],
             floatBox:{},
             shareCoverTitle:'',
             shareCoverImageUrl:'', // 分享图
             imageCodeUrl: '', // 封面图
-            courseName:''
+            courseName:'',
+            skillInfo: {}
         }
         components = {
             'jn-header': header,
@@ -298,12 +292,17 @@
             }
 
             fetch.getNewSpecialCourse(postData).then((res) => {
-                self.isNewCourseMap = res.isNewCourseMap
                 self.floatBox = res.floatBox
                 self.shareCoverTitle = res.shareCoverTitle
                 self.shareCoverImageUrl = res.shareCoverImageUrl
                 self.imageCodeUrl = res.carousel
                 self.courseName = res.name
+                self.skillInfo = {
+                    isShow: self.screenName == '今日技能' ? true : false,
+                    skillScore: res.skillScore,
+                    senceTarget: res.senceTarget,
+                    progress: res.progress
+                }
                 self.isLoaded = true
                 self.moduleList = self.__dataRegroup(res.moduleList)
 
@@ -456,8 +455,7 @@
             'on-interaction': (data) => {
                 let self = this
                 let item = null
-                /*let item = _.find(self.moduleList, {pollID: data.id})
-                _.extend(item, data)*/
+
                 if (data.parentkey) {
                     item = self.moduleList[data.parentindex][data.parentkey][data.cardindex]
                     item && self.moduleList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
@@ -466,6 +464,7 @@
                     if (item.isSumbit && !item.isShowDescription) {
                         let postData = {
                             token: self.token,
+                            courseID: self.courseID,
                             teamID: 'defaultTeamID',
                             senceID: item.senceID,
                             cardID: item.id,
@@ -483,7 +482,6 @@
                             self.$apply()
                         })
                     }
-
                 } else {
                     let number = null
                     item = _.find(self.moduleList, (option, index) => {

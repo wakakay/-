@@ -74,7 +74,7 @@
             </swiper>
         </view>
 
-        <form bindsubmit="handleSavePushCode" report-submit class="ui-button-box dir-left main-justify" :class="{'is-iphonex': isIphonex}">
+        <view class="ui-button-box dir-left main-justify" :class="{'is-iphonex': isIphonex}">
             <view class="dir-top main-justify">
                 <view class="cell-number">
                     <text>{{scoreInfo.showScore}}</text> {{scoreInfo.skillName}}
@@ -83,16 +83,18 @@
                     <view class="cell-current" style="width:{{scoreInfo.showScore / scoreInfo.senceScore * 100}}%"></view>
                 </view>
             </view>
-            <button class="cell-button main-center cross-center"
-                    hover-class="cell-hover"
-                    hover-stay-time="100"
-                    form-type="submit"
-                    :class="{'is-selected': cardCurrentInfo[0].selectedId}"
-                    disabled="{{!cardCurrentInfo[0].selectedId}}"
-                    @tap.stop="getContinue">
-                {{cardCurrentInfo[0].fullImageBottomtText}}
-            </button>
-        </form>
+            <form bindsubmit="handleSavePushCode" report-submit>
+                <button class="cell-button main-center cross-center"
+                        hover-class="cell-hover"
+                        hover-stay-time="100"
+                        form-type="submit"
+                        :class="{'is-selected': cardCurrentInfo[0].selectedId}"
+                        disabled="{{!cardCurrentInfo[0].selectedId}}"
+                        @tap.stop="getContinue">
+                    {{cardCurrentInfo[0].fullImageBottomtText}}
+                </button>
+            </form>
+        </view>
     </view>
 </template>
 
