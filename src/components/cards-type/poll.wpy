@@ -157,6 +157,7 @@
                     })
                 } else {
                     // 计算每个投票的比例
+                    data.pollCount += 1
                     _.each(optionList, (data) => {
                         let add = data.selected ? 1 : 0
                         self.ballotInfo[data.id] = data.prop = Math.floor((data.ballot + add) / data.ballotTotal * 1000) / 10

@@ -161,6 +161,7 @@
         globalData = {
             staffList: [],
             unionID: null,
+            accessNumber: 0,
             newCourseDetailTempele: {},
             allOpenIDHash(token) {
                 let self = this
@@ -257,13 +258,15 @@
                         previousArgs: prev && prev.options || '',
                         event: eventType,
                         msg: '',
-                        source: stateInfo.entrance.scenceName,
+                        source: !self.accessNumber ? stateInfo.entrance.scenceName : '',
                         previousUrl: prev && prev.route || current.route,
                         url: current.route
                     }
                 }
 
-                fetch.pageLogs(postData)
+                fetch.pageLogs(postData).then(respone => {
+                    ++self.accessNumber
+                })
             },
             userInfo: null,
             firstAccessForUserProfile: true,

@@ -88,7 +88,7 @@
                             form-type="submit"
                             open-type="{{!phone ? 'getPhoneNumber' : ''}}"
                             @getphonenumber.stop="getPoll"
-                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
+                            @tap.stop="getPoll">{{data.isDone ? data.pollCount+'已投票' : '投票'}}</button>
                 </view>
 
 
@@ -336,9 +336,8 @@
                     case 'poll':
                         data.cardStatus = data.pollType
                         if (data.isDone) {
-                            let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0); // 统计全部投票人数
                             _.each(data.optionList, (item) => {
-                                item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
+                                item.prop = Math.floor(item.ballot / data.pollCount * 1000) / 10
                             })
                         }
                         break
@@ -352,7 +351,6 @@
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
-                console.log(34)
                 let {currentTarget: {dataset: {item}}, detail: {encryptedData, errMsg, iv}} = event
                 let buttonStatus = item.buttonStatus
                 let source = 'discoverPage'
