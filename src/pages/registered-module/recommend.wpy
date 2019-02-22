@@ -87,8 +87,9 @@
                                 <button class="cell-button main-center cross-center"
                                         form-type="submit"
                                         data-item="{{item}}"
-                                        open-type="getPhoneNumber"
-                                        @getphonenumber.stop="getReceive">免费领取</button>
+                                        open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                                        @getphonenumber.stop="getReceive"
+                                        @tap.stop="getReceive">免费领取</button>
                             </view>
                         </view>
                     </swiper-item>

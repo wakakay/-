@@ -1,7 +1,32 @@
 <style lang="less" scoped>
+    @import "../../assets/style/theme";
     .module-single-choice-box{
-        padding-bottom:40rpx;
-        .ui-content{padding:0 32rpx;}
+        .ui-content{padding:40rpx 32rpx;}
+        .ui-answer-list{
+            .cell-title{width:526rpx;}
+            .is-success{
+                background-color:#E6FFF0;border-color:@border-green;
+                .cell-icon{
+                    opacity:1;
+                    text{color:@color-green;}
+                }
+            }
+            .is-error{
+                background-color:#FFE6E6;border-color:@border-red;
+                .cell-icon{
+                    opacity:1;
+                    text{color:@color-red;}
+                }
+            }
+        }
+        .module-exercises-result{
+            padding:26rpx 32rpx;margin-top:30rpx;background-color:@background-gray-F0;border-radius:@border-radius-20;
+            .cell-exercises-title{
+                color:@color-red;
+                &.is-yes{color:@color-green;}
+            }
+        }
+        .cell-sumbit{width:264rpx;height:64rpx;margin:0 auto;background-color:@background-blue;font-size:30rpx;color:@color-white;line-height:64rpx;border-radius:64rpx;}
     }
 </style>
 
@@ -11,7 +36,6 @@
             <view class="ui-subtitle" wx:if="{{parentList[parentIndex][parentKey][cardIndex].abilitySkill}}"># {{parentList[parentIndex][parentKey][cardIndex].abilitySkill}}</view>
             <view class="ui-title">{{parentList[parentIndex][parentKey][cardIndex].title}}</view>
 
-
             <view class="ui-description" wx:if="{{parentList[parentIndex][parentKey][cardIndex].description}}">{{parentList[parentIndex][parentKey][cardIndex].description}}</view>
             <view class="ui-thumb" wx:if="{{parentList[parentIndex][parentKey][cardIndex].bigimage}}">
                 <image mode="widthFix" src="{{parentList[parentIndex][parentKey][cardIndex].bigimage}}"></image>
@@ -20,36 +44,57 @@
             <view class="ui-answer-list">
                 <repeat for="{{parentList[parentIndex][parentKey][cardIndex].select}}" key="singleIndex" index="singleIndex" item="item">
                     <view class="ui-item main-justify cross-center"
-                          :class="{'is-selected': item.selected || item.isSelected, 'is-success': parentList[parentIndex][parentKey][cardIndex].allowToNext && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].allowToNext && !item.isanswer && item.selected}"
-                          hover-class="{{!isAnswerOver && !parentList[parentIndex][parentKey][cardIndex].allowToNext ? 'ui-item-hover' : ''}}"
+                          :class="{'is-selected': item.isSelected, 'is-success': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && item.isanswer, 'is-error': parentList[parentIndex][parentKey][cardIndex].isDone && item.isSelected && !item.isanswer}"
+                          hover-class="{{!isAnswerOver &&'ui-item-hover'}}"
                           data-parentlist="{{parentList}}"
                           data-parentkey="{{parentKey}}"
                           data-parentindex="{{parentIndex}}"
                           data-cardindex="{{cardIndex}}"
                           data-item="{{item}}"
                           @tap.stop="getSelected">
-                        <view class="cell-title" :class="{'is-full': isExercises}">
+                        <view class="cell-title">
                             <text>{{labelDictionary[singleIndex+1]}}. </text>
                             <text>{{item.option}}</text>
                         </view>
-                        <view class="cell-icon" wx:if="{{!isExercises}}"><text class="icon-correctly"></text></view>
+                        <view class="cell-icon" wx:if="{{parentList[parentIndex][parentKey][cardIndex].answerStatus == 1}}"><text class="icon-complete"></text></view>
+                        <view class="cell-icon" wx:if="{{parentList[parentIndex][parentKey][cardIndex].answerStatus == 2}}"><text class="icon-back-close"></text></view>
                     </view>
                 </repeat>
             </view>
 
-            <view class="module-exercises-result" :class="{'is-show': isExercises && parentList[parentIndex][parentKey][cardIndex].answerDescription}">
+            <view class="module-exercises-result" :class="{'is-show': parentList[parentIndex][parentKey][cardIndex].isShowDescription}">
                 <view class="main-justify">
-                    <view class="cell-exercises-title">题目解释</view>
+                    <view class="cell-exercises-title" :class="{'is-yes': parentList[parentIndex][parentKey][cardIndex].answerStatus}">
+                        {{parentList[parentIndex][parentKey][cardIndex].answerStatus == 1 ? '回答正确' : '回答错误'}}
+                    </view>
                 </view>
                 <view class="ui-description">{{parentList[parentIndex][parentKey][cardIndex].answerDescription}}</view>
             </view>
         </view>
+        <button class="cell-sumbit"
+                wx:if="{{!parentList[parentIndex][parentKey][cardIndex].isDone}}"
+                form-type="submit"
+                disabled="{{!parentList[parentIndex][parentKey][cardIndex].selectedItem.option}}"
+                data-parentkey="{{parentKey}}"
+                data-parentindex="{{parentIndex}}"
+                data-cardindex="{{cardIndex}}"
+                open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                @getphonenumber.stop="getSumbit"
+                @tap.stop="getSumbit">提交</button>
+        <button class="cell-sumbit"
+                wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
+                form-type="submit"
+                data-parentkey="{{parentKey}}"
+                data-parentindex="{{parentIndex}}"
+                data-cardindex="{{cardIndex}}"
+                @tap.stop="getShowDescription">查看解释</button>
     </view>
 </template>
 
 <script>
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
+    import {getUserPhone} from "../../redux/models/user"
     import _ from 'underscore'
 
     const store = getStore()
@@ -103,11 +148,11 @@
                 let {currentTarget: {dataset: {item, parentlist, parentindex, parentkey, cardindex}}} = event
                 let cardData = !parentkey ? self.cardsList[self.cardIndex] : parentlist[parentindex][parentkey][cardindex]
 
-                if (cardData.answerDescription || 'member' !== cardData.role) {
+                if (cardData.isDone) {
                     return false
                 }
                 _.each(cardData.select, (option) => {
-                    option.selected = option.id == item.id ? true : false
+                    option.isSelected = option.id == item.id ? true : false
                 })
                 self.selectedId = item.id
                 self.$apply()
@@ -132,6 +177,39 @@
 
                 self.$emit('on-interaction', data)
             },
+
+            getSumbit(event) {
+                let self = this
+                let {currentTarget: {dataset: {parentindex, parentkey, cardindex}}, detail: {encryptedData, errMsg, iv}} = event
+
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    console.log(55)
+                    let data = {
+                        parentindex: parentindex,
+                        parentkey: parentkey,
+                        cardindex: cardindex,
+                        isSumbit: true
+                    }
+
+                    self.$emit('on-interaction', data)
+                }).catch((error) => {
+                    console.log(32)
+                })
+            },
+
+            getShowDescription(event) {
+                let self = this
+                let {currentTarget: {dataset: {parentindex, parentkey, cardindex}}} = event
+
+                let data = {
+                    parentindex: parentindex,
+                    parentkey: parentkey,
+                    cardindex: cardindex,
+                    isShowDescription: true
+                }
+
+                self.$emit('on-interaction', data)
+            }
         }
 
         events = {
@@ -140,12 +218,9 @@
              * @param data
              */
             'broadcast-single-choive': (data) => {
-                console.log(data)
                 let self = this
-                let cardData = !data.parentkey ? self.cardsList[self.cardIndex] : data.parentlist[data.parentindex][data.parentkey][data.cardindex]
-                let item = !self.isExercises
-                    ? _.find(cardData.select, {isanswer: true})
-                    : _.find(cardData.select, {id: data.selectedId})
+                let cardData = data.parentlist[data.parentindex][data.parentkey][data.cardindex]
+                let item = _.find(cardData.select, {id: data.selectedId})
 
                 self.$apply()
             },

@@ -3,27 +3,41 @@
     <form class="ui-special-course" bindsubmit="handleSavePushCode" report-submit>
         <jn-header :className.sync="headerBackground" buttonAfter :isHeadHeight="isHeadHeight"></jn-header>
         <view class="ui-course-content">
-            <view class="ui-first flex">
-                <image mode="widthFix" src="{{imageCodeUrl}}" />
+            <view class="ui-cover-thumb flex">
+                <image mode="widthFix" id="imageCodeUrl" src="{{imageCodeUrl}}" />
+                <view class="ui-skill-box dir-bottom">
+                    <view class="ui-box">
+                        <view class="ui-skill main-justify">
+                            <view># {{todaySkill.senceTarget}}</view>
+                            <view class="cell-num">{{todaySkill.skillScore}}</view>
+                        </view>
+                        <view class="ui-progress">
+                            <view class="cell-line box-mean">
+                                <view></view><view></view><view></view><view></view><view></view>
+                            </view>
+                            <view class="cell-percent" style="width: {{todaySkill.progress}}%;"></view>
+                        </view>
+                    </view>
+                </view>
             </view>
             <repeat for="{{moduleList}}" key="index" index="index" item="data">
-                <view class="ui-first"  wx:if="{{data.type == 'image' && index == 0}}">
+                <button class="ui-first" form-type="submit" wx:if="{{data.type == 'image' && index == 0}}">
                     <image mode="widthFix" src="{{data.img}}" />
-                </view>
+                </button>
                 <button class="ui-img-type flex"
                         form-type="submit"
-                        id="{{index == 1 ? 'ui-id' : ''}}"
+
                         wx:if="{{data.type == 'image' && index !== 0}}" >
                     <image mode="widthFix" src="{{data.img}}" />
                 </button>
                 <button class="ui-doc"
                         form-type="submit"
-                        id="{{index == 1 ? 'ui-id' : ''}}"
+
                         wx:if="{{data.type == 'text'}}">
                     <view class="cell-title" wx:if="{{data.title}}">{{data.title}}</view>
                     <text class="cell-content" wx:if="{{data.content}}">{{data.content}}</text>
                 </button>
-                <view class="ui-lesson" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type == 'sence'}}">
+                <view class="ui-lesson" wx:if="{{data.type == 'sence'}}">
                     <repeat wx:for="{{data.senceList}}" wx:key="{{lessonIndex}}" wx:index="{{lessonIndex}}" wx:for-item="lessonItem">
                         <button class="ui-item"
                                 form-type="submit"
@@ -42,7 +56,7 @@
                         </button>
                     </repeat>
                 </view>
-                <view class="ui-course" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type == 'course'}}">
+                <view class="ui-course" wx:if="{{data.type == 'course'}}">
                     <repeat wx:for="{{data.courseList}}" wx:key="{{courseIndex}}" wx:index="{{courseIndex}}" wx:for-item="courseItem">
                         <button class="ui-item"
                                 form-type="submit"
@@ -64,7 +78,7 @@
                     </repeat>
 
                 </view>
-                <view class="ui-poll" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type === 'poll'}}">
+                <view class="ui-poll" wx:if="{{data.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
 
                     <button class="cell-poll-btn"
@@ -72,16 +86,19 @@
                             data-index="{{index}}"
                             data-item="{{data}}"
                             form-type="submit"
-                            open-type="getPhoneNumber"
-                            @getphonenumber.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
+                            open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                            @getphonenumber.stop="getPoll"
+                            @tap.stop="getPoll">{{data.isDone ? '已投票' : '投票'}}</button>
                 </view>
-                <view class="ui-poll" wx:if="{{data.type === 'practise'}}">
+
+
+                <view wx:if="{{data.type === 'practise'}}">
                     <repeat for="{{data.practiseList}}" key="practiceIndex" index="practiceIndex" item="item">
-                        <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="moduleList"
-                                          :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiceList" isExercises></jn-single-choice>
+                        <jn-single-choice :parentIndex.sync="index" parentKey="practiseList" :parentList.sync="moduleList"
+                                          :cardIndex.sync="practiceIndex" :cardsList.sync="data.practiseList" isExercises></jn-single-choice>
                     </repeat>
                 </view>
-                <view class="cell-border" id="{{index == 1 ? 'ui-id' : ''}}" wx:if="{{data.type === 'border'}}"></view>
+                <view class="cell-border" wx:if="{{data.type === 'border'}}"></view>
             </repeat>
             <view class="ui-bottom">
                 <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
@@ -97,8 +114,9 @@
                 <button class="module-floax-box"
                         wx:if="{{floatBox.type === 'sence'}}"
                         data-item="{{floatBox.sence}}"
-                        open-type="getPhoneNumber"
-                        @getphonenumber.stop="handleStartLesson">
+                        open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                        @getphonenumber.stop="handleStartLesson"
+                        @tap.stop="handleStartLesson">
                     <button class="ui-share-course" form-type="submit" :class="{'is-phonex': isIphonex}">
                         <view class="ui-left">
                             <view class="ui-img">
@@ -148,7 +166,7 @@
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
-    import singleChoice from '../../components/team-module/single-choice'
+    import singleChoice from '../../components/special-course/single-choice'
     import PushMixin from '../../mixins/push'
     import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
     import {auth as authApi, fetch} from "../../api"
@@ -231,11 +249,15 @@
         onPageScroll(res) {
             let self = this
             let scrollTop = res.scrollTop
-            var query = wx.createSelectorQuery()
-            query.select('#ui-id').boundingClientRect(function (response) {
-                self.backgroundHeight = response.top
-            }).exec()
-            self.headerBackground =  self.backgroundHeight < 0 ? 'background-transparent-opacity' : 'background-transparent'
+            if (self.backgroundHeight) {
+                self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            } else {
+                let query = wx.createSelectorQuery()
+                query.select('#imageCodeUrl').boundingClientRect((response) => {
+                    self.backgroundHeight = response.height + 68
+                    self.headerBackground = scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+                }).exec()
+            }
             self.$apply()
         }
 
@@ -283,25 +305,47 @@
                 self.imageCodeUrl = res.carousel
                 self.courseName = res.name
                 self.isLoaded = true
-                self.moduleList = res.moduleList
-                _.each(self.moduleList, (data, index) => {
-                    if ('poll' === data.type) {
+                self.moduleList = self.__dataRegroup(res.moduleList)
 
-                        data.index = index
+                wepy.$instance.globalData.getLoadHuilder({screenName: self.screenName, pageTheme: self.courseName}) // ga统计
+                self.$apply()
+            })
+        }
+
+        /**
+         * 数组重组
+         * @paramsrespone 接口返回的数据
+         */
+        __dataRegroup(response) {
+            let self = this
+
+            _.each(response, (data) => {
+                switch (data.type) {
+                    case 'practise':
+                        _.each(data.practiseList, (item) => {
+                            _.each(item.select, (option) => {
+                                option.sId = _.clone(option.id)
+                                option.id = item.id + option.id
+                                if (option.isSelected) {
+                                    item.answerDescription = option.feedback && option.feedback.description
+                                }
+                            })
+                        })
+                        break
+                    case 'poll':
                         data.cardStatus = data.pollType
                         if (data.isDone) {
-
                             let ballotTotal = _.reduce(data.optionList, (memo, item) => {return memo + item.ballot}, 0); // 统计全部投票人数
                             _.each(data.optionList, (item) => {
                                 item.prop = Math.floor(item.ballot / ballotTotal * 1000) / 10
                             })
                         }
-                    }
-                })
+                        break
+                }
 
-                wepy.$instance.globalData.getLoadHuilder({screenName: self.screenName, pageTheme: self.courseName}) // ga统计
-                self.$apply()
             })
+
+            return response
         }
 
         methods = {
@@ -411,8 +455,47 @@
             },
             'on-interaction': (data) => {
                 let self = this
-                let item = _.find(self.moduleList, {pollID: data.id})
-                _.extend(item, data)
+                let item = null
+                /*let item = _.find(self.moduleList, {pollID: data.id})
+                _.extend(item, data)*/
+                if (data.parentkey) {
+                    item = self.moduleList[data.parentindex][data.parentkey][data.cardindex]
+                    item && self.moduleList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
+                    _.extend(item, data)
+
+                    if (item.isSumbit) {
+                        let postData = {
+                            token: self.token,
+                            teamID: 'defaultTeamID',
+                            senceID: item.senceID,
+                            cardID: item.id,
+                            score: item.score || 0,
+                            message: item.selectedItem.option, // 选中选项的name
+                            weight: item.selectedItem.weight, // 选中选项的权重
+                            questionIndex: 0,
+                            skillID: item.skillID,
+                            json: item.json // 选中选项的id或顺序
+                        }
+                        fetch.sendTeamPractice(postData).then(respone => {
+                            item.isAnswerOver = true // 已经答案，不能再次作答
+                            item.isDone = true
+                            self.$apply()
+                        })
+                    }
+
+                } else {
+                    let number = null
+                    item = _.find(self.moduleList, (option, index) => {
+                        if (option.pollID && option.pollID === data.pollID) {
+                            number = index
+                            return option
+                        }
+                    })
+                    _.extend(item, data)
+                    if (-1 !== number) {
+                        self.moduleList.splice(number, 1, item)
+                    }
+                }
 
                 self.$apply()
             }
@@ -451,12 +534,32 @@
         view{box-sizing: border-box}
         .ui-course-content{
             width:100%;
-            .ui-first{
-                image{width: 100%;}
+            .ui-cover-thumb{
+                position:relative;
+                image{width:100%;}
+                .ui-skill-box{
+                    width:100%;height:100%;position:absolute;left:0;top:0;
+                    .ui-box{padding:0 80rpx 70rpx;}
+                    .ui-skill{
+                        font-size: 32rpx;color:@color-white;height:46rpx;
+                        .cell-num{font-size: 36rpx;font-weight: bold;}
+                    }
+                    .ui-progress{
+                        width:590rpx;height:16rpx;margin-top:8rpx;border-radius:16rpx;position:relative;overflow: hidden;
+                        >view{position:absolute;left:0;top:0;}
+                        .cell-line{
+                            width:100%;height:100%;z-index:3;border-radius:16rpx;overflow:hidden;
+                            view{width:20%;height:100%;margin-left:6rpx;background-color:rgba(255,255,255,0.2);}
+                            view:first-child{margin-left:0}
+                        }
+                        .cell-percent{
+                            width:50%;height:100%;background: linear-gradient(to right,#fff 95%,transparent 5%);z-index:2;transition:width .2s;background-size:118rpx  100%;
+                        }
+                    }
+                }
             }
-            .ui-img-type{
-                image{width: 100%;}
-            }
+            .ui-first image{width: 100%;}
+            .ui-img-type image{width: 100%;}
             .ui-doc{
                 padding:4rpx 0 24rpx;background:none;text-align:left;box-sizing:border-box;line-height:1;
                 .cell-title{font-size: 40rpx;color: @color-black;line-height:54rpx;padding-top:20rpx;margin-bottom: 24rpx;font-weight: 700;margin:0 32rpx;box-sizing:border-box;}

@@ -173,6 +173,13 @@ export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) 
             return resolve(initialState.phone)
         })
     }
+
+    if (!errMsg) {
+        return new Promise((resolve, reject) => {
+            return reject(false)
+        })
+    }
+
     return new Promise((resolve, reject) => {
         wepy.$instance.globalData.getHuilder('授权手机号码弹窗', 'click', rounterPath)
         if ('getPhoneNumber:ok' !== errMsg) {

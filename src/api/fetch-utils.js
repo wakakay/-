@@ -91,6 +91,7 @@ export const fetch = ((actionObj) => {
             }
         } else {
             if (200 !== data.status) {
+                console.log('接口异常：', actionObj.url, data.message)
                 throw new Error(data.message)
             } else {
                 return data.data
