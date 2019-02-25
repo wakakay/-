@@ -5,7 +5,7 @@
         <from class="ui-course-content" bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-cover-thumb flex">
                 <image mode="widthFix" id="imageCodeUrl" src="{{imageCodeUrl}}" />
-                <view class="ui-skill-box dir-bottom" wx:if="{{isTodaySkill}}">
+                <!--<view class="ui-skill-box dir-bottom" wx:if="{{isTodaySkill}}">
                     <view class="ui-box">
                         <view class="ui-skill main-justify">
                             <view># {{skillInfo.senceTarget}}</view>
@@ -18,7 +18,7 @@
                             <view class="cell-percent" style="{{'width: '+ skillInfo.progress +'%;'}}"></view>
                         </view>
                     </view>
-                </view>
+                </view>-->
             </view>
             <repeat for="{{moduleList}}" key="index" index="index" item="data">
                 <button class="ui-first" form-type="submit" wx:if="{{data.type == 'image' && index == 0}}">
