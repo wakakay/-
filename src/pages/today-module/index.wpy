@@ -229,7 +229,7 @@
                         {{todaySkill.userCount}}
                     </view>
                 </view>
-                <view class="cell-title">{{todaySkill.subtitle}}</view>
+                <view class="cell-title">{{todaySkill.name}}</view>
                 <view class="ui-bottom">
                     <view class="ui-skill main-justify">
                         <view># {{todaySkill.senceTarget}}</view>
@@ -397,7 +397,7 @@
                             {{item.userCount}}
                         </view>
                     </view>
-                    <view class="cell-title">{{item.subtitle}}</view>
+                    <view class="cell-title">{{item.name}}</view>
                     <view class="ui-bottom">
                         <view class="ui-skill main-justify">
                             <view># {{item.senceTarget}}</view>
