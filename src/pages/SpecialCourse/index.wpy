@@ -53,7 +53,7 @@
                                     <view class="cell-title">{{lessonItem.name}}</view>
                                     <view class="cell-dec">{{lessonItem.description}}</view>
                                 </view>
-                                <view class="cell-btn">{{lessonItem.buttonStatusMsg}}</view>
+                                <view class="cell-btn">{{phone ? lessonItem.buttonStatusMsg : '免费领取'}}</view>
                             </view>
                         </button>
                     </repeat>
@@ -74,7 +74,7 @@
                                 <view class="cell-title">{{courseItem.name}}</view>
                                 <view class="cell-dec">{{courseItem.description}}</view>
                                 <view class="ui-btn-bottom">
-                                    <view class="cell-btn">{{courseItem.buttonMsg}}</view>
+                                    <view class="cell-btn">{{phone ? courseItem.buttonMsg : '免费领取'}}</view>
                                     <view class="cell-tip">{{courseItem.userCount}}人已学</view>
                                 </view>
                             </view>
@@ -131,7 +131,7 @@
                                 <view class="cell-dec">{{floatBox.sence.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">{{floatBox.sence.buttonStatusMsg}}</view>
+                        <view class="cell-btn">{{phone ? floatBox.sence.buttonStatusMsg : '免费领取'}}</view>
                     </button>
                 </button>
                 <button class="module-floax-box"
@@ -152,7 +152,7 @@
                                 <view class="cell-dec">{{floatBox.course.description}}</view>
                             </view>
                         </view>
-                        <view class="cell-btn">{{floatBox.course.buttonMsg}}</view>
+                        <view class="cell-btn">{{phone ? floatBox.course.buttonMsg : '免费领取'}}</view>
                     </view>
                 </button>
                 <view class="ui-share-font"  wx:if="{{floatBox.type !== 'share'}}">
@@ -364,7 +364,7 @@
         __receiveResult({phone, courseID, callBack}) {
             let self = this
             if (self.hasGift) {
-                _.isFunction(callBack()) && callBack()
+                _.isFunction(callBack) && callBack()
                 return
             }
 
@@ -381,7 +381,9 @@
                     })
                     store.dispatch(refreshUserInformations({hasGift: true}))
                 }
-                _.isFunction(callBack()) && callBack()
+                if ( _.isFunction(callBack)) {
+                    callBack()
+                }
             }).catch(error => {
                 wx.showToast({
                     icon: 'none',
@@ -416,8 +418,8 @@
                             }
 
                             navigateToLesson({
-                                courseID:self.courseID,
-                                senceID:self.senceID,
+                                courseID: item.courseID,
+                                senceID: self.senceID,
                                 resumeLastRead: item.resume,
                                 source
                             })
@@ -446,7 +448,7 @@
                             }
 
                             wepy.$instance.globalData.getHuilder(`${self.screenName}/${typeSrc}`,'click',`${item.name}`)
-                            wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}&source=${item.buttonMsg || '专题'}`})
+                            wepy.navigateTo({url: `/pages/course-module/course-details?id=${item.id}&source=${item.buttonMsg || '专题'}`})
                         }
                     })
                 }).catch((error) => {
@@ -656,7 +658,7 @@
                         .cell-dec{width:474rpx;font-size:26rpx;color:@color-gray;text-align:left;line-height:40rpx;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
                         .ui-btn-bottom{
                             height:84rpx;display:flex;align-items:flex-end;
-                            .cell-btn{width: 128rpx;height: 60rpx;border-radius: 200rpx;color: @color-blue;background: @background-gray-F4;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-right: 20rpx;}
+                            .cell-btn{width: 150rpx;height: 60rpx;border-radius: 200rpx;color: @color-blue;background: @background-gray-F4;font-size: 30rpx;text-align: center;line-height: 60rpx;margin-right: 20rpx;}
                             .cell-tip{font-size: 26rpx;color:@color-gray;height:84rpx;line-height:108rpx;}
                         }
                     }
