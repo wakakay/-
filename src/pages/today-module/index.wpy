@@ -315,7 +315,7 @@
                 class="ui-new-role"
                 @tap.stop="getCourseDetail"
                 data-item="{{newRoleRecommend}}"
-                wx:if="{{ 0 == roleStatus && newRoleRecommend.courseName}}"
+                wx:if="{{ 0 == roleStatus }}"
                 style="background-image: url('{{newRoleRecommend.bgImg}}');">
             <view class="cell-dec text-overflow">{{newRoleRecommend.courseDec}}</view>
             <view class="cell-title">{{newRoleRecommend.courseName}}</view>
