@@ -3,7 +3,7 @@
         <scroll-veiw class="evaluation-article__wrapper" scroll-y="{{ true }}">
             <jn-header title="评价"></jn-header>
             <view class="ui-unable-edit-box" wx-if="{{!isAbleToEdit}}">
-                <view class="ui-star-box" :class="{'ipx':ipX}">
+                <view class="ui-star-box" :class="{'ipx':isIphonex}">
                     <view class="cell-star-title">你愿意将本课推荐给朋友吗？</view>
                     <view class="ui-star-item">
                         <text wx:for="{{ [1, 2, 3, 4, 5] }}" wx:key="{{ index }}"
@@ -33,20 +33,20 @@
                         <view class="cell-view-area-tip" wx-if="{{comment.length >= 16}}"> 还差0个字可获赠3个即能币！</view>
                     </view>
                 </view>
-                <view class="ui-listen-box" :class="{'ipx':ipX}">
+                <view class="ui-listen-box" :class="{'ipx':isIphonex}">
                     <view class="cell-listen-title">
                         <view class="cell-listen-title-item">倾听您的个人评价</view>
-                        <view class="cell-listen-content" wx-if="{{ipX}}" >
+                        <view class="cell-listen-content" wx-if="{{isIphonex}}" >
                             <view>Hi，我们是即能课程组，</view>
                             <view>悄悄告诉我们你对本课的评价吧</view>
                         </view>
                     </view>
-                    <view class="ui-anonym-box-ipx"  wx-if="{{!ipX}}">
+                    <view class="ui-anonym-box-ipx"  wx-if="{{!isIphonex}}">
                         <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
                         匿名评价
                     </view>
                 </view>
-                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                     <view class="cell-evaluation-title">本课让你容易学习吗?</view>
                     <view class="ui-evaluation-face dir-left">
                         <image wx:for="{{ participationEvaluation }}" wx:key="{{ index }}"
@@ -67,7 +67,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                     <view class="cell-evaluation-title">本课让你收获了有效技能吗？</view>
                     <view class="ui-evaluation-face dir-left">
                         <image wx:for="{{ contentEvaluation }}" wx:key="{{ index }}"
@@ -88,7 +88,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                     <view class="cell-evaluation-title">本课可以启发/指引你在工作中应用吗？</view>
                     <view class="ui-evaluation-face dir-left">
                         <image wx:for="{{ applcationEvaluation }}" wx:key="{{ index }}"
@@ -111,7 +111,7 @@
                     </view>
 
                 </view>
-                <view class="cell-anonym-box" wx-if="{{ipX}}">
+                <view class="cell-anonym-box" wx-if="{{isIphonex}}">
                     <view>匿名评价</view>
                     <view>
                         <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
@@ -126,7 +126,7 @@
             bindchange="getScrollPage">
                 <block style="height: calc(100% - {{headerHeigth}}px)">
                 <swiper-item  bindtouchstart="getTouchStart" bindtouchmove="getTouchMove"  data-swiper-item-id="item-{{ index }}">
-                    <view class="ui-star-box" :class="{'ipx':ipX}" wx-if="{{!isShowArea}}">
+                    <view class="ui-star-box" :class="{'ipx':isIphonex}" wx-if="{{!isShowArea}}">
                         <view class="cell-star-title">你愿意将本课推荐给朋友吗</view>
                         <view class="ui-star-item">
                             <text wx:for="{{ [1, 2, 3, 4, 5] }}" wx:key="{{ index }}"  data-score="{{ item }}"
@@ -165,21 +165,21 @@
             </block>
             <block  style="height: calc(100% - {{headerHeigth}}px)" wx-if="{{isChoiceDemand}}">
                 <swiper-item  data-swiper-item-id="item-{{ index }}">
-                    <view class="ui-listen-box" :class="{'ipx':ipX}">
+                    <view class="ui-listen-box" :class="{'ipx':isIphonex}">
                         <view class="cell-listen-title">
                             <view class="cell-star-title">倾听您的个人评价</view>
-                            <view class="cell-listen-content" wx-if="{{ipX}}" >
+                            <view class="cell-listen-content" wx-if="{{isIphonex}}" >
                                 <view>Hi，我们是即能课程组，</view>
                                 <view>悄悄告诉我们你对本课的评价吧</view>
                             </view>
                         </view>
-                        <view class="ui-anonym-box-ipx"  wx-if="{{!ipX}}" @tap="getAnonymous">
+                        <view class="ui-anonym-box-ipx"  wx-if="{{!isIphonex}}" @tap="getAnonymous">
                             <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
                             匿名评价
                         </view>
 
                     </view>
-                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                         <view class="cell-evaluation-title">本课让你容易学习吗?</view>
                         <view class="ui-evaluation-face dir-left">
                             <image wx:for="{{ participationEvaluation }}" wx:key="{{ index }}"
@@ -201,7 +201,7 @@
                         </view>
 
                     </view>
-                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                         <view class="cell-evaluation-title">本课让你收获了有效技能吗？</view>
                         <view class="ui-evaluation-face dir-left">
                             <image wx:for="{{ contentEvaluation }}" wx:key="{{ index }}"
@@ -221,7 +221,7 @@
                             </view>
                         </view>
                     </view>
-                    <view class="ui-evaluation-box" :class="{'ipx':ipX}">
+                    <view class="ui-evaluation-box" :class="{'ipx':isIphonex}">
                         <view class="cell-evaluation-title">本课可以启发/指引你在工作中应用吗？</view>
                         <view class="ui-evaluation-face dir-left">
                             <image wx:for="{{ applcationEvaluation }}" wx:key="{{ index }}"
@@ -243,7 +243,7 @@
                         </view>
 
                     </view>
-                    <view class="cell-anonym-box" wx-if="{{ipX}}" @tap="getAnonymous">
+                    <view class="cell-anonym-box" wx-if="{{isIphonex}}" @tap="getAnonymous">
                         <view>匿名评价</view>
                         <view>
                             <image class="cell-anonym-img" src="{{isAnonymous? 'http://wx-small.runwise.cn/image/imageIDfebdc277a72435bf8e4392d14349.png' : 'http://wx-small.runwise.cn/image/imageID2083cb6a15b4e59eb795e4b1bedd.png'}}" />
@@ -289,9 +289,6 @@
         },
         entranceScenceID(state) {
             return state.entrance.scenceID
-        },
-        ipX(state) {
-            return state.user.equipmentModel.startsWith('iPhone X')
         }
     })
     export default class Evaluation extends wepy.page {
@@ -302,6 +299,7 @@
 
         data = {
             activedIndex:0,//默认index
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isShowArea:false,
             isShowDiv:true,
             animationData: {},
