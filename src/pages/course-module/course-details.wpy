@@ -261,7 +261,7 @@
         <view class="ui-title" wx:if="{{courseDetail.linkEditorList.length}}">你将获得</view>
         <scroll-view wx:if="{{courseDetail.linkEditorList.length}}" class="ui-special-list" scroll-x scroll-with-animation>
             <repeat for="{{courseDetail.linkEditorList}}" key="index" index="index" item="item">
-                <button form-type="submit" hover-stay-time="100" 
+                <button form-type="submit" hover-stay-time="100"
                         class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
                         data-item="{{item}}"
                         @tap.stop="getEditor">
@@ -573,16 +573,7 @@
             let self = this
             self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
         }
-        onReady() {
-            let self = this
-            wx.createSelectorQuery().select('.ui-course-list').boundingClientRect((rect) => {
-                self.targetScroll = rect.top - 200
-            }).exec()
 
-            wx.createSelectorQuery().select('.ui-header-thumb').boundingClientRect((rect) => {
-                self.backgroundHeight = rect.height - 50
-            }).exec()
-        }
         onUnload() {
             let self = this
             clearInterval(self.timer)
@@ -598,6 +589,14 @@
          */
         onPageScroll(res) {
             let self = this
+            let query = wx.createSelectorQuery()
+            !self.targetScroll && query.select('.ui-course-list').boundingClientRect((rect) => {
+                self.targetScroll = rect.top - 200
+            }).exec()
+
+            !self.backgroundHeight && query.select('.ui-header-thumb').boundingClientRect((rect) => {
+                self.backgroundHeight = rect.height - 50
+            }).exec()
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
             self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
             self.$apply()
