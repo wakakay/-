@@ -1,0 +1,34 @@
+<style lang="less" scoped>
+
+</style>
+
+<template>
+    <view class="module-footer">
+        <button></button>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import {getStore, connect} from 'wepy-redux'
+
+    const store = getStore()
+    @connect({
+        systemInfo(state) {
+            return state.user
+        }
+    })
+    export default class skillsBoard extends wepy.component {
+        props = {}
+
+        data = {}
+
+        onLoad() {
+            let self = this
+        }
+
+        methods = {}
+
+        events = {}
+    }
+</script>
