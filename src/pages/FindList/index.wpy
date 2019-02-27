@@ -254,7 +254,7 @@
         onLoad() {
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 2 ? false : true
+            self.isShowEvaluate = pageNum !== 3 ? false : true
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 

@@ -103,6 +103,18 @@ export const getLoginToken = () => (dispatch, getState) => {
             }
             return fetch.getLogin(postData)
         }).then(respone => {
+            // 查看来源是否有freeCourse开头的，有就去授权手机号页面
+            let reg = /^(freeCourse)/
+            if (query && query.source && reg.test(query.source) && !respone.phone) {
+                let str = ''
+                _.mapObject(query, (val, key) => {
+                    if ('source' !== key) {
+                        str += `${key}=${val}`
+                    }
+                })
+                wepy.$instance.globalData.freeCourseRounter = `/${path}${str ? '?'+str : ''}`
+                wx.redirectTo({ url: `/pages/registered-module/weclome`})
+            }
             _.extend(storeInfo, respone)
             setStorage(storeInfo)
             return getState()['user']

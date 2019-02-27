@@ -349,7 +349,7 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.paramsInfo = params
-            self.isShowEvaluate = pageNum !== 2 ? false : true
+            self.isShowEvaluate = pageNum !== 3 ? false : true
             self.isShowToast = self.paramsInfo.isShowToast ? true : false
 
             initializationDeligate({initializeFunc: self.initialize.bind(self)})

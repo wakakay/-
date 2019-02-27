@@ -133,6 +133,8 @@
             unionID: null,
             accessNumber: 0,
             newCourseDetailTempele: {},
+            oldRounter: null,
+            freeCourseRounter: null,
             allOpenIDHash(token) {
                 let self = this
                 if (self.staffList.length) {
@@ -237,10 +239,7 @@
                 fetch.pageLogs(postData).then(respone => {
                     ++self.accessNumber
                 })
-            },
-            userInfo: null,
-            firstAccessForUserProfile: true,
-            oldRounter: null
+            }
         }
 
         constructor() {
