@@ -21,13 +21,9 @@
                 </view>-->
             </view>
             <repeat for="{{moduleList}}" key="index" index="index" item="data">
-                <button class="ui-first" form-type="submit" wx:if="{{data.type == 'image' && index == 0}}">
-                    <image mode="widthFix" src="{{data.img}}" />
-                </button>
                 <button class="ui-img-type flex"
                         form-type="submit"
-
-                        wx:if="{{data.type == 'image' && index !== 0}}" >
+                        wx:if="{{data.type == 'image'}}" >
                     <image mode="widthFix" src="{{data.img}}" />
                 </button>
                 <button class="ui-doc"
