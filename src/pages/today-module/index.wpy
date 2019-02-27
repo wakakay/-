@@ -51,7 +51,7 @@
                 }
             }
         }
-        
+
     }
     /* 最新推荐 */
     .ui-studying{
@@ -411,7 +411,7 @@
                         </view>
                     </view>
                 </view>
-               
+
             </view>
         </button>
     </repeat>
@@ -487,7 +487,7 @@
         onLoad() {
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 2 ? false : true
+            self.isShowEvaluate = pageNum !== 3 ? false : true
         }
 
         onShow() {
