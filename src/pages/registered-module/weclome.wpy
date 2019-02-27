@@ -79,7 +79,7 @@
                 let {detail: {encryptedData, errMsg, iv}} = event
 
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
-                    wx.redirectTo({ url: wepy.$instance.globalData.freeCourseRounter})
+                    wx.reLaunch({ url: wepy.$instance.globalData.freeCourseRounter})
                 }).catch((error) => {
 
                 })
