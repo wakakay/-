@@ -293,7 +293,7 @@
         </scroll-view>
 
 
-        <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
+        <view class="ui-title" id="senceList" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
         <view class="ui-course-list" wx:if="{{courseDetail.senceList.length}}">
             <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
                 <button class="ui-item"
@@ -598,7 +598,7 @@
                 self.backgroundHeight = rect.height - 50
             }).exec()
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
-            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-white' : 'background-transparent'
             self.$apply()
         }
         /**
@@ -694,10 +694,30 @@
                     courseid: self.paramsInfo.id,
                     source: self.paramsInfo.source
                 })
+
+                self.__positionScroll()
             }).catch(error => {
                 self.isLoaded = true
             })
         }
+        /**
+         * 用户进入已获得的课程的详情页时，直接滚动到微课列表位置
+         */
+        __positionScroll() {
+            let self = this
+            if (self.courseDetail.price || !self.hasGift) {
+                return
+            }
+
+            let query = wx.createSelectorQuery()
+            query.select('#senceList').boundingClientRect((rect) => {
+                wx.pageScrollTo({
+                    scrollTop: rect.top - rect.height,
+                    duration: 300
+                })
+            }).exec()
+        }
+
         /**
          * 去微课学习页面
          * @param item 当前微课的信息

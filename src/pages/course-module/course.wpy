@@ -107,7 +107,6 @@
             scroll-y="{{isScroll}}"
             bindscroll="getScroll">
         <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
-        <jn-footer></jn-footer>
 
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-course-header main-justify cross-center">
@@ -271,6 +270,7 @@
         <view class="ui-clear"></view>
 
         <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+        <jn-footer></jn-footer>
     </scroll-view>
     <view class="ui-registed-toast courseFadeOut" wx:if="{{isShowToast}}" @tap.stop="getCloseToast">
         <image src="http://wx-small.runwise.cn/image/imageID7618264dab0493be413342508fae.png" />

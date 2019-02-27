@@ -1,7 +1,7 @@
 <template>
 	<mloading wx:if="{{ !isLoaded  }}"/>
 	<jn-header title="训练营" hiddenButton statusBackground="#fff"></jn-header>
-	<jn-footer></jn-footer>
+
 	<view class="ui-training-camp" style="height: calc(100% - {{headerHeigth}}px)" wx:if="{{isLoaded}}">
 		<scroll-view class="ui-bar" scroll-x="{{ true }}"
 					 scroll-into-view="item-{{ activedAssortmentPage }}"
@@ -182,6 +182,7 @@
 		</swiper>
 	</view>
 	<studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+	<jn-footer></jn-footer>
 </template>
 
 <script>

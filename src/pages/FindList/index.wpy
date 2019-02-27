@@ -100,7 +100,6 @@
                 bindscrolltoupper="getScrollRefresh"
                 bindscrolltolower="getScrollMore">
             <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
-            <jn-footer></jn-footer>
 
             <form bindsubmit="handleSavePushCode" report-submit>
                 <view class="ui-course-header main-justify cross-center">
@@ -179,6 +178,7 @@
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
     </view>
+    <jn-footer></jn-footer>
 </template>
 
 <script>

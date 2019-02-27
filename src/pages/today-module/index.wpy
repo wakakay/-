@@ -208,7 +208,6 @@
 <jn-header hiddenButton class="ui-today-header">
     <view slot="cursor-button" class="cell-header-date">{{todayDate}}</view>
 </jn-header>
-<jn-footer></jn-footer>
 
 <form bindsubmit="handleSavePushCode" report-submit>
     <view class="ui-course-header main-justify cross-center">
@@ -419,6 +418,7 @@
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+<jn-footer></jn-footer>
 </template>
 
 <script>
