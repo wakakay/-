@@ -22,7 +22,7 @@
               style="{{'top:'+ (-keyboardHeight)+'px;'}}"
               @tap.stop="getShowStatus" wx:if="{{isShow}}">
             <scroll-view class="ui-discuss-list"
-                         scroll-y="{{discussList.length>5 ? true : false}}"
+                         scroll-y
                          data-type="0"
                          bindscrolltolower="getScrolltolower">
                 <repeat for="{{discussList}}" key="index" index="index" item="item">
