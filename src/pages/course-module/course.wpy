@@ -107,6 +107,7 @@
             scroll-y="{{isScroll}}"
             bindscroll="getScroll">
         <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
+        <jn-footer></jn-footer>
 
         <form bindsubmit="handleSavePushCode" report-submit>
             <view class="ui-course-header main-justify cross-center">
@@ -281,6 +282,7 @@
     import {getStore, connect} from 'wepy-redux'
     import PushMixin from '../../mixins/push'
     import header from '../../components/common/header'
+    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import CourseSeries from '../../components/course-module/course-series'
@@ -314,6 +316,7 @@
 
         components = {
             'jn-header': header,
+            'jn-footer': footer,
             'jn-loading': Loading,
             'favourite-course': FavouriteCourseCopy,
             'evaluate-modal': EvaluateModal,

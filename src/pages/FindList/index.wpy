@@ -100,6 +100,7 @@
                 bindscrolltoupper="getScrollRefresh"
                 bindscrolltolower="getScrollMore">
             <jn-header hiddenButton className="background-transparent" statusBackground="#fff"></jn-header>
+            <jn-footer></jn-footer>
 
             <form bindsubmit="handleSavePushCode" report-submit>
                 <view class="ui-course-header main-justify cross-center">
@@ -187,6 +188,7 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
+    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
@@ -226,6 +228,7 @@
 
         components = {
             'jn-header': header,
+            'jn-footer': footer,
             'jn-loading': Loading,
             'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar

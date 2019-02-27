@@ -1,6 +1,7 @@
 <template>
 	<mloading wx:if="{{ !isLoaded  }}"/>
 	<jn-header title="训练营" hiddenButton statusBackground="#fff"></jn-header>
+	<jn-footer></jn-footer>
 	<view class="ui-training-camp" style="height: calc(100% - {{headerHeigth}}px)" wx:if="{{isLoaded}}">
 		<scroll-view class="ui-bar" scroll-x="{{ true }}"
 					 scroll-into-view="item-{{ activedAssortmentPage }}"
@@ -189,6 +190,7 @@
     import Loading from '../../components/common/loading'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
+    import footer from '../../components/common/footer'
     import TeamLearningCourse from '../../components/TeamLearningCourse/index'
     import studyingBar from '../../components/common/studying-bar'
     import {team as teamApi, fetch } from '../../api'
@@ -217,9 +219,10 @@
         }
 
         components = {
+            'jn-header': header,
+            'jn-footer': footer,
             'mloading': Loading,
             'teamLearningCourse': TeamLearningCourse,
-            'jn-header': header,
             'studying-bar': studyingBar
         }
         data = {

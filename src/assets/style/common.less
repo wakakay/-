@@ -48,6 +48,34 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
     }
 }
 
+
+.module-footer{
+    width:100%;height:100rpx;box-sizing:border-box;
+    >view{box-sizing:border-box;}
+    &.is-iphonex{
+        height:168rpx;
+        .ui-container{
+            height:168rpx;padding-bottom:68rpx;
+        }
+    }
+    .ui-container{
+        display:flex;width:100%;height:100rpx;background-color:@background-white;border-top:1rpx solid @border-gray;position:fixed;left:0;bottom:0;z-index:@z-index-highest;
+        button{
+            display:flex;flex-grow:1;flex-shrink:1;flex-direction:column;padding:10rpx 0;background:none;
+            text:nth-of-type(1){padding-bottom:4rpx;font-size:56rpx;color:@color-gray;line-height:56rpx;}
+            text:nth-of-type(2){font-size:20rpx;color:@color-gray;line-height:28rpx;}
+            &.active text{color:@color-blue;}
+        }
+    }
+}
+
+
+
+
+
+
+
+
 /* 加载框 */
 .module-loading{
     width:100%;height:100%;background:@background-white;position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;z-index:@z-index-mask;
