@@ -34,7 +34,7 @@
             footerList: [
                 {icon: 'icon-footer-toady', name: '今日', path: 'pages/today-module/index'},
                 {icon: 'icon-footer-find', name: '发现', path: 'pages/FindList/index'},
-                {icon: 'icon-send', name: '课程', path: 'pages/course-module/course'},
+                {icon: '.icon-footer-course', name: '课程', path: 'pages/course-module/course'},
                 {icon: 'icon-footer-team', name: '训练营', path: 'pages/training-camp-module/index'}
             ]
         }

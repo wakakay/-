@@ -17,6 +17,7 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
     &.background-cancel .cell-back text{color:@color-white;}
     &.background-white .ui-header-box{background:@background-white;color:@color-black;}
     &.background-white .cell-back text{color:@color-black;}
+    &.background-white .ui-titile text{font-size:24rpx;}
     &.background-green .ui-header-box{background:#2db7b5;color:@color-white;}
     &.background-green .cell-back text{color:@color-white;}
     &.background-grass .ui-header-box{background:#B4DDD9;color:@color-white;}
@@ -276,7 +277,7 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
 }
 /* 投票卡 */
 .module-poll-box{
-    width:100%;
+    width:100%;width:100%;height:calc(~"100% - 72px");
     &.is-phonex{width:100%;height:calc(~"100% - 96px");}
     &.is-learning{
         .ui-content{padding:0;}

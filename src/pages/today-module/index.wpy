@@ -74,10 +74,17 @@
                     .ui-shadow{
                         position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);
                         .ui-bg-content{
-                            padding:58rpx 60px 0 32rpx;
+                            padding:58rpx 32rpx 0 32rpx;
                             .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:520rpx;line-height:1;}
                             .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 530rpx;height: 80rpx;line-height:52rpx;margin-top:40rpx}
-                            .cell-btn{width: 208rpx;height: 72rpx;border-radius: 39rpx;background: @background-mask-white;color:@color-white;text-align:center;line-height:72rpx;font-size:32rpx;margin-top: 118rpx;}
+                            .ui-button-box{
+                                height:72rpx;margin-top:150rpx;
+                                .cell-btn{width: 208rpx;height: 72rpx;border-radius: 39rpx;background: @background-mask-white;color:@color-white;text-align:center;line-height:72rpx;font-size:32rpx;}
+                                .cell-downtime{
+                                    width:134rpx;height:48rpx;padding:0 4rpx;background-color:@background-red-F0;font-size:24rpx;color:@color-white;line-height:48rpx;border-radius:@border-radius-8;
+                                    text{display:block;float:left;font-size:36rpx;margin-right:4rpx;line-height:52rpx;}
+                                }
+                            }
                         }
                     }
                     .ui-progress{
@@ -92,7 +99,6 @@
                                     &.cell-circle-left{border-bottom:6rpx solid @border-white;border-left:6rpx solid @border-white;}
                                 }
                             }
-
                         }
                     }
                 }
@@ -271,7 +277,13 @@
                                 <view class="ui-bg-content">
                                     <view class="cell-title">{{item.courseName}}</view>
                                     <view class="cell-dec">{{item.courseDec}}</view>
-                                    <view class="cell-btn">选择微课</view>
+                                    <view class="ui-button-box main-justify cross-center">
+                                        <view class="cell-btn">选择微课</view>
+                                        <view class="cell-downtime" wx:if="{{item.expiredCode>=0}}">
+                                            <text class="icon-time"></text>{{item.expiredCode ? '仅剩'+item.expiredCode+'天' : '今天到期'}}
+                                        </view>
+                                    </view>
+
                                 </view>
                                 <view class="ui-progress">
                                     <view class="ui-circular-progress">

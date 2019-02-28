@@ -88,7 +88,7 @@
                             form-type="submit"
                             open-type="{{!phone ? 'getPhoneNumber' : ''}}"
                             @getphonenumber.stop="getPoll"
-                            @tap.stop="getPoll">{{data.isDone ? data.pollCount+'已投票' : '投票'}}</button>
+                            @tap.stop="getPoll">{{data.isDone ? data.pollCount+'人已投票' : '投票'}}</button>
                 </view>
 
 
