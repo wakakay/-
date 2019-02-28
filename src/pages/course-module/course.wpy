@@ -270,6 +270,7 @@
         <view class="ui-clear"></view>
 
         <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+        <jn-footer></jn-footer>
     </scroll-view>
     <view class="ui-registed-toast courseFadeOut" wx:if="{{isShowToast}}" @tap.stop="getCloseToast">
         <image src="http://wx-small.runwise.cn/image/imageID7618264dab0493be413342508fae.png" />
@@ -281,6 +282,7 @@
     import {getStore, connect} from 'wepy-redux'
     import PushMixin from '../../mixins/push'
     import header from '../../components/common/header'
+    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import CourseSeries from '../../components/course-module/course-series'
@@ -314,6 +316,7 @@
 
         components = {
             'jn-header': header,
+            'jn-footer': footer,
             'jn-loading': Loading,
             'favourite-course': FavouriteCourseCopy,
             'evaluate-modal': EvaluateModal,
@@ -346,7 +349,7 @@
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
             self.paramsInfo = params
-            self.isShowEvaluate = pageNum !== 2 ? false : true
+            self.isShowEvaluate = pageNum !== 3 ? false : true
             self.isShowToast = self.paramsInfo.isShowToast ? true : false
 
             initializationDeligate({initializeFunc: self.initialize.bind(self)})

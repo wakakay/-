@@ -19,9 +19,10 @@
 
         <view class="ui-button main-center" :class="{'is-iphonex': isIphonex}">
             <button class="cell-button main-center cross-center"
-                  open-type="getUserInfo"
-                  hover-class="cell-hover"
-                  bindgetuserinfo="getRegistered">免费领取</button>
+                    hover-class="cell-hover"
+                    open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                    @getphonenumber.stop="getRegistered"
+                    @tap.stop="getRegistered">免费领取</button>
         </view>
     </view>
 </template>
@@ -30,18 +31,13 @@
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
-    import Loading from '../../components/common/loading'
-    import {CustomError} from '../../errors'
-    import {login} from '../../redux/models/user'
+    import {getUserPhone} from '../../redux/models/user'
     import {fetch} from '../../api'
 
     const store = getStore()
     @connect({
         systemInfo(state) {
             return state.user
-        },
-        entrance(state) { // 全局场景值
-            return state.entrance
         }
     })
     export default class registeredWeclome extends wepy.page {
@@ -51,9 +47,7 @@
 
         data = {
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
-            swiperList: [],
-            banner: '',
-            isClick: false
+            banner: ''
         }
 
         onLoad() {
@@ -73,8 +67,7 @@
         }
 
         onShow() {
-            let self = this
-            self.isClick = false
+
         }
 
         methods = {
@@ -83,52 +76,14 @@
              */
             getRegistered(event) {
                 let self = this
-                let {detail: {errMsg}} = event
+                let {detail: {encryptedData, errMsg, iv}} = event
 
-                wx.reportAnalytics('welcome_register', {
-                    username: self.systemInfo.nickName,
-                    channel: self.entrance.mappers[self.entrance.scenceID],
-                    role: self.systemInfo.role
-                })
-
-                return new Promise((resolve, reject) => {
-                    if (errMsg === 'getUserInfo:fail auth deny') throw new CustomError('用户拒绝授权')
-                    if (errMsg && errMsg.includes('fail')) throw new CustomError('用户授权失败')
-
-                    resolve(errMsg)
-                }).then(userInfo => { // 确定授权
-                    return store.dispatch(login())
-                }).then((respone) => { // 授权成功
-                    self.__isGetGift()
-                }).catch(error => { // 拒接授权
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    wx.reLaunch({ url: wepy.$instance.globalData.freeCourseRounter})
+                }).catch((error) => {
 
                 })
             }
-        }
-
-        /**
-         * 是否领取过新手礼包
-         * @private
-         */
-        __isGetGift() {
-            let self = this
-            if (self.isClick) {
-                return
-            }
-            self.isClick = true
-
-            let postData = {
-                token: self.systemInfo.token
-            }
-            fetch.userInfo(postData).then((respone) => {
-                respone.hasGift ? wx.reLaunch({url: '/pages/today-module/index'}) : wx.navigateTo({url: '/pages/registered-module/interest-select?src=weclome'})
-                self.$apply()
-            }).catch(error => {
-                wx.showToast({
-                    icon: 'none',
-                    title: ' 网络错误 '
-                })
-            })
         }
 
         events = {}

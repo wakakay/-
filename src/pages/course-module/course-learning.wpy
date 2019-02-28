@@ -550,6 +550,7 @@
             self.__noticeBroadcast(current)
             self.__sumbitScore()
             self.__sumbitFeedBack()
+            self.__recordProgress()
         }
         /**
          * 通知对应的子组件

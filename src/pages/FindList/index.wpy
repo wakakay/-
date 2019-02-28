@@ -178,6 +178,7 @@
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
     </view>
+    <jn-footer></jn-footer>
 </template>
 
 <script>
@@ -187,6 +188,7 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
+    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
@@ -226,6 +228,7 @@
 
         components = {
             'jn-header': header,
+            'jn-footer': footer,
             'jn-loading': Loading,
             'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
@@ -251,7 +254,7 @@
         onLoad() {
             let self = this
             let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 2 ? false : true
+            self.isShowEvaluate = pageNum !== 3 ? false : true
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
