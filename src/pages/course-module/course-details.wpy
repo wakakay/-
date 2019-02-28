@@ -243,7 +243,8 @@
                     <view class="ui-button-list ui-column">
                         <button data-role="2"
                                 hover-stay-time="100"
-                                @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
+                                open-type="getPhoneNumber"
+                                @getphonenumber.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
                     </view>
                 </view>
             </view>
@@ -340,8 +341,6 @@
             isTips: true,
             countDown: '', // 倒计时事件
             timer: null, // 定时器
-            isReceived: false, // 已经领取过了
-            isReceive: false,
             isShowActionSheet: false,
             actionSheetTitle: '',
             actionSheetContent: ''
@@ -449,8 +448,6 @@
                 }, 2000)
                 // 接受者，并且有倒计时时间，则显示倒计时
                 if ('receiver' === self.courseDetail.roleType && self.courseDetail.giftCountdown) {
-                    self.isReceive = true
-                    self.$apply()
                     self.__countDown()
                 }
                 // 是受赠者且未登录，显示马上领取
@@ -463,13 +460,13 @@
                     }
                 }
 
-                if (self.courseDetail.hasGiftState
+                /*if (self.courseDetail.hasGiftState
                     && 'receiver' === self.courseDetail.roleType
                     && '马上领取' === self.courseDetail.giftButtonMsg
                     && !self.isReceived) {
                     self.__receiveCourse()
                     return
-                }
+                }*/
                 // 赠送者→获取赠送的giftID
                 if ('defaultToken' !== postData.token
                     && self.courseDetail.isLimitedTimeGiftCourse
@@ -530,6 +527,7 @@
             let resumeLastRead = item.resume ? item.resume : 'NO'
 
             let isRedirectTo = false
+            // 是否要去微课的
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
@@ -607,14 +605,8 @@
                 courseID: self.paramsInfo.id,
                 giftID: self.paramsInfo.giftID
             }
-            if (self.isReceived) {
-                return
-            }
+
             fetch.receiveCourseGift(postData).then((respone) => {
-                self.isReceive = true
-                self.isReceived = true
-                self.$apply()
-                self.initialize()
                 if (1 === respone.success) {
                     self.isShowActionSheet = true
                     self.isGifter = false
@@ -622,8 +614,12 @@
                     self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
                     self.$apply()
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
+                    setTimeout(()=>{
+                        let item = self.courseDetail.senceList[0]
+                        self.__goToCourseLearning(item)
+                    }, 300)
                 } else {
-                    !self.isReceive && wx.showToast({title: respone.message})
+                    wx.showToast({title: respone.message})
                 }
             }).catch((error) => {
 
@@ -716,12 +712,7 @@
                 store.dispatch(refreshUserInformations({hasGift: true}))
                 setTimeout(()=>{
                     let item = self.courseDetail.senceList[0]
-                    let courseID = self.paramsInfo.id
-                    let senceID = item.id
-                    let name = item.senceName
-                    let resumeLastRead = item.resume ? item.resume : 'NO'
-
-                    navigateToLesson({courseID, senceID, resumeLastRead})
+                    self.__goToCourseLearning(item)
                 }, 300)
             }).catch(error => {
                 wx.showToast({
@@ -824,24 +815,15 @@
              * @param event
              * @returns {Promise<any>}
              */
-            getReceiveCourse() {
+            getReceiveCourse(event) {
                 let self = this
-                if ( !self.isReceive) {
-                    return
-                }
-                self.__receiveCourse()
+                let {detail: {encryptedData, errMsg, iv}} = event
 
-                // 如果已经领取了，则依次跑去未学习的微课
-                let data = _.find(self.courseDetail.senceList, (item) => {
-                    if ('finish' !== item.buttonStatus && 'needPay' !== item.buttonStatus) {
-                        return item
-                    }
-                })
-
-                if (data) {
-                    self.__goToCourseLearning(data)
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    self.__receiveCourse(respone)
                     wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
-                }
+                }).catch((error) => {
+                })
             }
         }
         events = {
