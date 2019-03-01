@@ -316,7 +316,7 @@
                 examid: self.examID
             })
 
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
 
             return {
                 title: self.resultObj.subjectHeading,

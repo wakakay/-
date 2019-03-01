@@ -253,7 +253,7 @@
                 examid: self.paramsInfo.examID
             })
 
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
 
             return {
                 title: self.detailsInfo.shareContent,

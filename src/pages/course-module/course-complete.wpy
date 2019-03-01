@@ -391,7 +391,7 @@
             let self = this
             let path = `/pages/course-module/course-details?id=${self.paramsInfo.courseID}&shareID=${self.shareID}`
             wepy.$instance.globalData.getHuilder('微课完成页/赠一得一', 'click', self.finishResultInfo.name)
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
             if (self.shareID) {
                 let postData = {
                     token: self.systemInfo.token,

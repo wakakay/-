@@ -235,7 +235,7 @@
                         url: current.route
                     }
                 }
-
+console.log(123, postData)
                 fetch.pageLogs(postData).then(respone => {
                     ++self.accessNumber
                 })

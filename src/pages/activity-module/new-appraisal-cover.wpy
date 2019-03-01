@@ -232,7 +232,7 @@
         onShareAppMessage(event) {
             let self = this
             wepy.$instance.globalData.getHuilder('开始测评/分享', 'click', `${self.detailsInfo.subjectHeading}`)
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
 
             return {
                 title: self.detailsInfo.shareContent,

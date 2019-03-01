@@ -477,7 +477,7 @@
         }
         onShareAppMessage() {
             let self = this
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: `我在即能学习【${self.courseInfo.seriesName}】`,
                 path: `/pages/course-module/course-series?courseSeriesID=${self.courseInfo.courseSeriesID}`,

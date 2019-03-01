@@ -895,7 +895,7 @@
                     fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
                 }
             }
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
             fetch.reportSharing({
                 token: self.systemInfo.token,
                 type: reportType,

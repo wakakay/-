@@ -374,7 +374,7 @@
 
         onShareAppMessage(event) {
             let self = this
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
             setTimeout(() => {
                 wepy.$instance.globalData.getHuilder('支付页/限时赠一得一', 'click', self.payInfo.name)
                 wx.redirectTo({url: `/pages/course-module/course-details?id=${self.paramsInfo.courseID}&giftID=${self.paramsInfo.giftID}`})

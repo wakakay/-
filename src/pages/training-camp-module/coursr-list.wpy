@@ -1521,7 +1521,7 @@
 
             let mNow = Date.now()
             let mShareFlag = `${self.teamID}-${mNow}-1`
-            wepy.$instance.getReportFlow('share')
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: `【学员邀请】${self.userName}邀请你成为「${ self.name }」训练营的学员`,
                 path: `/pages/training-camp-module/registration?teamID=${mShareFlag}`,
