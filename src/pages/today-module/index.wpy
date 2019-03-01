@@ -500,22 +500,19 @@
 
         onLoad() {
             let self = this
-            console.log(6543)
             /**
             * 判断是否显示 评价框
             * @param
             */
-            getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
-                console.log(respone,2121)
-                if(1 === respone) {
-                    self.isShowEvaluate = true;
-                }else {
-                    self.isShowEvaluate = false
-                }
-                self.$apply()
-            }).catch(error => {
-                console.log(error)
-            })
+           setTimeout(() => {
+                getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
+                    self.isShowEvaluate = 2 === respone ? true : false; 
+                    self.$apply()
+                }).catch(error => {
+                    console.log(error)
+                })
+            }, 300)
+           
         }
 
         onShow() {
