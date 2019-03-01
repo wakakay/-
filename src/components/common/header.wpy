@@ -20,7 +20,7 @@
 
                     <navigator wx:if="{{!isHiddenButton && isSrcShare}}"
                                class="cell-back main-center cross-center"
-                               open-type="redirect"
+                               open-type="switchTab"
                                url="/pages/today-module/index">
                         <view class="cell-after main-center cross-center">
                             <text class="icon-home"

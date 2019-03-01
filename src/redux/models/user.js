@@ -112,6 +112,7 @@ export const getLoginToken = () => (dispatch, getState) => {
                         str += `${key}=${val}`
                     }
                 })
+                respone.hasGift = true // 后端会自动帮对应的课程购买，这边强制变成true，不再显示首课免费领
                 wepy.$instance.globalData.freeCourseRounter = `/${path}${str ? '?'+str : ''}`
                 wx.redirectTo({ url: `/pages/registered-module/weclome`})
             }

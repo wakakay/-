@@ -120,6 +120,37 @@
                 navigationBarTitleText: "即能",
                 navigationBarTextStyle: "black",
             },
+            tabBar: {
+                color: "#8F8E94",
+                backgroundColor: "#FFFFFF",
+                selectedColor: "#007AFF",
+                list: [
+                    {
+                        "pagePath": "pages/today-module/index",
+                        "text": "今日",
+                        "iconPath": "assets/img/task-off.png",
+                        "selectedIconPath": "assets/img/task-on.png"
+                    },
+                    {
+                        "pagePath": "pages/FindList/index",
+                        "text": "发现",
+                        "iconPath": "assets/img/discover-off.png",
+                        "selectedIconPath": "assets/img/discover-on.png"
+                    },
+                    {
+                        "pagePath": "pages/course-module/course",
+                        "text": "课程",
+                        "iconPath": "assets/img/tab-study-off.png",
+                        "selectedIconPath": "assets/img/tab-study-on.png"
+                    },
+                    {
+                        "pagePath": "pages/training-camp-module/index",
+                        "text": "训练营",
+                        "iconPath": "assets/img/tab-train-off.png",
+                        "selectedIconPath": "assets/img/tab-train-on.png"
+                    }
+                ]
+            },
             networkTimeout: {
                 request: 30000,
                 downloadFile: 30000
@@ -197,7 +228,7 @@
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                self.getReportFlow(rounter)
+                self.getReportFlow()
                 if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
@@ -235,7 +266,7 @@
                         url: current.route
                     }
                 }
-console.log(123, postData)
+
                 fetch.pageLogs(postData).then(respone => {
                     ++self.accessNumber
                 })

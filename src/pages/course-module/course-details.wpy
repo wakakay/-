@@ -243,8 +243,9 @@
                     <view class="ui-button-list ui-column">
                         <button data-role="2"
                                 hover-stay-time="100"
-                                open-type="getPhoneNumber"
-                                @getphonenumber.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
+                                open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                                @getphonenumber.stop="getReceiveCourse"
+                                @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
                     </view>
                 </view>
             </view>
@@ -468,13 +469,6 @@
                     }
                 }
 
-                /*if (self.courseDetail.hasGiftState
-                    && 'receiver' === self.courseDetail.roleType
-                    && '马上领取' === self.courseDetail.giftButtonMsg
-                    && !self.isReceived) {
-                    self.__receiveCourse()
-                    return
-                }*/
                 // 赠送者→获取赠送的giftID
                 if ('defaultToken' !== postData.token
                     && self.courseDetail.isLimitedTimeGiftCourse
@@ -519,7 +513,7 @@
                         duration: 300
                     })
                 }).exec()
-            }, 1000)
+            }, 2000)
         }
 
         /**
@@ -834,6 +828,12 @@
             getReceiveCourse(event) {
                 let self = this
                 let {detail: {encryptedData, errMsg, iv}} = event
+
+                if (self.courseDetail.giftCountdown) {
+                    let item = self.courseDetail.senceList[0]
+                    self.__goToCourseLearning(item, true)
+                    return
+                }
 
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
                     self.__receiveCourse(respone)

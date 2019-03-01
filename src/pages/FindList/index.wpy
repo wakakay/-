@@ -176,7 +176,6 @@
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
     </view>
-    <jn-footer></jn-footer>
 </template>
 
 <script>
@@ -186,7 +185,6 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
@@ -225,7 +223,6 @@
 
         components = {
             'jn-header': header,
-            'jn-footer': footer,
             'jn-loading': Loading,
             'studying-bar': studyingBar
         }

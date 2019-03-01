@@ -429,7 +429,7 @@
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
-<jn-footer></jn-footer>
+
 </template>
 
 <script>
@@ -438,7 +438,6 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import footer from '../../components/common/footer'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
@@ -469,7 +468,6 @@
 
         components = {
             'jn-header': header,
-            'jn-footer': footer,
             'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
         }
@@ -506,13 +504,13 @@
             */
            setTimeout(() => {
                 getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
-                    self.isShowEvaluate = 2 === respone ? true : false; 
+                    self.isShowEvaluate = 2 === respone ? true : false;
                     self.$apply()
                 }).catch(error => {
                     console.log(error)
                 })
             }, 300)
-           
+
         }
 
         onShow() {

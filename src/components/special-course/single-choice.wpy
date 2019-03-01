@@ -4,7 +4,7 @@
         .ui-content{padding:20rpx 32rpx;}
         .ui-answer-list{
             .cell-title{width:526rpx;}
-            .is-tip-success{background-color:#E6FFF0;}
+            .is-tip-success{background-color:#E6FFF0;border-color:@border-green;}
             .is-success{
                 background-color:#E6FFF0;border-color:@border-green;
                 .cell-icon{
@@ -82,7 +82,7 @@
                     data-cardindex="{{cardIndex}}"
                     open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
                     @getphonenumber.stop="getSumbit"
-                    @tap.stop="getSumbit">提交</button>
+                    @tap.stop="getSumbit">查看解释</button>
             <!--<button class="cell-sumbit"
                     wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
                     form-type="submit"
