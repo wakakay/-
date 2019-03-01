@@ -98,7 +98,6 @@
 
 <template>
     <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-    <evaluate-modal wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></evaluate-modal>
     <scroll-view
             wx:if="{{ isLoaded }}"
             class="ui-container"
@@ -284,7 +283,6 @@
     import header from '../../components/common/header'
     import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
-    import EvaluateModal from '../../components/EvaluateModal/index'
     import CourseSeries from '../../components/course-module/course-series'
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
@@ -319,7 +317,6 @@
             'jn-footer': footer,
             'jn-loading': Loading,
             'favourite-course': FavouriteCourseCopy,
-            'evaluate-modal': EvaluateModal,
             'studying-bar': studyingBar,
             'jn-course-series': CourseSeries
         }
@@ -339,7 +336,6 @@
             hotCourseList: [],
             personalInfo: {}, // 头部用户信息
             recommendCourseList:[],
-            isShowEvaluate:false,
             isShowCourseSeries:false,
             courseSeriesModalList:[],
             isShowToast:false
@@ -348,17 +344,6 @@
         onLoad(params) {
             let self = this
             self.paramsInfo = params
-            /**
-            * 判断是否显示 评价框
-            * @param
-            */
-            getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
-                self.isShowEvaluate = 1 === respone ? true : false;
-                self.$apply()
-            }).catch(error => {
-                console.log(error)
-            })
-
             self.isShowToast = self.paramsInfo.isShowToast ? true : false
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }

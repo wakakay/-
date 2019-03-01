@@ -92,8 +92,6 @@
 <template>
     <view catchtouchmove="{{!isScroll}}">
         <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-        <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
-
         <scroll-view
                 scroll-with-animation
                 scroll-y="{{isScroll}}"
@@ -190,7 +188,6 @@
     import header from '../../components/common/header'
     import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
-    import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
@@ -230,7 +227,6 @@
             'jn-header': header,
             'jn-footer': footer,
             'jn-loading': Loading,
-            'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
         }
 
@@ -243,7 +239,6 @@
             pageSize: 10,
             isScroll: true, // 是否能滚动
             scrollTop: 0,
-            isShowEvaluate: false,
             informationList: [],
             discoverPageTitle: '',
             courseID: null,
@@ -253,16 +248,6 @@
 
         onLoad() {
             let self = this
-            /**
-            * 判断是否显示 评价框
-            * @param
-            */
-            getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
-                self.isShowEvaluate = 1 === respone ? true : false;
-                self.$apply()
-            }).catch(error => {
-                console.log(error)
-            })
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
