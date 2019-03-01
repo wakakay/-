@@ -325,6 +325,7 @@
         data = {
             headerHeigth: 68,
             headerBackground: 'background-transparent',
+            isAndroid: /android/i.test(wx.getSystemInfoSync().system),
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isFixed: false,
             timestamp: new Date().getTime(),
@@ -491,7 +492,7 @@
                     source: self.paramsInfo.source
                 })
 
-                self.__positionScroll()
+                !self.isAndroid && self.__positionScroll()
             }).catch(error => {
                 self.isLoaded = true
             })
@@ -509,11 +510,11 @@
                 let query = wx.createSelectorQuery()
                 query.select('#senceList').boundingClientRect((rect) => {
                     wx.pageScrollTo({
-                        scrollTop: rect.top - rect.height,
+                        scrollTop: rect.top - self.headerHeigth,
                         duration: 300
                     })
                 }).exec()
-            }, 2000)
+            }, 800)
         }
 
         /**

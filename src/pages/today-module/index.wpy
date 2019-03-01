@@ -325,6 +325,7 @@
                 hover-stay-time="100"
                 class="ui-new-role"
                 @tap.stop="getCourseDetail"
+                data-type="roleStatus"
                 data-item="{{newRoleRecommend}}"
                 wx:if="{{ 0 == roleStatus }}"
                 style="background-image: url('{{newRoleRecommend.bgImg}}');">
@@ -598,11 +599,11 @@
             },
             getCourseDetail(event){
                 let self = this;
-                let {currentTarget: {dataset: {item}}} = event
+                let {currentTarget: {dataset: {item, type}}} = event
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('今日页/在学课程','click',`${name}`)
+                wepy.$instance.globalData.getHuilder(`今日页/${'roleStatus'!==type ? '在学课程' : '即能第一课'}`,'click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
             // 点击查看全部 触发组件
