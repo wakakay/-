@@ -337,6 +337,7 @@
             shareID: '', // 分享获取即能币奖励的id
             isGifter: false,
             courseTitle: '',
+            courseCopyTitle: '',
             courseDetail: {}, // 课程详情
             isTips: true,
             countDown: '', // 倒计时事件
@@ -388,7 +389,14 @@
                 self.backgroundHeight = rect.height - 50
             }).exec()
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
-            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-white' : 'background-transparent'
+
+            if (res.scrollTop > self.backgroundHeight) {
+                self.headerBackground ='background-white'
+                self.courseTitle = _.clone(self.courseCopyTitle)
+            } else {
+                self.headerBackground ='background-transparent'
+                self.courseTitle = ''
+            }
             self.$apply()
         }
         /**
@@ -415,10 +423,10 @@
                     respone.courseLink = []
                 }
                 self.courseDetail = respone
-                self.courseTitle = respone.name
+                self.courseCopyTitle = respone.name
 
                 if (self.courseDetail.expiredCode >= 0) {
-                    self.courseTitle = (self.courseDetail.expiredCode ? `仅剩${self.courseDetail.expiredCode}天` : '今天到期') + '，学完课程可永久获得'
+                    self.courseCopyTitle = (self.courseDetail.expiredCode ? `仅剩${self.courseDetail.expiredCode}天` : '今天到期') + '，学完课程可永久获得'
                 }
 
                 _.each(self.courseDetail.senceList, (item) => {
@@ -503,22 +511,25 @@
                 return
             }
 
-            let query = wx.createSelectorQuery()
-            query.select('#senceList').boundingClientRect((rect) => {
-                wx.pageScrollTo({
-                    scrollTop: rect.top - rect.height,
-                    duration: 300
-                })
-            }).exec()
+            setTimeout(() => {
+                let query = wx.createSelectorQuery()
+                query.select('#senceList').boundingClientRect((rect) => {
+                    wx.pageScrollTo({
+                        scrollTop: rect.top - rect.height,
+                        duration: 300
+                    })
+                }).exec()
+            }, 1000)
         }
 
         /**
          * 去微课学习页面
          * @param item 当前微课的信息
+         * @param isGoLesson 首页免费领取或限时赠一得一，自动去学第一课
          * @returns {*}
          * @private
          */
-        __goToCourseLearning(item) {
+        __goToCourseLearning(item, isGoLesson=false) {
             let self = this
             let courseID = self.paramsInfo.id
             let senceID = item.id
@@ -532,6 +543,11 @@
                 self.shareSenceID = null
                 isRedirectTo = true
                 navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isRedirectTo})
+                return
+            }
+
+            if (isGoLesson) {
+                navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isRedirectTo})
                 return
             }
 
@@ -616,7 +632,7 @@
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                     setTimeout(()=>{
                         let item = self.courseDetail.senceList[0]
-                        self.__goToCourseLearning(item)
+                        self.__goToCourseLearning(item, true)
                     }, 300)
                 } else {
                     wx.showToast({title: respone.message})
@@ -712,7 +728,7 @@
                 store.dispatch(refreshUserInformations({hasGift: true}))
                 setTimeout(()=>{
                     let item = self.courseDetail.senceList[0]
-                    self.__goToCourseLearning(item)
+                    self.__goToCourseLearning(item, true)
                 }, 300)
             }).catch(error => {
                 wx.showToast({
