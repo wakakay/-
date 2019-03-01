@@ -13,12 +13,6 @@
     }
 </style>
 
-<template>
-    <view class="module-footer">
-        121
-    </view>
-</template>
-
 <script>
     import wepy from 'wepy'
     import {store} from './redux/store'
@@ -126,7 +120,6 @@
                 navigationBarTitleText: "即能",
                 navigationBarTextStyle: "black",
             },
-
             networkTimeout: {
                 request: 30000,
                 downloadFile: 30000
