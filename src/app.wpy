@@ -120,7 +120,6 @@
                 navigationBarTitleText: "即能",
                 navigationBarTextStyle: "black",
             },
-
             networkTimeout: {
                 request: 30000,
                 downloadFile: 30000
@@ -251,7 +250,7 @@
 
         onLaunch() {
             let self = this
-            
+
 
             store.dispatch(getLoginToken()).then(respone => {
                 let rounter = getCurrentPages()

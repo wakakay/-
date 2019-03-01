@@ -500,6 +500,7 @@
 
         onLoad() {
             let self = this
+            console.log(6543)
             /**
             * 判断是否显示 评价框
             * @param
