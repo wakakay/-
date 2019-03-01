@@ -277,7 +277,7 @@
                                 <view class="ui-bg-content">
                                     <view class="cell-title">{{item.courseName}}</view>
                                     <view class="cell-dec">{{item.courseDec}}</view>
-                                    <view class="ui-button-box main-justify cross-center">
+                                    <view class="ui-button-box dir-right cross-center">
                                         <view class="cell-downtime" wx:if="{{item.expiredCode>=0}}">
                                             <text class="icon-time"></text>{{item.expiredCode ? '仅剩'+item.expiredCode+'天' : '今天到期'}}
                                         </view>
@@ -699,6 +699,7 @@
          */
         onShareAppMessage(options) {
             let self = this
+            wepy.$instance.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/today-module/index?source=TodayTabShare',

@@ -209,15 +209,16 @@
                 }
             },
             // 页面数据上报服务器
-            getReportFlow(rounter, eventType='') {
+            getReportFlow(eventType='') {
                 let self = this
+                let rounter = getCurrentPages()
                 let stateInfo = store.getState()
                 let current = rounter[rounter.length - 1]
                 let prev = rounter[rounter.length - 2]
 
                 if ('defaultToken' === stateInfo.user.token) {
                     setTimeout(()=>{
-                        self.getReportFlow(rounter, eventType)
+                        self.getReportFlow(eventType)
                     }, 300)
                     return
                 }
@@ -253,9 +254,8 @@
 
 
             store.dispatch(getLoginToken()).then(respone => {
-                let rounter = getCurrentPages()
                 let query = store.getState().entrance.query
-                query && query.wxPushType && self.globalData.getReportFlow(rounter, query.wxPushType)
+                query && query.wxPushType && self.globalData.getReportFlow(query.wxPushType)
             }) // 默认登录
 
             // 强制更新

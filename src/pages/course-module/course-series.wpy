@@ -111,9 +111,9 @@
         position: fixed;width: 100%;height: 100%;background: @background-mask-normal;left: 0;top: 0;z-index: @z-index-mask;
         .ui-normal{
             width: 562rpx;height: 750rpx;border-radius: @border-radius-32;background: @background-white;overflow:hidden;transform: translate(-50%,-50%);top:50%;left: 50%;position:absolute;
-            .cell-btn{width: 362rpx;height: 88rpx;border-radius: @border-radius-20;color: @color-white;line-height: 88rpx;text-align: center;background: @background-blue;font-size: 32rpx;margin:16rpx auto 0;} 
+            .cell-btn{width: 362rpx;height: 88rpx;border-radius: @border-radius-20;color: @color-white;line-height: 88rpx;text-align: center;background: @background-blue;font-size: 32rpx;margin:16rpx auto 0;}
         }
-        .ui-content{ 
+        .ui-content{
             height: 750rpx;
             .ui-top{
                 height: 360rpx;width: 100%;background-size:100% auto;position: relative;background-position:center;
@@ -258,9 +258,9 @@
             <view class="cell-btn" @tap.stop="getHiddenAppraisal">我知道了</view>
         </view>
     </view>
-    
+
     <view class="cell-clear"></view>
-    
+
 </template>
 <script>
     import wepy from 'wepy'
@@ -472,6 +472,7 @@
         }
         onShareAppMessage() {
             let self = this
+            wepy.$instance.getReportFlow('share')
             return {
                 title: `我在即能学习【${self.courseInfo.seriesName}】`,
                 path: `/pages/course-module/course-series?courseSeriesID=${self.courseInfo.courseSeriesID}`,

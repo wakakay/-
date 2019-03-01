@@ -252,6 +252,9 @@
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 examid: self.paramsInfo.examID
             })
+
+            wepy.$instance.getReportFlow('share')
+
             return {
                 title: self.detailsInfo.shareContent,
                 path: `/pages/activity-module/new-appraisal-cover?examID=${self.paramsInfo.examID}`,

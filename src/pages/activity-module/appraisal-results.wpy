@@ -316,6 +316,8 @@
                 examid: self.examID
             })
 
+            wepy.$instance.getReportFlow('share')
+
             return {
                 title: self.resultObj.subjectHeading,
                 path: `/pages/activity-module/appraisal-start?examID=${self.examID}`,

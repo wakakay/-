@@ -892,6 +892,7 @@ export default class teamDetail extends wepy.page {
 
     onShareAppMessage(event) {
         let self = this
+        wepy.$instance.getReportFlow('share')
         return {
             title: self.teamName,
             path: `/pages/training-camp-module/registration?teamID=${self.teamID}`

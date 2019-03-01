@@ -558,6 +558,7 @@
          */
         onShareAppMessage(options) {
             let self = this
+            wepy.$instance.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/course-module/course?source=TopAppShare',

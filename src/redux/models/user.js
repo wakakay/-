@@ -214,6 +214,8 @@ export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) 
         return renewWechatCode() // 必须重新更新code才能获取到手机号码
     }).then((respone) => {
         wepy.$instance.globalData.getHuilder('授权手机号码成功', 'click', rounterPath)
+        wepy.$instance.getReportFlow('register')
+
         let postData = {
             token: initialState.token,
             body: {

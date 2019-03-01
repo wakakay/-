@@ -553,6 +553,7 @@
         onShareAppMessage(res) {
             let self = this
             wepy.$instance.globalData.getHuilder(`${self.screenName}分享`, 'click', `${self.courseName}`)
+            wepy.$instance.getReportFlow('share')
             fetch.reportSharing({
                 token:self.token,
                 type: shareDictionary.SHARE_SPECIAL_COURSE.type,

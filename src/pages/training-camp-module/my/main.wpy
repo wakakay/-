@@ -562,7 +562,7 @@
             let mNow = Date.now()
             let mShareFlag = `${teamID}-${mNow}-${targetUser}`
             console.log(`shareTarget: ${shareTarget}, teamID: ${teamID}, url: /pages/training-camp-module/registration?teamID=${mShareFlag}`)
-
+            wepy.$instance.getReportFlow('share')
             return {
                 title: `【${roleText}邀请】${adminName}邀请你成为「${ shareTitle }」训练营的${roleText}`,
                 path: `/pages/training-camp-module/registration?teamID=${mShareFlag}`,
