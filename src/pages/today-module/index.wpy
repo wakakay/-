@@ -278,7 +278,6 @@
                                     <view class="cell-title">{{item.courseName}}</view>
                                     <view class="cell-dec">{{item.courseDec}}</view>
                                     <view class="ui-button-box main-justify cross-center">
-                                        <view class="cell-btn">选择微课</view>
                                         <view class="cell-downtime" wx:if="{{item.expiredCode>=0}}">
                                             <text class="icon-time"></text>{{item.expiredCode ? '仅剩'+item.expiredCode+'天' : '今天到期'}}
                                         </view>

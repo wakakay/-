@@ -252,7 +252,7 @@
             <view class="cell-dec">{{courseInfo.examLink.subject}}</view>
             <view class="cell-btn" @tap.stop="getStartAppraisal">立即测试</view>
         </view>
-        <view class="ui-tips ui-normal" wx:else>
+        <view class="ui-tips ui-normal" wx:if="{{isShowTips}}">
             <view class="cell-title">温馨提示</view>
             <view class="cell-dec">更多测评和专题，之后可在发现页中查看~</view>
             <view class="cell-btn" @tap.stop="getHiddenAppraisal">我知道了</view>
@@ -303,6 +303,7 @@
             isShowAppraisal:false,
             isShowExam:true,
             isFirstAppraisal:false,
+            isShowTips:false
         }
 
         onLoad(params) {
@@ -388,6 +389,7 @@
                 }
             }).catch(error => {
                 self.isLoaded = true
+                self.$apply()
             })
         }
         methods = {
@@ -397,7 +399,9 @@
              */
             getHiddenAppraisal() {
                 let self = this;
-                self.isShowAppraisal = false
+                self.isShowAppraisal = false;
+                self.isShowTips = false;
+                self.$apply()
             },
             /**
              * 关闭测评页；显示tips
@@ -406,6 +410,9 @@
             getHiddenExam() {
                 let self = this;
                 self.isShowExam = false;
+                self.isShowTips = true;
+                self.$apply()
+
             },
             /**
              * 去测评开始页
@@ -413,10 +420,12 @@
              */
             getStartAppraisal() {
                 let self = this;
+                self.isShowAppraisal = false;
                 let examLink = self.courseInfo.examLink
                 let type = examLink.skillType
                 let examID = examLink.examID
                 self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
+                self.$apply()
             },
             /**
              * 课程详情页
