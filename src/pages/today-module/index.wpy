@@ -277,7 +277,7 @@
                                 <view class="ui-bg-content">
                                     <view class="cell-title">{{item.courseName}}</view>
                                     <view class="cell-dec">{{item.courseDec}}</view>
-                                    <view class="ui-button-box main-justify cross-center">
+                                    <view class="ui-button-box dir-right cross-center">
                                         <view class="cell-downtime" wx:if="{{item.expiredCode>=0}}">
                                             <text class="icon-time"></text>{{item.expiredCode ? '仅剩'+item.expiredCode+'天' : '今天到期'}}
                                         </view>
@@ -429,7 +429,7 @@
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
-<jn-footer></jn-footer>
+
 </template>
 
 <script>
@@ -438,7 +438,6 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import footer from '../../components/common/footer'
     import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
@@ -469,7 +468,6 @@
 
         components = {
             'jn-header': header,
-            'jn-footer': footer,
             'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
         }
@@ -506,13 +504,13 @@
             */
            setTimeout(() => {
                 getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
-                    self.isShowEvaluate = 2 === respone ? true : false; 
+                    self.isShowEvaluate = 2 === respone ? true : false;
                     self.$apply()
                 }).catch(error => {
                     console.log(error)
                 })
             }, 300)
-           
+
         }
 
         onShow() {
@@ -701,6 +699,7 @@
          */
         onShareAppMessage(options) {
             let self = this
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/today-module/index?source=TodayTabShare',

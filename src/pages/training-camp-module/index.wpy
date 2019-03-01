@@ -182,7 +182,6 @@
 		</swiper>
 	</view>
 	<studying-bar :scrollTop.sync="scrollTop"></studying-bar>
-	<jn-footer></jn-footer>
 </template>
 
 <script>
@@ -191,7 +190,6 @@
     import Loading from '../../components/common/loading'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import footer from '../../components/common/footer'
     import TeamLearningCourse from '../../components/TeamLearningCourse/index'
     import studyingBar from '../../components/common/studying-bar'
     import {team as teamApi, fetch } from '../../api'
@@ -221,7 +219,6 @@
 
         components = {
             'jn-header': header,
-            'jn-footer': footer,
             'mloading': Loading,
             'teamLearningCourse': TeamLearningCourse,
             'studying-bar': studyingBar

@@ -120,6 +120,37 @@
                 navigationBarTitleText: "即能",
                 navigationBarTextStyle: "black",
             },
+            tabBar: {
+                color: "#8F8E94",
+                backgroundColor: "#FFFFFF",
+                selectedColor: "#007AFF",
+                list: [
+                    {
+                        "pagePath": "pages/today-module/index",
+                        "text": "今日",
+                        "iconPath": "assets/img/task-off.png",
+                        "selectedIconPath": "assets/img/task-on.png"
+                    },
+                    {
+                        "pagePath": "pages/FindList/index",
+                        "text": "发现",
+                        "iconPath": "assets/img/discover-off.png",
+                        "selectedIconPath": "assets/img/discover-on.png"
+                    },
+                    {
+                        "pagePath": "pages/course-module/course",
+                        "text": "课程",
+                        "iconPath": "assets/img/tab-study-off.png",
+                        "selectedIconPath": "assets/img/tab-study-on.png"
+                    },
+                    {
+                        "pagePath": "pages/training-camp-module/index",
+                        "text": "训练营",
+                        "iconPath": "assets/img/tab-train-off.png",
+                        "selectedIconPath": "assets/img/tab-train-on.png"
+                    }
+                ]
+            },
             networkTimeout: {
                 request: 30000,
                 downloadFile: 30000
@@ -197,7 +228,7 @@
                 let page = rounter[rounter.length - 1]
                 let title = ROUTERS[page.route]
 
-                self.getReportFlow(rounter)
+                self.getReportFlow()
                 if (params.screenName || title) {
                     // Google Analytics 统计
                     var trackerInfo = self.getTracker()
@@ -209,15 +240,16 @@
                 }
             },
             // 页面数据上报服务器
-            getReportFlow(rounter, eventType='') {
+            getReportFlow(eventType='') {
                 let self = this
+                let rounter = getCurrentPages()
                 let stateInfo = store.getState()
                 let current = rounter[rounter.length - 1]
                 let prev = rounter[rounter.length - 2]
 
                 if ('defaultToken' === stateInfo.user.token) {
                     setTimeout(()=>{
-                        self.getReportFlow(rounter, eventType)
+                        self.getReportFlow(eventType)
                     }, 300)
                     return
                 }
@@ -253,9 +285,8 @@
 
 
             store.dispatch(getLoginToken()).then(respone => {
-                let rounter = getCurrentPages()
                 let query = store.getState().entrance.query
-                query && query.wxPushType && self.globalData.getReportFlow(rounter, query.wxPushType)
+                query && query.wxPushType && self.globalData.getReportFlow(query.wxPushType)
             }) // 默认登录
 
             // 强制更新

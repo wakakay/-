@@ -176,7 +176,6 @@
             <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
         </scroll-view>
     </view>
-    <jn-footer></jn-footer>
 </template>
 
 <script>
@@ -186,7 +185,6 @@
     import PushMixin from '../../mixins/push'
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
-    import footer from '../../components/common/footer'
     import Loading from '../../components/common/loading'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
@@ -225,7 +223,6 @@
 
         components = {
             'jn-header': header,
-            'jn-footer': footer,
             'jn-loading': Loading,
             'studying-bar': studyingBar
         }
@@ -497,26 +494,22 @@
          * @returns {{title: string, path: string, success: success, fail: fail}}
          */
         onShareAppMessage(options) {
+            getStorageAsync({key: 'name'}).then(name => {
+                wx.reportAnalytics('share_event', {
+                    nickname: name,
+                    type: shareDictionary.SHARE_WE_APP.type,
+                })
+
+            }).catch(error => error)
+
+            getStorageAsync({key: 'token'}).then(token => {
+                fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+
+            }).catch(error => error)
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
-                path: '/pages/FindList/index?source=FindTabShare',
-                success(res) {
-                    getStorageAsync({key: 'name'}).then(name => {
-                        wx.reportAnalytics('share_event', {
-                            nickname: name,
-                            type: shareDictionary.SHARE_WE_APP.type,
-                        })
-
-                    }).catch(error => error)
-
-                    getStorageAsync({key: 'token'}).then(token => {
-                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
-
-                    }).catch(error => error)
-                },
-                fail(res) {
-                    console.log('转发失败')
-                }
+                path: '/pages/FindList/index?source=FindTabShare'
             }
         }
 
