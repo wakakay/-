@@ -347,11 +347,19 @@
 
         onLoad(params) {
             let self = this
-            let pageNum = wx.getStorageSync('pageLoadNum')
             self.paramsInfo = params
-            self.isShowEvaluate = pageNum !== 3 ? false : true
-            self.isShowToast = self.paramsInfo.isShowToast ? true : false
+            /**
+            * 判断是否显示 评价框
+            * @param
+            */
+            getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
+                self.isShowEvaluate = 1 === respone ? true : false;
+                self.$apply()
+            }).catch(error => {
+                console.log(error)
+            })
 
+            self.isShowToast = self.paramsInfo.isShowToast ? true : false
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 

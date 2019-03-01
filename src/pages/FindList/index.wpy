@@ -253,8 +253,16 @@
 
         onLoad() {
             let self = this
-            let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 3 ? false : true
+            /**
+            * 判断是否显示 评价框
+            * @param
+            */
+            getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
+                self.isShowEvaluate = 1 === respone ? true : false;
+                self.$apply()
+            }).catch(error => {
+                console.log(error)
+            })
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
