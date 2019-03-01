@@ -311,6 +311,12 @@
             self.routeParams = params
             self.isLoaded = false
 
+        }
+
+        onShow() {
+            let self = this
+            initializationDeligate({initializeFunc: self.initialize.bind(self)})
+
             // 判断是否第一次进入 该系列
             let seriesID = self.routeParams.courseSeriesID;
             let storeInfo = {}
@@ -341,11 +347,6 @@
                 self.isFirstAppraisal = true
                 self.$apply()
             })
-        }
-
-        onShow() {
-            let self = this
-            initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
         /**
          * 监听滚动条的位置
@@ -400,6 +401,7 @@
             getHiddenAppraisal() {
                 let self = this;
                 self.isShowAppraisal = false;
+                self.isShowExam = false;
                 self.isShowTips = false;
                 self.$apply()
             },
@@ -421,11 +423,14 @@
             getStartAppraisal() {
                 let self = this;
                 self.isShowAppraisal = false;
+                self.isShowExam = false;
+                self.isShowTips = false;
+                self.$apply()
+
                 let examLink = self.courseInfo.examLink
                 let type = examLink.skillType
                 let examID = examLink.examID
                 self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
-                self.$apply()
             },
             /**
              * 课程详情页
