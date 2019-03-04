@@ -80,11 +80,9 @@
                             </view>
                         </button>
                     </repeat>
-
                 </view>
                 <view class="ui-poll" wx:if="{{data.type === 'poll'}}">
                     <jn-poll :cardIndex.sync="index" :cardsList.sync="moduleList" isLearning></jn-poll>
-
                     <button class="cell-poll-btn"
                             :class="{'cell-seleted' : data.isDone}"
                             data-index="{{index}}"
@@ -94,8 +92,6 @@
                             @getphonenumber.stop="getPoll"
                             @tap.stop="getPoll">{{data.isDone ? data.pollCount+'已投票' : '投票'}}</button>
                 </view>
-
-
                 <view wx:if="{{data.type === 'practice'}}">
                     <repeat for="{{data.practiceList}}" key="practiceIndex" index="practiceIndex" item="item">
                         <jn-single-choice :parentIndex.sync="index" parentKey="practiceList" :parentList.sync="moduleList"
@@ -104,6 +100,39 @@
                 </view>
                 <view class="cell-border" wx:if="{{data.type === 'border'}}"></view>
             </repeat>
+            <view class="ui-title">关联技能</view>
+            <scroll-view wx:if="{{linkEditorList.length}}" class="model-special-scroll-list" scroll-x scroll-with-animation>
+                <repeat for="{{linkEditorList}}" key="index" index="index" item="item">
+                    <button form-type="submit" hover-stay-time="100"
+                            class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
+                            data-item="{{item}}"
+                            @tap.stop="getEditor">
+                            <view class="ui-mask">
+                                <view class="ui-top main-justify">
+                                    <view>{{item.sceneTypeText}}</view>
+                                    <view class="ui-count">
+                                        <text class="icon-eyes"></text>
+                                        {{item.userCount}}
+                                    </view>
+                                </view>
+                                <view class="cell-title text-overflow-t">{{item.name}}</view>
+                                <view wx:if="{{'todaySkill' == item.sceneType}}" class="ui-bottom">
+                                    <view class="ui-skill main-justify">
+                                        <view># {{item.senceTarget}}</view>
+                                        <view class="cell-num">{{item.skillScore}}</view>
+                                    </view>
+                                    <view class="ui-progress">
+                                        <view class="cell-line box-mean">
+                                            <view></view><view></view><view></view><view></view><view></view>
+                                        </view>
+                                        <view class="cell-percent" style="width: {{item.progress}}%;"></view>
+                                    </view>
+                                </view>
+                                <view wx:if="{{'todaySkill' != item.sceneType}}" class="cell-subtitle text-overflow">{{item.subtitle}}</view>
+                            </view>
+                    </button>
+                </repeat>
+            </scroll-view>
             <view class="ui-bottom">
                 <view class="cell-margin" wx:if="{{floatBox.type === 'share'}}"></view>
                 <view class="module-floax-box" wx:if="{{floatBox.type === 'share'}}">
@@ -165,6 +194,7 @@
             </view>
         </from>
     </view>
+    <view></view>
 </template>
 
 <script>
@@ -226,7 +256,45 @@
             imageCodeUrl: '', // 封面图
             courseName:'',
             isTodaySkill: false,
-            skillInfo: {}
+            skillInfo: {},
+            linkEditorList:[
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageID97e721d5b49440b49c679893aa53.png",
+                    id:"courseID1a7dfb68adf4e2ac2f3d90d02bd4",
+                    name:"",
+                    progress:0,
+                    sceneType:"todaySkill",
+                    sceneTypeText:"",
+                    senceTarget:"有效口头沟通",
+                    skillScore:0,
+                    type:"editor",
+                    userCount:398
+                },
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageID298c1fb9f604df8232ece685d7d8.png",
+                    id:"courseID4b15a8d32144efafd14a93399c66",
+                    name:"",
+                    progress:0,
+                    sceneType:"todaySkill",
+                    sceneTypeText:"",
+                    senceTarget:"申请职业岗位",
+                    skillScore:0,
+                    type:"editor",
+                    userCount:296
+                },
+                {
+                    coverImageURL:"http://image.runwise.cn/image/imageID8d37ff9d0954429015e8cc3c03cd.png",
+                    id:"courseID1a7dfb68adf4e2ac2f3d90d02bd4",
+                    name:"",
+                    progress:0,
+                    sceneType:"todaySkill",
+                    sceneTypeText:"",
+                    senceTarget:"评估职业优势",
+                    skillScore:0,
+                    type:"editor",
+                    userCount:398
+                },
+            ]
         }
         components = {
             'jn-header': header,
@@ -666,6 +734,7 @@
             }
             .cell-border{height: 2rpx;border-bottom:2rpx solid @border-gray;margin:20rpx 32rpx 24rpx;}
         }
+        .ui-title{font-size: 44rpx;font-weight: bold;padding-top:36rpx;border-top:2rpx solid @border-gray;margin:90rpx 32rpx 40rpx;}
         .ui-bottom{
             .cell-margin{width: 100%;height: 200rpx;}
             .ui-share{
