@@ -96,14 +96,14 @@
 
 <script>
     /**
-     * <jn-single-choice></jn-header>
+     * <jn-single-choice></jn-single-choice>
      * @module components/special-course/single-choice
      * @desc 专题、今日技能quiz
-     * @param {parentList} [Boolean] - 最外层的数组----【Array】
-     * @param {parentKey} [String] - 需要遍历的测练的key名称，value肯定是Array----【即能】
-     * @param {parentIndex} [String] - 发送到ga的自定义纬度用的----【】
-     * @param {cardsList} [String] - 不需要显示左侧按钮，写这个字段即可，不需要传值- ----【0显示】
-     * @param {cardIndex} [String] - 是否显示左侧按钮背景，写这个字段即可，不需要传值- ----【0显示】
+     * @param {parentList} [Array] - 最外层的数组----【】
+     * @param {parentKey} [String] - 需要遍历的测练的key名称，value肯定是Array----【】
+     * @param {parentIndex} [Number] - 遍历的这个在隶属于最外层数组的索引键值----【】
+     * @param {cardsList} [Array] - 测练的key的value数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的测练数组索引键值- ----【】
      */
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'

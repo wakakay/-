@@ -48,6 +48,17 @@
 </template>
 
 <script>
+    /**
+     * <jn-single-choice></jn-single-choice>
+     * @module components/special-course/single-choice
+     * @desc 团队学习quiz
+     * @param {parentList} [Array] - 最外层的数组----【】
+     * @param {parentKey} [String] - 需要遍历的测练的key名称，value肯定是Array----【】
+     * @param {parentIndex} [Number] - 遍历的这个在隶属于最外层数组的索引键值----【】
+     * @param {cardsList} [Array] - 测练的key的value数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的测练数组索引键值- ----【】
+     * @param {isExercises} [Number] - option是否占整行，需要给option文本后面留出一定的空间，显示正确错误的图标- ----【0】
+     */
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import _ from 'underscore'
@@ -58,7 +69,7 @@
             return state.user
         }
     })
-    export default class singleChoiceCard extends wepy.component {
+    export default class teamSingleChoice extends wepy.component {
         props = {
             parentIndex: {
                 type: Number
@@ -78,10 +89,6 @@
                 default: []
             },
             isExercises: {
-                type: Number,
-                default: 0
-            },
-            commentsCount: {
                 type: Number,
                 default: 0
             }

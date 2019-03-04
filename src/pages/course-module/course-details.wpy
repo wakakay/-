@@ -328,6 +328,7 @@
             isAndroid: /android/i.test(wx.getSystemInfoSync().system),
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isFixed: false,
+            onShow: false,
             timestamp: new Date().getTime(),
             backgroundHeight: 0,
             targetScroll: 0,
@@ -364,6 +365,7 @@
         }
         onShow() {
             let self = this
+            self.onShow = true
             self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
         }
 
@@ -492,7 +494,7 @@
                     source: self.paramsInfo.source
                 })
 
-                !self.isAndroid && self.__positionScroll()
+                !self.isAndroid && !self.onShow &&  self.__positionScroll()
             }).catch(error => {
                 self.isLoaded = true
             })
