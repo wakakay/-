@@ -282,8 +282,6 @@
 
         onLaunch() {
             let self = this
-
-
             store.dispatch(getLoginToken()).then(respone => {
                 let query = store.getState().entrance.query
                 query && query.wxPushType && self.globalData.getReportFlow(query.wxPushType)
