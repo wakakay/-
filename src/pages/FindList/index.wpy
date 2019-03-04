@@ -28,7 +28,7 @@
             .ui-special-subject{
                 width: 100%;height: 824rpx;background:none;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;background-size:100%;line-height: 1;text-align: left;color:@color-white;padding:38rpx 40rpx;
                 .cell-tip{font-size: 28rpx;}
-                .cell-title{font-weight: bold;font-size: 52rpx;height: 154rpx;width: 550rpx;margin:40rpx 0 428rpx;line-height:1.5;}
+                .cell-title{font-weight: bold;font-size: 48rpx;height: 154rpx;width: 550rpx;margin:40rpx 0 428rpx;line-height:1.5;}
                 .cell-subtitle{font-size: 32rpx;line-height:1.5;}
             }
             .ui-evaluation{
