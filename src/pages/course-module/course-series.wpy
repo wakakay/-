@@ -304,8 +304,6 @@
             isShowExam:true,
             isFirstAppraisal:false,
             isShowTips:false,
-            enterNum:0,
-            enterAllNum:0
         }
 
         onLoad(params) {
@@ -322,31 +320,15 @@
             // 判断是否第一次进入 该系列
             let seriesID = self.routeParams.courseSeriesID;
             let storeInfo = {}
-            storeInfo[seriesID] =  1
+            storeInfo[seriesID] =  true
             getStorageAsync({key: 'seriesFirstLoad'}).then((respone) => {
                 let isHas = _.has(respone, seriesID);
                 if(isHas){
-                    storeInfo[seriesID] =  respone[seriesID] + 1;
-                    self.enterNum = storeInfo[seriesID];
+                    storeInfo[seriesID] =  false
                     setStorageAsync({
                         key: 'seriesFirstLoad',
                         value: _.extend(respone, storeInfo)
                     })
-                    // 设置缓存 第几次进入显示
-                    getStorageAsync({key: 'seriesAllLoad'}).then((respone) => {
-                        let num = respone + 1;
-                        setStorageAsync({
-                            key: 'seriesAllLoad',
-                            value: num
-                        })
-                        wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click',`${num}次`)
-                    }).catch(error => {
-                        setStorageAsync({
-                            key: 'seriesAllLoad',
-                            value: 1
-                        })
-                        wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click','1次')
-                    });
                     self.isFirstAppraisal = false
                     self.$apply()
                 }else {
@@ -354,23 +336,8 @@
                         key: 'seriesFirstLoad',
                         value: _.extend(respone, storeInfo)
                     })
-                    // 设置缓存 第几次进入显示
-                    getStorageAsync({key: 'seriesAllLoad'}).then((respone) => {
-                        let num = respone + 1;
-                        setStorageAsync({
-                            key: 'seriesAllLoad',
-                            value: num
-                        })
-                        wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click',`${num}次`)
-                    }).catch(error => {
-                        setStorageAsync({
-                            key: 'seriesAllLoad',
-                            value: 1
-                        })
-                        wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click','1次')
-                    });
                     self.isFirstAppraisal = true
-                    self.enterNum = storeInfo[seriesID];
+                    wepy.$instance.globalData.getHuilder('系列页详情页/测评弹窗','click',`${self.routeParams.seriesName}`)
                     self.$apply()
                 }
             }).catch(error => {
@@ -378,28 +345,8 @@
                     key: 'seriesFirstLoad',
                     value: storeInfo
                 })
-
-                // 设置缓存 第几次进入显示
-                getStorageAsync({key: 'seriesAllLoad'}).then((respone) => {
-                    let num = respone + 1;
-                    setStorageAsync({
-                        key: 'seriesAllLoad',
-                        value: num
-                    })
-                    wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click',`${num}次`)
-
-                }).catch(error => {
-                    setStorageAsync({
-                        key: 'seriesAllLoad',
-                        value: 1
-                    })
-                    wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click',
-                    '1次')
-                });
-                
-
-                self.enterNum = storeInfo[seriesID];
                 self.isFirstAppraisal = true
+                wepy.$instance.globalData.getHuilder('系列页详情页/测评弹窗','click',`${self.routeParams.seriesName}`)
                 self.$apply()
             })
         }
@@ -485,8 +432,9 @@
                 let examLink = self.courseInfo.examLink
                 let type = examLink.skillType
                 let examID = examLink.examID
-                wepy.$instance.globalData.getHuilder(`系列页详情页${self.routeParams.seriesName}`,'click',`${self.enterNum}次`)
+                
                 self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
+                wepy.$instance.globalData.getHuilder('系列页详情页/马上测试','click',`${self.routeParams.seriesName}`)
             },
             /**
              * 课程详情页
