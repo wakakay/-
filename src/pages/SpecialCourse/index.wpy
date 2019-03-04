@@ -520,8 +520,8 @@
                     item = self.moduleList[data.parentindex][data.parentkey][data.cardindex]
                     item && self.moduleList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
                     _.extend(item, data)
-console.log(item)
-                    if (item.isDone) {
+
+                    if (item.isDone && !item.isSumbit) {
                         let postData = {
                             token: self.token,
                             courseID: self.courseID,
