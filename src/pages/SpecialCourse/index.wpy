@@ -21,7 +21,7 @@
                 </view>-->
                 <view class="ui-headline">
                     <view class="cell-sence">{{skillInfo.sceneTypeText}}</view>
-                    <view class="cell-name">{{skillInfo.specialCourseName}}</view>
+                    <view class="cell-name">{{skillInfo.name}}</view>
                     <view class="cell-subtitle" wx:if="{{'todaySkill' != skillInfo.sceneType}}">{{skillInfo.subtitle}}</view>
                 </view>
             </view>
