@@ -520,8 +520,8 @@
                     item = self.moduleList[data.parentindex][data.parentkey][data.cardindex]
                     item && self.moduleList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
                     _.extend(item, data)
-
-                    if (item.isSumbit && !item.isShowDescription) {
+console.log(item)
+                    if (item.isDone) {
                         let postData = {
                             token: self.token,
                             courseID: self.courseID,
@@ -538,7 +538,6 @@
                         wepy.$instance.globalData.getHuilder(`${self.screenName}测练`, 'click', `${item.title}`)
                         fetch.sendTeamPractice(postData).then(respone => {
                             item.isAnswerOver = true // 已经答案，不能再次作答
-                            item.isDone = true
                             self.$apply()
                         })
                     }
@@ -622,7 +621,7 @@
                     .cell-sence{color:rgba(255,255,255,0.70);margin-bottom: 18rpx}
                     .cell-name{font-weight: bold;height: 236rpx;font-size: 64rpx;}
                     .cell-subtitle{margin-top: 300rpx}
-                }   
+                }
             }
             .ui-img-type, .ui-first {
                 border-radius:0;
