@@ -12,8 +12,8 @@
             <view class="desc">添加工作人员微信， 申请</view>
             <view class="desc">成为内测用户</view>
             <image class="avatar"
-                   src="http://wx-small.runwise.cn/image/imageID000561d94474d1a78f491c842d69.jpg" />
-            <view class="wechat">微信号：oliviaJN2</view>
+                   src="https://wx.qlogo.cn/mmopen/vi_32/ib7GHzIj9uuh5HzlCPiae46gwjpryQNAsksiaibOia6KqibxGicJw1rIgvVib0hPHF4BH1HUnruicl7kN4h9ZTicTFGKdFkg/132" />
+            <view class="wechat">微信号：Up酱 Pascalbo</view>
             <view class="wechat-btn" @tap.stop="copyTBL">复制微信号</view>
         </view>
     </view>
@@ -46,10 +46,10 @@
             <view class="replay-article-title"  wx:else>恭喜您！您的申请已成功通过审核</view>
             <view class="replay-article__wechat-num-box">
                 <view class="desc">添加工作人员微信， 申请</view>
-                <view class="desc">申请成为内测用户</view>
+                <view class="desc">成为内测用户</view>
                 <image class="avatar"
-                       src="http://wx-small.runwise.cn/image/imageID000561d94474d1a78f491c842d69.jpg"></image>
-                <view class="wechat">微信号：oliviaJN2</view>
+                       src="https://wx.qlogo.cn/mmopen/vi_32/ib7GHzIj9uuh5HzlCPiae46gwjpryQNAsksiaibOia6KqibxGicJw1rIgvVib0hPHF4BH1HUnruicl7kN4h9ZTicTFGKdFkg/132"></image>
+                <view class="wechat">微信号：Up酱 Pascalbo</view>
                 <view class="wechat-btn" @tap.stop="copyTBLOnly">复制微信号</view>
             </view>
         </view>

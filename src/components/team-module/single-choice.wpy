@@ -50,7 +50,7 @@
 <script>
     /**
      * <jn-single-choice></jn-single-choice>
-     * @module components/special-course/single-choice
+     * @module components/team-module/single-choice
      * @desc 团队学习quiz
      * @param {parentList} [Array] - 最外层的数组----【】
      * @param {parentKey} [String] - 需要遍历的测练的key名称，value肯定是Array----【】

@@ -38,16 +38,9 @@
 
 <script>
     import wepy from 'wepy'
-    import {getStore, connect} from 'wepy-redux'
     import {parsePercentageForPoll} from '../../utils'
     import _ from 'underscore'
 
-    const store = getStore()
-    @connect({
-        systemInfo(state) {
-            return state.user
-        }
-    })
     export default class pollCard extends wepy.component {
         props = {
             cardIndex: {

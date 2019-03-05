@@ -16,7 +16,7 @@
                 <view class="cell-subtitle">{{courseDetail.courseSkill}}</view>
                 <view class="cell-title main-justify">
                     <text>{{courseDetail.name}}</text>
-                    <button class="main-center cross-center" open-type="share">
+                    <button class="main-center cross-center" form-type="submit" open-type="share">
                         <text class="icon-share"></text>
                     </button>
                     <view class="ui-tips" wx:if="{{isTips}}">分享赚5即能币<text class="icon-arrow"></text></view>
@@ -206,6 +206,7 @@
 
         <button class="ui-pay-button"
                 hover-stay-time="100"
+                form-type="submit"
                 @tap.stop="getAllPay"
                 wx:if="{{courseDetail.price>0}}">{{courseDetail.price}} 即能币购买 <text class="icon-details"></text></button>
 
@@ -218,7 +219,7 @@
                     <text>{{courseDetail.price}} <text class="cell-currency">即能币</text></text>
                 </view>
                 <view class="ui-button-list ui-column">
-                    <button hover-stay-time="100" @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
+                    <button hover-stay-time="100" form-type="submit" @tap.stop="getAllPay">{{price ? '已获取' : '一键获取'}}</button>
                 </view>
             </view>
         </view>
@@ -228,7 +229,8 @@
                 <view class="ui-container is-fixed">
                     <view class="ui-text main-center"></view>
                     <view class="ui-button-list ui-column">
-                        <button open-type="share"
+                        <button form-type="submit"
+                                open-type="share"
                                 data-role="1"
                                 hover-stay-time="100">分享免费领</button>
                     </view>
@@ -243,6 +245,7 @@
                     <view class="ui-button-list ui-column">
                         <button data-role="2"
                                 hover-stay-time="100"
+                                form-type="submit"
                                 open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
                                 @getphonenumber.stop="getReceiveCourse"
                                 @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>

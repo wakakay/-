@@ -85,7 +85,6 @@
     import wepy from "wepy";
     import loadingMixin from "../../mixins/loading";
     import header from '../../components/common/header'
-    import AskForPhoneModal from '../../components/AskForPhoneModal/index'
     import SkillsBoardShareImage from '../../components/shareImages/skills-board' // 分享图片
     import FetchPhoneMixin from "../../mixins/fetchPhone";
     import Toast from "wepy-com-toast";
@@ -143,7 +142,6 @@
 
         components = {
             toast: Toast,
-            AskForPhoneModal,
             'jn-header': header,
             SkillsBoardShareImage,
             'skillSetBoard': SkillSet,

@@ -44,16 +44,18 @@
 </template>
 
 <script>
+    /**
+     * <jn-sort></jn-sort>
+     * @module components/cards-type/single-choice
+     * @desc 即学即练排序
+     * @param {cardsList} [Array] - 测练的数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的测练数组索引键值- ----【】
+     * @param {isExercises} [Number] - option是否占整行，需要给option文本后面留出一定的空间，显示正确错误的图标- ----【0】
+     * @param {commentsCount} [Number] - 即练提交答案后显示的参与评论的条数- ----【0】
+     */
     import wepy from 'wepy'
-    import {getStore, connect} from 'wepy-redux'
     import _ from 'underscore'
 
-    const store = getStore()
-    @connect({
-        systemInfo(state) {
-            return state.user
-        }
-    })
     export default class sortCard extends wepy.component {
         props = {
             cardIndex: {
