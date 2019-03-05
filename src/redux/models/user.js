@@ -112,6 +112,7 @@ export const getLoginToken = () => (dispatch, getState) => {
                         str += `${key}=${val}`
                     }
                 })
+                respone.hasGift = true // 后端会自动帮对应的课程购买，这边强制变成true，不再显示首课免费领
                 wepy.$instance.globalData.freeCourseRounter = `/${path}${str ? '?'+str : ''}`
                 wx.redirectTo({ url: `/pages/registered-module/weclome`})
             }
@@ -214,6 +215,7 @@ export const getUserPhone = (encryptedData, errMsg, iv) => (dispatch, getState) 
         return renewWechatCode() // 必须重新更新code才能获取到手机号码
     }).then((respone) => {
         wepy.$instance.globalData.getHuilder('授权手机号码成功', 'click', rounterPath)
+        wepy.$instance.globalData.getReportFlow('register')
         let postData = {
             token: initialState.token,
             body: {

@@ -1,187 +1,12 @@
 <style lang="less" scoped>
-    @import "../../assets/style/theme";
-    .ui-course-details-box{
-        width:100%;height:100%;
-        view{box-sizing:border-box;}
-        .ui-board-box{
-            width:100%;height:612rpx;padding:172rpx 32rpx 0;position:relative;
-            .ui-header-thumb{
-                width:100%;background-size:cover;background-position:top center;background-repeat:no-repeat;position:absolute;left:0;top:0;
-                .cell-mask{width:100%;height:100%;background-color:@background-mask-normal;}
-            }
-            .ui-content{position:relative;z-index:@z-index-normal;}
-            .cell-subtitle{padding-bottom:8rpx;font-size:30rpx;color:@color-white-opacity;line-height:40rpx;}
-            .cell-title{
-                height:136rpx;position:relative;
-                >text{display:block;width:500rpx;font-size:56rpx;font-weight:700;color:@color-white;line-height:68rpx;}
-                button{
-                    width:60rpx;height:60rpx;background:none;
-                    text{font-size:60rpx;color:@color-white;}
-                }
-                .ui-tips{
-                    height:40rpx;padding:0 20rpx;background-color:@background-red;font-size:24rpx;color:@color-white;text-align:center;line-height:40rpx;border-radius:@border-radius-20;position:absolute;right:-16rpx;top:84rpx;
-                    text{display:block;font-size:34rpx;color:@color-red;position:absolute;right:28rpx;top:-26rpx;}
-                }
-            }
-        }
-        .ui-introduction-board{
-            width:100%;height:216rpx;padding:20rpx 24rpx 0;margin-top:20rpx;background-color:rgba(0,0,0,.27);border-radius:@border-radius-20;
-            .cell-text{height:36rpx;font-size:26rpx;color:@color-white;line-height:36rpx;}
-            .ui-progress{
-                height:16rpx;margin:20rpx 0;border-radius:@border-radius-20;overflow:hidden;
-                progress{height:100%;}
-            }
-            .ui-list{
-                view{text-align:center;}
-                view:nth-of-type(1){text-align:left}
-                view:nth-of-type(4){text-align:right}
-                text{display:block;padding:4rpx 0;line-height:32rpx;}
-                text:nth-of-type(1){font-size:26rpx;color:@color-white-opacity;}
-                text:nth-of-type(2){font-size:28rpx;color:@color-white;}
-            }
-        }
-        .ui-title{padding:36rpx 0 20rpx;margin:0 32rpx;font-size:44rpx;font-weight:700;color:@color-black;line-height:56rpx;border-top:1rpx solid @border-gray;}
-        .ui-introduction-content{
-            font-size:30rpx;color:@color-black;text-align:left;line-height:48rpx;overflow:hidden;position:relative;
-            >view{margin:0 32rpx;}
-            image{width: 100%;}
-        }
-        .cell-border{height:22rpx;}
-
-        .ui-get-list{
-            .ui-item{
-                height:184rpx;padding-top:40rpx;background:none;line-heihgt:1;text-align:left;
-                .ui-icon{
-                    width:80rpx;height:80rpx;margin:0 24rpx 0 32rpx;line-height:80rpx;position:relative;
-                    text:nth-of-type(1){font-size:40rpx;color:@color-black;position:relative;z-index:@z-index-normal;}
-                    text:nth-of-type(2){font-size:88rpx;color:rgba(0,0,0,.1);position:absolute;left:-4rpx;top:0rpx;}
-                    .cell-dot{position: absolute;top: -6rpx;right: -6rpx;width: 28rpx;height: 28rpx;background: @background-red;border:4rpx solid @border-white;border-radius: 50%;}
-                }
-                .ui-content{
-                    width:100%;border-bottom:1rpx solid @border-gray;position:relative;
-                    text{padding:0 28rpx;margin-top:-26rpx;font-size:26rpx;color:@color-gray;position:absolute;right:0;top:50%;}
-                    .cell-title{width:500rpx;padding-bottom:8rpx;font-size:34rpx;font-weight:700;color:@color-black;line-height:44rpx;}
-                    .cell-subtitle{width:500rpx;height:80rpx;font-size:26rpx;color:@color-gray;line-height:40rpx;overflow:hidden;}
-                }
-                &:last-of-type {
-                    .ui-content {border-bottom: 0;}
-                }
-            }
-        }
-
-        .ui-course-list{
-            padding:0 32rpx 40rpx;
-            .ui-item{
-                width:100%;height:346rpx;padding:40rpx 32rpx 52rpx;margin-top:24rpx;background-size:cover;background-repeat:no-repeat;background-position:center center;text-align:left;line-height:1;border-radius:@border-radius-20;position:relative;
-                .cell-title{width:460rpx;padding-bottom:12rpx;font-size:40rpx;font-weight:700;color:@color-white;line-height:50rpx;overflow:hidden;}
-                .ui-skills{
-                    font-size: 26rpx;color: rgba(255,255,255,.70);
-                    text{margin:8rpx;}
-                }
-                .cell-subtitle{font-size:26rpx;color:@color-white-opacity;line-height:36rpx;position:absolute;bottom: 40rpx;;}
-                .ui-status{
-                    position:absolute;right:32rpx;top:32rpx;
-                    .ui-circular-progress{
-                        &::before{border:6rpx solid @background-mask-white;}
-                        .ui-wrapper{
-                            >view{
-                                &.cell-circle-right{border-top:6rpx solid @background-white;border-right:6rpx solid @background-white;}
-                                &.cell-circle-left{border-bottom:6rpx solid @background-white;border-left:6rpx solid @background-white;}
-                            }
-                        }
-                        .cell-progress-number{color:@color-white;}
-                    }
-                    .cell-text{font-size:46rpx;color:@color-white;line-height:68rpx;}
-                    .cell-status{width:140rpx;height:60rpx;background-color:@background-mask-white;font-size:34rpx;color:@color-white;text-align:center;line-height:60rpx;border-radius:@border-radius-32;}
-                }
-                .cell-thumb{width:112rpx;height:112rpx;border-radius:@border-radius-32;position:absolute;right:32rpx;bottom:32rpx;}
-            }
-        }
-
-        .ui-comments-box{
-            background-color:#fff;padding-bottom:20rpx;
-            .ui-comments-list{height:400rpx}
-            .ui-swiper{
-                background-color:#fff;padding-right:12rpx;box-sizing:border-box;
-                .ui-item{background-color:rgba(142,143,148,.1);border-radius:@border-radius-20;height:400rpx;padding:24rpx 32rpx 46rpx;}
-                .ui-top{
-                    display:flex;justify-content: space-between;height: 80rpx;line-height: 80rpx;
-                    .ui-user{
-                        font-size:30rpx;color:@color-gray;display: flex;align-items: center;
-                        .cell-name{width: 294rpx;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
-                        image{width:80rpx;height:80rpx;border-radius:50%;margin-right:12rpx;}
-                    }
-                    .ui-star text{margin-left:10rpx;font-size:34rpx;color:@color-blue;line-height:80rpx;}
-                }
-                .ui-title-box{
-                    display: flex;justify-content: space-between;margin:38rpx 0 26rpx;height:44rpx;width: 100%;box-sizing:border-box;
-                    .cell-title{font-size:30rpx;color:@color-black;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width: 472rpx;}
-                    .cell-date{font-size:28rpx;color:@color-gray;width: 190rpx;line-height:44rpx;}
-                }
-                .ui-message{height:140rpx;font-size:30rpx;color:@color-black;line-height:48rpx;white-space:pre-wrap;word-break:break-all;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;}
-            }
-        }
-
-        .ui-recommend-list{
-            margin-left:42rpx;padding-bottom:40rpx;
-            .ui-item{
-                height:220rpx;padding:20rpx 0;background:none;line-height:1;text-align:left;border-top:1rpx solid @border-gray;transform:translate(-12rpx, 0px) translateZ(0px);
-                &:first-child{border-top:0;}
-                .ui-thumb{
-                    width:180rpx;height:180rpx;border-radius:@border-radius-44;overflow:hidden;
-                    image{width:180rpx;height:180rpx;}
-                }
-                .ui-content{padding:10rpx 0;margin-left:24rpx;}
-                .cell-title{font-size:32rpx;font-weight:700;color:@color-black;line-height:44rpx;white-space:pre-wrap;word-break:break-all;overflow:hidden;}
-                .cell-subtitle{font-size:26rpx;color:@color-gray;line-height:40rpx;overflow:hidden;}
-                .ui-star{
-                    padding-top:30rpx;
-                    text{margin-right:12rpx;color:@color-blue;}
-                }
-            }
-        }
-        .ui-rules-box{
-            .ui-text{
-                padding:10rpx 32rpx;font-size:30rpx;color:@color-black;line-height:48rpx;
-                text{padding-right:10rpx;}
-            }
-        }
-        .ui-rules-box ~ .ui-rules-box .ui-title{border-top:0;}
-        .ui-pay-button{background:none;font-size:34rpx;color:@color-blue;}
-        .ui-clear{width:100%;height:254rpx;}
-
-        .ui-button-box{
-            width:100%;
-            &.is-phonex{
-                .ui-container{padding-bottom:48rpx;}
-            }
-            .ui-container{
-                width:100%;height:auto;padding:0 32rpx;background-color:@background-mask-deep-white;position:fixed;left:0;bottom:0;z-index:@z-index-slightly;transform:translateY(400rpx);transition:all .5s ease-in-out;
-                &.is-fixed{transform:translateY(0);}
-            }
-            .ui-text{
-                height:auto;padding:10rpx 8rpx;line-height:42rpx;
-                text:nth-of-type(1){font-size:30rpx;color:@color-black;}
-                text:nth-of-type(2){font-size:44rpx;font-weight:700;color:@color-black;}
-                .cell-currency{font-size:30rpx;}
-            }
-            .ui-button-list{
-                padding-bottom:20rpx;
-                &.ui-column button:nth-of-type(1){
-                    width:100%;background-color:@background-blue;color:@color-white;
-                }
-                button{width:326rpx;height:100rpx;font-size:35rpx;font-weight:700;border-radius:@border-radius-20;line-height: 100rpx;}
-                button:nth-of-type(1){background-color:@background-gray-F4;color:@color-blue;}
-                button:nth-of-type(2){background-color:@background-blue;color:@color-white;}
-            }
-        }
-    }
+    @import "../../assets/style/course-detail";
 </style>
 
 <template>
     <jn-loading wx:if="{{!isLoaded}}"></jn-loading>
+
     <form class="ui-course-details-box" bindsubmit="handleSavePushCode" report-submit>
-        <jn-header :className.sync="headerBackground" buttonAfter></jn-header>
+        <jn-header :title.sync="courseTitle" :className.sync="headerBackground" buttonAfter></jn-header>
 
         <view class="ui-board-box">
             <view class="ui-header-thumb" style="height: calc(100% + {{headerHeigth}}px);top:-{{headerHeigth}}px;background-image:url({{courseDetail.image}})">
@@ -224,7 +49,7 @@
         <view class="cell-border"></view>
 
         <view class="ui-title" wx:if="{{courseDetail.linkEditorList.length}}">你将获得</view>
-        <scroll-view wx:if="{{courseDetail.linkEditorList.length}}" class="model-special-scroll-list" scroll-x scroll-with-animation>
+        <scroll-view wx:if="{{courseDetail.linkEditorList.length}}" class="ui-special-list" scroll-x scroll-with-animation>
             <repeat for="{{courseDetail.linkEditorList}}" key="index" index="index" item="item">
                 <button form-type="submit" hover-stay-time="100"
                         class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
@@ -256,7 +81,9 @@
                 </button>
             </repeat>
         </scroll-view>
-        <view class="ui-title" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
+
+
+        <view class="ui-title" id="senceList" wx:if="{{courseDetail.senceList.length}}">微课列表</view>
         <view class="ui-course-list" wx:if="{{courseDetail.senceList.length}}">
             <repeat for="{{courseDetail.senceList}}" key="index" index="index" item="item">
                 <button class="ui-item"
@@ -416,6 +243,8 @@
                     <view class="ui-button-list ui-column">
                         <button data-role="2"
                                 hover-stay-time="100"
+                                open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                                @getphonenumber.stop="getReceiveCourse"
                                 @tap.stop="getReceiveCourse">{{courseDetail.giftButtonMsg}}{{countDown}}</button>
                     </view>
                 </view>
@@ -496,8 +325,10 @@
         data = {
             headerHeigth: 68,
             headerBackground: 'background-transparent',
+            isAndroid: /android/i.test(wx.getSystemInfoSync().system),
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isFixed: false,
+            isScrollLesson: false,
             timestamp: new Date().getTime(),
             backgroundHeight: 0,
             targetScroll: 0,
@@ -508,12 +339,12 @@
             giftID: '', // 赠一得一id
             shareID: '', // 分享获取即能币奖励的id
             isGifter: false,
+            courseTitle: '',
+            courseCopyTitle: '',
             courseDetail: {}, // 课程详情
             isTips: true,
             countDown: '', // 倒计时事件
             timer: null, // 定时器
-            isReceived: false, // 已经领取过了
-            isReceive: false,
             isShowActionSheet: false,
             actionSheetTitle: '',
             actionSheetContent: ''
@@ -561,7 +392,14 @@
                 self.backgroundHeight = rect.height - 50
             }).exec()
             self.isFixed = res.scrollTop > self.targetScroll ? true : false
-            self.headerBackground = res.scrollTop > self.backgroundHeight ? 'background-transparent-opacity' : 'background-transparent'
+
+            if (res.scrollTop > self.backgroundHeight) {
+                self.headerBackground ='background-white'
+                self.courseTitle = _.clone(self.courseCopyTitle)
+            } else {
+                self.headerBackground ='background-transparent'
+                self.courseTitle = ''
+            }
             self.$apply()
         }
         /**
@@ -588,6 +426,12 @@
                     respone.courseLink = []
                 }
                 self.courseDetail = respone
+                self.courseCopyTitle = respone.name
+
+                if (self.courseDetail.expiredCode >= 0) {
+                    self.courseCopyTitle = (self.courseDetail.expiredCode ? `仅剩${self.courseDetail.expiredCode}天` : '今天到期') + '，学完课程可永久获得'
+                }
+
                 _.each(self.courseDetail.senceList, (item) => {
                     if ('needPay' === item.buttonStatus) {
                         item.buttonStatusMsg = item.sencePrice
@@ -613,10 +457,8 @@
                     self.isTips = false
                     self.$apply()
                 }, 2000)
-
+                // 接受者，并且有倒计时时间，则显示倒计时
                 if ('receiver' === self.courseDetail.roleType && self.courseDetail.giftCountdown) {
-                    self.isReceive = true
-                    self.$apply()
                     self.__countDown()
                 }
                 // 是受赠者且未登录，显示马上领取
@@ -629,13 +471,6 @@
                     }
                 }
 
-                if (self.courseDetail.hasGiftState
-                    && 'receiver' === self.courseDetail.roleType
-                    && '马上领取' === self.courseDetail.giftButtonMsg
-                    && !self.isReceived) {
-                    self.__receiveCourse()
-                    return
-                }
                 // 赠送者→获取赠送的giftID
                 if ('defaultToken' !== postData.token
                     && self.courseDetail.isLimitedTimeGiftCourse
@@ -657,17 +492,43 @@
                     courseid: self.paramsInfo.id,
                     source: self.paramsInfo.source
                 })
+
+                !self.isAndroid &&  !self.isScrollLesson && self.__positionScroll()
             }).catch(error => {
                 self.isLoaded = true
             })
         }
         /**
+         * 用户进入已获得的课程的详情页时，直接滚动到微课列表位置
+         */
+        __positionScroll() {
+            let self = this
+            if (self.courseDetail.price || !self.hasGift) {
+                return
+            }
+
+            setTimeout(() => {
+                let query = wx.createSelectorQuery()
+                query.select('#senceList').boundingClientRect((rect) => {
+                    wx.pageScrollTo({
+                        scrollTop: rect.top - self.headerHeigth,
+                        duration: 300,
+                        success() {
+                            self.isScrollLesson = true
+                        }
+                    })
+                }).exec()
+            }, 800)
+        }
+
+        /**
          * 去微课学习页面
          * @param item 当前微课的信息
+         * @param isGoLesson 首页免费领取或限时赠一得一，自动去学第一课
          * @returns {*}
          * @private
          */
-        __goToCourseLearning(item) {
+        __goToCourseLearning(item, isGoLesson=false) {
             let self = this
             let courseID = self.paramsInfo.id
             let senceID = item.id
@@ -676,10 +537,16 @@
             let resumeLastRead = item.resume ? item.resume : 'NO'
 
             let isRedirectTo = false
+            // 是否要去微课的
             if (self.shareSenceID) {
                 self.shareSenceID = null
                 isRedirectTo = true
                 navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isRedirectTo})
+                return
+            }
+
+            if (isGoLesson) {
+                navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isRedirectTo})
                 return
             }
 
@@ -694,7 +561,7 @@
                         giftID: self.giftID || self.paramsInfo.giftID})
                     break
                 default:
-                    navigateToLesson({courseID, senceID,resumeLastRead: resumeLastRead, isRedirectTo})
+                    navigateToLesson({courseID, senceID, resumeLastRead: resumeLastRead, isRedirectTo})
             }
         }
         /**
@@ -753,14 +620,8 @@
                 courseID: self.paramsInfo.id,
                 giftID: self.paramsInfo.giftID
             }
-            if (self.isReceived) {
-                return
-            }
+
             fetch.receiveCourseGift(postData).then((respone) => {
-                self.isReceive = true
-                self.isReceived = true
-                self.$apply()
-                self.initialize()
                 if (1 === respone.success) {
                     self.isShowActionSheet = true
                     self.isGifter = false
@@ -768,8 +629,12 @@
                     self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
                     self.$apply()
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
+                    setTimeout(()=>{
+                        let item = self.courseDetail.senceList[0]
+                        self.__goToCourseLearning(item, true)
+                    }, 300)
                 } else {
-                    !self.isReceive && wx.showToast({title: respone.message})
+                    wx.showToast({title: respone.message})
                 }
             }).catch((error) => {
 
@@ -860,7 +725,10 @@
                     title: '领取成功'
                 })
                 store.dispatch(refreshUserInformations({hasGift: true}))
-                self.initialize()
+                setTimeout(()=>{
+                    let item = self.courseDetail.senceList[0]
+                    self.__goToCourseLearning(item, true)
+                }, 300)
             }).catch(error => {
                 wx.showToast({
                     icon: 'none',
@@ -962,24 +830,21 @@
              * @param event
              * @returns {Promise<any>}
              */
-            getReceiveCourse() {
+            getReceiveCourse(event) {
                 let self = this
-                if ( !self.isReceive) {
+                let {detail: {encryptedData, errMsg, iv}} = event
+
+                if (self.courseDetail.giftCountdown) {
+                    let item = self.courseDetail.senceList[0]
+                    self.__goToCourseLearning(item, true)
                     return
                 }
-                self.__receiveCourse()
 
-                // 如果已经领取了，则依次跑去未学习的微课
-                let data = _.find(self.courseDetail.senceList, (item) => {
-                    if ('finish' !== item.buttonStatus && 'needPay' !== item.buttonStatus) {
-                        return item
-                    }
-                })
-
-                if (data) {
-                    self.__goToCourseLearning(data)
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    self.__receiveCourse(respone)
                     wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
-                }
+                }).catch((error) => {
+                })
             }
         }
         events = {
@@ -1035,7 +900,7 @@
                     fetch.saveShareID(postData).then((respone) => {}).catch((error) => {})
                 }
             }
-
+            wepy.$instance.globalData.getReportFlow('share')
             fetch.reportSharing({
                 token: self.systemInfo.token,
                 type: reportType,

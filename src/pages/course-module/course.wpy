@@ -98,7 +98,6 @@
 
 <template>
     <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-    <evaluate-modal wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></evaluate-modal>
     <scroll-view
             wx:if="{{ isLoaded }}"
             class="ui-container"
@@ -282,7 +281,6 @@
     import PushMixin from '../../mixins/push'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import EvaluateModal from '../../components/EvaluateModal/index'
     import CourseSeries from '../../components/course-module/course-series'
     import FavouriteCourseCopy from '../../components/FavouriteCourseCopy/index'
     import studyingBar from '../../components/common/studying-bar'
@@ -316,7 +314,6 @@
             'jn-header': header,
             'jn-loading': Loading,
             'favourite-course': FavouriteCourseCopy,
-            'evaluate-modal': EvaluateModal,
             'studying-bar': studyingBar,
             'jn-course-series': CourseSeries
         }
@@ -336,7 +333,6 @@
             hotCourseList: [],
             personalInfo: {}, // 头部用户信息
             recommendCourseList:[],
-            isShowEvaluate:false,
             isShowCourseSeries:false,
             courseSeriesModalList:[],
             isShowToast:false
@@ -344,11 +340,8 @@
 
         onLoad(params) {
             let self = this
-            let pageNum = wx.getStorageSync('pageLoadNum')
             self.paramsInfo = params
-            self.isShowEvaluate = pageNum !== 3 ? false : true
             self.isShowToast = self.paramsInfo.isShowToast ? true : false
-
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
@@ -547,6 +540,7 @@
          */
         onShareAppMessage(options) {
             let self = this
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/course-module/course?source=TopAppShare',

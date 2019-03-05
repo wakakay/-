@@ -4,7 +4,7 @@
         .ui-content{padding:20rpx 32rpx;}
         .ui-answer-list{
             .cell-title{width:526rpx;}
-            .is-tip-success{background-color:#E6FFF0;}
+            .is-tip-success{background-color:#E6FFF0;border-color:@border-green;}
             .is-success{
                 background-color:#E6FFF0;border-color:@border-green;
                 .cell-icon{
@@ -64,7 +64,7 @@
                 </repeat>
             </view>
 
-            <view class="module-exercises-result" :class="{'is-show': parentList[parentIndex][parentKey][cardIndex].isDone}">
+            <view class="module-exercises-result" :class="{'is-show': parentList[parentIndex][parentKey][cardIndex].isSumbit}">
                 <view class="main-justify">
                     <view class="cell-exercises-title" :class="{'is-yes': parentList[parentIndex][parentKey][cardIndex].answerStatus==1, 'is-no': parentList[parentIndex][parentKey][cardIndex].answerStatus==2}">
                         {{parentList[parentIndex][parentKey][cardIndex].answerStatus == 1 ? '回答正确' : '回答错误'}}
@@ -80,22 +80,31 @@
                     data-parentkey="{{parentKey}}"
                     data-parentindex="{{parentIndex}}"
                     data-cardindex="{{cardIndex}}"
-                    open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
-                    @getphonenumber.stop="getSumbit"
-                    @tap.stop="getSumbit">提交</button>
-            <!--<button class="cell-sumbit"
-                    wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isShowDescription}}"
+                    @tap.stop="getShowDescription">提交</button>
+            <button class="cell-sumbit"
+                    wx:if="{{parentList[parentIndex][parentKey][cardIndex].isDone && !parentList[parentIndex][parentKey][cardIndex].isSumbit}}"
                     form-type="submit"
                     data-parentkey="{{parentKey}}"
                     data-parentindex="{{parentIndex}}"
                     data-cardindex="{{cardIndex}}"
-                    @tap.stop="getShowDescription">查看解释</button>-->
+                    open-type="{{!systemInfo.phone ? 'getPhoneNumber' : ''}}"
+                    @getphonenumber.stop="getSumbit"
+                    @tap.stop="getSumbit">查看解释</button>
         </view>
-
     </view>
 </template>
 
 <script>
+    /**
+     * <jn-single-choice></jn-single-choice>
+     * @module components/special-course/single-choice
+     * @desc 专题、今日技能quiz
+     * @param {parentList} [Array] - 最外层的数组----【】
+     * @param {parentKey} [String] - 需要遍历的测练的key名称，value肯定是Array----【】
+     * @param {parentIndex} [Number] - 遍历的这个在隶属于最外层数组的索引键值----【】
+     * @param {cardsList} [Array] - 测练的key的value数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的测练数组索引键值- ----【】
+     */
     import wepy from 'wepy'
     import {getStore, connect} from 'wepy-redux'
     import {getUserPhone} from "../../redux/models/user"
@@ -107,7 +116,7 @@
             return state.user
         }
     })
-    export default class singleChoiceCard extends wepy.component {
+    export default class specialSingleChoice extends wepy.component {
         props = {
             parentIndex: {
                 type: Number
@@ -125,14 +134,6 @@
             cardsList: {
                 type: Array,
                 default: []
-            },
-            isExercises: {
-                type: Number,
-                default: 0
-            },
-            commentsCount: {
-                type: Number,
-                default: 0
             }
         }
 
@@ -181,7 +182,9 @@
 
                 self.$emit('on-interaction', data)
             },
-
+            /**
+             * @param event
+             */
             getSumbit(event) {
                 let self = this
                 let {currentTarget: {dataset: {parentindex, parentkey, cardindex}}, detail: {encryptedData, errMsg, iv}} = event
@@ -193,13 +196,14 @@
                         cardindex: cardindex,
                         isSumbit: true
                     }
-
                     self.$emit('on-interaction', data)
                 }).catch((error) => {
 
                 })
             },
-
+            /**
+             * @param event
+             */
             getShowDescription(event) {
                 let self = this
                 let {currentTarget: {dataset: {parentindex, parentkey, cardindex}}} = event
@@ -208,7 +212,7 @@
                     parentindex: parentindex,
                     parentkey: parentkey,
                     cardindex: cardindex,
-                    isShowDescription: true
+                    isDone: true
                 }
 
                 self.$emit('on-interaction', data)

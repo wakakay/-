@@ -28,7 +28,7 @@
             .ui-special-subject{
                 width: 100%;height: 824rpx;background:none;box-shadow:@box-shadow-hight;border-radius: @border-radius-32;overflow: hidden;background-size:100%;line-height: 1;text-align: left;color:@color-white;padding:38rpx 40rpx;
                 .cell-tip{font-size: 28rpx;}
-                .cell-title{font-weight: bold;font-size: 52rpx;height: 154rpx;width: 550rpx;margin:40rpx 0 428rpx;line-height:1.5;}
+                .cell-title{font-weight: bold;font-size: 48rpx;height: 154rpx;width: 550rpx;margin:40rpx 0 428rpx;line-height:1.5;}
                 .cell-subtitle{font-size: 32rpx;line-height:1.5;}
             }
             .ui-evaluation{
@@ -92,8 +92,6 @@
 <template>
     <view catchtouchmove="{{!isScroll}}">
         <jn-loading wx:if="{{ !isLoaded }}"></jn-loading>
-        <jn-evaluate wx:if="{{ isLoaded }}" :isShowEvaluate.sync="isShowEvaluate"></jn-evaluate>
-
         <scroll-view
                 scroll-with-animation
                 scroll-y="{{isScroll}}"
@@ -188,7 +186,6 @@
     import loadingMixin from '../../mixins/loading'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import EvaluateModal from '../../components/EvaluateModal/index'
     import studyingBar from '../../components/common/studying-bar'
     import {fetch} from '../../api'
     import {showErrorPage, shareDictionary, getStorageAsync, initializationDeligate ,navigateToLesson} from '../../utils'
@@ -227,7 +224,6 @@
         components = {
             'jn-header': header,
             'jn-loading': Loading,
-            'jn-evaluate': EvaluateModal,
             'studying-bar': studyingBar
         }
 
@@ -240,7 +236,6 @@
             pageSize: 10,
             isScroll: true, // 是否能滚动
             scrollTop: 0,
-            isShowEvaluate: false,
             informationList: [],
             discoverPageTitle: '',
             courseID: null,
@@ -250,8 +245,6 @@
 
         onLoad() {
             let self = this
-            let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 3 ? false : true
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
 
@@ -501,26 +494,22 @@
          * @returns {{title: string, path: string, success: success, fail: fail}}
          */
         onShareAppMessage(options) {
+            getStorageAsync({key: 'name'}).then(name => {
+                wx.reportAnalytics('share_event', {
+                    nickname: name,
+                    type: shareDictionary.SHARE_WE_APP.type,
+                })
+
+            }).catch(error => error)
+
+            getStorageAsync({key: 'token'}).then(token => {
+                fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
+
+            }).catch(error => error)
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
-                path: '/pages/FindList/index?source=FindTabShare',
-                success(res) {
-                    getStorageAsync({key: 'name'}).then(name => {
-                        wx.reportAnalytics('share_event', {
-                            nickname: name,
-                            type: shareDictionary.SHARE_WE_APP.type,
-                        })
-
-                    }).catch(error => error)
-
-                    getStorageAsync({key: 'token'}).then(token => {
-                        fetch.reportSharing({token, type: shareDictionary.SHARE_WE_APP.type}) // 向后台上报分享行为
-
-                    }).catch(error => error)
-                },
-                fail(res) {
-                    console.log('转发失败')
-                }
+                path: '/pages/FindList/index?source=FindTabShare'
             }
         }
 

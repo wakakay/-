@@ -66,7 +66,7 @@
             <view class="cell-more">没有更多内容了</view>
         </scroll-view>
     </view>
-    
+
 </template>
 
 <script>
@@ -74,7 +74,7 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import {fetch} from '../../api'
-    
+
     const store = getStore()
     @connect({
         token(state) {
@@ -99,7 +99,7 @@
 
         methods = {
             getBackStep() {
-                wepy.switchTab({ url: '/pages/today-module/index'})
+                wx.navigateBack()
             },
             getCourseDetail(event){
                 let self = this
@@ -109,7 +109,6 @@
                 let resume = item.resume ? item.resume : ''
                 wepy.$instance.globalData.getHuilder('今日页/全部在学课程/进入课程','click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
-
             }
         }
         initialize() {

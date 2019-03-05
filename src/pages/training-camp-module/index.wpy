@@ -1,6 +1,7 @@
 <template>
 	<mloading wx:if="{{ !isLoaded  }}"/>
 	<jn-header title="训练营" hiddenButton statusBackground="#fff"></jn-header>
+
 	<view class="ui-training-camp" style="height: calc(100% - {{headerHeigth}}px)" wx:if="{{isLoaded}}">
 		<scroll-view class="ui-bar" scroll-x="{{ true }}"
 					 scroll-into-view="item-{{ activedAssortmentPage }}"
@@ -217,9 +218,9 @@
         }
 
         components = {
+            'jn-header': header,
             'mloading': Loading,
             'teamLearningCourse': TeamLearningCourse,
-            'jn-header': header,
             'studying-bar': studyingBar
         }
         data = {
