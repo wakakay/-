@@ -42,7 +42,6 @@
 
 <script>
     import wepy from 'wepy'
-    import {getStore, connect} from 'wepy-redux'
     import _ from 'underscore'
 
     export default class associationCard extends wepy.component {

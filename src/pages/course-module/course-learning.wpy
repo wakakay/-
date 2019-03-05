@@ -82,7 +82,6 @@
               bindtouchstart="getSwipperStart"
               bindtouchend="getSwipperEnd">
             <swiper class="ui-swiper"
-                    skip-hidden-item-layout
                     duration="300"
                     current="{{cardCurrent}}"
                     bindanimationfinish="getAnimationfinish">

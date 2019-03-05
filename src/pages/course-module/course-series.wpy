@@ -106,7 +106,29 @@
             .cell-btn{width: 144rpx;height: 60rpx;border-radius: @border-radius-32;background: @background-blue;color:@color-white;font-size: 30rpx;text-align: center;line-height: 60rpx;font-weight: 700;}
         }
         .ui-share-box.is-phonex{margin-bottom: 68rpx;}
-
+    }
+    .ui-appraisal-dialog{
+        position: fixed;width: 100%;height: 100%;background: @background-mask-normal;left: 0;top: 0;z-index: @z-index-mask;
+        .ui-normal{
+            width: 562rpx;height: 750rpx;border-radius: @border-radius-32;background: @background-white;overflow:hidden;transform: translate(-50%,-50%);top:50%;left: 50%;position:absolute;
+            .cell-btn{width: 362rpx;height: 88rpx;border-radius: @border-radius-20;color: @color-white;line-height: 88rpx;text-align: center;background: @background-blue;font-size: 32rpx;margin:16rpx auto 0;}
+        }
+        .ui-content{
+            height: 750rpx;
+            .ui-top{
+                height: 360rpx;width: 100%;background-size:100% auto;position: relative;background-position:center;
+                text{color:@color-white;position: absolute;right:10rpx;font-size:52rpx;top:10rpx;}
+                &::before{content: '';position: absolute;right:12rpx;top:14rpx;border-radius: 50%;background: @color-gray;width: 50rpx;height: 46rpx;}
+            }
+            .cell-subject{font-size:34rpx;color:@color-black;font-weight:bold;max-height:142rpx;width:562rpx;box-sizing:border-box;margin-bottom:10rpx;padding:32rpx 32rpx 20rpx;}
+            .cell-dec{font-size: 28rpx;height: 96rpx;color:@color-gray;padding:0 32rpx;}
+        }
+        .ui-normal.ui-tips{
+            height: 432rpx;color:@color-black;
+            .cell-title{font-size: 34rpx;font-weight: bold;text-align: center;margin: 40rpx 0;}
+            .cell-dec{font-size: 32rpx;padding:0 32rpx;}
+            .cell-btn{margin:64rpx auto 0;}
+        }
     }
 </style>
 <template>
@@ -221,7 +243,24 @@
             <view class="cell-btn">{{courseInfo.floatBox.buttonStatusMsg}}</view>
         </view>
     </view>
+    <view class="ui-appraisal-dialog" wx:if="{{isShowAppraisal}}">
+        <view class="ui-content ui-normal" wx:if="{{isShowExam}}">
+            <view class="ui-top" style="background-image:url({{courseInfo.examLink.coverImageURL}})">
+                <text class="icon-close" @tap.stop="getHiddenExam"></text>
+            </view>
+            <view class="cell-subject">{{courseInfo.examLink.subjectHeading}}</view>
+            <view class="cell-dec">{{courseInfo.examLink.subject}}</view>
+            <view class="cell-btn" @tap.stop="getStartAppraisal">立即测试</view>
+        </view>
+        <view class="ui-tips ui-normal" wx:if="{{isShowTips}}">
+            <view class="cell-title">温馨提示</view>
+            <view class="cell-dec">更多测评和专题，之后可在发现页中查看~</view>
+            <view class="cell-btn" @tap.stop="getHiddenAppraisal">我知道了</view>
+        </view>
+    </view>
+
     <view class="cell-clear"></view>
+
 </template>
 <script>
     import wepy from 'wepy'
@@ -229,7 +268,8 @@
     import {fetch} from '../../api'
     import Loading from '../../components/common/loading'
     import header from '../../components/common/header'
-    import {initializationDeligate, navigateToLesson, shareDictionary} from '../../utils'
+    import _ from 'underscore'
+    import {initializationDeligate, navigateToLesson, shareDictionary,getStorageAsync,setStorageAsync} from '../../utils'
 
     const store = getStore()
     @connect({
@@ -259,18 +299,56 @@
             headerTitle: '',
             routeParams: {},
             isLoaded: false,
-            courseInfo: {}
+            courseInfo: {},
+            isShowAppraisal:false,
+            isShowExam:true,
+            isFirstAppraisal:false,
+            isShowTips:false,
         }
 
         onLoad(params) {
             let self = this
             self.routeParams = params
             self.isLoaded = false
+
         }
 
         onShow() {
             let self = this
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
+
+            // 判断是否第一次进入 该系列
+            let seriesID = self.routeParams.courseSeriesID;
+            let storeInfo = {}
+            storeInfo[seriesID] =  true
+            getStorageAsync({key: 'seriesFirstLoad'}).then((respone) => {
+                let isHas = _.has(respone, seriesID);
+                if(isHas){
+                    storeInfo[seriesID] =  false
+                    setStorageAsync({
+                        key: 'seriesFirstLoad',
+                        value: _.extend(respone, storeInfo)
+                    })
+                    self.isFirstAppraisal = false
+                    self.$apply()
+                }else {
+                    setStorageAsync({
+                        key: 'seriesFirstLoad',
+                        value: _.extend(respone, storeInfo)
+                    })
+                    self.isFirstAppraisal = true
+                    wepy.$instance.globalData.getHuilder('系列页详情页/测评弹窗','click',`${self.routeParams.seriesName}`)
+                    self.$apply()
+                }
+            }).catch(error => {
+                setStorageAsync({
+                    key: 'seriesFirstLoad',
+                    value: storeInfo
+                })
+                self.isFirstAppraisal = true
+                wepy.$instance.globalData.getHuilder('系列页详情页/测评弹窗','click',`${self.routeParams.seriesName}`)
+                self.$apply()
+            })
         }
         /**
          * 监听滚动条的位置
@@ -302,11 +380,62 @@
                     channel: self.entrance.mappers[self.entrance.scenceID],
                     seriesname: response.seriesName
                 })
+
+                // 判断是否弹窗
+                if(self.isFirstAppraisal) {
+                    let examLink = self.courseInfo.examLink;
+                    let isEmpty = _.isEmpty(examLink);
+                    if(!isEmpty && !examLink.isDone) {
+                        self.isShowAppraisal = true
+                        self.$apply()
+                    }
+                }
             }).catch(error => {
                 self.isLoaded = true
+                self.$apply()
             })
         }
         methods = {
+            /**
+             * 隐藏弹窗
+             * @param
+             */
+            getHiddenAppraisal() {
+                let self = this;
+                self.isShowAppraisal = false;
+                self.isShowExam = false;
+                self.isShowTips = false;
+                self.$apply()
+            },
+            /**
+             * 关闭测评页；显示tips
+             * @param
+             */
+            getHiddenExam() {
+                let self = this;
+                self.isShowExam = false;
+                self.isShowTips = true;
+                self.$apply()
+
+            },
+            /**
+             * 去测评开始页
+             * @param
+             */
+            getStartAppraisal() {
+                let self = this;
+                self.isShowAppraisal = false;
+                self.isShowExam = false;
+                self.isShowTips = false;
+                self.$apply()
+
+                let examLink = self.courseInfo.examLink
+                let type = examLink.skillType
+                let examID = examLink.examID
+                
+                self.$navigate(`/pages/activity-module/${'noSkill' === type ? 'appraisal-start' : 'new-appraisal-cover'}`, {examID})
+                wepy.$instance.globalData.getHuilder('系列页详情页/马上测试','click',`${self.routeParams.seriesName}`)
+            },
             /**
              * 课程详情页
              * @param
@@ -352,6 +481,7 @@
         }
         onShareAppMessage() {
             let self = this
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: `我在即能学习【${self.courseInfo.seriesName}】`,
                 path: `/pages/course-module/course-series?courseSeriesID=${self.courseInfo.courseSeriesID}`,

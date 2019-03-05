@@ -19,6 +19,11 @@
                         </view>
                     </view>
                 </view>-->
+                <view class="ui-headline">
+                    <view class="cell-sence">{{skillInfo.sceneTypeText}}</view>
+                    <view class="cell-name">{{skillInfo.name}}</view>
+                    <view class="cell-subtitle" wx:if="{{'todaySkill' != skillInfo.sceneType}}">{{skillInfo.subtitle}}</view>
+                </view>
             </view>
             <repeat for="{{moduleList}}" key="index" index="index" item="data">
                 <button class="ui-img-type flex"
@@ -85,7 +90,7 @@
                             form-type="submit"
                             open-type="{{!phone ? 'getPhoneNumber' : ''}}"
                             @getphonenumber.stop="getPoll"
-                            @tap.stop="getPoll">{{data.isDone ? data.pollCount+'已投票' : '投票'}}</button>
+                            @tap.stop="getPoll">{{data.isDone ? data.pollCount+'人已投票' : '投票'}}</button>
                 </view>
                 <view wx:if="{{data.type === 'practice'}}">
                     <repeat for="{{data.practiceList}}" key="practiceIndex" index="practiceIndex" item="item">
@@ -338,6 +343,10 @@
                     senceTarget: res.senceTarget,
                     progress: res.progress,
                     linkEditorList: res.linkEditorList
+                    subtitle:res.subtitle,
+                    sceneType:res.sceneType,
+                    sceneTypeText:res.sceneTypeText,
+                    name:res.name
                 }
                 self.isLoaded = true
                 self.moduleList = self.__dataRegroup(res.moduleList)
@@ -553,7 +562,7 @@
                     item && self.moduleList[data.parentindex][data.parentkey].splice(data.cardindex, 1, item)
                     _.extend(item, data)
 
-                    if (item.isSumbit && !item.isShowDescription) {
+                    if (item.isDone && !item.isSumbit) {
                         let postData = {
                             token: self.token,
                             courseID: self.courseID,
@@ -570,7 +579,6 @@
                         wepy.$instance.globalData.getHuilder(`${self.screenName}测练`, 'click', `${item.title}`)
                         fetch.sendTeamPractice(postData).then(respone => {
                             item.isAnswerOver = true // 已经答案，不能再次作答
-                            item.isDone = true
                             self.$apply()
                         })
                     }
@@ -595,6 +603,7 @@
         onShareAppMessage(res) {
             let self = this
             wepy.$instance.globalData.getHuilder(`${self.screenName}分享`, 'click', `${self.courseName}`)
+            wepy.$instance.globalData.getReportFlow('share')
             fetch.reportSharing({
                 token:self.token,
                 type: shareDictionary.SHARE_SPECIAL_COURSE.type,
@@ -647,6 +656,12 @@
                             width:50%;height:100%;background: linear-gradient(to right,#fff 95%,transparent 5%);z-index:2;transition:width .2s;background-size:118rpx  100%;
                         }
                     }
+                }
+                .ui-headline{
+                    width:100%;height:100%;position:absolute;left:0;top:0;color:@color-white;padding:164rpx 68rpx 0;font-size: 34rpx;
+                    .cell-sence{color:rgba(255,255,255,0.70);margin-bottom: 18rpx}
+                    .cell-name{font-weight: bold;height: 236rpx;font-size: 52rpx;}
+                    .cell-subtitle{margin-top: 300rpx}
                 }
             }
             .ui-img-type{

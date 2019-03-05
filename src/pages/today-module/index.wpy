@@ -74,10 +74,17 @@
                     .ui-shadow{
                         position: absolute;left: 0;top: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, .4);
                         .ui-bg-content{
-                            padding:58rpx 60px 0 32rpx;
+                            padding:58rpx 32rpx 0 32rpx;
                             .cell-title{color:@color-white;font-weight: bold;font-size: 42rpx;overflow: hidden;white-space: nowrap;text-overflow:ellipsis;width:520rpx;line-height:1;}
                             .cell-dec{color: @color-white;opacity: 0.7;font-size: 28rpx;width: 530rpx;height: 80rpx;line-height:52rpx;margin-top:40rpx}
-                            .cell-btn{width: 208rpx;height: 72rpx;border-radius: 39rpx;background: @background-mask-white;color:@color-white;text-align:center;line-height:72rpx;font-size:32rpx;margin-top: 118rpx;}
+                            .ui-button-box{
+                                height:72rpx;margin-top:150rpx;
+                                .cell-btn{width: 208rpx;height: 72rpx;border-radius: 39rpx;background: @background-mask-white;color:@color-white;text-align:center;line-height:72rpx;font-size:32rpx;}
+                                .cell-downtime{
+                                    width:134rpx;height:48rpx;padding:0 4rpx;background-color:@background-red-F0;font-size:24rpx;color:@color-white;line-height:48rpx;border-radius:@border-radius-8;
+                                    text{display:block;float:left;font-size:36rpx;margin-right:4rpx;line-height:52rpx;}
+                                }
+                            }
                         }
                     }
                     .ui-progress{
@@ -92,7 +99,6 @@
                                     &.cell-circle-left{border-bottom:6rpx solid @border-white;border-left:6rpx solid @border-white;}
                                 }
                             }
-
                         }
                     }
                 }
@@ -271,7 +277,12 @@
                                 <view class="ui-bg-content">
                                     <view class="cell-title">{{item.courseName}}</view>
                                     <view class="cell-dec">{{item.courseDec}}</view>
-                                    <view class="cell-btn">选择微课</view>
+                                    <view class="ui-button-box dir-right cross-center">
+                                        <view class="cell-downtime" wx:if="{{item.expiredCode>=0}}">
+                                            <text class="icon-time"></text>{{item.expiredCode ? '仅剩'+item.expiredCode+'天' : '今天到期'}}
+                                        </view>
+                                    </view>
+
                                 </view>
                                 <view class="ui-progress">
                                     <view class="ui-circular-progress">
@@ -314,6 +325,7 @@
                 hover-stay-time="100"
                 class="ui-new-role"
                 @tap.stop="getCourseDetail"
+                data-type="roleStatus"
                 data-item="{{newRoleRecommend}}"
                 wx:if="{{ 0 == roleStatus }}"
                 style="background-image: url('{{newRoleRecommend.bgImg}}');">
@@ -418,6 +430,7 @@
 </form>
 <view class="ui-clear"></view>
 <studying-bar :scrollTop.sync="scrollTop"></studying-bar>
+
 </template>
 
 <script>
@@ -486,8 +499,19 @@
 
         onLoad() {
             let self = this
-            let pageNum = wx.getStorageSync('pageLoadNum')
-            self.isShowEvaluate = pageNum !== 3 ? false : true
+            /**
+            * 判断是否显示 评价框
+            * @param
+            */
+           setTimeout(() => {
+                getStorageAsync({key: 'pageLoadNum'}).then((respone) => {
+                    self.isShowEvaluate = 2 === respone ? true : false;
+                    self.$apply()
+                }).catch(error => {
+                    console.log(error)
+                })
+            }, 300)
+
         }
 
         onShow() {
@@ -575,11 +599,12 @@
             },
             getCourseDetail(event){
                 let self = this;
-                let {currentTarget: {dataset: {item}}} = event
+                let {currentTarget: {dataset: {item, type}}} = event
                 let courseID = item.courseID;
                 let name = item.courseName;
                 let resume = item.resume ? item.resume : ''
-                wepy.$instance.globalData.getHuilder('今日页/在学课程','click',`${name}`)
+                wepy.$instance.globalData.getHuilder(`今日页/${'roleStatus'!==type ? '在学程' : '即能第一课'}`,'click',`${name}`)
+                wepy.$instance.globalData.getHuilder(`今日页/${'roleStatus' !== type ? '在学课程' : '即能第一课'}`,'click',`${name}`)
                 wepy.navigateTo({url: `/pages/course-module/course-details?id=${courseID}`})
             },
             // 点击查看全部 触发组件
@@ -676,6 +701,7 @@
          */
         onShareAppMessage(options) {
             let self = this
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: '即能，互联网微学习',
                 path: '/pages/today-module/index?source=TodayTabShare',

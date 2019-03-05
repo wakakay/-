@@ -15,6 +15,9 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
     width:100%;transition:all .2s ease;
     &.background-cancel .ui-header-box{background:none;color:@color-white;}
     &.background-cancel .cell-back text{color:@color-white;}
+    &.background-white .ui-header-box{background:@background-white;color:@color-black;}
+    &.background-white .cell-back text{color:@color-black;}
+    &.background-white .ui-titile text{font-size:24rpx;}
     &.background-green .ui-header-box{background:#2db7b5;color:@color-white;}
     &.background-green .cell-back text{color:@color-white;}
     &.background-grass .ui-header-box{background:#B4DDD9;color:@color-white;}
@@ -45,6 +48,26 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
     .ui-titile{
         box-sizing:border-box;width:320rpx;margin:0 auto;
         text{display:block;width:100%;font-size:36rpx;text-align:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+    }
+}
+/* footer组件 */
+.module-footer{
+    width:100%;height:100rpx;box-sizing:border-box;
+    >view{box-sizing:border-box;}
+    &.is-iphonex{
+        height:168rpx;
+        .ui-container{
+            height:168rpx;
+        }
+    }
+    .ui-container{
+        display:flex;width:100%;height:100rpx;background-color:@background-white;border-top:1rpx solid @border-gray;position:fixed;left:0;bottom:0;z-index:@z-index-highest;
+        button{
+            display:flex;flex-grow:1;flex-shrink:1;flex-direction:column;padding:10rpx 0;background:none;
+            text:nth-of-type(1){padding-bottom:4rpx;font-size:56rpx;color:@color-gray;line-height:56rpx;}
+            text:nth-of-type(2){font-size:20rpx;color:@color-gray;line-height:28rpx;}
+            &.active text{color:@color-blue;}
+        }
     }
 }
 
@@ -254,7 +277,7 @@ button[disabled]{background-color:@background-gray-F4 !important;color:@color-gr
 }
 /* 投票卡 */
 .module-poll-box{
-    width:100%;
+    width:100%;width:100%;height:calc(~"100% - 72px");
     &.is-phonex{width:100%;height:calc(~"100% - 96px");}
     &.is-learning{
         .ui-content{padding:0;}

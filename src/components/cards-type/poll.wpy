@@ -3,7 +3,9 @@
 </style>
 
 <template>
-    <view class="module-poll-box" :class="{'is-phonex': isIphonex && !isLearning, 'is-learning': isLearning}">
+    <scroll-view class="module-poll-box"
+                 :class="{'is-phonex': isIphonex && !isLearning, 'is-learning': isLearning}"
+                 scroll-y>
         <view class="ui-content">
             <view class="ui-thumb" wx:if="{{cardsList[cardIndex].bigimage}}">
                 <image mode="aspectFit" src="{{cardsList[cardIndex].bigimage}}"></image>
@@ -31,21 +33,14 @@
                 </repeat>
             </view>
         </view>
-    </view>
+    </scroll-view>
 </template>
 
 <script>
     import wepy from 'wepy'
-    import {getStore, connect} from 'wepy-redux'
     import {parsePercentageForPoll} from '../../utils'
     import _ from 'underscore'
 
-    const store = getStore()
-    @connect({
-        systemInfo(state) {
-            return state.user
-        }
-    })
     export default class pollCard extends wepy.component {
         props = {
             cardIndex: {

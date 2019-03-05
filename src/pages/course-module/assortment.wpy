@@ -452,6 +452,7 @@
         onShareAppMessage() {
             let self = this
             wepy.$instance.globalData.getHuilder('课程微信分享','click',`${self.courseInfo.seriesName}`)
+            wepy.$instance.globalData.getReportFlow('share')
             return {
                 title: `我在即能学习【${self.courseInfo.seriesName}】`,
                 path: `/pages/course-module/course-series?courseSeriesID=${self.courseInfo.courseSeriesID}`,

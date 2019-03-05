@@ -1,0 +1,62 @@
+<style lang="less" scoped>
+</style>
+
+<template>
+    <view class="module-footer" :class="{'is-iphonex': isIphonex}">
+        <form bindsubmit="handleSavePushCode" report-submit>
+            <view class="ui-container flex">
+                <repeat for="{{footerList}}" index="{{ index }}" key="{{ index }}">
+                    <button form-type="submit"
+                            data-item="{{item}}"
+                            :class="{'active': item.isSelected}"
+                            @tap.stop="getRounter">
+                        <text class="{{item.icon}}"></text>
+                        <text>{{item.name}}</text>
+                    </button>
+                </repeat>
+            </view>
+        </form>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import PushMixin from '../../mixins/push'
+    import _ from 'underscore'
+
+    export default class footer extends wepy.component {
+        mixins = [PushMixin]
+
+        props = {}
+
+        data = {
+            isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
+            footerList: [
+                {icon: 'icon-footer-toady', name: '今日', path: 'pages/today-module/index'},
+                {icon: 'icon-footer-find', name: '发现', path: 'pages/FindList/index'},
+                {icon: '.icon-footer-course', name: '课程', path: 'pages/course-module/course'},
+                {icon: 'icon-footer-team', name: '训练营', path: 'pages/training-camp-module/index'}
+            ]
+        }
+
+        onLoad() {
+            let self = this
+            let rounterList = getCurrentPages()
+            let path = rounterList[(rounterList.length - 1 || 0)].route
+
+            let item = _.find(self.footerList, {path: path})
+            item.isSelected = true
+            self.$apply()
+        }
+
+        methods = {
+            getRounter(event) {
+                let self = this
+                let {currentTarget: {dataset: {item}}} = event
+                wx.reLaunch({url: '/' + item.path})
+            }
+        }
+
+        events = {}
+    }
+</script>
