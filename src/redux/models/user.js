@@ -35,7 +35,10 @@ const initialState = {
     windowWidth: 0,
     screenHeight: 0
 }
-
+/**
+ * 写入缓存
+ * @param storeInfo 需要合并的对象
+ */
 const setStorage = (storeInfo) => {
     getStorageAsync({key: 'account'}).then((respone) => {
         setStorageAsync({
