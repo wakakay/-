@@ -28,12 +28,11 @@
             <repeat for="{{moduleList}}" key="index" index="index" item="data">
                 <button class="ui-img-type flex"
                         form-type="submit"
-                        wx:if="{{data.type == 'image'}}" >
+                        wx:if="{{data.type == 'image'}}">
                     <image mode="widthFix" src="{{data.img}}" />
                 </button>
                 <button class="ui-doc"
                         form-type="submit"
-
                         wx:if="{{data.type == 'text'}}">
                     <view class="cell-title" wx:if="{{data.title}}">{{data.title}}</view>
                     <text class="cell-content" wx:if="{{data.content}}">{{data.content}}</text>
@@ -102,8 +101,8 @@
                 <view class="cell-border" wx:if="{{data.type === 'border'}}"></view>
             </repeat>
             <view class="ui-title">关联技能</view>
-            <scroll-view wx:if="{{linkEditorList.length}}" class="model-special-scroll-list" scroll-x scroll-with-animation>
-                <repeat for="{{linkEditorList}}" key="index" index="index" item="item">
+            <scroll-view wx:if="{{skillInfo.linkEditorList.length}}" class="model-special-scroll-list" scroll-x scroll-with-animation>
+                <repeat for="{{skillInfo.linkEditorList}}" key="index" index="index" item="item">
                     <button form-type="submit" hover-stay-time="100"
                             class="ui-item" style="background-image:url('{{item.coverImageURL}}')"
                             data-item="{{item}}"
@@ -258,44 +257,6 @@
             courseName:'',
             isTodaySkill: false,
             skillInfo: {},
-            linkEditorList:[
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageID97e721d5b49440b49c679893aa53.png",
-                    id:"courseID1a7dfb68adf4e2ac2f3d90d02bd4",
-                    name:"",
-                    progress:0,
-                    sceneType:"todaySkill",
-                    sceneTypeText:"",
-                    senceTarget:"有效口头沟通",
-                    skillScore:0,
-                    type:"editor",
-                    userCount:398
-                },
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageID298c1fb9f604df8232ece685d7d8.png",
-                    id:"courseID4b15a8d32144efafd14a93399c66",
-                    name:"",
-                    progress:0,
-                    sceneType:"todaySkill",
-                    sceneTypeText:"",
-                    senceTarget:"申请职业岗位",
-                    skillScore:0,
-                    type:"editor",
-                    userCount:296
-                },
-                {
-                    coverImageURL:"http://image.runwise.cn/image/imageID8d37ff9d0954429015e8cc3c03cd.png",
-                    id:"courseID1a7dfb68adf4e2ac2f3d90d02bd4",
-                    name:"",
-                    progress:0,
-                    sceneType:"todaySkill",
-                    sceneTypeText:"",
-                    senceTarget:"评估职业优势",
-                    skillScore:0,
-                    type:"editor",
-                    userCount:398
-                },
-            ]
         }
         components = {
             'jn-header': header,
@@ -381,6 +342,7 @@
                     skillScore: res.skillScore,
                     senceTarget: res.senceTarget,
                     progress: res.progress,
+                    linkEditorList: res.linkEditorList
                     subtitle:res.subtitle,
                     sceneType:res.sceneType,
                     sceneTypeText:res.sceneTypeText,
@@ -466,6 +428,18 @@
         }
 
         methods = {
+            /**
+             * 前往专题学习
+             * @param event
+             */
+            getEditor(event) {
+                let self = this
+                let {currentTarget: {dataset:{item}}} = event
+                let courseID = item.id;
+                let name = item.name
+                wepy.$instance.globalData.getHuilder('课程详情页/专题列表','click', `${name}`)
+                return self.$navigate('/pages/SpecialCourse/index', {courseID, source: 'CourseDetailPage'})
+            },
             // 跳去微课
             handleStartLesson(event) {
                 let self = this
@@ -690,10 +664,10 @@
                     .cell-subtitle{margin-top: 300rpx}
                 }
             }
-            .ui-img-type, .ui-first {
+            .ui-img-type{
                 border-radius:0;
-                image{width:100%;}
-            }
+                image{width: 100%;}
+            } 
             .ui-doc{
                 padding:4rpx 0 24rpx;background:none;text-align:left;box-sizing:border-box;line-height:1;
                 .cell-title{font-size: 40rpx;color: @color-black;line-height:54rpx;padding-top:20rpx;margin-bottom: 24rpx;font-weight: 700;margin:0 32rpx;box-sizing:border-box;}
