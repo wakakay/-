@@ -86,7 +86,6 @@
     import loadingMixin from "../../mixins/loading";
     import header from '../../components/common/header'
     import SkillsBoardShareImage from '../../components/shareImages/skills-board' // 分享图片
-    import FetchPhoneMixin from "../../mixins/fetchPhone";
     import Toast from "wepy-com-toast";
     import {fetch} from "../../api";
     import {getStore, connect} from "wepy-redux";
@@ -122,7 +121,7 @@
         },
     })
     export default class MySkillBoard extends wepy.page {
-        mixins = [loadingMixin, FetchPhoneMixin]; // end mixins
+        mixins = [loadingMixin]; // end mixins
 
         computed = {} // end computed
 

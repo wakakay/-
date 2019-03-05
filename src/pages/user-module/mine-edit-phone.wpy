@@ -31,14 +31,12 @@
     import wepy from "wepy";
     import {getStore, connect} from "wepy-redux";
     import {auth as authApi, fetch, report as reportApi} from "../../api";
-    import fetchPhoneMixin from "../../mixins/fetchPhone";
     import {setPhone, renewWechatCode} from '../../redux/models/user'
     import header from '../../components/common/header'
 
     const store = getStore();
     @connect({
         token(state) {
-            //return 'userID4456e4e22b584ce5907d5c96e0ef247a-1538120155743-e115231777ab9449fdb18daa4c316e9c'
             return state.user.token;
         },
         code(state) {
@@ -46,7 +44,6 @@
         },
     })
     export default class MineEditPhone extends wepy.page {
-        mixins = [fetchPhoneMixin]; // end mixins
 
         data = {
             headerHeigth: 68,
@@ -72,7 +69,7 @@
                 let self = this
                 let {detail: {value}} = event
                 let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-                if(!value) return 
+                if(!value) return
                 self.isPhone = !reg.test(value) ? false : true
                 self.phoneNumber = value
                 self.$apply()
@@ -105,7 +102,7 @@
                 }, 1000)
 
                 self.__phoneCode()
-                
+
             },
             /**
              * 自动填写手机号码，授权手机
@@ -151,9 +148,9 @@
                         icon:'none'
                     })
                 }else {
-                    reportApi.saveUserCenterInfo({ 
-                        token:self.token, 
-                        json: {mobile:self.phoneNumber,verCode:self.codeNum}, 
+                    reportApi.saveUserCenterInfo({
+                        token:self.token,
+                        json: {mobile:self.phoneNumber,verCode:self.codeNum},
                         flag:'mobile'
                     })
                     .then((res) => {
@@ -171,7 +168,7 @@
                     })
                 }
             }
-           
+
         };
         /**
          * 获取验证码

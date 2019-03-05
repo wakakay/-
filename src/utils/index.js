@@ -281,22 +281,6 @@ export const redirectToLesson = ({ courseID, senceID, teamID = 'defaultTeamID', 
     return wepy.redirectTo({ url: url })
 }
 
-export const formatTimestamp = timestamp => {
-    let day = Math.floor(timestamp / 86400000)
-    let hour = Math.floor(timestamp % 86400000 / (3600 * 1000))
-    let minute = Math.floor(timestamp % 86400000 % (3600 * 1000) / (60 * 1000))
-    let second = 0 || Math.floor(timestamp % 86400000 % (3600 * 1000) % (60 * 1000) / 1000)
-    return { day, hour, minute, second }
-}
-
-export const formatTimestampForHours = timestamp => {
-    let day = null
-    let hour = Math.floor(timestamp / (3600 * 1000))
-    let minute = Math.floor(timestamp % 86400000 % (3600 * 1000) / (60 * 1000))
-    let second = 0 || Math.floor(timestamp % 86400000 % (3600 * 1000) % (60 * 1000) / 1000)
-    return { day, hour, minute, second }
-}
-
 export const shareDictionary = {
     SHARE_TEAM: {
         event: 'SHARE_TEAM',

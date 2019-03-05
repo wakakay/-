@@ -840,7 +840,6 @@
     import header from '../../components/common/header'
 	import poll from '../../components/cards-type/poll'
     import NavigatorMixin from '../../mixins/navigator'
-	import fetchPhoneMixin from "../../mixins/fetchPhone"
 	import _ from 'underscore'
 
     const store = getStore();
@@ -870,7 +869,7 @@
         },
     })
     export default class TeamLearning extends wepy.page {
-        mixins = [loadingMixin, fetchPhoneMixin, PushMixin, NavigatorMixin] // end mixins
+        mixins = [loadingMixin, PushMixin, NavigatorMixin] // end mixins
 
         components = {
             'mloading': Loading,
