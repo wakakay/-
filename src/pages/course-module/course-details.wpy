@@ -328,7 +328,7 @@
             isAndroid: /android/i.test(wx.getSystemInfoSync().system),
             isIphonex: /iphone10|iphone x/i.test(wx.getSystemInfoSync().model),
             isFixed: false,
-            onShow: false,
+            isScrollLesson: false,
             timestamp: new Date().getTime(),
             backgroundHeight: 0,
             targetScroll: 0,
@@ -365,7 +365,6 @@
         }
         onShow() {
             let self = this
-            self.onShow = true
             self.courseDetail && self.courseDetail.senceList && self.courseDetail.senceList.length && self.initialize()
         }
 
@@ -494,7 +493,7 @@
                     source: self.paramsInfo.source
                 })
 
-                !self.isAndroid && !self.onShow &&  self.__positionScroll()
+                !self.isAndroid &&  !self.isScrollLesson && self.__positionScroll()
             }).catch(error => {
                 self.isLoaded = true
             })
@@ -513,7 +512,10 @@
                 query.select('#senceList').boundingClientRect((rect) => {
                     wx.pageScrollTo({
                         scrollTop: rect.top - self.headerHeigth,
-                        duration: 300
+                        duration: 300,
+                        success() {
+                            self.isScrollLesson = true
+                        }
                     })
                 }).exec()
             }, 800)
