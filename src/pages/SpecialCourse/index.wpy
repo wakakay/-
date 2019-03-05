@@ -342,7 +342,7 @@
                     skillScore: res.skillScore,
                     senceTarget: res.senceTarget,
                     progress: res.progress,
-                    linkEditorList: res.linkEditorList
+                    linkEditorList: res.linkEditorList,
                     subtitle:res.subtitle,
                     sceneType:res.sceneType,
                     sceneTypeText:res.sceneTypeText,
