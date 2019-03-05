@@ -11,10 +11,7 @@
   import wepy from 'wepy'
   import { sleep, doDecrpytPhone } from '../../utils'
   import { getStore, connect } from 'wepy-redux'
-  import { CustomError } from '../../errors'
-  import {
-    login
-  } from '../../redux/models/user'
+  import {login} from '../../redux/models/user'
   const store = getStore()
 
   @connect({

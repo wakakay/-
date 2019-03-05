@@ -5,7 +5,7 @@ export const getStorageAsync = ({ key }) => {
                 success: ({ errMsg, data }) => 'getStorage:ok' === errMsg && resolve(data) || reject(data),
                 fail: error => reject(`getStorage: fail to get ${key}`)
             })
-        }) // end return
+        })
 }
 
 export const setStorageAsync = ({ key, value }) => {
@@ -16,5 +16,5 @@ export const setStorageAsync = ({ key, value }) => {
                 success: ({ errMsg }) => 'setStorage:ok' === errMsg && resolve() || reject(errMsg),
                 fail: error => reject(`setStorage: fail to get ${key}`)
             })
-        }) // end return
+        })
 }

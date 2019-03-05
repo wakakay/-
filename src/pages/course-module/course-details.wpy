@@ -286,24 +286,6 @@
     import {getUserPhone, refreshUserInformations} from '../../redux/models/user'
     import _ from 'underscore'
 
-    /*
-       * 赠一得一，字段
-       * isLimitedTimeGiftCourse: 是否是限时赠一得一
-       * coursePayStatus: 是否显示底部购买按钮（2个按钮的条件之一）
-       * hasGiftState: 是否有赠送状态
-       * giftButtonMsg: 底部按钮文案
-       * roleType: {gifter: 赠送者, receiver: 受赠者, normal: 普通者}
-       *
-       * 赠送者
-       * 1、访客身份：点击按钮需要授权，之后重新调取课程详情
-       * 2、用户身份: 1) isLimitedTimeGiftCourse && roleType!='receiver' 需要获取giftID，弹窗分享接口，如果请求接口回来再弹窗好友列表是不可以的
-       *             2) 如果giftButtonMsg=='赠一得一' && roleType!='gifter'
-       *
-       * 受赠者
-       * 1、访客身份：点击按钮需要授权，之后重新调取课程详情
-       * 2、用户身份: 1) 如果没有领取过，进来自动领取
-       *             2) 如果giftButtonMsg=='赠一得一' && roleType!='gifter'
-       * */
     const store = getStore()
     @connect({
         systemInfo(state) {

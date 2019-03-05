@@ -38,7 +38,6 @@
 	import wepy from 'wepy'
     import {getStore,connect} from "wepy-redux"
 	import {team as teamApi, auth as authApi} from '../../api'
-	import fetchPhoneMixin from "../../mixins/fetchPhone";
 	import {setPhone, renewWechatCode} from '../../redux/models/user'
     import header from '../../components/common/header'
 	import Loading from "../../components/common/loading"
@@ -69,8 +68,6 @@
             mloading: Loading,
             'jn-header': header
 		}
-
-	 	mixins = [fetchPhoneMixin] // end mixins
 
 		data = {
 			teamID: 'defaultTeamID',

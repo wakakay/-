@@ -110,7 +110,6 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import fetchPhoneMixin from "../../mixins/fetchPhone";
     import PushMixin from '../../mixins/push'
     import {auth as authApi, fetch} from '../../api'
     import {getUserPhone, refreshUserInformations} from '../../redux/models/user'
@@ -130,7 +129,7 @@
             disableScroll: true
         }
 
-        mixins = [fetchPhoneMixin, PushMixin]
+        mixins = [PushMixin]
 
         components = {
             'jn-header': header,
