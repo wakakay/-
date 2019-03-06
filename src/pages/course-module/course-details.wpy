@@ -91,6 +91,8 @@
                         hover-stay-time="100"
                         form-type="submit"
                         data-item="{{item}}"
+                        open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                        @getphonenumber.stop="getLessonPhone"
                         @tap.stop="getCourseLearning">
                     <view class="cell-title">{{item.senceName}}</view>
                     <view class="ui-skills">
@@ -294,8 +296,11 @@
         hasGift(state) {
             return state.user.hasGift
         },
-        entrance(state) {//全局场景值
+        entrance(state) {
             return state.entrance
+        },
+        phone(state) {
+            return state.user.phone
         }
     })
     export default class courseDetails extends wepy.page {
@@ -686,10 +691,6 @@
                 courseID: self.paramsInfo.id,
                 pageTime: time
             }
-
-            if ('defaultToken' === self.systemInfo.token) {
-                return
-            }
             fetch.sendCoursePageTime(postData).then(response => {})
         }
         /** 领取课程结果
@@ -729,11 +730,9 @@
             getFirstReceive(event) {
                 let self = this
                 let {detail: {encryptedData, errMsg, iv}} = event
-
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
                     self.__receiveResult(respone)
                 }).catch((error) => {
-
                 })
             },
             /**
@@ -782,6 +781,7 @@
             getCourseLearning(event) {
                 let self = this
                 let {currentTarget: {dataset:{item}}} = event
+                if(!self.phone && !self.hasGift) return;
                 wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
                 self.reportButtonTap(item.senceID, item.buttonStatus)
                 self.__goToCourseLearning(item)
@@ -829,6 +829,26 @@
                     self.__receiveCourse(respone)
                     wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
                 }).catch((error) => {
+                })
+            },
+            /**
+             * 判断来源是否增一得一；若是，则发送接口；若不是，则授权并去学课
+             * @param event
+             * @returns {Promise<any>}
+             */
+            getLessonPhone(event) {
+                let self = this;
+                let {detail: {encryptedData, errMsg, iv},currentTarget: {dataset:{item}}} = event
+                store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    if(self.courseDetail.isLimitedTimeGiftCourse && 'receiver' == self.courseDetail.roleType) {
+                        self.__receiveCourse(respone)
+                    }else {
+                        wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
+                        self.reportButtonTap(item.senceID, item.buttonStatus)
+                        self.__goToCourseLearning(item)
+                    }
+                }).catch((error) => {
+
                 })
             }
         }

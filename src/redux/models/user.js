@@ -66,6 +66,7 @@ export const getLoginToken = () => (dispatch, getState) => {
     let path = LaunchOptions.path
     let query = LaunchOptions.query
 
+    // 渠道来源 的获取；
     let rounterPath = ROUTERS[path]
     if (query.source) { // 地址栏的source有带直接给
         sourceName = query.source
