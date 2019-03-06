@@ -603,7 +603,7 @@
         /**
          * 受赠者确定领取课程
          */
-        __receiveCourse() {
+        __receiveCourse(item) {
             let self = this
             let postData = {
                 token: self.systemInfo.token,
@@ -620,8 +620,8 @@
                     self.$apply()
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                     setTimeout(()=>{
-                        let item = self.courseDetail.senceList[0]
-                        self.__goToCourseLearning(item, true)
+                        let lesson = item || self.courseDetail.senceList[0]
+                        self.__goToCourseLearning(lesson, true)
                     }, 300)
                 } else {
                     wx.showToast({title: respone.message})
@@ -840,13 +840,15 @@
                 let self = this;
                 let {detail: {encryptedData, errMsg, iv},currentTarget: {dataset:{item}}} = event
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
+                    store.dispatch(refreshUserInformations({hasGift: true}))
+                    wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
+                    self.reportButtonTap(item.senceID, item.buttonStatus)
+
                     if(self.courseDetail.isLimitedTimeGiftCourse && 'receiver' == self.courseDetail.roleType) {
-                        self.__receiveCourse(respone)
-                    }else {
-                        wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
-                        self.reportButtonTap(item.senceID, item.buttonStatus)
-                        self.__goToCourseLearning(item)
+                        self.__receiveCourse(item)
+                        return
                     }
+                    self.__goToCourseLearning(item, true)
                 }).catch((error) => {
 
                 })
