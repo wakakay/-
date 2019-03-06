@@ -618,6 +618,7 @@
                     self.actionSheetTitle = '恭喜你！领取成功',
                     self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
                     self.$apply()
+                    store.dispatch(refreshUserInformations({hasGift: true}))
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                     setTimeout(()=>{
                         let lesson = item || self.courseDetail.senceList[0]
@@ -840,7 +841,6 @@
                 let self = this;
                 let {detail: {encryptedData, errMsg, iv},currentTarget: {dataset:{item}}} = event
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
-                    store.dispatch(refreshUserInformations({hasGift: true}))
                     wepy.$instance.globalData.getHuilder('课程详情页/微课列表','click',`${self.courseDetail.name}/${item.senceName}`) // ga点击统计
                     self.reportButtonTap(item.senceID, item.buttonStatus)
 
@@ -848,6 +848,7 @@
                         self.__receiveCourse(item)
                         return
                     }
+                    store.dispatch(refreshUserInformations({hasGift: true}))
                     self.__goToCourseLearning(item, true)
                 }).catch((error) => {
 
