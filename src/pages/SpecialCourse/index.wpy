@@ -144,13 +144,14 @@
                                 open-type="share"></button>
                     </view>
                 </view>
-                <button class="module-floax-box"
-                        wx:if="{{floatBox.type === 'sence'}}"
-                        data-item="{{floatBox.sence}}"
-                        open-type="{{!phone ? 'getPhoneNumber' : ''}}"
-                        @getphonenumber.stop="handleStartLesson"
-                        @tap.stop="handleStartLesson">
-                    <button class="ui-share-course" form-type="submit" :class="{'is-phonex': isIphonex}">
+                <view class="module-floax-box" wx:if="{{floatBox.type === 'sence'}}">
+                    <button class="ui-share-course"
+                            :class="{'is-phonex': isIphonex}"
+                            form-type="submit"
+                            data-item="{{floatBox.sence}}"
+                            open-type="{{!phone ? 'getPhoneNumber' : ''}}"
+                            @getphonenumber.stop="handleStartLesson"
+                            @tap.stop="handleStartLesson">
                         <view class="ui-left">
                             <view class="ui-img">
                                 <image src="{{floatBox.sence.imageUrl}}" />
@@ -162,7 +163,7 @@
                         </view>
                         <view class="cell-btn">{{phone ? floatBox.sence.buttonStatusMsg : '免费领取'}}</view>
                     </button>
-                </button>
+                </view>
                 <button class="module-floax-box"
                         :class="{'is-phonex': isIphonex}"
                         wx:if="{{floatBox.type === 'course'}}"
@@ -194,7 +195,7 @@
             </view>
         </from>
     </view>
-    <view></view>
+    <jn-share-thumb></jn-share-thumb>
 </template>
 
 <script>
@@ -203,6 +204,7 @@
     import header from '../../components/common/header'
     import poll from '../../components/cards-type/poll'
     import singleChoice from '../../components/special-course/single-choice'
+    import shareThumb from '../../components/special-course/share-thumb'
     import PushMixin from '../../mixins/push'
     import {initializationDeligate, showErrorPage, shareDictionary, navigateToLesson} from "../../utils"
     import {auth as authApi, fetch} from "../../api"
@@ -262,7 +264,8 @@
             'jn-header': header,
             'mloading': Loading,
             'jn-poll': poll,
-            'jn-single-choice': singleChoice
+            'jn-single-choice': singleChoice,
+            'jn-share-thumb': shareThumb
         };
         onLoad({courseID='', gift='', source='', wxPushType='newCoursePush'}) {
             let self = this
@@ -335,10 +338,11 @@
                 self.imageCodeUrl = res.carousel
                 self.courseName = res.name
                 if ('todaySkill' === res.sceneType) {
-                    self.screenName = '今日技能'
+                    self.screenName = '每日技能'
                     self.isTodaySkill = true
                 }
                 let nameList = res.name && res.name.split('日）')
+                let name = nameList[1] || res.name || '-'
                 self.skillInfo = {
                     skillScore: res.skillScore,
                     senceTarget: res.senceTarget,
@@ -347,12 +351,17 @@
                     subtitle:res.subtitle,
                     sceneType:res.sceneType,
                     sceneTypeText:res.sceneTypeText,
-                    name: nameList[1] || res.name || '-'
+                    name: name
                 }
 
                 self.isLoaded = true
                 self.moduleList = self.__dataRegroup(res.moduleList)
 
+                res.name && self.$broadcast('special-share-thumb', {
+                    title: name,
+                    screenName: self.screenName,
+                    shareImage: self.imageCodeUrl
+                })
                 wepy.$instance.globalData.getLoadHuilder({screenName: self.screenName, pageTheme: self.courseName}) // ga统计
                 self.$apply()
             })
@@ -556,6 +565,12 @@
                 self.headerHeigth = data.headerHeigth
                 self.$apply()
             },
+            'share-thumb': (data) => {
+                let self = this
+                if (data) {
+                    self.shareCoverImageUrl = data
+                }
+            },
             'on-interaction': (data) => {
                 let self = this
                 let item = null
@@ -621,10 +636,11 @@
                 channel: self.entrance.mappers[self.entrance.scenceID],
                 type: shareDictionary.SHARE_SPECIAL_COURSE.type,
             })
+
             return {
                 title: self.shareCoverTitle,
                 path: `/pages/SpecialCourse/index?courseID=${self.courseID}&pageName=${self.courseName}`,
-                imageUrl:self.shareCoverImageUrl
+                imageUrl: self.shareCoverImageUrl
             };
         }
     }
