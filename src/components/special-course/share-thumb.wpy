@@ -45,7 +45,6 @@
                 let shareImage = self.__loadingImages('shareImage', image)
 
                 self.cardCanvas = wx.createCanvasContext('shareThumbCanvas')
-
                 Promise.all([shareImage]).then(respone => {
                     self.thumbInfo = respone[0].shareImage
 
