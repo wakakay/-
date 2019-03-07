@@ -104,25 +104,28 @@
 
             let shareBackgroundImage = new Promise(function (resolve, reject) {
                 wx.getImageInfo({
-                    src: self.dataInfo.shareBackgroundImage, success: function (res) {
+                    src: self.dataInfo.shareBackgroundImage,
+                    success(res) {
                         prop = windowWidth / res.width
                         self.shareInfo.previewWidth = res.width
                         self.shareInfo.previewHeight = res.height
                         self.shareInfo.canvasHeiht = Math.ceil(res.height * prop)
-                        resolve(res);
+                        resolve(res)
                     }
                 })
             })
             let shareCodeImage = new Promise(function (resolve, reject) {
                 wx.getImageInfo({
-                    src: self.dataInfo.shareCodeImage, success: function (res) {
+                    src: self.dataInfo.shareCodeImage,
+                    success(res) {
                         resolve(res);
                     }
                 })
             })
             let avatarImage = new Promise(function (resolve, reject) {
                 wx.getImageInfo({
-                    src: self.systemInfo.avatar, success: function (res) {
+                    src: self.systemInfo.avatarUrl,
+                    success(res) {
                         resolve(res);
                     }
                 })
