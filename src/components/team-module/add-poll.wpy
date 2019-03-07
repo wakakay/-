@@ -118,17 +118,29 @@
         }
 
         methods = {
+            /**
+             * 选择是单选还是多选
+             * @param event
+             */
             getRadio(event) {
                 let self = this
                 let {currentTarget: {dataset: {type}}} = event
                 self.seleteInfo.pollType = type
                 self.$apply()
             },
+            /**
+             * 删除某个投票选项
+             * @param event
+             */
             getDelete(event) {
                 let self = this
                 let {currentTarget: {dataset: {index}}} = event
                 self.seleteInfo.list.splice(index, 1)
             },
+            /**
+             * 投票选项输入框失去焦点
+             * @param event
+             */
             getBlur(event) {
                 let self = this
                 let {detail: {value}, currentTarget: {dataset: {type}}} = event
@@ -140,6 +152,9 @@
                 }
                 self.$apply()
             },
+            /**
+             * 添加选项
+             */
             getAddItem() {
                 let self = this
                 self.seleteInfo.list.push({
@@ -147,10 +162,16 @@
                     option: ''
                 })
             },
+            /**
+             * 关闭组件
+             */
             getClose() {
                 let self = this
                 self.$emit('on-add-poll', {})
             },
+            /**
+             * 确定添加
+             */
             getConfirm(){
                 let self = this
                 self.$emit('on-add-poll', self.seleteInfo)

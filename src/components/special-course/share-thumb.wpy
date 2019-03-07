@@ -24,7 +24,6 @@
 
         data = {
             cardCanvas: null,
-            shareThumb: '', // 最后生成的分享图片
             broadcastInfo: {},
             thumbInfo: {},
             cardShareInfo: {
@@ -73,7 +72,10 @@
                 })
             })
         }
-
+        /**
+         * 绘画封面图
+         * @private
+         */
         __initShareCard() {
             let self = this
             self.cardShareInfo.width = self.cardShareInfo.width
@@ -112,7 +114,6 @@
             let x = Math.ceil(32 * prop) // x轴坐标
             let y1 = Math.ceil(52 * prop) // 副标题y轴坐标
             let y2 = Math.ceil(90 * prop) // 正标题y轴坐标
-            let maxWidth = self.cardShareInfo.width
 
             // 副标题绘画
             self.cardCanvas.save()
@@ -156,12 +157,7 @@
                 fileType: 'jpg',
                 canvasId: 'shareThumbCanvas',
                 success(respone) {
-                    self.shareThumb = respone.tempFilePath
-                    self.$emit('share-thumb', self.shareThumb)
-                    self.$apply()
-                },
-                complete() {
-                    wx.hideLoading()
+                    self.$emit('share-thumb', respone.tempFilePath)
                 }
             })
         }

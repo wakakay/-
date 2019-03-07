@@ -41,6 +41,14 @@
 </template>
 
 <script>
+    /**
+     * <jn-association></jn-association>
+     * @module components/cards-type/poll
+     * @desc 分类卡
+     * @param {cardsList} [Array] - 交互卡的数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的交互卡的数组索引键值- ----【】
+     * @param {cardItem} [Object] - 当前分类卡的数据- ----【】
+     */
     import wepy from 'wepy'
     import _ from 'underscore'
 
@@ -51,7 +59,6 @@
             },
             cardItem: {
                 type: Object,
-                toway: true,
                 default: {}
             },
             cardsList: {

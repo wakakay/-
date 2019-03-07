@@ -37,6 +37,14 @@
 </template>
 
 <script>
+    /**
+     * <jn-poll></jn-poll>
+     * @module components/cards-type/poll
+     * @desc 投票卡
+     * @param {cardsList} [Array] - 交互卡的数组- ----【】
+     * @param {cardIndex} [Number] - 当前循环的交互卡的数组索引键值- ----【】
+     * @param {isLearning} [Number] - 适配一些引用的页面的样式- ----【0】
+     */
     import wepy from 'wepy'
     import {parsePercentageForPoll} from '../../utils'
     import _ from 'underscore'
