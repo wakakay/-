@@ -245,9 +245,10 @@
             isHeadHeight: false,
             headerBackground: 'background-transparent',
             backgroundHeight: 0,
+            shareID: Date.parse(new Date()) + (_.random(100, 999)).toString(),
             timestamp: new Date().getTime(),
             isLoaded: false,
-            screenName: '课程专题页', // 来源，是今日还是发现页面过来的
+            screenName: '课程专题页', // 来源，是每日还是发现页面过来的
             courseID: '',
             wxPushType:'',
             senceID:'',
@@ -639,7 +640,7 @@
 
             return {
                 title: self.shareCoverTitle,
-                path: `/pages/SpecialCourse/index?courseID=${self.courseID}&pageName=${self.courseName}`,
+                path: `/pages/SpecialCourse/index?courseID=${self.courseID}&pageName=${self.courseName}&shareID=${self.shareID}`,
                 imageUrl: self.shareCoverImageUrl
             };
         }
