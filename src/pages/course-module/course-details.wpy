@@ -351,6 +351,7 @@
             if (-1 !== isCode && params.senceID) {
                 self.shareSenceID = params.senceID
             }
+            !self.isAndroid &&  !self.isScrollLesson && self.__positionScroll()
             initializationDeligate({initializeFunc: self.initialize.bind(self)})
         }
         onShow() {
@@ -482,8 +483,8 @@
                     courseid: self.paramsInfo.id,
                     source: self.paramsInfo.source
                 })
-
-                !self.isAndroid &&  !self.isScrollLesson && self.__positionScroll()
+                
+                
             }).catch(error => {
                 self.isLoaded = true
             })
