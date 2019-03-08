@@ -4,12 +4,12 @@
         <image class="my-feedback-image"
                src="http://wx-small.runwise.cn/image/imageID0a43755b08c481af440e1635d7a2.png"/>
         <view class="my-feedback-desc">感谢你为即能提出建议，我们会在大家的监督和提醒下，持续优化产品体验!</view>
-        <button class="feedback-btn-style" open-type="feedback" plain="{{true}}">意见反馈</button>
+        <button class="feedback-btn-style" open-type="feedback">意见反馈</button>
         <view class="my-feedback-title-top">请添加即能客服进行反馈</view>
         <view class="my-feedback-title">客服微信号：
-            <text>oliviaJN2</text>
+            <text>Up酱 Pascalbo</text>
         </view>
-        <button class="copy-btn-style" plain="{{true}}" @tap.stop="copyTBL">{{copyStatus}}</button>
+        <button class="copy-btn-style" @tap.stop="copyTBL">{{copyStatus}}</button>
     </view>
     <toast/>
 </template>
@@ -40,7 +40,6 @@
       return state.user.avatarUrl;
     },
     token(state) {
-    //   return 'userIDd48a471afb7f4bca8d40b414cd3fc44f-1531441661514-1c8a5a0de2b57aba460de3f3d3b5755c'
       return state.user.token;
     },
     code(state) {
@@ -56,7 +55,7 @@
   export default class MineFeedback extends wepy.page {
     data = {
         previewImage:['http://wx-small.runwise.cn/image/imageID374fc9d569f4c9a62acd65f0e0dd.png','http://wx-small.runwise.cn/image/T60a13fdb5234de93d0c407e49be7Width430ImageCode.png'],
-        clipBoardData:'PasangXu2013',
+        clipBoardData:'Pascalbo',
         copyStatus:'复制微信号',
 
     } // end data
@@ -92,20 +91,10 @@
                 // wx.showModal({con})
             }
           });
-      },
-        handlePreviewCoreImage() {
-            return wepy.previewImage({urls: this.previewImage})
-        }
+      }
     };
-    computed = {};
     onLoad() {
         wepy.$instance.globalData.getLoadHuilder() // ga统计
-    }
-    onUnload(){
-      // this.copyStatus='+添加棋枫老师微信'
-    }
-    onShow() {
-
     }
   }
 </script>

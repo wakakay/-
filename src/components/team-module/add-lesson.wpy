@@ -141,7 +141,7 @@
                 let dataList = self.dataList;
                 _.each(dataList,(item)=>{
                     _.each(item.senceList,senceItem=>{
-                        if(senceItem.isSelected) {
+                       if(senceItem.isSelected) {
                             self.seleteList.push(senceItem)
                             self.$apply();
                         }
