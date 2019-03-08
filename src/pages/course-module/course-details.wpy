@@ -269,10 +269,7 @@
             </view>
         </view>
     </form>
-    <jn-actionSheet :isShow.sync="isShowActionSheet"
-            :title.sync="actionSheetTitle"
-            :content.sync="actionSheetContent"
-            buttonConfirm='我知道了'></jn-actionSheet>
+    <view></view>
 </template>
 
 <script>
@@ -280,7 +277,6 @@
     import {getStore, connect} from 'wepy-redux'
     import header from '../../components/common/header'
     import Loading from '../../components/common/loading'
-    import actionSheet from '../../components/common/actionSheet'
     import {course as courseApi, fetch} from '../../api'
     import PushMixin from "../../mixins/push"
     import {initializationDeligate, navigateToLesson, shareDictionary, getStorageAsync} from '../../utils'
@@ -309,7 +305,6 @@
         components = {
             'jn-header': header,
             'jn-loading': Loading,
-            'jn-actionSheet': actionSheet
         }
 
         data = {
@@ -335,14 +330,10 @@
             isTips: true,
             countDown: '', // 倒计时事件
             timer: null, // 定时器
-            isShowActionSheet: false,
-            actionSheetTitle: '',
-            actionSheetContent: ''
         }
 
         onLoad(params) {
             let self = this
-            console.log('课程详情', params)
             self.paramsInfo = params
             self.paramsInfo.source = self.paramsInfo.source
             // 是否是通过识别小程序号且有scenceID，说明是微课分享进来的，要重定向到微课
@@ -614,17 +605,13 @@
 
             fetch.receiveCourseGift(postData).then((respone) => {
                 if (1 === respone.success) {
-                    self.isShowActionSheet = true
                     self.isGifter = false
-                    self.actionSheetTitle = '恭喜你！领取成功',
-                    self.actionSheetContent = '3天内学完所有微课，你将获得此课程。'
                     self.$apply()
                     store.dispatch(refreshUserInformations({hasGift: true}))
                     wepy.$instance.globalData.getHuilder('课程详情页/领取点击事件', 'click', `${self.courseDetail.name}`)
                     setTimeout(()=>{
                         let lesson = item || self.courseDetail.senceList[0]
                         self.__goToCourseLearning(lesson, true)
-                        self.isShowActionSheet = false
                         self.$apply()
                     }, 300)
                 } else {
