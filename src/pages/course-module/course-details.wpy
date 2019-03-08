@@ -698,7 +698,7 @@
          * @param phone 手机号码
          * @param item 当前点击的哪个推荐课程
          */
-        __receiveResult(phone) {
+        __receiveResult(phone, item) {
             let self = this
             let postData = {
                 token: self.systemInfo.token,
@@ -713,8 +713,8 @@
                 })
                 store.dispatch(refreshUserInformations({hasGift: true}))
                 setTimeout(()=>{
-                    let item = self.courseDetail.senceList[0]
-                    self.__goToCourseLearning(item, true)
+                    let lesson = item || self.courseDetail.senceList[0]
+                    self.__goToCourseLearning(lesson, true)
                 }, 300)
             }).catch(error => {
                 wx.showToast({
@@ -849,7 +849,7 @@
                         return
                     }
                     store.dispatch(refreshUserInformations({hasGift: true}))
-                    self.__goToCourseLearning(item, true)
+                    self.__receiveResult(respone, item)
                 }).catch((error) => {
 
                 })
