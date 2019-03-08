@@ -399,7 +399,7 @@
     </view>
     <repeat for="{{historicalSkillList}}" key="index" index="index" item="item">
         <button class="ui-before-subject" form-type="submit" @tap.stop="getItem" data-item="{{item}}">
-            <view class="cell-date">{{item.dateTips}}</view>
+            <view class="cell-date" wx:if="{{!item.isRecommended}}">{{item.dateTips}}</view>
             <view class="ui-special-subject"  style="background-image: url('{{item.coverImageURL}}');" >
                 <view class="ui-mask">
                     <view class="ui-top">
