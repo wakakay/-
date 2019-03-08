@@ -623,6 +623,8 @@
                     setTimeout(()=>{
                         let lesson = item || self.courseDetail.senceList[0]
                         self.__goToCourseLearning(lesson, true)
+                        self.isShowActionSheet = false
+                        self.$apply()
                     }, 300)
                 } else {
                     wx.showToast({title: respone.message})
@@ -819,15 +821,15 @@
             getReceiveCourse(event) {
                 let self = this
                 let {detail: {encryptedData, errMsg, iv}} = event
+                let item = self.courseDetail.senceList[0]
 
                 if (self.courseDetail.giftCountdown) {
-                    let item = self.courseDetail.senceList[0]
                     self.__goToCourseLearning(item, true)
                     return
                 }
 
                 store.dispatch(getUserPhone(encryptedData, errMsg, iv)).then(respone => {
-                    self.__receiveCourse(respone)
+                    self.__receiveCourse(item)
                     wepy.$instance.globalData.getHuilder('课程详情页/马上学习', 'click', `${data.senceName}`)
                 }).catch((error) => {
                 })
